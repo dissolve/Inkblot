@@ -1,0 +1,53 @@
+<?php
+//
+// FILE BRAND.PHP.ORIG is used for generating BRAND.PHP
+// changes made to BRAND.PHP will NOT effect the live server.
+// 
+// If you wish to update any of this entries make sure you do so in the BRAND.PHP.ORIG file,
+//  as well as the version in the trial folder
+//
+define('ENVIRONMENT', 'dev'); //TODO: at launch set to 'LIVE"
+
+
+define('EMAIL', 'dev@null.me');
+
+// DIR
+define('DIR_BASE', (ENVIRONMENT == 'LIVE' ? '/var/www/openbloglocal/': '/var/www/openblog/'));
+
+// DB
+define('DB_DRIVER', 'mysqli');
+define('DB_USERNAME', 'YourUsername321'));
+define('DB_PASSWORD', 'YourPassword123');
+define('DB_HOSTNAME', '127.0.0.1');
+define('DATABASE', 'your_database_name');
+define('DB_PREFIX', '');
+
+
+define('THEME', 'default');
+
+define('PAGE_TITLE', 'TESTING');
+
+if(ENVIRONMENT == 'LIVE'){
+    // HTTP
+    define('HTTP_SERVER', 'http://ben3.thatmustbe.me/');
+    // HTTPS
+    define('HTTPS_SERVER', 'https://ben3.thatmustbe.me/');
+} else {
+    // HTTP
+    define('HTTP_SERVER', 'http://www.ben3/');
+    // HTTPS
+    define('HTTPS_SERVER', 'https://www.ben3/');
+}
+
+define('DIR_SYSTEM', DIR_BASE .'system/');
+define('DIR_DATABASE', DIR_BASE . 'system/database/');
+define('DIR_CONFIG', DIR_BASE . 'system/config/');
+define('DIR_IMAGE', DIR_BASE . 'image/');
+define('DIR_CACHE', DIR_BASE . 'system/cache/');
+define('DIR_DOWNLOAD', DIR_BASE . 'download/');
+define('DIR_LOGS', DIR_BASE . 'system/logs/');
+define('DIR_MODIFICATION', DIR_BASE . 'system/modification/');
+
+define('DIR_APPLICATION', DIR_BASE . 'blog/');
+define('DIR_LANGUAGE', DIR_BASE . 'blog/language/');
+define('DIR_TEMPLATE', DIR_BASE . 'blog/view/theme/');

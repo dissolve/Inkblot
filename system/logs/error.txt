@@ -1,0 +1,829 @@
+2014-03-27 19:09:00 - Full cache cleared!
+2014-03-27 20:07:51 - Array
+(
+    [0] => account
+    [1] => wishlist
+)
+
+2014-03-27 20:07:51 - Array
+(
+    [0] => account
+    [1] => account
+)
+
+2014-03-27 20:07:51 - Array
+(
+    [0] => checkout
+    [1] => cart
+)
+
+2014-03-27 20:07:51 - Array
+(
+    [0] => checkout
+    [1] => checkout
+)
+
+2014-03-27 20:08:52 - Array
+(
+    [0] => blog
+    [1] => post
+)
+
+2014-03-27 20:08:52 - Array
+(
+    [0] => blog
+    [1] => post
+    [2] => comment
+)
+
+2014-03-27 20:08:52 - Array
+(
+    [0] => blog
+    [1] => category
+)
+
+2014-03-27 20:08:52 - Array
+(
+    [0] => blog
+    [1] => author
+)
+
+2014-03-27 20:09:22 - Array
+(
+    [0] => blog
+    [1] => post
+)
+
+2014-03-27 20:09:22 - Array
+(
+    [0] => blog
+    [1] => post
+    [2] => comment
+)
+
+2014-03-27 20:09:22 - Array
+(
+    [0] => blog
+    [1] => category
+)
+
+2014-03-27 20:09:22 - Array
+(
+    [0] => blog
+    [1] => author
+)
+
+2014-03-27 20:11:52 - Array
+(
+    [0] => blog
+    [1] => post
+)
+
+2014-03-27 20:11:52 - Array
+(
+    [0] => blog
+    [1] => post
+    [2] => comment
+)
+
+2014-03-27 20:11:52 - Array
+(
+    [0] => blog
+    [1] => category
+)
+
+2014-03-27 20:11:52 - Array
+(
+    [0] => blog
+    [1] => author
+)
+
+2014-03-28 15:24:01 - route => common/home
+2014-03-28 15:24:14 - route => blog/post
+2014-03-28 15:24:14 - id => 5
+2014-03-28 15:24:14 - route => blog/post/comment
+2014-03-28 15:24:14 - pid => 5
+2014-03-28 15:24:14 - route => blog/category
+2014-03-28 15:24:14 - id => 0
+2014-03-28 15:24:14 - route => common/home
+2014-03-28 15:24:14 - route => blog/author
+2014-03-28 15:24:14 - id => 1
+2014-03-28 15:32:31 - route => blog/post
+2014-03-28 15:32:31 - id => 5
+2014-03-28 15:32:31 - route => blog/post/comment
+2014-03-28 15:32:31 - pid => 5
+2014-03-28 15:32:31 - route => blog/category
+2014-03-28 15:32:31 - id => 0
+2014-03-28 15:32:31 - route => common/home
+2014-03-28 15:32:31 - route => blog/author
+2014-03-28 15:32:31 - id => 1
+2014-03-28 15:33:19 - ok
+2014-03-28 15:33:19 - ok
+2014-03-28 15:33:19 - ok
+2014-03-28 15:33:19 - ok
+2014-03-28 15:33:19 - ok
+2014-03-28 15:33:44 - ok
+2014-03-28 15:33:44 - ok2
+2014-03-28 15:33:44 - ok2
+2014-03-28 15:33:44 - ok2
+2014-03-28 15:33:48 - ok
+2014-03-28 15:33:48 - ok2
+2014-03-28 15:33:48 - ok2
+2014-03-28 15:33:48 - ok2
+2014-03-28 15:34:00 - ok
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - route = `post/(?P<year>\d{4})/(?P<dayofyear>\d{3})/(?P<daycount>\d+)/.*`i
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - route = `category/(?P<name>\w+)`i
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - ok2
+2014-03-28 15:34:00 - route = `author/(?P<id>\d+)`i
+2014-03-28 16:02:35 - post/{year}/{dayofyear}/{daycount}/{title}
+2014-03-28 16:03:32 - post/{year}/{dayofyear}/{daycount}/{title}
+2014-03-28 16:03:56 - post/{year}/{dayofyear}/{daycount}/{title}
+2014-03-28 16:03:56 - 
+2014-03-28 16:03:56 - category/{name}
+2014-03-28 16:03:56 - 
+2014-03-28 16:03:56 - author/{id}
+2014-03-28 16:04:02 - 
+2014-03-28 16:04:06 - post/{year}/{dayofyear}/{daycount}/{title}
+2014-03-28 16:04:06 - 
+2014-03-28 16:04:06 - category/{name}
+2014-03-28 16:04:06 - 
+2014-03-28 16:04:06 - author/{id}
+2014-03-28 16:04:43 - post/{year}/{dayofyear}/{daycount}/{title}
+1
+2014-03-28 16:04:43 - 
+1
+2014-03-28 16:04:43 - category/{name}
+1
+2014-03-28 16:04:43 - 
+1
+2014-03-28 16:04:43 - author/{id}
+1
+2014-03-28 16:05:11 - 
+Array
+(
+)
+
+2014-03-28 16:05:17 - post/{year}/{dayofyear}/{daycount}/{title}
+Array
+(
+    [id] => 5
+)
+
+2014-03-28 16:05:17 - 
+Array
+(
+    [pid] => 5
+)
+
+2014-03-28 16:05:17 - category/{name}
+Array
+(
+    [id] => 0
+)
+
+2014-03-28 16:05:17 - 
+Array
+(
+)
+
+2014-03-28 16:05:17 - author/{id}
+Array
+(
+    [id] => 1
+)
+
+2014-03-28 16:06:05 - post/{year}/{dayofyear}/{daycount}/{title}
+
+Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:06:05 - 
+
+Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:06:05 - category/{name}
+
+Array
+(
+    [0] => 0
+)
+
+2014-03-28 16:06:05 - 
+
+Array
+(
+)
+
+2014-03-28 16:06:05 - author/{id}
+
+Array
+(
+    [0] => 1
+)
+
+2014-03-28 16:07:20 - post/{year}/{dayofyear}/{daycount}/{title}
+keys: 
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:07:20 - 
+keys: 
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:07:20 - category/{name}
+keys: 
+values:Array
+(
+    [0] => 0
+)
+
+2014-03-28 16:07:20 - 
+keys: 
+values:Array
+(
+)
+
+2014-03-28 16:07:20 - author/{id}
+keys: 
+values:Array
+(
+    [0] => 1
+)
+
+2014-03-28 16:08:04 - post/{year}/{dayofyear}/{daycount}/{title}
+keys: Array
+(
+    [0] => id
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:08:04 - 
+keys: Array
+(
+    [0] => pid
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:08:04 - category/{name}
+keys: Array
+(
+    [0] => id
+)
+
+values:Array
+(
+    [0] => 0
+)
+
+2014-03-28 16:08:04 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:08:04 - author/{1}
+keys: Array
+(
+    [0] => id
+)
+
+values:Array
+(
+    [0] => 1
+)
+
+2014-03-28 16:09:24 - post/{year}/{dayofyear}/{daycount}/{title}
+keys: 
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:09:24 - 
+keys: 
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:09:24 - category/{name}
+keys: 
+values:Array
+(
+    [0] => 0
+)
+
+2014-03-28 16:09:24 - 
+keys: 
+values:Array
+(
+)
+
+2014-03-28 16:09:24 - author/{id}
+keys: 
+values:Array
+(
+    [0] => 1
+)
+
+2014-03-28 16:11:07 - post/{year}/{dayofyear}/{daycount}/{title}
+keys: Array
+(
+    [0] => {id}
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:11:07 - 
+keys: Array
+(
+    [0] => {pid}
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:11:07 - category/{name}
+keys: Array
+(
+    [0] => {id}
+)
+
+values:Array
+(
+    [0] => 0
+)
+
+2014-03-28 16:11:07 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:11:07 - author/1
+keys: Array
+(
+    [0] => {id}
+)
+
+values:Array
+(
+    [0] => 1
+)
+
+2014-03-28 16:12:14 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:12:33 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:12:47 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:12:51 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:12:58 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:13:01 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:13:04 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:13:49 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:20:43 - post/{year}/{dayofyear}/{daycount}/{title}
+keys: Array
+(
+    [0] => {id}
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:20:43 - 
+keys: Array
+(
+    [0] => {pid}
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:20:43 - category/Uncategorized
+keys: Array
+(
+    [0] => {name}
+)
+
+values:Array
+(
+    [0] => Uncategorized
+)
+
+2014-03-28 16:20:43 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:20:43 - author/1
+keys: Array
+(
+    [0] => {id}
+)
+
+values:Array
+(
+    [0] => 1
+)
+
+2014-03-28 16:47:44 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:47:50 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:53:42 - post/2014/3/24/1/Episode_IV__A_New_Home
+keys: Array
+(
+    [0] => {year}
+    [1] => {month}
+    [2] => {day}
+    [3] => {daycount}
+    [4] => {title}
+)
+
+values:Array
+(
+    [0] => 2014
+    [1] => 3
+    [2] => 24
+    [3] => 1
+    [4] => Episode_IV__A_New_Home
+)
+
+2014-03-28 16:53:42 - 
+keys: Array
+(
+    [0] => {pid}
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:53:42 - category/Uncategorized
+keys: Array
+(
+    [0] => {name}
+)
+
+values:Array
+(
+    [0] => Uncategorized
+)
+
+2014-03-28 16:53:42 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:53:42 - author/1
+keys: Array
+(
+    [0] => {id}
+)
+
+values:Array
+(
+    [0] => 1
+)
+
+2014-03-28 16:54:03 - post/2014/3/24/1/_E_p_i_s_o_d_e__I_V__A__N_e_w_
+keys: Array
+(
+    [0] => {year}
+    [1] => {month}
+    [2] => {day}
+    [3] => {daycount}
+    [4] => {title}
+)
+
+values:Array
+(
+    [0] => 2014
+    [1] => 3
+    [2] => 24
+    [3] => 1
+    [4] => _E_p_i_s_o_d_e__I_V__A__N_e_w_
+)
+
+2014-03-28 16:54:03 - 
+keys: Array
+(
+    [0] => {pid}
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:54:03 - category/Uncategorized
+keys: Array
+(
+    [0] => {name}
+)
+
+values:Array
+(
+    [0] => Uncategorized
+)
+
+2014-03-28 16:54:03 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:54:03 - author/1
+keys: Array
+(
+    [0] => {id}
+)
+
+values:Array
+(
+    [0] => 1
+)
+
+2014-03-28 16:54:13 - post/2014/3/24/1/Episode_IV_A_New_Home
+keys: Array
+(
+    [0] => {year}
+    [1] => {month}
+    [2] => {day}
+    [3] => {daycount}
+    [4] => {title}
+)
+
+values:Array
+(
+    [0] => 2014
+    [1] => 3
+    [2] => 24
+    [3] => 1
+    [4] => Episode_IV_A_New_Home
+)
+
+2014-03-28 16:54:13 - 
+keys: Array
+(
+    [0] => {pid}
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:54:13 - category/Uncategorized
+keys: Array
+(
+    [0] => {name}
+)
+
+values:Array
+(
+    [0] => Uncategorized
+)
+
+2014-03-28 16:54:13 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:54:13 - author/1
+keys: Array
+(
+    [0] => {id}
+)
+
+values:Array
+(
+    [0] => 1
+)
+
+2014-03-28 16:59:31 - post/2014/3/24/1/Episode_IV_A_New_Home
+keys: Array
+(
+    [0] => {year}
+    [1] => {month}
+    [2] => {day}
+    [3] => {daycount}
+    [4] => {slug}
+)
+
+values:Array
+(
+    [0] => 2014
+    [1] => 3
+    [2] => 24
+    [3] => 1
+    [4] => Episode_IV_A_New_Home
+)
+
+2014-03-28 16:59:31 - 
+keys: Array
+(
+    [0] => {pid}
+)
+
+values:Array
+(
+    [0] => 5
+)
+
+2014-03-28 16:59:31 - category/Uncategorized
+keys: Array
+(
+    [0] => {name}
+)
+
+values:Array
+(
+    [0] => Uncategorized
+)
+
+2014-03-28 16:59:31 - 
+keys: Array
+(
+)
+
+values:Array
+(
+)
+
+2014-03-28 16:59:31 - author/1
+keys: Array
+(
+    [0] => {id}
+)
+
+values:Array
+(
+    [0] => 1
+)
+
+2014-03-28 17:08:21 - unset year
+2014-03-28 17:08:21 - unset month
+2014-03-28 17:08:21 - unset day
+2014-03-28 17:08:21 - unset daycount
+2014-03-28 17:08:21 - unset slug
+2014-03-28 17:08:21 - unset name
+2014-03-28 17:08:21 - unset id
+2014-03-28 17:08:44 - unset year
+2014-03-28 17:08:44 - unset month
+2014-03-28 17:08:44 - unset day
+2014-03-28 17:08:44 - unset daycount
+2014-03-28 17:08:44 - unset slug
+2014-03-28 17:08:44 - unset name
+2014-03-28 17:08:44 - unset id
+2014-03-28 17:09:29 - unset year
+2014-03-28 17:09:29 - unset month
+2014-03-28 17:09:29 - unset day
+2014-03-28 17:09:29 - unset daycount
+2014-03-28 17:09:29 - unset slug
+2014-03-28 17:09:29 - unset name
+2014-03-28 17:09:29 - unset id
+2014-03-28 17:09:32 - unset name
