@@ -20,7 +20,7 @@
   <footer class="entry-meta">
   Posted  
     <span class="sep"> | </span>
-  <!-- <span class="comments-link"><a href="<?php echo $post['commentlink']?>" title="Comment on <?php echo $post['title']?>">Leave a comment</a></span> -->
+    <span class="comments-link"><a href="<?php echo $post['permalink']?>#comments" title="Comment on <?php echo $post['title']?>">Leave a comment</a></span>
   
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>

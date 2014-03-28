@@ -19,7 +19,6 @@
   <footer class="entry-meta">
   Posted  
     <span class="sep"> | </span>
-  <!-- <span class="comments-link"><a href="<?php echo $post['commentlink']?>" title="Comment on <?php echo $post['title']?>">Leave a comment</a></span> -->
   
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
@@ -29,5 +28,8 @@
   <?php } // end if post_categories ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
+  <a id="comments"></a>
+  <!-- TODO: comments go here -->
+  <!-- TODO: new comments form -->
 
 <?php echo $footer; ?>
