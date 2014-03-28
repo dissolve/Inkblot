@@ -33,13 +33,14 @@
 <ul id="recentcomments">
 </ul>
 </section>
-<!-- TODO:
 <section id="archives-2" class="widget widget_archive">
-<h3 class="widget-title">Archives</h3>		<ul>
-			<li><a href='http://ben.thatmustbe.me/?m=201403'>March 2014</a></li>
-		</ul>
+<h3 class="widget-title">Archives</h3>
+<ul>
+    <?php foreach($archives as $arch){ ?>
+    <li><a href='<?php echo $arch['permalink']?>'><?php echo $arch['name'] ?></a></li>
+    <?php } // end foreach archives ?>
+</ul>
 </section>
--->
 
 <section id="categories-2" class="widget widget_categories">
 <h3 class="widget-title">Categories</h3>
@@ -62,13 +63,16 @@
 
 </div><!-- #secondary .widget-area -->
 
-      </aside>
-  </div><!-- #main -->
+</aside>
 
-  <footer id="colophon" role="contentinfo">
-    <div id="site-generator">
-            This site is powered by OpenBlog (a work in progress) based on <a href="http://opencart.com/">OpenCart</a>    </div>
-  </footer><!-- #colophon -->
+</div><!-- #main -->
+
+<footer id="colophon" role="contentinfo">
+  <div id="site-generator">
+    This site is powered by <a href="https://github.com/dissolve/openblog">OpenBlog</a> based on <a href="http://opencart.com/">OpenCart</a>
+  </div>
+</footer><!-- #colophon -->
+
 </div><!-- #page -->
 </body>
 </html>

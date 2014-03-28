@@ -4,3 +4,4 @@ image/uploaded/
 image/static/
 system/cache/cache.*
 system/logs/error.txt
+curr.sql

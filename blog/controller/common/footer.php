@@ -26,6 +26,13 @@ class ControllerCommonFooter extends Controller {
 				$data['recent_posts'][] = $result;
     	}
 
+		$this->load->model('blog/archive');
+		$data['archives'] = array();
+
+		foreach ($this->model_blog_archive->getArchives() as $result) {
+				$data['archives'][] = $result;
+    	}
+
 		$this->load->model('blog/category');
 		$data['categories'] = array();
 

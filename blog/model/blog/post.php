@@ -3,6 +3,7 @@ class ModelBlogPost extends Model {
 
 
     //TODO: add a boolean flag to for ASC, so change the sort order
+    //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full posts
 
 	public function getPost($post_id) {
         $post = $this->cache->get('post.'. $post_id);
@@ -14,13 +15,33 @@ class ModelBlogPost extends Model {
                                                 'month='.$post['month']. '&' . 
                                                 'day='.$post['day']. '&' . 
                                                 'daycount='.$post['daycount']. '&' . 
-                                                'slug=' . $post['slug'], ''),
-                'commentlink' => $this->url->link('blog/post/comment', 'pid='. $post['post_id'], '')
+                                                'slug=' . $post['slug'], '')
             ));
             $this->cache->set('post.'. $post_id, $post);
         }
 		return $post;
 	}
+
+	public function getPostByDayCount($year,$month, $day, $daycount) {
+        $post = $this->cache->get('post.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
+        if(!$post){
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE year = '". (int)$year . "' AND
+                                                                                  month = '". (int)$month . "' AND
+                                                                                  day = '". (int)$day . "' AND
+                                                                                  daycount = '". (int)$daycount . "'");
+            $post = $query->row;
+            $post = array_merge($post, array(
+                'permalink' => $this->url->link('blog/post', 'year='.$post['year']. '&' . 
+                                                'month='.$post['month']. '&' . 
+                                                'day='.$post['day']. '&' . 
+                                                'daycount='.$post['daycount']. '&' . 
+                                                'slug=' . $post['slug'], '')
+            ));
+            $this->cache->set('post.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $post);
+        }
+		return $post;
+	}
+
 	public function getRecentPosts($limit=10, $skip=0) {
         $data = $this->cache->get('posts.recent.'. $skip . '.'.  $limit);
         if(!$data){
@@ -72,16 +93,16 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
-	public function getPostsByDate($start_date, $end_date, $limit=20, $skip=0) {
-        $data = $this->cache->get('posts.date.'.$start_date.'.'.$end_date.'.'.$skip.'.'.$limit);
+	public function getPostsByArchive($year, $month, $limit=20, $skip=0) {
+        $data = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE timestamp >= '".$this->db->escape($start_date)."' AND timestamp < '".$this->db->escape($end_date)."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
             foreach($data as $post){
                 $data_array[] = $this->getPost($post['post_id']);
             }
-            $this->cache->set('posts.date.'.$start_date.'.'.$end_date.'.'.$skip.'.'.$limit, $data_array);
+            $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
         } else {
             $data_array = $data;
         }
