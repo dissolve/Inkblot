@@ -2,3 +2,5 @@ config/blog.php
 favicon.ico
 image/uploaded/
 image/static/
+system/cache/cache.*
+system/logs/error.txt
