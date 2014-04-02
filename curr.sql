@@ -86,8 +86,39 @@ CREATE TABLE `categories_posts` (
 
 LOCK TABLES `categories_posts` WRITE;
 /*!40000 ALTER TABLE `categories_posts` DISABLE KEYS */;
-INSERT INTO `categories_posts` VALUES (0,5);
+INSERT INTO `categories_posts` VALUES (0,5),(0,6);
 /*!40000 ALTER TABLE `categories_posts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `comments`
+--
+
+DROP TABLE IF EXISTS `comments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `comments` (
+  `comment_id` int(11) NOT NULL,
+  `post_id` int(11) DEFAULT NULL,
+  `body` text,
+  `author_name` varchar(100) DEFAULT NULL,
+  `author_url` varchar(150) DEFAULT NULL,
+  `source_name` varchar(45) DEFAULT NULL,
+  `source_url` varchar(150) DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `timestamp` timestamp NULL DEFAULT NULL,
+  `debug_post_back_data` text,
+  PRIMARY KEY (`comment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comments`
+--
+
+LOCK TABLES `comments` WRITE;
+/*!40000 ALTER TABLE `comments` DISABLE KEYS */;
+/*!40000 ALTER TABLE `comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -137,6 +168,7 @@ CREATE TABLE `posts` (
   `day` tinyint(2) unsigned DEFAULT NULL COMMENT 'daycount is the post number for that specific day',
   `daycount` tinyint(3) unsigned DEFAULT NULL,
   `slug` varchar(45) DEFAULT NULL,
+  `type` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -147,8 +179,37 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (5,'As of today I am finally setting up my personal site.  I have only owned this URL and hosting for it for about a year and thus far had only used it to be my email address.\n\nSo what is it that lit a fire under me?  IndieWebCamp and IndieAuth.  I’ll be working on some new ideas I have for how we could get people to host their own contact info.  It could be quite nice.  Perhaps working with other sites like sync.me to follow an open standard.\n\nThat would be amazing.  Anyway, back to work.','2014-03-24 15:01:00','Episode IV: A New Home',1,2014,3,24,1,'Episode_IV_A_New_Home'),(6,'A second post.  I am in the midst of building my entire site from scratch.\n\nI say from scratch but in reality I am actually ripping apart opencart to build on their basic MVC structure.   Hopefully I will have this in github by the end of the day.  If not, next week.','0000-00-00 00:00:00','Hard At Work',1,2014,3,28,1,'Hard_At_Work');
+INSERT INTO `posts` VALUES (5,'As of today I am finally setting up my personal site.  I have only owned this URL and hosting for it for about a year and thus far had only used it to be my email address.\n\nSo what is it that lit a fire under me?  IndieWebCamp and IndieAuth.  I’ll be working on some new ideas I have for how we could get people to host their own contact info.  It could be quite nice.  Perhaps working with other sites like sync.me to follow an open standard.\n\nThat would be amazing.  Anyway, back to work.','2014-03-24 15:01:00','Episode IV: A New Home',1,2014,3,24,1,'Episode_IV_A_New_Home',NULL),(6,'A second post.  I am in the midst of building my entire site from scratch.\n\nI say from scratch but in reality I am actually ripping apart opencart to build on their basic MVC structure.   Hopefully I will have this in github by the end of the day.  If not, next week.','2014-03-28 13:47:45','Hard At Work',1,2014,3,28,1,'Hard_At_Work',NULL);
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `webmentions`
+--
+
+DROP TABLE IF EXISTS `webmentions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `webmentions` (
+  `webmention_id` int(11) NOT NULL AUTO_INCREMENT,
+  `timestamp` datetime DEFAULT NULL,
+  `source_url` varchar(300) DEFAULT NULL,
+  `target_url` varchar(300) DEFAULT NULL,
+  `webmention_status` varchar(45) DEFAULT NULL,
+  `admin_status` varchar(45) DEFAULT NULL,
+  `approved_url` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`webmention_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `webmentions`
+--
+
+LOCK TABLES `webmentions` WRITE;
+/*!40000 ALTER TABLE `webmentions` DISABLE KEYS */;
+INSERT INTO `webmentions` VALUES (1,'2014-04-01 14:28:22','asdf','qwert','queued',NULL,NULL),(2,'2014-04-01 15:46:45','asdf','qwerty','queued',NULL,NULL),(3,'2014-04-01 16:31:20','asdf','qwert','queued',NULL,NULL);
+/*!40000 ALTER TABLE `webmentions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -160,4 +221,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-03-28 13:29:26
+-- Dump completed on 2014-04-01 17:00:14

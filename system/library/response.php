@@ -8,6 +8,10 @@ class Response {
 		$this->headers[] = $header;
 	}
 
+	public function resetHeaders() {
+		$this->headers = array();
+	}
+
 	public function redirect($url, $status = 302) {
 		header('Status: ' . $status);
 		header('Location: ' . str_replace(array('&amp;', "\n", "\r"), array('&', '', ''), $url));

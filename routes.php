@@ -7,7 +7,11 @@ $routes['sitemap']            = 'information/sitemap';
 
 $routes['clearcache']     	  = 'admin/cache';
 $routes['clearrevision']   	  = 'admin/cache/revision';
+$routes['webmention']   	  = 'webmention/receive';
 
+$advanced_routes[] = array('controller' => 'webmention/queue',
+    'expression' => '`queue/(?P<id>\d+)`i',
+    'reverse' => 'queue/{id}');
 
 $advanced_routes[] = array('controller' => 'blog/archive',
     'expression' => '`archive/(?P<year>\d{4})-(?P<month>\d{1,2})`i',
