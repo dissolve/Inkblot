@@ -11,6 +11,8 @@ class ControllerWebmentionReceive extends Controller {
             }
             $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
 
+            $this->response->addHeader('Link: <'.$link.'>; rel="status"');
+
             $this->response->setOutput($link);
         } else {
             header('HTTP/1.1 400 Bad Request');
