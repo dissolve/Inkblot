@@ -29,8 +29,8 @@
 <body class="home blog custom-background multi-column single-author custom-header hfeed h-feed feed" itemscope="" itemtype="http://schema.org/Blog">
 <div id="page">
   <header id="branding" role="banner">
-    <h1 id="site-title" itemprop="name" class="p-title"><a href="<?php echo $home?>" title="Ben Roberts" rel="home" itemprop="url" class="u-url url">Ben Roberts</a></h1>
-    <h2 id="site-description" itemprop="description" class="p-summary e-content">Coder, Geek, Gamer, Spy?</h2>
+    <h1 id="site-title" itemprop="name" class="p-title"><a href="<?php echo $home?>" title="<?php echo $site_title?>" rel="home" itemprop="url" class="u-url url"><?php echo $site_title?></a></h1>
+    <h2 id="site-description" itemprop="description" class="p-summary e-content"><?php echo $site_subtitle?></h2>
     
           <img src="/image/uploaded/rainbow.jpg" height="200" width="950" alt="header image" id="site-image" />
         

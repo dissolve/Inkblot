@@ -9,6 +9,8 @@ class ControllerCommonHeader extends Controller {
 			$server = $this->config->get('config_url');
 		}
 
+		$data['site_title'] = SITE_TITLE;
+		$data['site_subtitle'] = SITE_SUBTITLE;
 		$data['base'] = $server;
 		$data['description'] = $this->document->getDescription();
 		$data['keywords'] = $this->document->getKeywords();
