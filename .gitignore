@@ -3,5 +3,5 @@ favicon.ico
 image/uploaded/
 image/static/
 system/cache/cache.*
-system/logs/error.txt
+system/logs/*.txt
 curr.sql

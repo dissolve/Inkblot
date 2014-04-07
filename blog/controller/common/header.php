@@ -11,6 +11,9 @@ class ControllerCommonHeader extends Controller {
 
 		$data['site_title'] = SITE_TITLE;
 		$data['site_subtitle'] = SITE_SUBTITLE;
+
+		$data['webmention_handler'] = $this->url->link('webmention/receive');
+
 		$data['base'] = $server;
 		$data['description'] = $this->document->getDescription();
 		$data['keywords'] = $this->document->getKeywords();

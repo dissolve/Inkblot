@@ -1,11 +1,8 @@
 <?php
 class ModelWebmentionQueue extends Model {
 	public function addEntry($source, $target) {
-        $this->db->query("INSERT INTO " . DATABASE . ".webmentions SET source_url='".$this->db->escape($source)."', target_url='".$this->db->escape($target)."', `timestamp` = NOW(), webmention_status='queued'");
+        $this->db->query("INSERT INTO " . DATABASE . ".webmentions SET source_url='".$this->db->escape($source)."', target_url='".$this->db->escape($target)."', `timestamp` = NOW(), webmention_status_code='202', webmention_status='queued'");
         $id = $this->db->getLastId();
-        if(!$id || $id == 0){
-            $this->log->write("ERROR WITH MYSQL: INSERT INTO " . DATABASE . ".webmentions SET source_url='".$this->db->escape($source)."', target_url='".$this->db->escape($target)."', `timestamp` = NOW(), webmention_status='queued'");
-        }
         return $id;
 	}
 

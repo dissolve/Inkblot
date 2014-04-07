@@ -1,6 +1,6 @@
 <?php
 // Version
-define('VERSION', '2.0');
+define('VERSION', '0.1');
 
 // Configuration
 require_once('config/blog.php');

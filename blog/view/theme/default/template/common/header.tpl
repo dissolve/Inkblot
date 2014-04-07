@@ -15,6 +15,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width" />
 <title><?php echo $title; ?></title>
+<link rel="webmention" href="<?php echo $webmention_handler?>" />
 <link rel="profile" href="http://microformats.org/profile/specs" />
 <link rel="profile" href="http://microformats.org/profile/hatom" />
 

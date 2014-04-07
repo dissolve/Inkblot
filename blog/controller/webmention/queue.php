@@ -9,15 +9,20 @@ class ControllerWebmentionQueue extends Controller {
             $entry = $this->model_webmention_queue->getEntry($this->request->get['id']);
             $this->log->write($this->request->get['id']);
             if($entry){
-                header('Webmention-Status: ' . $entry['webmention_status']);
+                header('Webmention-Status: ' . $entry['webmention_status_code']);
 
-                if($entry['webmention_status'] == 'success'){
-                    $this->response->setOutput('Webmention is awaiting Approval');
-                    //TODO: after it is approved, etc
+                if($entry['webmention_status'] == 'accepted'){
+                    $this->response->setOutput('This webmention has been accepted is awaiting moderator approval.');
+
+                } elseif($entry['webmention_status'] == 'OK'){
+                    $this->response->setOutput('This webmention has been accepted and approved.');
+
                 } elseif ($entry['webmention_status'] == 'queued'){
-                    $this->response->setOutput('Webmention is processing');
+                    $this->response->setOutput('This webmention is in the process queue.');
+
                 } else {
-                    $this->response->setOutput('Webmention processing failed');
+                    $this->response->setOutput('This webmention processing failed because: ' . $entry['webmention_status']);
+
                 }
 
             } else {

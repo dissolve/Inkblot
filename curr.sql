@@ -197,7 +197,9 @@ CREATE TABLE `webmentions` (
   `target_url` varchar(300) DEFAULT NULL,
   `webmention_status` varchar(45) DEFAULT NULL,
   `admin_status` varchar(45) DEFAULT NULL,
-  `approved_url` varchar(150) DEFAULT NULL,
+  `approved_url` varchar(300) DEFAULT NULL,
+  `callback_url` varchar(300) DEFAULT NULL,
+  `webmention_status_code` varchar(3) DEFAULT '202',
   PRIMARY KEY (`webmention_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -208,7 +210,7 @@ CREATE TABLE `webmentions` (
 
 LOCK TABLES `webmentions` WRITE;
 /*!40000 ALTER TABLE `webmentions` DISABLE KEYS */;
-INSERT INTO `webmentions` VALUES (1,'2014-04-01 14:28:22','asdf','qwert','queued',NULL,NULL),(2,'2014-04-01 15:46:45','asdf','qwerty','queued',NULL,NULL),(3,'2014-04-01 16:31:20','asdf','qwert','queued',NULL,NULL);
+INSERT INTO `webmentions` VALUES (1,'2014-04-01 14:28:22','asdf','qwert','queued',NULL,NULL,NULL,'202'),(2,'2014-04-01 15:46:45','asdf','qwerty','queued',NULL,NULL,NULL,'202'),(3,'2014-04-01 16:31:20','asdf','qwert','queued',NULL,NULL,NULL,'202');
 /*!40000 ALTER TABLE `webmentions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -221,4 +223,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-04-01 17:00:14
+-- Dump completed on 2014-04-07 13:59:07

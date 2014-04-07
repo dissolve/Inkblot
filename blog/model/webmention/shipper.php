@@ -10,15 +10,17 @@ class ModelWebmentionShipper extends Model {
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_URL, $url);
         curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
-        //curl_setopt($c, CURLOPT_USERAGENT, 'webmention lookup');
         $page_content = curl_exec($c);
         curl_close($c);
         unset($c);
 
         $parsed = Mf2\parse($page_content);
 
-        if(isset($parsed['rels']) && isset($parsed['rels']['webmention']) && isset($parsed['rels']['webmention'][0])) {
-            return $parsed['rels']['webmention'][0];
+        if(isset($parsed['rels'])){
+            if(isset($parsed['rels']['webmention']) && isset($parsed['rels']['webmention'][0])) {
+                return $parsed['rels']['webmention'][0];
+            } elseif(isset($parsed['rels']['http://webmention.org/']) && isset($parsed['rels']['http://webmention.org/'][0])) {
+                return $parsed['rels']['http://webmention.org/'][0];
         } else {
             return null;
         }
