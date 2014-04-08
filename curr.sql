@@ -108,6 +108,7 @@ CREATE TABLE `comments` (
   `status` varchar(45) DEFAULT NULL,
   `timestamp` timestamp NULL DEFAULT NULL,
   `debug_post_back_data` text,
+  `approved` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`comment_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -148,6 +149,32 @@ LOCK TABLES `melinks` WRITE;
 /*!40000 ALTER TABLE `melinks` DISABLE KEYS */;
 INSERT INTO `melinks` VALUES (1,'https://www.facebook.com/dissolve333',NULL,'Rarely Used','Facebook',NULL,'_blank'),(2,'https://github.com/dissolve',NULL,NULL,'Github',NULL,'_blank'),(3,'https://plus.google.com/+BenRoberts83',NULL,NULL,'Google+',NULL,'_blank'),(4,'https://twitter.com/dissolve333',NULL,'Rarely Used','Twitter',NULL,'_blank');
 /*!40000 ALTER TABLE `melinks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mentions`
+--
+
+DROP TABLE IF EXISTS `mentions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mentions` (
+  `mention_id` int(11) NOT NULL,
+  `post_id` int(11) DEFAULT NULL,
+  `source_url` varchar(150) DEFAULT NULL,
+  `approved` tinyint(4) DEFAULT '0',
+  `parse_timestamp` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`mention_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mentions`
+--
+
+LOCK TABLES `mentions` WRITE;
+/*!40000 ALTER TABLE `mentions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mentions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -200,6 +227,8 @@ CREATE TABLE `webmentions` (
   `approved_url` varchar(300) DEFAULT NULL,
   `callback_url` varchar(300) DEFAULT NULL,
   `webmention_status_code` varchar(3) DEFAULT '202',
+  `resulting_comment_id` int(11) DEFAULT NULL,
+  `resulting_mention_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`webmention_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -210,7 +239,7 @@ CREATE TABLE `webmentions` (
 
 LOCK TABLES `webmentions` WRITE;
 /*!40000 ALTER TABLE `webmentions` DISABLE KEYS */;
-INSERT INTO `webmentions` VALUES (1,'2014-04-01 14:28:22','asdf','qwert','queued',NULL,NULL,NULL,'202'),(2,'2014-04-01 15:46:45','asdf','qwerty','queued',NULL,NULL,NULL,'202'),(3,'2014-04-01 16:31:20','asdf','qwert','queued',NULL,NULL,NULL,'202');
+INSERT INTO `webmentions` VALUES (1,'2014-04-01 14:28:22','asdf','qwert','Failed To Get Source',NULL,NULL,NULL,'400',NULL,NULL),(2,'2014-04-01 15:46:45','asdf','qwerty','Failed To Get Source',NULL,NULL,NULL,'400',NULL,NULL),(3,'2014-04-01 16:31:20','asdf','qwert','Failed To Get Source',NULL,NULL,NULL,'400',NULL,NULL);
 /*!40000 ALTER TABLE `webmentions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -223,4 +252,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-04-07 13:59:07
+-- Dump completed on 2014-04-08 11:20:50

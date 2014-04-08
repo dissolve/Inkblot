@@ -1,45 +1,35 @@
 <?php
+
+//** BASIC SET UP (Since this will be run independently) **//
 // Configuration
 require_once('../config/blog.php');
 
 // Startup
 require_once(DIR_SYSTEM . 'startup.php');
 
-// Registry
-$registry = new Registry();
-
-// Loader
-$loader = new Loader($registry);
-$registry->set('load', $loader);
-
 // Config
 $config = new Config();
-$registry->set('config', $config);
 
 //flag for site being broken/administratively down
 $site_down = false;
 
+// Log
+$log = new Log('webmentions-error.txt');
+
 // Database 
 try {
 	$db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, '');
-	$registry->set('db', $db);
 } catch (ErrorException $ex) {
-	die('error connecting to database');
+	$log->write('Error connecting to database!');
+	die('Error connecting to database!');
 }
 
-		
 	$config->set('config_url', HTTP_SERVER);
 	$config->set('config_ssl', HTTPS_SERVER);	
 	$config->set('config_secure', true);	
 
-
 // Url
 $url = new Url($config->get('config_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url'));	
-$registry->set('url', $url);
-
-// Log
-$log = new Log('webmentions-error.txt');
-$registry->set('log', $log);
 
 function error_handler($errno, $errstr, $errfile, $errline) {
 	global $log, $config;
@@ -75,11 +65,10 @@ function error_handler($errno, $errstr, $errfile, $errline) {
 
 // Error Handler
 set_error_handler('error_handler');
+//** END BASIC SET UP **//
 
 include '../libraries/php-mf2/Mf2/Parser.php';
 include '../libraries/php-comments/src/indieweb/comments.php';
-
-//select * from webmentions where webmention_status_code == '202';
 
 
 //check if target is at this site
@@ -88,8 +77,8 @@ $webmention = $result->row;
 
 while($webmention){
 
-    $source_url = $webmention['source_url'];
-    $source_url = $webmention['target_url'];
+    $source_url = trim($webmention['source_url']);
+    $target_url = trim($webmention['target_url']);
 
     $webmention_id = $webmention['webmention_id'];
 
@@ -97,31 +86,60 @@ while($webmention){
 
     //TODO verify that target is on my site
 
+
     $c = curl_init();
     curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($c, CURLOPT_URL, $source_url);
     curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+    $real_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
     $page_content = curl_exec($c);
     curl_close($c);
     unset($c);
 
     if($page_content === FALSE){
-       $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Failed To Get Source' WHERE webmention_id = ". (int)$webmention_id);
+        //our curl command failed to fetch the source site
+        $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Failed To Fetch Source' WHERE webmention_id = ". (int)$webmention_id);
+
+    } elseif(strpos($real_url, HTTP_SERVER) !== 0 && strpos($real_url, HTTPS_SERVER) !== 0){
+        //target_url does not point actually redirect to our site
+        $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Target Link Does Not Point Here' WHERE webmention_id = ". (int)$webmention_id);
+
     } elseif(stristr($page_content, $target_url) === FALSE){
+        //we could not find the target_url anywhere on the source page.
+        $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Target Link Not Found At Source' WHERE webmention_id = ". (int)$webmention_id);
 
-       $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Target Link Not Found At Source' WHERE webmention_id = ". (int)$webmention_id);
-       continue;
     } else {
+        $mf2_parsed = Mf2\parse($page_content);
+        $comment_parsed = IndieWeb\comments\parse($mf2_parsed['items'][0], $target_url);
+        print_r($comment_parsed);
 
-        $parsed = Mf2\parse($page_content);
-        $result = IndieWeb\comments\parse($parsed['items'][0], $target_url);
-        print_r($result);
+        switch($comment_parsed['type']) {
+        case 'mention':
+        case 'rsvp':
+        case 'like':
+        case 'repost':
+        case 'reply': //temp
+            //go in to general "mentions" list for now
+            $db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW()";
+            $mention_id = $db->getLastId();
+            $db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'Pending Moderation' WHERE webmention_id = ". (int)$webmention_id);
+            break;
+        //case 'reply':
+            ////TODO: parse out reply
+            ////go in to general "mentions" list for now
+            //$db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW()";
+            //$mention_id = $db->getLastId();
+            //$db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'Pending Moderation' WHERE webmention_id = ". (int)$webmention_id);
+            //break;
+        default:
+            $log->write("UNKNOWN TYPE: " . print_r($comment_parsed, true));
+            $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '500', webmention_status = 'Unknown Server Error' WHERE webmention_id = ". (int)$webmention_id);
+            break
+        }
 
-           $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '200', webmention_status = 'Pending Moderation' WHERE webmention_id = ". (int)$webmention_id);
-        //if(isset($parsed['rels']) && isset($parsed['rels']['webmention']) && isset($parsed['rels']['webmention'][0])) {
-            //echo $parsed['rels']['webmention'][0];
-        //}
     }
+
     $result = $db->query("SELECT * FROM ". DATABASE.".webmentions WHERE webmention_status_code = '202' LIMIT 1");
     $webmention = $result->row;
-}
+
+} //end while($webmention) loop
