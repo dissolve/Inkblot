@@ -120,7 +120,7 @@ while($webmention){
         case 'repost':
         case 'reply': //temp
             //go in to general "mentions" list for now
-            $db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW()";
+            $db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW()");
             $mention_id = $db->getLastId();
             $db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'Pending Moderation' WHERE webmention_id = ". (int)$webmention_id);
             break;
@@ -134,7 +134,7 @@ while($webmention){
         default:
             $log->write("UNKNOWN TYPE: " . print_r($comment_parsed, true));
             $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '500', webmention_status = 'Unknown Server Error' WHERE webmention_id = ". (int)$webmention_id);
-            break
+            break;
         }
 
     }
