@@ -4,3 +4,6 @@
 [submodule "libraries/php-comments"]
 	path = libraries/php-comments
 	url = https://github.com/indieweb/php-comments
+[submodule "libraries/mention-client-php"]
+	path = libraries/mention-client-php
+	url = https://github.com/indieweb/mention-client-php
