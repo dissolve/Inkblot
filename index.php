@@ -132,7 +132,7 @@ if ($site_down) {
 } else if (isset($request->get['route'])) {
 	$action = new Action($request->get['route']);
 } else {
-	$action = new Action('common/home');
+	$action = new Action('error/not_found');
 }
 
 // Dispatch

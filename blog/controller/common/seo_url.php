@@ -47,9 +47,6 @@ class ControllerCommonSeoUrl extends Controller {
 		
 		parse_str($url_info['query'], $data);
 
-        $this->log->write(print_r($link, true) . ' ' . $data['route']);
-
-
         if(isset($data['route'])){
             foreach ($routes as $route_key => $true_route){
                 if($data['route'] === $true_route){
