@@ -61,6 +61,16 @@
 	</ul>
 </section>
 
+<?php if($recent_mentions){ ?>
+<section id="linkcat-3" class="widget widget_links"><h3 class="widget-title">Recent Mentions</h3>
+	<ul>
+        <?php foreach($recent_mentions as $mention){?>
+            <li><a href="<?php echo $mention['source_url'];?>" title="External Web Mention"><?php echo $mention['source_url'];?></a></li>
+        <?php } ?>
+	</ul>
+</section>
+<?php } //end if recent mentions ?>
+
 </div><!-- #secondary .widget-area -->
 
 </aside>

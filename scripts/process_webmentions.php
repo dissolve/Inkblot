@@ -65,6 +65,9 @@ function error_handler($errno, $errstr, $errfile, $errline) {
 
 // Error Handler
 set_error_handler('error_handler');
+
+// Cache
+$cache = new Cache('file');
 //** END BASIC SET UP **//
 
 include '../libraries/php-mf2/Mf2/Parser.php';
@@ -84,14 +87,20 @@ while($webmention){
 
     echo $webmention_id;
 
-    //TODO verify that target is on my site
+    //to verify that target is on my site
+    $c = curl_init();
+    curl_setopt($c, CURLOPT_NOBODY, 1);
+    curl_setopt($c, CURLOPT_URL, $target_url);
+    curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+    $real_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
+    curl_close($c);
+    unset($c);
 
 
     $c = curl_init();
     curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($c, CURLOPT_URL, $source_url);
     curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
-    $real_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
     $page_content = curl_exec($c);
     curl_close($c);
     unset($c);
@@ -120,9 +129,11 @@ while($webmention){
         case 'repost':
         case 'reply': //temp
             //go in to general "mentions" list for now
-            $db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW()");
+            $db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW(), approved=1");
             $mention_id = $db->getLastId();
-            $db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'Pending Moderation' WHERE webmention_id = ". (int)$webmention_id);
+            $db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
+            $cache->delete('mentions');
+            //$db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'accepted' WHERE webmention_id = ". (int)$webmention_id);
             break;
         //case 'reply':
             ////TODO: parse out reply

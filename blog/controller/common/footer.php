@@ -19,6 +19,12 @@ class ControllerCommonFooter extends Controller {
 		//$data['return'] = $this->url->link('account/return/insert', '', 'SSL');
     	//$data['sitemap'] = $this->url->link('information/sitemap');
 		
+		$this->load->model('blog/mention');
+		$data['recent_mentions'] = array();
+		foreach ($this->model_blog_mention->getRecentMentions(10) as $result) {
+				$data['recent_mentions'][] = $result;
+    	}
+		
 		$this->load->model('blog/post');
 		$data['recent_posts'] = array();
 
