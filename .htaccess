@@ -25,8 +25,11 @@ RewriteEngine On
 RewriteBase /
 RewriteRule ^sitemap.xml$ index.php?route=feed/google_sitemap [L]
 RewriteRule ^googlebase.xml$ index.php?route=feed/google_base [L]
-RewriteRule ^download/(.*) /index.php?route=error/not_found [L]
-RewriteRule ^scripts/(.*) /index.php?route=error/not_found [L]
+#notice these routes are intentionally wrong to ensure that a 404 is returned
+RewriteRule ^scripts/(.*) /index.php?_route_=error [L]
+RewriteRule ^libraries/(.*) /index.php?_route_=error [L]
+RewriteRule ^system/(.*) /index.php?_route_=error [L]
+RewriteRule ^config/(.*) /index.php?_route_=error [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !.*\.(ico|gif|jpg|jpeg|png|js|css)

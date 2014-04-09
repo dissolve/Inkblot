@@ -31,10 +31,19 @@ class ControllerCommonSeoUrl extends Controller {
 
             }
 			
-			if (isset($this->request->get['route'])) {
-				return new Action($this->request->get['route']);
-			}
-		}
+        } else { //_route_ is not set
+
+            // check to see if '' is set
+            include DIR_BASE . '/routes.php';
+            if(isset($routes[''])){
+                $this->request->get['route'] = $routes[''];
+            } 
+
+        }
+        if (isset($this->request->get['route'])) {
+            return new Action($this->request->get['route']);
+        }
+
 	}
 	
 	public function rewrite($link) {

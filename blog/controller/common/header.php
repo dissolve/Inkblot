@@ -12,7 +12,9 @@ class ControllerCommonHeader extends Controller {
 		$data['site_title'] = SITE_TITLE;
 		$data['site_subtitle'] = SITE_SUBTITLE;
 
-		$data['webmention_handler'] = $this->url->link('webmention/receive');
+		$webmention_handler = $this->url->link('webmention/receive');
+        $this->response->addHeader('Link: <'.$webmention_handler.'>; rel="webmention"');
+		$data['webmention_handler'] = $webmention_handler;
 
 		$data['base'] = $server;
 		$data['description'] = $this->document->getDescription();
