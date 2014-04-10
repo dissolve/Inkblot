@@ -109,5 +109,11 @@ class ModelBlogPost extends Model {
 	
 		return $data_array;
 	}
+    public function addComment($data, $comment_data){
+	    $post = $this->getPostByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
+        die(
+            print_r($data,true) . "\n\n\n".
+            print_r($comment_data,true));
+    }
 
 }
