@@ -159,13 +159,13 @@ DROP TABLE IF EXISTS `mentions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `mentions` (
-  `mention_id` int(11) NOT NULL,
+  `mention_id` int(11) NOT NULL AUTO_INCREMENT,
   `post_id` int(11) DEFAULT NULL,
   `source_url` varchar(150) DEFAULT NULL,
   `approved` tinyint(4) DEFAULT '0',
   `parse_timestamp` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`mention_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
