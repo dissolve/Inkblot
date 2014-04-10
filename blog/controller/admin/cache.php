@@ -5,11 +5,12 @@ class ControllerAdminCache extends Controller {
   	public function index() {
         $json = array();
 
+    	$this->cache->delete('author');
+    	$this->cache->delete('categories');
+    	$this->cache->delete('melinks');
+    	$this->cache->delete('mentions');
     	$this->cache->delete('post');
     	$this->cache->delete('posts');
-    	$this->cache->delete('categories');
-    	$this->cache->delete('author');
-    	$this->cache->delete('melinks');
 
         $json['success'] = "Full cache cleared!";
         if(isset($this->request->get['reason'])){
