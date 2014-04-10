@@ -132,51 +132,31 @@ while($webmention){
     } else {
         $mf2_parsed = Mf2\parse($page_content);
         $comment_parsed = IndieWeb\comments\parse($mf2_parsed['items'][0], $target_url);
-        //print_r($comment_parsed);
 
-        switch($comment_parsed['type']) {
-        case 'mention':
-        case 'rsvp':
-        case 'like':
-        case 'repost':
-            //go in to general "mentions" list for now
+        include DIR_BASE . '/routes.php';
+
+        $data = array();
+        foreach($advanced_routes as $adv_route){
+            $matches = array();
+            preg_match($adv_route['expression'], $real_url, $matches);
+            if(!empty($matches)){
+                $model = $adv_route['controller'];
+                    foreach($matches as $field => $value){
+                        $data[$field] = $value;
+                    }
+            }
+        }
+
+        try {
+            $loader->model($model);
+            $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $mention_id, $comment_parsed);
+        } catch (Exception $e) {
             $db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW(), approved=1");
             $mention_id = $db->getLastId();
             $db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
             $cache->delete('mentions');
-            //$db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'accepted' WHERE webmention_id = ". (int)$webmention_id);
-            break;
-        case 'reply':
-
-            include DIR_BASE . '/routes.php';
-
-            $data = array();
-            foreach($advanced_routes as $adv_route){
-                $matches = array();
-                preg_match($adv_route['expression'], $real_url, $matches);
-                if(!empty($matches)){
-                    $model = $adv_route['controller'];
-                        foreach($matches as $field => $value){
-                            $data[$field] = $value;
-                        }
-                }
-            }
-
-            $loader->model($model);
-            $registry->get('model_'. str_replace('/', '_', $model))->addComment($data, $comment_parsed);
-
-
-
-            ////TODO: parse out reply
-            //$db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW()";
-            //$mention_id = $db->getLastId();
-            //$db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'Pending Moderation' WHERE webmention_id = ". (int)$webmention_id);
-            //break;
-        default:
-            $log->write("UNKNOWN TYPE: " . print_r($comment_parsed, true));
-            $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '500', webmention_status = 'Unknown Server Error' WHERE webmention_id = ". (int)$webmention_id);
-            break;
         }
+
 
     }
 

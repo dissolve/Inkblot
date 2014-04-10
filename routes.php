@@ -22,8 +22,8 @@ $advanced_routes[] = array('controller' => 'blog/category',
     'reverse' => 'category/{name}');
 
 $advanced_routes[] = array('controller' => 'blog/post',
-    'expression' => '`post/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/.*`i',
-    'reverse' => 'post/{year}/{month}/{day}/{daycount}/{slug}');
+    'expression' => '`(?P<post_type>\w+)/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/.*`i',
+    'reverse' => '{post_type}/{year}/{month}/{day}/{daycount}/{slug}');
 
 $advanced_routes[] = array('controller' => 'blog/author',
     'expression' => '`author/(?P<id>\d+)`i',
