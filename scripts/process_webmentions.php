@@ -113,6 +113,7 @@ while($webmention){
     curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($c, CURLOPT_URL, $source_url);
     curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+    $real_source_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
     $page_content = curl_exec($c);
     curl_close($c);
     unset($c);
@@ -130,7 +131,7 @@ while($webmention){
         $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Target Link Not Found At Source' WHERE webmention_id = ". (int)$webmention_id);
 
     } else {
-        $mf2_parsed = Mf2\parse($page_content);
+        $mf2_parsed = Mf2\parse($page_content, $real_source_url);
         $comment_data = IndieWeb\comments\parse($mf2_parsed['items'][0], $target_url);
 
         include DIR_BASE . '/routes.php';
