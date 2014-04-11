@@ -149,7 +149,7 @@ while($webmention){
 
         try {
             $loader->model($model);
-            $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $mention_id, $comment_parsed);
+            $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_parsed);
         } catch (Exception $e) {
             $db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW(), approved=1");
             $mention_id = $db->getLastId();
