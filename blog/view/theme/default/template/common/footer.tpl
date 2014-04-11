@@ -95,7 +95,7 @@
 
 <footer id="colophon" role="contentinfo">
   <div id="site-generator">
-    This site is powered by <a href="https://github.com/dissolve/openblog">OpenBlog</a> based on <a href="http://opencart.com/">OpenCart</a>
+    This site is powered by <a href="https://github.com/dissolve/openblog">OpenBlog</a>
   </div>
 </footer><!-- #colophon -->
 
