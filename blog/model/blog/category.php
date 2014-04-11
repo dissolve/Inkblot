@@ -25,7 +25,7 @@ class ModelBlogCategory extends Model {
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".categories WHERE name = '".$this->db->escape($name)."'");
             $data = $query->row;
             if($data){
-                $data['permalink'] = $this->url->link('blog/category', 'name='.$category['name'], '');
+                $data['permalink'] = $this->url->link('blog/category', 'name='.$data['name'], '');
             }
             $this->cache->set('category.'.$name, $data);
         }

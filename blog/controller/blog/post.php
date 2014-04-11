@@ -17,12 +17,14 @@ class ControllerBlogPost extends Controller {
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
 		$this->load->model('blog/like');
+		$this->load->model('blog/mention');
 		
 		$post = $this->model_blog_post->getPostByDayCount($year, $month, $day, $daycount);
         $author = $this->model_blog_author->getAuthor($post['author_id']);
         $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
         $comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
         $comments = $this->model_blog_comment->getCommentsForPost($post['post_id']);
+        $mentions = $this->model_blog_mention->getMentionsForPost($post['post_id']);
         $like_count = $this->model_blog_like->getLikeCountForPost($post['post_id']);
         $likes = $this->model_blog_like->getLikesForPost($post['post_id']);
 
@@ -31,6 +33,7 @@ class ControllerBlogPost extends Controller {
             'categories' => $categories,
             'comment_count' => $comment_count,
             'comments' => $comments,
+            'mentions' => $mentions,
             'like_count' => $like_count,
             'likes' => $likes
             ));

@@ -28,11 +28,6 @@
 </ul>
 </section>
 
-<section id="recent-comments-2" class="widget widget_recent_comments">
-<h3 class="widget-title">Recent Comments</h3>
-<ul id="recentcomments">
-</ul>
-</section>
 <section id="archives-2" class="widget widget_archive">
 <h3 class="widget-title">Archives</h3>
 <ul>

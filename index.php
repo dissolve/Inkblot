@@ -105,19 +105,11 @@ $session = new Session();
 $registry->set('session', $session);
 
 
-$config->set('config_language_id', 1);
-$config->set('config_language', 'en');
-
-// Language	
-$language = new Language('english');
-$language->load('english');	
-$registry->set('language', $language); 
-
 // Document
 $registry->set('document', new Document()); 		
 
 
-// Front Controller 
+// Front Controller
 $controller = new Front($registry);
 
 // SEO URL's
@@ -140,4 +132,3 @@ $controller->dispatch($action, new Action('error/not_found'));
 
 // Output
 $response->output();
-?>

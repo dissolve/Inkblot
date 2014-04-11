@@ -1,7 +1,9 @@
 config/blog.php
+config/admin.php
 favicon.ico
 image/uploaded/
 image/static/
 system/cache/cache.*
 system/logs/*.txt
 curr.sql
+parsed.sql
