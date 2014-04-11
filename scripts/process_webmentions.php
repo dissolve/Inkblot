@@ -131,7 +131,7 @@ while($webmention){
 
     } else {
         $mf2_parsed = Mf2\parse($page_content);
-        $comment_parsed = IndieWeb\comments\parse($mf2_parsed['items'][0], $target_url);
+        $comment_data = IndieWeb\comments\parse($mf2_parsed['items'][0], $target_url);
 
         include DIR_BASE . '/routes.php';
 
@@ -149,12 +149,28 @@ while($webmention){
 
         try {
             $loader->model($model);
-            $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_parsed);
+            $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_data);
         } catch (Exception $e) {
-            $db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$source_url."', parse_timestamp = NOW(), approved=1");
-            $mention_id = $db->getLastId();
-            $db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
-            $cache->delete('mentions');
+            if(isset($comment_data['type']) && $comment_data['type'] == 'like'){
+                $db->query("INSERT INTO ". DATABASE.".likes SET source_url = '".$comment_data['url']."'".
+                    ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$comment_data['author']['name']."'" : "") .
+                    ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$comment_data['author']['url']."'" : "") .
+                    ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$comment_data['author']['photo']."'" : "") .
+                    "");
+                $like_id = $db->getLastId();
+                $db->query("UPDATE ". DATABASE.".webmentions SET resulting_like_id = '".(int)$like_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
+                $cache->delete('likes');
+                break;
+            } else {
+                $db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$comment_data['url']."'".
+                    ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$comment_data['author']['name']."'" : "") .
+                    ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$comment_data['author']['url']."'" : "") .
+                    ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$comment_data['author']['photo']."'" : "") .
+                    ", post_id = ".(int)$post['post_id'] .", parse_timestamp = NOW(), approved=1");
+                $mention_id = $db->getLastId();
+                $db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
+                $cache->delete('mentions');
+            }
         }
 
 
