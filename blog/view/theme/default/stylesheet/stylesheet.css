@@ -1340,6 +1340,8 @@ ol.commentlist {
 .jp-carousel-wrap {
   text-shadow: none;
 }
+#general-likes ul li, #general-likes .likewrapper { float:left; }
+#general-likes img { width:24px; height:24px; }
 
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {

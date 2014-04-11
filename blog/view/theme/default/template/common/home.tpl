@@ -18,9 +18,15 @@
       </div><!-- .entry-content -->
   
   <footer class="entry-meta">
-  Posted  
+    <?php if($post['comment_count'] > 0) { ?>
+    <span class="comments-link"><a href="<?php echo $post['permalink']?>#comments" title="Comments for <?php echo $post['title']?>"><?php echo $post['comment_count'] . ($post['comment_count'] > 1 ? ' comments' : ' comment')?></a></span>
     <span class="sep"> | </span>
-    <span class="comments-link"><a href="<?php echo $post['permalink']?>#comments" title="Comment on <?php echo $post['title']?>">Leave a comment</a></span>
+    <?php } ?>
+
+    <?php if($post['like_count'] > 0) { ?>
+    <span class="likes-link"><a href="<?php echo $post['permalink']?>#likes" title="Likes of <?php echo $post['title']?>"><?php echo $post['like_count'] . ($post['like_count'] > 1 ? ' likes' : ' like')?></a></span>
+    <span class="sep"> | </span>
+    <?php } ?>
   
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>

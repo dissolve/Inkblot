@@ -26,10 +26,41 @@
   
       <?php } // end for post_categories as category ?>
   <?php } // end if post_categories ?>
+
+
+    <?php if($post['like_count'] > 0) { ?>
+<br>
+<span id="general-likes" class="widget widget_links"><a id="like"><h3 class="widget-title"><?php echo $post['like_count'] . ($post['like_count'] > 1 ? ' People' : ' Person')?> Liked This Post</h3></a>
+        <?php foreach($post['likes'] as $like){?>
+                <span class="likewrapper">
+                <a href="<?php echo (isset($like['author_url']) ? $like['author_url']: $like['source_url'])?>" rel="nofollow">
+                    <img class='like_author' src="<?php echo (isset($like['author_image']) ? $like['author_image']: '/image/person.jpg') ?>"
+                        title="<?php echo (isset($like['author_name']) ? $like['author_name']: 'Author Image') ?>" /></a>
+                </span>
+        <?php } ?>
+    <div style="clear:both"></div>
+	</span>
+    <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
-  <a id="comments"></a>
-  <!-- TODO: comments go here -->
-  <!-- TODO: new comments form -->
+    <?php if($post['comment_count'] > 0) { ?>
+<br>
+<span id="general-comments" class="widget widget_links"><a id="comment"><h3 class="widget-title">Comments:</h3></a>
+        <?php foreach($post['comments'] as $comment){?>
+                <div class="comment">
+                <div class='comment_header'>
+                <a href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow">
+                    <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>"
+                        title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'Author Image') ?>" /></a>
+                <a href="<?php echo $comment['source_url']?>" rel="nofollow">Permalink</a>
+                <?php echo $comment['source_name']?>
+                </div>
+                <div class='comment_body'>
+                <?php echo $comment['body']?>
+                </div>
+                </div>
+        <?php } ?>
+	</span>
+    <?php } ?>
 
 <?php echo $footer; ?>

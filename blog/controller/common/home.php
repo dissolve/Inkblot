@@ -10,15 +10,21 @@ class ControllerCommonHome extends Controller {
 		$this->load->model('blog/post');
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
+		$this->load->model('blog/comment');
+		$this->load->model('blog/like');
 		
 		$data['posts'] = array();
 
 		foreach ($this->model_blog_post->getRecentPosts(5) as $result) {
                 $author = $this->model_blog_author->getAuthor($result['author_id']);
                 $categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
+                $comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
+                $like_count = $this->model_blog_like->getLikeCountForPost($result['post_id']);
                 $data['posts'][] = array_merge($result, array(
                     'author' => $author,
-                    'categories' => $categories
+                    'categories' => $categories,
+                    'comment_count' => $comment_count,
+                    'like_count' => $like_count
                     ));
     	}
 

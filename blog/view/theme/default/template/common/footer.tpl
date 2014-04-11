@@ -62,7 +62,7 @@
 </section>
 
 <?php if($recent_mentions){ ?>
-<section id="linkcat-3" class="widget widget_links"><h3 class="widget-title">Recent Mentions</h3>
+<section id="mentions" class="widget widget_links"><h3 class="widget-title">Recent Mentions</h3>
 	<ul>
         <?php foreach($recent_mentions as $mention){?>
             <li><a href="<?php echo $mention['source_url'];?>" title="External Web Mention"><?php echo $mention['source_url'];?></a></li>
@@ -70,6 +70,22 @@
 	</ul>
 </section>
 <?php } //end if recent mentions ?>
+
+<?php if($like_count > 0){ ?>
+<section id="general-likes" class="widget widget_links"><h3 class="widget-title"><?php echo $like_count . ($like_count > 1 ? ' People' : ' Person')?> Liked This Site</h3>
+	<ul>
+        <?php foreach($likes as $like){?>
+            <li>
+                <a href="<?php echo (isset($like['author_url']) ? $like['author_url']: $like['source_url'])?>" rel="nofollow">
+                    <img class='like_author' src="<?php echo (isset($like['author_image']) ? $like['author_image']: '/image/person.jpg') ?>"
+                        title="<?php echo (isset($like['author_name']) ? $like['author_name']: 'Author Image') ?>" />
+                </a>
+            </li>
+        <?php } ?>
+	</ul>
+    <div style="clear:both"></div>
+</section>
+<?php } //end if like_coutn > 0 ?>
 
 </div><!-- #secondary .widget-area -->
 

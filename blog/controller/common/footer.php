@@ -24,6 +24,13 @@ class ControllerCommonFooter extends Controller {
 		foreach ($this->model_blog_mention->getRecentMentions(10) as $result) {
 				$data['recent_mentions'][] = $result;
     	}
+
+		$this->load->model('blog/like');
+		$data['likes'] = array();
+		$data['like_count'] = $this->model_blog_like->getGenericLikeCount();
+		foreach ($this->model_blog_like->getGenericLikes() as $result) {
+				$data['likes'][] = $result;
+    	}
 		
 		$this->load->model('blog/post');
 		$data['recent_posts'] = array();
