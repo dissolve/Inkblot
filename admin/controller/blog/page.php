@@ -1,28 +1,25 @@
 <?php
-class ControllerCatalogInformation extends Controller { 
+class ControllerBlogPage extends Controller { 
 	private $error = array();
 
 	public function index() {
-		$this->load->language('catalog/information');
 
-		$this->document->setTitle($this->language->get('heading_title'));
+		$this->document->setTitle();
 
-		$this->load->model('catalog/information');
+		$this->load->model('blog/page');
 
 		$this->getList();
 	}
 
 	public function insert() {
-		$this->load->language('catalog/information');
+		$this->document->setTitle();
 
-		$this->document->setTitle($this->language->get('heading_title'));
-
-		$this->load->model('catalog/information');
+		$this->load->model('blog/page');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_catalog_information->addInformation($this->request->post);
+			$this->model_blog_page->addPage($this->request->post);
 
-			$this->session->data['success'] = $this->language->get('text_success');
+			$this->session->data['success'] = 'success';
 
 			$url = '';
 
@@ -38,21 +35,21 @@ class ControllerCatalogInformation extends Controller {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
-			$this->response->redirect($this->url->link('catalog/information', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->response->redirect($this->url->link('blog/page', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 		}
 
 		$this->getForm();
 	}
 
 	public function update() {
-		$this->load->language('catalog/information');
+		$this->load->language('blog/page');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$this->load->model('catalog/information');
+		$this->load->model('blog/page');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_catalog_information->editInformation($this->request->get['information_id'], $this->request->post);
+			$this->blog->editPage($this->request->get['page_id'], $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -70,22 +67,22 @@ class ControllerCatalogInformation extends Controller {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
-			$this->response->redirect($this->url->link('catalog/information', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->response->redirect($this->url->link('blog/page', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 		}
 
 		$this->getForm();
 	}
 
 	public function delete() {
-		$this->load->language('catalog/information');
+		$this->load->language('blog/page');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$this->load->model('catalog/information');
+		$this->load->model('blog/page');
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
-			foreach ($this->request->post['selected'] as $information_id) {
-				$this->model_catalog_information->deleteInformation($information_id);
+			foreach ($this->request->post['selected'] as $page_id) {
+				$this->model_blog_page->deletePage($page_id);
 			}
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -104,7 +101,7 @@ class ControllerCatalogInformation extends Controller {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
-			$this->response->redirect($this->url->link('catalog/information', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->response->redirect($this->url->link('blog/page', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 		}
 
 		$this->getList();
@@ -152,13 +149,13 @@ class ControllerCatalogInformation extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('catalog/information', 'token=' . $this->session->data['token'] . $url, 'SSL')
+			'href' => $this->url->link('blog/page', 'token=' . $this->session->data['token'] . $url, 'SSL')
 		);
 
-		$data['insert'] = $this->url->link('catalog/information/insert', 'token=' . $this->session->data['token'] . $url, 'SSL');
-		$data['delete'] = $this->url->link('catalog/information/delete', 'token=' . $this->session->data['token'] . $url, 'SSL');	
+		$data['insert'] = $this->url->link('blog/page/insert', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$data['delete'] = $this->url->link('blog/page/delete', 'token=' . $this->session->data['token'] . $url, 'SSL');	
 
-		$data['informations'] = array();
+		$data['pages'] = array();
 
 		$filter_data = array(
 			'sort'  => $sort,
@@ -167,16 +164,16 @@ class ControllerCatalogInformation extends Controller {
 			'limit' => $this->config->get('config_limit_admin')
 		);
 
-		$information_total = $this->model_catalog_information->getTotalInformations();
+		$page_total = $this->model_blog_page->getTotalPages();
 
-		$results = $this->model_catalog_information->getInformations($filter_data);
+		$results = $this->model_blog_page->getPages($filter_data);
 
 		foreach ($results as $result) {
-			$data['informations'][] = array(
-				'information_id' => $result['information_id'],
+			$data['pages'][] = array(
+				'page_id' => $result['page_id'],
 				'title'          => $result['title'],
 				'sort_order'     => $result['sort_order'],
-				'edit'           => $this->url->link('catalog/information/update', 'token=' . $this->session->data['token'] . '&information_id=' . $result['information_id'] . $url, 'SSL')
+				'edit'           => $this->url->link('blog/page/update', 'token=' . $this->session->data['token'] . '&page_id=' . $result['page_id'] . $url, 'SSL')
 			);
 		}	
 
@@ -225,8 +222,8 @@ class ControllerCatalogInformation extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		$data['sort_title'] = $this->url->link('catalog/information', 'token=' . $this->session->data['token'] . '&sort=id.title' . $url, 'SSL');
-		$data['sort_sort_order'] = $this->url->link('catalog/information', 'token=' . $this->session->data['token'] . '&sort=i.sort_order' . $url, 'SSL');
+		$data['sort_title'] = $this->url->link('blog/page', 'token=' . $this->session->data['token'] . '&sort=id.title' . $url, 'SSL');
+		$data['sort_sort_order'] = $this->url->link('blog/page', 'token=' . $this->session->data['token'] . '&sort=i.sort_order' . $url, 'SSL');
 
 		$url = '';
 
@@ -239,14 +236,13 @@ class ControllerCatalogInformation extends Controller {
 		}
 
 		$pagination = new Pagination();
-		$pagination->total = $information_total;
+		$pagination->total = $page_total;
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_limit_admin');
-		$pagination->url = $this->url->link('catalog/information', 'token=' . $this->session->data['token'] . $url . '&page={page}', 'SSL');
+		$pagination->url = $this->url->link('blog/page', 'token=' . $this->session->data['token'] . $url . '&page={page}', 'SSL');
 
 		$data['pagination'] = $pagination->render();
 
-		$data['results'] = sprintf($this->language->get('text_pagination'), ($information_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($information_total - $this->config->get('config_limit_admin'))) ? $information_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $information_total, ceil($information_total / $this->config->get('config_limit_admin')));
 
 		$data['sort'] = $sort;
 		$data['order'] = $order;
@@ -255,37 +251,11 @@ class ControllerCatalogInformation extends Controller {
 		$data['menu'] = $this->load->controller('common/menu');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('catalog/information_list.tpl', $data));
+		$this->response->setOutput($this->load->view('blog/page_list.tpl', $data));
 	}
 
 	protected function getForm() {
-		$data['heading_title'] = $this->language->get('heading_title');
-
-		$data['text_default'] = $this->language->get('text_default');
-		$data['text_enabled'] = $this->language->get('text_enabled');
-		$data['text_disabled'] = $this->language->get('text_disabled');
-
-		$data['entry_title'] = $this->language->get('entry_title');
-		$data['entry_description'] = $this->language->get('entry_description');
-		$data['entry_meta_title'] = $this->language->get('entry_meta_title');
-		$data['entry_meta_description'] = $this->language->get('entry_meta_description');
-		$data['entry_meta_keyword'] = $this->language->get('entry_meta_keyword');
-		$data['entry_keyword'] = $this->language->get('entry_keyword');
-		$data['entry_store'] = $this->language->get('entry_store');
-		$data['entry_bottom'] = $this->language->get('entry_bottom');
-		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
-		$data['entry_status'] = $this->language->get('entry_status');
-		$data['entry_layout'] = $this->language->get('entry_layout');
-
-		$data['help_keyword'] = $this->language->get('help_keyword');
-		$data['help_bottom'] = $this->language->get('help_bottom');
-
-		$data['button_save'] = $this->language->get('button_save');
-		$data['button_cancel'] = $this->language->get('button_cancel');
-
-		$data['tab_general'] = $this->language->get('tab_general');
-		$data['tab_data'] = $this->language->get('tab_data');
-		$data['tab_design'] = $this->language->get('tab_design');
+        $data['lorum'] = 'lorum ipsum';
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -328,91 +298,91 @@ class ControllerCatalogInformation extends Controller {
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_home'),
+			'text' => 'Home',
 			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL')
 		);
 
 		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('catalog/information', 'token=' . $this->session->data['token'] . $url, 'SSL')
+			'text' => 'New Page',
+			'href' => $this->url->link('blog/page', 'token=' . $this->session->data['token'] . $url, 'SSL')
 		);
 
-		if (!isset($this->request->get['information_id'])) {
-			$data['action'] = $this->url->link('catalog/information/insert', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		if (!isset($this->request->get['page_id'])) {
+			$data['action'] = $this->url->link('blog/page/insert', 'token=' . $this->session->data['token'] . $url, 'SSL');
 		} else {
-			$data['action'] = $this->url->link('catalog/information/update', 'token=' . $this->session->data['token'] . '&information_id=' . $this->request->get['information_id'] . $url, 'SSL');
+			$data['action'] = $this->url->link('blog/page/update', 'token=' . $this->session->data['token'] . '&page_id=' . $this->request->get['page_id'] . $url, 'SSL');
 		}
 
-		$data['cancel'] = $this->url->link('catalog/information', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$data['cancel'] = $this->url->link('blog/page', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
-		if (isset($this->request->get['information_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
-			$information_info = $this->model_catalog_information->getInformation($this->request->get['information_id']);
+		if (isset($this->request->get['page_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
+			$page_info = $this->model_blog_page->getPage($this->request->get['page_id']);
 		}
 
 		$data['token'] = $this->session->data['token'];
 
-		$this->load->model('localisation/language');
+		//$this->load->model('localisation/language');
 
-		$data['languages'] = $this->model_localisation_language->getLanguages();
+		//$data['languages'] = $this->model_localisation_language->getLanguages();
 
-		if (isset($this->request->post['information_description'])) {
-			$data['information_description'] = $this->request->post['information_description'];
-		} elseif (isset($this->request->get['information_id'])) {
-			$data['information_description'] = $this->model_catalog_information->getInformationDescriptions($this->request->get['information_id']);
+		if (isset($this->request->post['page_description'])) {
+			$data['page_description'] = $this->request->post['page_description'];
+		} elseif (isset($this->request->get['page_id'])) {
+			$data['page_description'] = $this->model_blog_page->getPageDescriptions($this->request->get['page_id']);
 		} else {
-			$data['information_description'] = array();
+			$data['page_description'] = array();
 		}
 
 		$this->load->model('setting/store');
 
 		$data['stores'] = $this->model_setting_store->getStores();
 
-		if (isset($this->request->post['information_store'])) {
-			$data['information_store'] = $this->request->post['information_store'];
-		} elseif (isset($this->request->get['information_id'])) {
-			$data['information_store'] = $this->model_catalog_information->getInformationStores($this->request->get['information_id']);
+		if (isset($this->request->post['page_store'])) {
+			$data['page_store'] = $this->request->post['page_store'];
+		} elseif (isset($this->request->get['page_id'])) {
+			$data['page_store'] = $this->model_blog_page->getPageStores($this->request->get['page_id']);
 		} else {
-			$data['information_store'] = array(0);
+			$data['page_store'] = array(0);
 		}		
 
 		if (isset($this->request->post['keyword'])) {
 			$data['keyword'] = $this->request->post['keyword'];
-		} elseif (!empty($information_info)) {
-			$data['keyword'] = $information_info['keyword'];
+		} elseif (!empty($page_info)) {
+			$data['keyword'] = $page_info['keyword'];
 		} else {
 			$data['keyword'] = '';
 		}
 
 		if (isset($this->request->post['bottom'])) {
 			$data['bottom'] = $this->request->post['bottom'];
-		} elseif (!empty($information_info)) {
-			$data['bottom'] = $information_info['bottom'];
+		} elseif (!empty($page_info)) {
+			$data['bottom'] = $page_info['bottom'];
 		} else {
 			$data['bottom'] = 0;
 		}
 
 		if (isset($this->request->post['status'])) {
 			$data['status'] = $this->request->post['status'];
-		} elseif (!empty($information_info)) {
-			$data['status'] = $information_info['status'];
+		} elseif (!empty($page_info)) {
+			$data['status'] = $page_info['status'];
 		} else {
 			$data['status'] = 1;
 		}
 
 		if (isset($this->request->post['sort_order'])) {
 			$data['sort_order'] = $this->request->post['sort_order'];
-		} elseif (!empty($information_info)) {
-			$data['sort_order'] = $information_info['sort_order'];
+		} elseif (!empty($page_info)) {
+			$data['sort_order'] = $page_info['sort_order'];
 		} else {
 			$data['sort_order'] = '';
 		}
 
-		if (isset($this->request->post['information_layout'])) {
-			$data['information_layout'] = $this->request->post['information_layout'];
-		} elseif (isset($this->request->get['information_id'])) {
-			$data['information_layout'] = $this->model_catalog_information->getInformationLayouts($this->request->get['information_id']);
+		if (isset($this->request->post['page_layout'])) {
+			$data['page_layout'] = $this->request->post['page_layout'];
+		} elseif (isset($this->request->get['post_id'])) {
+			$data['page_layout'] = $this->model_blog_page->getPageLayouts($this->request->get['page_id']);
 		} else {
-			$data['information_layout'] = array();
+			$data['page_layout'] = array();
 		}
 
 		$this->load->model('design/layout');
@@ -423,15 +393,15 @@ class ControllerCatalogInformation extends Controller {
 		$data['menu'] = $this->load->controller('common/menu');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('catalog/information_form.tpl', $data));
+		$this->response->setOutput($this->load->view('blog/page_form.tpl', $data));
 	}
 
 	protected function validateForm() {
-		if (!$this->user->hasPermission('modify', 'catalog/information')) {
+		if (!$this->user->hasPermission('modify', 'blog/page')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
-		foreach ($this->request->post['information_description'] as $language_id => $value) {
+		foreach ($this->request->post['page_description'] as $language_id => $value) {
 			if ((utf8_strlen($value['title']) < 3) || (utf8_strlen($value['title']) > 64)) {
 				$this->error['title'][$language_id] = $this->language->get('error_title');
 			}
@@ -453,26 +423,26 @@ class ControllerCatalogInformation extends Controller {
 	}
 
 	protected function validateDelete() {
-		if (!$this->user->hasPermission('modify', 'catalog/information')) {
+		if (!$this->user->hasPermission('modify', 'blog/page')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
 		$this->load->model('setting/store');
 
-		foreach ($this->request->post['selected'] as $information_id) {
-			if ($this->config->get('config_account_id') == $information_id) {
+		foreach ($this->request->post['selected'] as $page_id) {
+			if ($this->config->get('config_account_id') == $page_id) {
 				$this->error['warning'] = $this->language->get('error_account');
 			}
 
-			if ($this->config->get('config_checkout_id') == $information_id) {
+			if ($this->config->get('config_checkout_id') == $page_id) {
 				$this->error['warning'] = $this->language->get('error_checkout');
 			}
 
-			if ($this->config->get('config_affiliate_id') == $information_id) {
+			if ($this->config->get('config_affiliate_id') == $page_id) {
 				$this->error['warning'] = $this->language->get('error_affiliate');
 			}
 
-			$store_total = $this->model_setting_store->getTotalStoresByInformationId($information_id);
+			$store_total = $this->model_setting_store->getTotalStoresByPageId($page_id);
 
 			if ($store_total) {
 				$this->error['warning'] = sprintf($this->language->get('error_store'), $store_total);

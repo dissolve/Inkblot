@@ -89,23 +89,23 @@ class ControllerCommonHeader extends Controller {
 			$data['alerts'] = $customer_total + $product_total + $review_total + $return_total + $affiliate_total;
 
 			// Online Stores
-			$data['stores'] = array();
+			//$data['stores'] = array();
 
-			$data['stores'][] = array(
-				'name' => $this->config->get('config_name'),
-				'href' => HTTP_CATALOG
-			);			
+			//$data['stores'][] = array(
+				//'name' => $this->config->get('config_name'),
+				//'href' => HTTP_CATALOG
+			//);			
 			
-			$this->load->model('setting/store');
+			//$this->load->model('setting/store');
 			
-			$results = $this->model_setting_store->getStores();
+			//$results = $this->model_setting_store->getStores();
 			
-			foreach ($results as $result) {
-				$data['stores'][] = array(
-					'name' => $result['name'],
-					'href' => $result['url']
-				);
-			}
+			//foreach ($results as $result) {
+				//$data['stores'][] = array(
+					//'name' => $result['name'],
+					//'href' => $result['url']
+				//);
+			//}
 		}
 		
 		$this->load->model('user/user');

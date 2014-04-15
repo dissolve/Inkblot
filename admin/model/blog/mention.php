@@ -13,5 +13,11 @@ class ModelBlogMention extends Model {
 	
 		return $data;
 	}
+	public function getMentionCountForPost($post_id) {
+            $query = $this->db->query("SELECT COUNT(*) as total FROM " . DATABASE . ".mentions WHERE approved != 0 AND post_id = ".(int)$post_id);
+            $data = $query->row['total'];
+	
+		return $data;
+	}
 }
 

@@ -12,7 +12,7 @@
       </header><!-- .entry-header -->
 
       <div class="entry-content e-content" itemprop="description articleBody">
-      <p><?php echo str_replace("\n", "</p>\n", str_replace("^", "<p>", $post['body']));?></p>
+      <?php echo $post['body_html'];?>
       
       </div><!-- .entry-content -->
   

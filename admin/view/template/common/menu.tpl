@@ -9,9 +9,9 @@
     <li id="dashboard"><a href="<?php echo $home; ?>"><i class="fa fa-home fa-fw fa-lg"></i> <span>Dashboard</span></a></li>
     <li id="catalog"><a class="parent"><i class="fa fa-tags fa-fw fa-lg"></i> <span>Blog</span></a>
       <ul>
-        <li><a href="<?php echo $post; ?>">Posts</a></li>
-        <li><a href="<?php echo $note; ?>">Notes</a></li>
-        <li><a href="<?php echo $category; ?>">Categories</a></li>
+        <li><a href="<?php echo $posts; ?>">Posts</a></li>
+        <li><a href="<?php echo $notes; ?>">Notes</a></li>
+        <li><a href="<?php echo $categories; ?>">Categories</a></li>
         <li><a href="<?php echo $comments; ?>">Comments</a></li>
         <li><a href="<?php echo $pages; ?>">Pages</a></li>
         <!--<li><a class="parent">attr</a>

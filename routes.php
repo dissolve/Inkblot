@@ -9,6 +9,10 @@ $routes['clearcache']     	  = 'admin/cache';
 $routes['clearrevision']   	  = 'admin/cache/revision';
 $routes['webmention']   	  = 'webmention/receive';
 
+$advanced_routes[] = array('controller' => 'blog/pages',
+    'expression' => '`page/(?P<id>\w+)`i',
+    'reverse' => 'page/{slug}');
+
 $advanced_routes[] = array('controller' => 'webmention/queue',
     'expression' => '`queue/(?P<id>\d+)`i',
     'reverse' => 'queue/{id}');

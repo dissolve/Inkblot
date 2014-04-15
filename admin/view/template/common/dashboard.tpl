@@ -20,7 +20,8 @@
           <div class="row">
             <div class="col-xs-3"><span class="text-muted"><i class="fa fa-shopping-cart fa-4x"></i></span></div>
             <div class="col-xs-9">
-              <?php echo $text_new_order; ?></div>
+              <a href="<?php echo $new_post?>"><h3>New Post</h3></a>
+            </div>
           </div>
         </div>
       </div>
@@ -31,8 +32,8 @@
           <div class="row">
             <div class="col-xs-3"><span class="text-muted"><i class="fa fa-user fa-4x"></i></span></div>
             <div class="col-xs-9">
-              <h3 class="text-success"><?php echo $customer_total; ?></h3>
-              <?php echo $text_new_customer; ?></div>
+              <a href="<?php echo $new_note?>" ><h3>New Note</h3></a>
+              </div>
           </div>
         </div>
       </div>
@@ -80,7 +81,24 @@
           <h1 class="panel-title"><i class="fa fa-bar-chart-o fa-lg"></i> <?php echo $text_analytics; ?></h1>
         </div>
         <div class="panel-body">
-          <div id="chart-sale" class="chart" style="width: 100%; height: 175px;"></div>
+          <div id="chart-sale" class="chart" style="width: 100%; height: 175px;">
+          <table>
+          <tr>
+            <th>Post</th>
+            <th>Comments</th>
+            <th>Likes</th>
+            <th>Mentions</th>
+          </tr>
+          <?php foreach($posts as $post){?>
+            <tr>
+            <td><a href="<?php echo $post['permalink']?>"><?php echo $post['title']?></a></td>
+            <td><?php echo $post['comment_count']?></td>
+            <td><?php echo $post['like_count']?></td>
+            <td><?php echo $post['mention_count']?></td>
+            </tr>
+          <?php } ?>
+          </table>
+          </div>
         </div>
       </div>
     </div>

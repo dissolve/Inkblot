@@ -9,13 +9,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = '". (int)$post_id . "'");
             $post = $query->row;
             $post = array_merge($post, array(
-                'permalink' => $this->url->link('blog/post', 'year='.$post['year']. '&' . 
-                                                'month='.$post['month']. '&' . 
-                                                'day='.$post['day']. '&' . 
-                                                'daycount='.$post['daycount']. '&' . 
-                                                'post_type='.$post['post_type']. '&' . 
-                                                'slug=' . $post['slug'], '')
-            ));
+                'permalink' => $this->url->link('blog/post', 'id='.$post['post_id'], '')));
 		return $post;
 	}
 
@@ -26,13 +20,7 @@ class ModelBlogPost extends Model {
                                                                                   daycount = '". (int)$daycount . "'");
             $post = $query->row;
             $post = array_merge($post, array(
-                'permalink' => $this->url->link('blog/post', 'year='.$post['year']. '&' . 
-                                                'month='.$post['month']. '&' . 
-                                                'day='.$post['day']. '&' . 
-                                                'daycount='.$post['daycount']. '&' . 
-                                                'post_type='.$post['post_type']. '&' . 
-                                                'slug=' . $post['slug'], '')
-            ));
+                'permalink' => $this->url->link('blog/post', 'id='.$post['post_id'], '')));
 		return $post;
 	}
 
@@ -79,6 +67,46 @@ class ModelBlogPost extends Model {
 	
 		return $data_array;
 	}
+
+    public function addPost($data){
+
+        $year = date('Y');
+        $month = date('n');
+        $day = date('j');
+
+        $post = $data['post'];
+
+        $this->log->write(print_r($data,true));
+
+
+        $query = $this->db->query("
+            SELECT COALESCE(MAX(daycount), 0) + 1 AS newval
+                FROM ".DATABASE.".posts 
+                WHERE `year` = '".$year."'
+                    AND `month` = '".$month."' 
+                    AND `day` = '".$day."';");
+
+        $newcount = $query->row['newval'];
+
+        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='post',
+            `body` = '".$this->db->escape($post['body'])."',
+            `title` = '".$this->db->escape($post['title'])."',
+            `slug` = '".$this->db->escape($post['slug'])."',
+            `author_id` = 1,
+            `timestamp` = NOW(),
+            `year` = '".$year."',
+            `month` = '".$month."',
+            `day` = '".$day."',
+            `daycount` = ".$newcount .
+            (isset($post['replyto']) && !empty($post['replyto']) ? ", replyto='".$this->db->escape($post['replyto'])."'" : "");
+        $this->log->write($sql);
+        $query = $this->db->query($sql);
+        $this->log->write(print_r($query,true));
+
+        $id = $this->db->getLastId();
+	
+		return $id;
+    }
 
 
 

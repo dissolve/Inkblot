@@ -28,6 +28,7 @@ class ControllerBlogCategory extends Controller {
                 $comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
                 $like_count = $this->model_blog_like->getLikeCountForPost($post['post_id']);
                 $data['posts'][] = array_merge($post, array(
+                    'body_html' => html_entity_decode($post['body']),
                     'author' => $author,
                     'categories' => $categories,
                     'comment_count' => $comment_count,

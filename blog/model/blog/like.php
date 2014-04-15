@@ -25,7 +25,6 @@ class ModelBlogLike extends Model {
 	public function getGenericLikeCount() {
         $data = $this->cache->get('likes.generic.count');
         if(!$data){
-            $this->log->write("SELECT COUNT(*) AS total FROM " . DATABASE . ".likes WHERE post_id IS NULL");
             $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DATABASE . ".likes WHERE post_id IS NULL");
             $data = $query->row['total'];
             $this->cache->set('likes.generic.count', $data);

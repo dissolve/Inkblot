@@ -29,6 +29,7 @@ class ControllerBlogPost extends Controller {
         $likes = $this->model_blog_like->getLikesForPost($post['post_id']);
 
         $data['post'] = array_merge($post, array(
+            'body_html' => html_entity_decode($post['body']),
             'author' => $author,
             'categories' => $categories,
             'comment_count' => $comment_count,

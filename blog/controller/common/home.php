@@ -21,6 +21,7 @@ class ControllerCommonHome extends Controller {
                 $comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
                 $like_count = $this->model_blog_like->getLikeCountForPost($result['post_id']);
                 $data['posts'][] = array_merge($result, array(
+                    'body_html' => html_entity_decode($result['body']),
                     'author' => $author,
                     'categories' => $categories,
                     'comment_count' => $comment_count,
