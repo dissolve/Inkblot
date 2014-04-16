@@ -13,12 +13,12 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <div class="pull-right">
-        <button type="submit" form="form-note" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn"><i class="fa fa-check-circle"></i></button>
+        <button type="submit" form="form-post" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn"><i class="fa fa-check-circle"></i></button>
         <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn"><i class="fa fa-reply"></i></a></div>
       <h1 class="panel-title"><i class="fa fa-pencil-square fa-lg"></i> <?php echo $heading_title; ?></h1>
     </div>
     <div class="panel-body">
-      <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-note" class="form-horizontal">
+      <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
             <div class="content">
                 <div class="form-group required">
                   <label class="col-sm-2 control-label" for="input-title">Title</label>
@@ -41,7 +41,7 @@
                 <div class="form-group required">
                   <label class="col-sm-2 control-label" for="input-body">Body</label>
                   <div class="col-sm-10">
-                    <textarea name="note[body]" placeholder="Bost of Note" id="input-body" class="form-control"><?php echo isset($note['body']) ? $note['body'] : ''; ?></textarea>
+                    <textarea name="note[body]" placeholder="Bost of note" id="input-body" class="form-control"><?php echo isset($note['body']) ? $note['body'] : ''; ?></textarea>
                     <?php if (isset($error_body)) { ?>
                     <span class="text-danger"><?php echo $error_body; ?></span>
                     <?php } ?>

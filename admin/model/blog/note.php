@@ -1,16 +1,17 @@
 <?php
 require_once(DIR_APPLICATION . 'controller/helper/seo_url.php');
 
-class ModelBlogPost extends Model {
+class ModelBlogNote extends Model {
 
 
     //TODO: add a boolean flag to for ASC, so change the sort order
-    //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full posts
+    //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full notes
 
-	public function getPost($post_id) {
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE `post_type`='post' AND post_id = '". (int)$post_id . "'");
+	public function getNote($post_id) {
+        $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE `post_type`='note' AND post_id = '". (int)$post_id . "'");
         $post = $query->row;
 
+        $post['note_id'] = $post['post_id'];
         $post['permalink'] = preg_replace( '`/admin/`', '/',
             rewrite_url($this->url->link('blog/post', 'year='.$post['year']. '&' . 
                                         'month='.$post['month']. '&' . 
@@ -22,13 +23,14 @@ class ModelBlogPost extends Model {
 		return $post;
 	}
 
-	public function getPostByDayCount($year,$month, $day, $daycount) {
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE `post_type`='post' AND year = '". (int)$year . "' AND
+	public function getNoteByDayCount($year,$month, $day, $daycount) {
+        $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE `post_type`='note' AND year = '". (int)$year . "' AND
                                                                               month = '". (int)$month . "' AND
                                                                               day = '". (int)$day . "' AND
                                                                               daycount = '". (int)$daycount . "'");
         $post = $query->row;
 
+        $post['note_id'] = $post['post_id'];
         $post['permalink'] = preg_replace( '`/admin/`', '/',
             rewrite_url($this->url->link('blog/post', 'year='.$post['year']. '&' . 
                                         'month='.$post['month']. '&' . 
@@ -40,75 +42,78 @@ class ModelBlogPost extends Model {
 		return $post;
 	}
 
-	public function getRecentPosts($limit=10, $skip=0) {
+	public function getRecentNotes($limit=10, $skip=0) {
         $data_array = array();
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='post' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='note' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
         foreach($data as $post){
-            $data_array[] = $this->getPost($post['post_id']);
+            $data_array[] = $this->getNote($post['post_id']);
         }
 	
 		return $data_array;
 	}
 
-	public function getPostsByCategory($category_id, $limit=20, $skip=0) {
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE `post_type`='post' AND category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+	public function getNotesByCategory($category_id, $limit=20, $skip=0) {
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE `post_type`='note' AND category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
         $data_array = array();
         foreach($data as $post){
-            $data_array[] = $this->getPost($post['post_id']);
+            $data_array[] = $this->getNote($post['post_id']);
         }
 	
 		return $data_array;
 	}
 
-	public function getPostsByAuthor($author_id, $limit=20, $skip=0) {
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='post' AND author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+	public function getNotesByAuthor($author_id, $limit=20, $skip=0) {
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='note' AND author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
         $data_array = array();
         foreach($data as $post){
-            $data_array[] = $this->getPost($post['post_id']);
+            $data_array[] = $this->getNote($post['post_id']);
         }
 	
 		return $data_array;
 	}
 
-	public function getPostsByArchive($year, $month, $limit=20, $skip=0) {
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='post' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+	public function getNotesByArchive($year, $month, $limit=20, $skip=0) {
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='note' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
         $data_array = array();
         foreach($data as $post){
-            $data_array[] = $this->getPost($post['post_id']);
+            $data_array[] = $this->getNote($post['post_id']);
         }
 	
 		return $data_array;
 	}
 
-    public function getTotalPosts(){
-        $query = $this->db->query("SELECT count(post_id) as total FROM " . DATABASE . ".posts WHERE `post_type`='post'");
+    public function getTotalNotes(){
+        $query = $this->db->query("SELECT count(post_id) as total FROM " . DATABASE . ".posts WHERE `post_type`='note'");
         return $query->rows['total'];
     }
 
-    public function getPosts($sort='post_id', $order='DESC', $limit=20, $skip=0){
+    public function getNotes($sort='post_id', $order='DESC', $limit=20, $skip=0){
+        if ($sort == 'note_id'){
+            $sort = 'post_id';
+        }
 
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='post'
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='note'
             ORDER BY ".$this->db->escape($sort)." ".$this->db->escape($order)."
             LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
         $data_array = array();
         foreach($data as $post){
-            $data_array[] = $this->getPost($post['post_id']);
+            $data_array[] = $this->getNote($post['post_id']);
         }
 		return $data_array;
     }
 
-    public function addPost($data){
+    public function addNote($data){
 
         $year = date('Y');
         $month = date('n');
         $day = date('j');
 
-        $post = $data['post'];
+        $post = $data['note'];
 
         $query = $this->db->query("
             SELECT COALESCE(MAX(daycount), 0) + 1 AS newval
@@ -119,7 +124,7 @@ class ModelBlogPost extends Model {
 
         $newcount = $query->row['newval'];
 
-        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='post',
+        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='note',
             `body` = '".$this->db->escape($post['body'])."',
             `title` = '".$this->db->escape($post['title'])."',
             `slug` = '".$this->db->escape($post['slug'])."',
@@ -138,9 +143,9 @@ class ModelBlogPost extends Model {
 		return $id;
     }
 
-    public function editPost($post_id, $data){
+    public function editNote($post_id, $data){
 
-        $post = $data['post'];
+        $post = $data['note'];
 
         $sql = "UPDATE " . DATABASE . ".posts SET 
             `body` = '".$this->db->escape($post['body'])."',

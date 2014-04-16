@@ -7,13 +7,8 @@ class ControllerCommonDashboard extends Controller {
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
-			'text' => '',
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL')
-		);
-
-		$data['breadcrumbs'][] = array(
-			'text' => '',
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL')
+			'text' => 'Home',
+			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], '')
 		);
 
 		$data['token'] = $this->session->data['token'];
@@ -37,7 +32,8 @@ class ControllerCommonDashboard extends Controller {
                 $data['posts'][] = array_merge($result, array(
                     'mention_count' => $mention_count,
                     'comment_count' => $comment_count,
-                    'like_count' => $like_count
+                    'like_count' => $like_count,
+                    'view' => $this->url->link('blog/post', 'post_id='.$result['post_id'], '')
                     ));
     	}
 

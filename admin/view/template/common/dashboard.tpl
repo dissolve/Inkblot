@@ -91,7 +91,7 @@
           </tr>
           <?php foreach($posts as $post){?>
             <tr>
-            <td><a href="<?php echo $post['permalink']?>"><?php echo $post['title']?></a></td>
+            <td><a href="<?php echo $post['view']?>"><?php echo $post['title']?></a></td>
             <td><?php echo $post['comment_count']?></td>
             <td><?php echo $post['like_count']?></td>
             <td><?php echo $post['mention_count']?></td>
