@@ -3,14 +3,14 @@ class ControllerCommonMenu extends Controller {
 	public function index() {	
 		
 		
-		if (!isset($this->request->get['token']) || !isset($this->session->data['token']) && ($this->request->get['token'] != $this->session->data['token'])) {
+		if (!$this->user->isLogged()){
 			$data['logged'] = false;
 			
-			$data['home'] = $this->url->link('common/dashboard', '', 'SSL');
+			$data['home'] = $this->url->link('common/dashboard', '', '');
 		} else {
 			$data['logged'] = true;
 
-			$data['home'] = $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL');
+			$data['home'] = $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], '');
 		}
         $data['posts'] = $this->url->link('blog/post');
         $data['pages'] = $this->url->link('blog/page');

@@ -6,7 +6,7 @@
       <div class="col-sm-offset-4 col-sm-4">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h1 class="panel-title"><i class="fa fa-lock fa-lg"></i> <?php echo $text_login; ?></h1>
+            <h1 class="panel-title"><i class="fa fa-lock fa-lg"></i> Login</h1>
           </div>
           <div class="panel-body">
             <?php if ($success) { ?>
@@ -21,22 +21,19 @@
             <?php } ?>
             <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
               <div class="form-group">
-                <label for="input-username"><?php echo $entry_username; ?></label>
+                <label for="input-username">Username</label>
                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-user"></i></span>
-                  <input type="text" name="username" value="<?php echo $username; ?>" placeholder="<?php echo $entry_username; ?>" id="input-username" class="form-control" />
+                  <input type="text" name="username" value="<?php echo $username; ?>" placeholder="Username" id="input-username" class="form-control" />
                 </div>
               </div>
               <div class="form-group">
-                <label for="input-password"><?php echo $entry_password; ?></label>
+                <label for="input-password">Password</label>
                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                  <input type="password" name="password" value="<?php echo $password; ?>" placeholder="<?php echo $entry_password; ?>" id="input-password" class="form-control" />
+                  <input type="password" name="password" value="<?php echo $password; ?>" placeholder="" id="input-password" class="form-control" />
                 </div>
-                <?php if ($forgotten) { ?>
-                <span class="help-block"><a href="<?php echo $forgotten; ?>"><?php echo $text_forgotten; ?></a></span>
-                <?php } ?>
               </div>
               <div class="text-right">
-                <button type="submit" class="btn btn-primary"><i class="fa fa-key"></i> <?php echo $button_login; ?></button>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-key"></i> Login</button>
               </div>
               <?php if ($redirect) { ?>
               <input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />

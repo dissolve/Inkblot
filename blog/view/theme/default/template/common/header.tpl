@@ -20,6 +20,7 @@
 <link rel="profile" href="http://microformats.org/profile/hatom" />
 
 <link rel='stylesheet' id='sempress-style-css'  href='/blog/view/theme/default/stylesheet/stylesheet.css' type='text/css' media='all' />
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 <?php foreach ($links as $link) { ?>
 <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
 <?php } ?>
@@ -30,7 +31,7 @@
 <body class="home blog custom-background multi-column single-author custom-header hfeed h-feed feed" itemscope="" itemtype="http://schema.org/Blog">
 <div id="page">
   <header id="branding" role="banner">
-    <h1 id="site-title" itemprop="name" class="p-title"><a href="<?php echo $home?>" title="<?php echo $site_title?>" rel="home" itemprop="url" class="u-url url"><?php echo $site_title?></a></h1>
+    <h1 id="site-title" itemprop="name" class="p-name"><a href="<?php echo $home?>" title="<?php echo $site_title?>" rel="home" itemprop="url" class="u-url url"><?php echo $site_title?></a></h1>
     <h2 id="site-description" itemprop="description" class="p-summary e-content"><?php echo $site_subtitle?></h2>
     
           <img src="/image/uploaded/rainbow.jpg" height="200" width="950" alt="header image" id="site-image" />

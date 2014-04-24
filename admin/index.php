@@ -101,7 +101,7 @@ $registry->set('user', new User($registry));
 $controller = new Front($registry);
 
 // Login
-//$controller->addPreAction(new Action('common/login/check'));
+$controller->addPreAction(new Action('common/login/check'));
 
 // Permission
 //$controller->addPreAction(new Action('error/permission/check'));

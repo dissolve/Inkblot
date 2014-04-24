@@ -8,6 +8,20 @@ class ControllerBlogNote extends Controller {
 
         if($this->request->get['note_id']){
 			$note = $this->model_blog_note->getNote($this->request->get['note_id']);
+            if($this->request->get['send_mention']){
+                include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+
+                
+                $url = $note['permalink'];
+
+                $client = new IndieWeb\MentionClient($url);
+                $client->debug(true);
+                $sent = $client->sendSupportedMentions();
+                $this->log->write($sent);
+                $data['success'] = 'Webmentions Sent';
+
+            }
+
             $note['edit'] = $this->url->link('blog/note/insert', '&id='.$note['note_id'] , ''); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
             $note['body_html'] = html_entity_decode($note['body']);
 
@@ -190,7 +204,8 @@ class ControllerBlogNote extends Controller {
 				'title'          => $result['title'],
 				'timestamp'      => $result['timestamp'],
 				'permalink'      => $result['permalink'],
-				'view'           => $this->url->link('blog/note', '&note_id=' . $result['note_id'] . $url, ''),
+				'send_mention'   => $this->url->link('blog/note', 'send_mention=true&note_id=' . $result['note_id'] . $url, ''),
+				'view'           => $this->url->link('blog/note', 'note_id=' . $result['note_id'] . $url, ''),
 				'edit'           => $this->url->link('blog/note/update', '&note_id=' . $result['note_id'] . $url, '')
 			);
 		}	
@@ -272,19 +287,19 @@ class ControllerBlogNote extends Controller {
 		if (isset($this->error['title'])) {
 			$data['error_title'] = $this->error['title'];
 		} else {
-			$data['error_title'] = array();
+			$data['error_title'] = '';
 		}
 
 		if (isset($this->error['description'])) {
 			$data['error_description'] = $this->error['description'];
 		} else {
-			$data['error_description'] = array();
+			$data['error_description'] = '';
 		}
 
 		if (isset($this->error['meta_title'])) {
 			$data['error_meta_title'] = $this->error['meta_title'];
 		} else {
-			$data['error_meta_title'] = array();
+			$data['error_meta_title'] = '';
 		}	
 
 		$url = '';
@@ -351,13 +366,13 @@ class ControllerBlogNote extends Controller {
 		//}
         $note = $this->request->post['note'];
 
-        if ((utf8_strlen($note['title']) < 3) || (utf8_strlen($note['title']) > 100)) {
-            $this->error['title'] = 'Min: 3 characters, Max: 100';
-        }
+        //if ((utf8_strlen($note['title']) < 3) || (utf8_strlen($note['title']) > 100)) {
+            //$this->error['title'] = 'Min: 3 characters, Max: 100';
+        //}
 
-        if ((utf8_strlen($note['slug']) < 3) || (utf8_strlen($note['slug']) > 100)) {
-            $this->error['slug'] = 'Min: 3 characters, Max: 100';
-        }
+        //if ((utf8_strlen($note['slug']) < 3) || (utf8_strlen($note['slug']) > 100)) {
+            //$this->error['slug'] = 'Min: 3 characters, Max: 100';
+        //}
 
         if (utf8_strlen($note['body']) < 3) {
             $this->error['body'] = 'Body Too Short';
@@ -394,4 +409,6 @@ class ControllerBlogNote extends Controller {
 
 		return !$this->error;
 	}
+
+
 }

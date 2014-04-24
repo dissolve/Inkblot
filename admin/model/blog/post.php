@@ -16,7 +16,6 @@ class ModelBlogPost extends Model {
                                         'month='.$post['month']. '&' . 
                                         'day='.$post['day']. '&' . 
                                         'daycount='.$post['daycount']. '&' . 
-                                        'post_type='.$post['post_type']. '&' . 
                                         'slug=' . $post['slug'], '')), 1);
 
 		return $post;
@@ -34,7 +33,6 @@ class ModelBlogPost extends Model {
                                         'month='.$post['month']. '&' . 
                                         'day='.$post['day']. '&' . 
                                         'daycount='.$post['daycount']. '&' . 
-                                        'post_type='.$post['post_type']. '&' . 
                                         'slug=' . $post['slug'], '')), 1);
 
 		return $post;

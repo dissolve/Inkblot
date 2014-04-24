@@ -13,11 +13,10 @@ class ModelBlogNote extends Model {
 
         $post['note_id'] = $post['post_id'];
         $post['permalink'] = preg_replace( '`/admin/`', '/',
-            rewrite_url($this->url->link('blog/post', 'year='.$post['year']. '&' . 
+            rewrite_url($this->url->link('blog/note', 'year='.$post['year']. '&' . 
                                         'month='.$post['month']. '&' . 
                                         'day='.$post['day']. '&' . 
                                         'daycount='.$post['daycount']. '&' . 
-                                        'post_type='.$post['post_type']. '&' . 
                                         'slug=' . $post['slug'], '')), 1);
 
 		return $post;
@@ -32,11 +31,10 @@ class ModelBlogNote extends Model {
 
         $post['note_id'] = $post['post_id'];
         $post['permalink'] = preg_replace( '`/admin/`', '/',
-            rewrite_url($this->url->link('blog/post', 'year='.$post['year']. '&' . 
+            rewrite_url($this->url->link('blog/note', 'year='.$post['year']. '&' . 
                                         'month='.$post['month']. '&' . 
                                         'day='.$post['day']. '&' . 
                                         'daycount='.$post['daycount']. '&' . 
-                                        'post_type='.$post['post_type']. '&' . 
                                         'slug=' . $post['slug'], '')), 1);
 
 		return $post;
@@ -114,6 +112,10 @@ class ModelBlogNote extends Model {
         $day = date('j');
 
         $post = $data['note'];
+
+        if(!isset($data['slug']) || empty($data['slug'])){
+            $data['slug'] = '_';
+        }
 
         $query = $this->db->query("
             SELECT COALESCE(MAX(daycount), 0) + 1 AS newval

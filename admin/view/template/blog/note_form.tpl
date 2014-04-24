@@ -20,7 +20,7 @@
     <div class="panel-body">
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
             <div class="content">
-                <div class="form-group required">
+                <div class="form-group ">
                   <label class="col-sm-2 control-label" for="input-title">Title</label>
                   <div class="col-sm-10">
                     <input type="text" name="note[title]" value="<?php echo isset($note) ? $note['title'] : ''; ?>" placeholder="<?php echo $entry_title; ?>" id="input-title" class="form-control" />
@@ -29,7 +29,7 @@
                     <?php } ?>
                   </div>
                 </div>
-                <div class="form-group required">
+                <div class="form-group ">
                   <label class="col-sm-2 control-label" for="input-slug">Slug</label>
                   <div class="col-sm-10">
                     <input type="text" name="note[slug]" value="<?php echo isset($note) ? $note['slug'] : ''; ?>" placeholder="<?php echo $entry_slug; ?>" id="input-slug" class="form-control" />

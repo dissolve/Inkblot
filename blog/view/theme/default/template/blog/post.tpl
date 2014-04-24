@@ -8,6 +8,11 @@
       <span class="sep">Posted on </span>
         <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="url u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($post['timestamp']))?>" itemprop="dateModified"><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
         <address class="byline"> <span class="sep"> by </span> <span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt='' src='http://0.gravatar.com/avatar/<?php echo md5($post['author']['email_address'])?>?s=40&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=G' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="url uid u-url u-uid fn p-name" href="<?php echo $post['author']['link']?>" title="View all posts by <?php echo $post['author']['display_name']?>" rel="author" itemprop="url"><span itemprop="name"><?php echo $post['author']['display_name']?></span></a></span></address>
+        <?php if($post['replyto']) { ?>
+            <div class="repyto">
+               In Reply To <a class="u-url" rel="in-reply-to" href="<?php echo $post['replyto']?>">This</a>
+            </div>
+        <?php }  // end if replyto?>
         </div><!-- .entry-meta -->
       </header><!-- .entry-header -->
 
@@ -17,8 +22,7 @@
       </div><!-- .entry-content -->
   
   <footer class="entry-meta">
-  Posted  
-    <span class="sep"> | </span>
+    
   
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
@@ -45,14 +49,14 @@
 
     <?php if($post['comment_count'] > 0) { ?>
 <br>
-<span id="general-comments" class="widget widget_links"><a id="comment"><h3 class="widget-title">Comments:</h3></a>
+<span id="comments" class="widget widget_links"><a id="comment"><h3 class="widget-title">Comments:</h3></a>
         <?php foreach($post['comments'] as $comment){?>
                 <div class="comment">
                 <div class='comment_header'>
                 <a href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow">
                     <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>"
                         title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'Author Image') ?>" /></a>
-                <a href="<?php echo $comment['source_url']?>" rel="nofollow">Permalink</a>
+                <a href="<?php echo $comment['source_url']?>" rel="nofollow"><i class="fa fa-link"></i></a>
                 <?php echo $comment['source_name']?>
                 </div>
                 <div class='comment_body'>

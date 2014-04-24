@@ -18,7 +18,6 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <div class="pull-right"><a href="<?php echo $insert; ?>" data-toggle="tooltip" title="Insert" class="btn"><i class="fa fa-plus-circle"></i></a>
-        <button type="submit" form="form-product" formaction="<?php echo $copy; ?>" data-toggle="tooltip" title="Copy" class="btn"><i class="fa fa-copy"></i></button>
         <button type="button" class="btn" data-toggle="tooltip" title="Delete" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-product').submit() : false;"><i class="fa fa-times-circle"></i></button>
       </div>
       <h1 class="panel-title"><i class="fa fa-bars fa-lg"></i> <?php echo $heading_title; ?></h1>
@@ -55,6 +54,7 @@
                 <td class="text-left"><?php echo $note['title']; ?></td>
                 <td class="text-left"><?php echo $note['timestamp']; ?></td>
                 <td class="text-right">
+                <a href="<?php echo $note['send_mention']; ?>" data-toggle="tooltip" title="Send Webmentions" class="btn btn-primary"><i class="fa fa-share"></i></a>
                 <a href="<?php echo $note['permalink']; ?>" data-toggle="tooltip" title="View Live" class="btn btn-primary"><i class="fa fa-link"></i></a>
                 <a href="<?php echo $note['view']; ?>" data-toggle="tooltip" title="View" class="btn btn-primary"><i class="fa fa-eye"></i></a>
                 <a href="<?php echo $note['edit']; ?>" data-toggle="tooltip" title="Edit" class="btn btn-primary"><i class="fa fa-pencil"></i></a>

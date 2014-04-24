@@ -1,57 +1,60 @@
 <?php
-class ModelBlogPost extends Model {
+class ModelBlogNote extends Model {
 
 
     //TODO: add a boolean flag to for ASC, so change the sort order
-    //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full posts
+    //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full notes
 
-	public function getPost($post_id) {
-        $post = $this->cache->get('post.'. $post_id);
-        if(!$post){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_type='post' AND post_id = '". (int)$post_id . "'");
-            $post = $query->row;
-            $post = array_merge($post, array(
-                'permalink' => $this->url->link('blog/post', 'year='.$post['year']. '&' . 
-                                                'month='.$post['month']. '&' . 
-                                                'day='.$post['day']. '&' . 
-                                                'daycount='.$post['daycount']. '&' . 
-                                                'slug=' . $post['slug'], '')
+	public function getNote($note_id) {
+        $note = $this->cache->get('note.'. $note_id);
+        if(!$note){
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_type='note' AND post_id = '". (int)$note_id . "'");
+            $note = $query->row;
+            $note = array_merge($note, array(
+                'note_id' => $note['post_id'],
+                'permalink' => $this->url->link('blog/note', 'year='.$note['year']. '&' . 
+                                                'month='.$note['month']. '&' . 
+                                                'day='.$note['day']. '&' . 
+                                                'daycount='.$note['daycount']. '&' . 
+                                                'slug=' . $note['slug'], '')
             ));
-            $this->cache->set('post.'. $post_id, $post);
+            $this->cache->set('note.'. $note_id, $note);
         }
-		return $post;
+		return $note;
 	}
 
-	public function getPostByDayCount($year,$month, $day, $daycount) {
-        $post = $this->cache->get('post.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
-        if(!$post){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_type='post' AND year = '". (int)$year . "' AND
+	public function getNoteByDayCount($year,$month, $day, $daycount) {
+        $note = $this->cache->get('note.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
+        if(!$note){
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_type='note' AND year = '". (int)$year . "' AND
                                                                                   month = '". (int)$month . "' AND
                                                                                   day = '". (int)$day . "' AND
                                                                                   daycount = '". (int)$daycount . "'");
-            $post = $query->row;
-            $post = array_merge($post, array(
-                'permalink' => $this->url->link('blog/post', 'year='.$post['year']. '&' . 
-                                                'month='.$post['month']. '&' . 
-                                                'day='.$post['day']. '&' . 
-                                                'daycount='.$post['daycount']. '&' . 
-                                                'slug=' . $post['slug'], '')
+            $note = $query->row;
+            $note = array_merge($note, array(
+                'note_id' => $note['post_id'],
+                'permalink' => $this->url->link('blog/note', 'year='.$note['year']. '&' . 
+                                                'month='.$note['month']. '&' . 
+                                                'day='.$note['day']. '&' . 
+                                                'daycount='.$note['daycount']. '&' . 
+                                                'note_type='.$note['note_type']. '&' . 
+                                                'slug=' . $note['slug'], '')
             ));
-            $this->cache->set('post.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $post);
+            $this->cache->set('note.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $note);
         }
-		return $post;
+		return $note;
 	}
 
-	public function getRecentPosts($limit=10, $skip=0) {
-        $data = $this->cache->get('posts.recent.'. $skip . '.'.  $limit);
+	public function getRecentNotes($limit=10, $skip=0) {
+        $data = $this->cache->get('notes.recent.'. $skip . '.'.  $limit);
         if(!$data){
             $data_array = array();
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='post' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='note' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
-            foreach($data as $post){
-                $data_array[] = $this->getPost($post['post_id']);
+            foreach($data as $note){
+                $data_array[] = $this->getNote($note['post_id']);
             }
-            $this->cache->set('posts.recent.'. $skip . '.' .$limit, $data_array);
+            $this->cache->set('notes.recent.'. $skip . '.' .$limit, $data_array);
         } else {
             $data_array = $data;
         }
@@ -59,16 +62,16 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
-	public function getPostsByCategory($category_id, $limit=20, $skip=0) {
-        $data = $this->cache->get('posts.category.'. $category_id . '.'. $skip . '.'.  $limit);
+	public function getNotesByCategory($category_id, $limit=20, $skip=0) {
+        $data = $this->cache->get('notes.category.'. $category_id . '.'. $skip . '.'.  $limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE post_type='post' AND category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE post_type='note' AND category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
-            foreach($data as $post){
-                $data_array[] = $this->getPost($post['post_id']);
+            foreach($data as $note){
+                $data_array[] = $this->getNote($note['post_id']);
             }
-            $this->cache->set('posts.category.'.$category_id . '.'. $skip . '.'.  $limit, $data_array);
+            $this->cache->set('notes.category.'.$category_id . '.'. $skip . '.'.  $limit, $data_array);
         } else {
             $data_array = $data;
         }
@@ -76,16 +79,16 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
-	public function getPostsByAuthor($author_id, $limit=20, $skip=0) {
-        $data = $this->cache->get('posts.author.'. $author_id . '.'. $skip . '.'.  $limit);
+	public function getNotesByAuthor($author_id, $limit=20, $skip=0) {
+        $data = $this->cache->get('notes.author.'. $author_id . '.'. $skip . '.'.  $limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='post' AND author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='note' AND author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
-            foreach($data as $post){
-                $data_array[] = $this->getPost($post['post_id']);
+            foreach($data as $note){
+                $data_array[] = $this->getNote($note['post_id']);
             }
-            $this->cache->set('posts.author.'.$author_id . '.'. $skip . '.'.  $limit, $data_array);
+            $this->cache->set('notes.author.'.$author_id . '.'. $skip . '.'.  $limit, $data_array);
         } else {
             $data_array = $data;
         }
@@ -93,16 +96,16 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
-	public function getPostsByArchive($year, $month, $limit=20, $skip=0) {
-        $data = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
+	public function getNotesByArchive($year, $month, $limit=20, $skip=0) {
+        $data = $this->cache->get('notes.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='post' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='note' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
-            foreach($data as $post){
-                $data_array[] = $this->getPost($post['post_id']);
+            foreach($data as $note){
+                $data_array[] = $this->getNote($note['post_id']);
             }
-            $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
+            $this->cache->set('notes.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
         } else {
             $data_array = $data;
         }
@@ -113,7 +116,7 @@ class ModelBlogPost extends Model {
 
     public function addWebmention($data, $webmention_id, $comment_data){
         if(isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount'])) {
-            $post = $this->getPostByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
+            $note = $this->getNoteByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
 
             switch($comment_data['type']) {
             case 'like':
@@ -121,7 +124,7 @@ class ModelBlogPost extends Model {
                     ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$comment_data['author']['name']."'" : "") .
                     ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$comment_data['author']['url']."'" : "") .
                     ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$comment_data['author']['photo']."'" : "") .
-                    ", post_id = ".(int)$post['post_id']);
+                    ", post_id = ".(int)$note['note_id']);
                 $like_id = $this->db->getLastId();
                 $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_like_id = '".(int)$like_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
                 $this->cache->delete('likes');
@@ -135,7 +138,7 @@ class ModelBlogPost extends Model {
                     ((isset($comment_data['text'])  && !empty($comment_data['text']))? ", body='".$comment_data['text']."'" : "") .
                     ((isset($comment_data['name'])  && !empty($comment_data['name']))? ", source_name='".$comment_data['name']."'" : "") .
                     ((isset($comment_data['published'])  && !empty($comment_data['published']))? ", `timestamp`='".$comment_data['published']."'" : ", `timestamp`=NOW()") .
-                    ", post_id = ".(int)$post['post_id'] .", approved=1");
+                    ", post_id = ".(int)$note['note_id'] .", approved=1");
                 $comment_id = $this->db->getLastId();
                 $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_comment_id = '".(int)$comment_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
                 $this->cache->delete('comments');
@@ -149,7 +152,7 @@ class ModelBlogPost extends Model {
                     ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$comment_data['author']['name']."'" : "") .
                     ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$comment_data['author']['url']."'" : "") .
                     ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$comment_data['author']['photo']."'" : "") .
-                    ", post_id = ".(int)$post['post_id'] .", parse_timestamp = NOW(), approved=1");
+                    ", post_id = ".(int)$note['note_id'] .", parse_timestamp = NOW(), approved=1");
                 $mention_id = $this->db->getLastId();
                 $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
                 $this->cache->delete('mentions');

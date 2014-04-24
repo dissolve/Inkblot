@@ -11,6 +11,8 @@ class ControllerAdminCache extends Controller {
     	$this->cache->delete('mentions');
     	$this->cache->delete('post');
     	$this->cache->delete('posts');
+    	$this->cache->delete('note');
+    	$this->cache->delete('notes');
     	$this->cache->delete('likes');
     	$this->cache->delete('comments');
 

@@ -31,15 +31,18 @@ define('PAGE_TITLE', 'TESTING');
 
 if(ENVIRONMENT == 'LIVE'){
     // HTTP
-    define('HTTP_SERVER', 'http://ben.thatmustbe.me/');
+    define('HTTP_SERVER', 'http://ben.thatmustbe.me/admin/');
     // HTTPS
-    define('HTTPS_SERVER', 'https://ben.thatmustbe.me/');
+    define('HTTPS_SERVER', 'https://ben.thatmustbe.me/admin/');
 } else {
     // HTTP
-    define('HTTP_SERVER', 'http://www.ben/');
+    define('HTTP_SERVER', 'http://www.ben/admin/');
     // HTTPS
-    define('HTTPS_SERVER', 'https://www.ben/');
+    define('HTTPS_SERVER', 'https://www.ben/admin/');
 }
+
+define('ADMIN_USER', 'admin_username_goes_here');
+define('ADMIN_PASSWORD', 'admin_password_goes_here');
 
 define('DIR_SYSTEM', DIR_BASE .'system/');
 define('DIR_DATABASE', DIR_BASE . 'system/database/');
@@ -50,5 +53,5 @@ define('DIR_DOWNLOAD', DIR_BASE . 'download/');
 define('DIR_LOGS', DIR_BASE . 'system/logs/');
 define('DIR_MODIFICATION', DIR_BASE . 'system/modification/');
 
-define('DIR_APPLICATION', DIR_BASE . 'blog/');
-define('DIR_TEMPLATE', DIR_BASE . 'blog/view/theme/');
+define('DIR_APPLICATION', DIR_BASE . 'admin/');
+define('DIR_TEMPLATE', DIR_BASE . 'admin/view/template/');
