@@ -11,11 +11,8 @@ class ControllerBlogNote extends Controller {
             if($this->request->get['send_mention']){
                 include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
 
-                
-                $url = $note['permalink'];
-
-                $client = new IndieWeb\MentionClient($url);
-                $client->debug(true);
+                $client = new IndieWeb\MentionClient($note['permalink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
+                $client->debug(false);
                 $sent = $client->sendSupportedMentions();
                 $this->log->write($sent);
                 $data['success'] = 'Webmentions Sent';

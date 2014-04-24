@@ -37,7 +37,6 @@ class ModelBlogNote extends Model {
                                                 'month='.$note['month']. '&' . 
                                                 'day='.$note['day']. '&' . 
                                                 'daycount='.$note['daycount']. '&' . 
-                                                'note_type='.$note['note_type']. '&' . 
                                                 'slug=' . $note['slug'], '')
             ));
             $this->cache->set('note.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $note);

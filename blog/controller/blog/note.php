@@ -38,6 +38,10 @@ class ControllerBlogNote extends Controller {
             'like_count' => $like_count,
             'likes' => $likes
             ));
+        if(empty($data['note']['title'])){
+            $data['note']['title'] = substr(strip_tags($data['note']['body_html']), 0, 27). '...';
+        }
+
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/note.tpl')) {
 			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/note.tpl', $data));
