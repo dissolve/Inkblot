@@ -21,6 +21,7 @@ class ControllerBlogNote extends Controller {
 
             $note['edit'] = $this->url->link('blog/note/insert', '&id='.$note['note_id'] , ''); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
             $note['body_html'] = html_entity_decode($note['body']);
+			$note['send_mention'] = $this->url->link('blog/note', 'send_mention=true&note_id=' . $note['note_id'] . $url, ''),
 
 			$data['note'] = $note;
 
