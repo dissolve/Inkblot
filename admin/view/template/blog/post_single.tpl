@@ -13,6 +13,7 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <div class="pull-right">
+        <a href="<?php echo $post['send_mention']; ?>" data-toggle="tooltip" title="Send Webmentions" class="btn btn-primary"><i class="fa fa-share"></i></a>
         <a href="<?php echo $post['permalink']; ?>" data-toggle="tooltip" title="View Live" class="btn"><i class="fa fa-link"></i></a>
         <a href="<?php echo $post['edit']; ?>" data-toggle="tooltip" title="Edit" class="btn"><i class="fa fa-pencil-square-o"></i></a>
         <a href="<?php echo $back; ?>" data-toggle="tooltip" title="Back" class="btn"><i class="fa fa-reply"></i></a></div>

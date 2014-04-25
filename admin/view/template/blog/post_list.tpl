@@ -54,6 +54,7 @@
                 <td class="text-left"><?php echo $post['title']; ?></td>
                 <td class="text-left"><?php echo $post['timestamp']; ?></td>
                 <td class="text-right">
+                <a href="<?php echo $post['send_mention']; ?>" data-toggle="tooltip" title="Send Webmentions" class="btn btn-primary"><i class="fa fa-share"></i></a>
                 <a href="<?php echo $post['permalink']; ?>" data-toggle="tooltip" title="View Live" class="btn btn-primary"><i class="fa fa-link"></i></a>
                 <a href="<?php echo $post['view']; ?>" data-toggle="tooltip" title="View" class="btn btn-primary"><i class="fa fa-eye"></i></a>
                 <a href="<?php echo $post['edit']; ?>" data-toggle="tooltip" title="Edit" class="btn btn-primary"><i class="fa fa-pencil"></i></a>

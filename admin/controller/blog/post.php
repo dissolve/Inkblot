@@ -8,8 +8,20 @@ class ControllerBlogPost extends Controller {
 
         if($this->request->get['post_id']){
 			$post = $this->model_blog_post->getPost($this->request->get['post_id']);
+            if($this->request->get['send_mention']){
+                include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+
+                $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body']));
+                $client->debug(false);
+                $sent = $client->sendSupportedMentions();
+                $this->log->write($sent);
+                $data['success'] = 'Webmentions Sent';
+
+            }
+
             $post['edit'] = $this->url->link('blog/post/insert', '&id='.$post['post_id'] , ''); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
             $post['body_html'] = html_entity_decode($post['body']);
+			$post['send_mention'] = $this->url->link('blog/post', 'send_mention=true&post_id=' . $post['post_id'] . $url, ''),
 
 			$data['post'] = $post;
 
@@ -190,6 +202,7 @@ class ControllerBlogPost extends Controller {
 				'title'          => $result['title'],
 				'timestamp'      => $result['timestamp'],
 				'permalink'      => $result['permalink'],
+				'send_mention'   => $this->url->link('blog/post', 'send_mention=true&post_id=' . $result['post_id'] . $url, ''),
 				'view'           => $this->url->link('blog/post', '&post_id=' . $result['post_id'] . $url, ''),
 				'edit'           => $this->url->link('blog/post/update', '&post_id=' . $result['post_id'] . $url, '')
 			);
