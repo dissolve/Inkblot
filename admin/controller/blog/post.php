@@ -21,7 +21,7 @@ class ControllerBlogPost extends Controller {
 
             $post['edit'] = $this->url->link('blog/post/insert', '&id='.$post['post_id'] , ''); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
             $post['body_html'] = html_entity_decode($post['body']);
-			$post['send_mention'] = $this->url->link('blog/post', 'send_mention=true&post_id=' . $post['post_id'] . $url, ''),
+			$post['send_mention'] = $this->url->link('blog/post', 'send_mention=true&post_id=' . $post['post_id'] . $url, '');
 
 			$data['post'] = $post;
 
