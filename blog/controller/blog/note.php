@@ -1,8 +1,6 @@
 <?php  
 class ControllerBlogNote extends Controller {
 	public function index() {
-		$this->document->setTitle($this->config->get('config_meta_title'));
-		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
@@ -41,6 +39,19 @@ class ControllerBlogNote extends Controller {
         if(empty($data['note']['title'])){
             $data['note']['title'] = substr(strip_tags($data['note']['body_html']), 0, 27). '...';
         }
+
+        $title = $data['post']['title'];
+        $short_title = (strlen($title) > 30 ? substr($title, 0, 27). '...' : $title);
+        $body = strip_tags($data['post']['body_html']);
+        $description = (strlen($body) > 300 ? substr($body, 0, 197). '...' : $body);
+
+		$this->document->setTitle($title);
+		$this->document->setDescription($description);
+
+		$this->document->addMeta('twitter:card', 'summary');
+		$this->document->addMeta('twitter:title', $short_title);
+		$this->document->addMeta('twitter:description', $description);
+
 
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/note.tpl')) {

@@ -14,6 +14,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width" />
+<?php foreach ($metas as $meta) { ?>
+<meta name="<?php echo $meta['name']; ?>" content="<?php echo $meta['content']; ?>" />
+<?php } ?>
 <title><?php echo $title; ?></title>
 <link rel="webmention" href="<?php echo $webmention_handler?>" />
 <link rel="profile" href="http://microformats.org/profile/specs" />

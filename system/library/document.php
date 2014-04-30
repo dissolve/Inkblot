@@ -4,6 +4,7 @@ class Document {
 	private $description;
 	private $keywords;
 	private $links = array();
+	private $metas = array();
 	private $styles = array();
 	private $scripts = array();
 
@@ -40,6 +41,17 @@ class Document {
 
 	public function getLinks() {
 		return $this->links;
+	}
+
+	public function addMeta($name, $data) {
+		$this->links[$name] = array(
+			'name' => $name,
+			'content'  => $data
+		);
+	}
+
+	public function getMetas() {
+		return $this->metas;
 	}
 
 	public function addStyle($href, $rel = 'stylesheet', $media = 'screen') {
