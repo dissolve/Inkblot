@@ -44,7 +44,7 @@ class Document {
 	}
 
 	public function addMeta($name, $data) {
-		$this->links[$name] = array(
+		$this->metas[$name] = array(
 			'name' => $name,
 			'content'  => $data
 		);

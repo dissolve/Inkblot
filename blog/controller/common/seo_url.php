@@ -8,6 +8,7 @@ class ControllerCommonSeoUrl extends Controller {
 		
 		// Decode URL
 		if (isset($this->request->get['_route_'])) {
+            $this->log->write('debug3');
             $route_get =  $this->request->get['_route_'];
             //remove a trailing /
             if(substr($route_get, -1) == '/'){
@@ -32,6 +33,7 @@ class ControllerCommonSeoUrl extends Controller {
             }
 			
         } else { //_route_ is not set
+            $this->log->write('debug4');
 
             // check to see if '' is set
             include DIR_BASE . '/routes.php';
