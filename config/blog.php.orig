@@ -52,3 +52,5 @@ define('DIR_MODIFICATION', DIR_BASE . 'system/modification/');
 
 define('DIR_APPLICATION', DIR_BASE . 'blog/');
 define('DIR_TEMPLATE', DIR_BASE . 'blog/view/theme/');
+
+define('AUTH_ENDPOINT', 'https://indieauth.com/auth');

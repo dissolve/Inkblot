@@ -13,8 +13,16 @@ class ControllerCommonHeader extends Controller {
 		$data['site_subtitle'] = SITE_SUBTITLE;
 
 		$webmention_handler = $this->url->link('webmention/receive');
+        $auth_endpoint = AUTH_ENDPOINT;
+        $token_endpoint = $this->url->link('auth/token');
+
         $this->response->addHeader('Link: <'.$webmention_handler.'>; rel="webmention"');
+        $this->response->addHeader('Link: <'. $auth_endpoint.'>; rel="authorization_endpoint"');
+        $this->response->addHeader('Link: <'. $token_endpoint.'>; rel="token_endpoint"');
+
 		$data['webmention_handler'] = $webmention_handler;
+		$data['authorization_endpoint'] = $auth_endpoint;
+		$data['token_endpoint'] = $token_endpoint;
 
 		$data['base'] = $server;
 		$data['description'] = $this->document->getDescription();
