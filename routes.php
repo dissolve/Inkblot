@@ -9,6 +9,7 @@ $routes['clearcache']         = 'admin/cache';
 $routes['clearrevision']      = 'admin/cache/revision';
 $routes['webmention']         = 'webmention/receive';
 $routes['token']              = 'auth/token';
+$routes['micropub']           = 'auth/micropub';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`page/(?P<id>\w+)`i',

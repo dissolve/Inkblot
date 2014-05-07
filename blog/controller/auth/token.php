@@ -17,16 +17,27 @@ class ControllerAuthToken extends Controller {
             ));
 
 
+            $this->log->write('connecting to : ' . AUTH_ENDPOINT);
+            $this->log->write('with : ' . $post_data);
             $ch = curl_init(AUTH_ENDPOINT);
+
+            if(!$ch){$this->log->write('error with curl_init');}
+
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-            //curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            /////////////////////////////////////////////////
+            //TODO: once my hosting provider fixes its issue i can remove this
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            /////////////////////////////////////////////////
+
             $response = curl_exec($ch);
 
             $this->log->write('response from Auth endpoint: ' . $response);
 
-            $results = parse_str($response);
+            $results = array();
+            parse_str($response, $results);
 
             if($results['me']){
                 $user = $results['me'];

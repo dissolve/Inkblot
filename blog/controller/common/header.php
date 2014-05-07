@@ -15,14 +15,17 @@ class ControllerCommonHeader extends Controller {
 		$webmention_handler = $this->url->link('webmention/receive');
         $auth_endpoint = AUTH_ENDPOINT;
         $token_endpoint = $this->url->link('auth/token');
+        $micropub_endpoint = $this->url->link('auth/micropub');
 
-        $this->response->addHeader('Link: <'.$webmention_handler.'>; rel="webmention"');
+        $this->response->addHeader('Link: <'. $webmention_handler.'>; rel="webmention"');
         $this->response->addHeader('Link: <'. $auth_endpoint.'>; rel="authorization_endpoint"');
         $this->response->addHeader('Link: <'. $token_endpoint.'>; rel="token_endpoint"');
+        $this->response->addHeader('Link: <'. $micropub_endpoint.'>; rel="micropub"');
 
 		$data['webmention_handler'] = $webmention_handler;
 		$data['authorization_endpoint'] = $auth_endpoint;
 		$data['token_endpoint'] = $token_endpoint;
+		$data['micropub_endpoint'] = $micropub_endpoint;
 
 		$data['base'] = $server;
 		$data['description'] = $this->document->getDescription();

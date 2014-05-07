@@ -21,6 +21,7 @@
 <link rel="webmention" href="<?php echo $webmention_handler?>" />
 <link rel="authorization_endpoint" href="<?php echo $authorization_endpoint ?>">
 <link rel="token_endpoint" href="<?php echo $token_endpoint ?>">
+<link rel="micropub" href="<?php echo $micropub_endpoint ?>">
 <link rel="profile" href="http://microformats.org/profile/specs" />
 <link rel="profile" href="http://microformats.org/profile/hatom" />
 

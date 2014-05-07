@@ -1,7 +1,7 @@
 <?php
 class ModelAuthToken extends Model {
 	public function newToken($user, $scope, $client_id) {
-        $checksum = md5sum($user. $scope. $client_id. date());
+        $checksum = md5($user. $scope. $client_id. date());
         $this->db->query("INSERT INTO " . DATABASE . ".tokens SET 
             user='".$this->db->escape($user)."',
             scope='".$this->db->escape($scope)."',
@@ -12,6 +12,20 @@ class ModelAuthToken extends Model {
         $id = $this->db->getLastId();
         return $id . ',' . $checksum;
 	}
+
+    public function getAuthFromToken($token){
+        $token_bits = explode(',', $token);
+        $token_id = $token_bits[0];
+        $checksum = $token_bits[1];
+
+        $results = $this->db->query("SELECT * FROM " . DATABASE . ".tokens WHERE token_id=". (int)$token_id. " LIMIT 1"); //TODO some expiration date
+
+        if($results->row){
+            $this->db->query("UPDATE " . DATABASE . ".tokens SET last_used=NOW() WHERE token_id=". (int)$token_id);
+        }
+
+        return $results->row;
+    }
 
 
 }
