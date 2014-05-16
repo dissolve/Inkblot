@@ -15,6 +15,7 @@ class ControllerBlogArticle extends Controller {
 		$this->load->model('blog/mention');
 		
 		$article = $this->model_blog_article->getArticleByDayCount($year, $month, $day, $daycount);
+        $this->log->write(print_r($article,true));
         $author = $this->model_blog_author->getAuthor($article['author_id']);
         $categories = $this->model_blog_category->getCategoriesForPost($article['article_id']);
         $comment_count = $this->model_blog_comment->getCommentCountForPost($article['article_id']);

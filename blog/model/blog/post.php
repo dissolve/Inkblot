@@ -11,7 +11,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = '". (int)$post_id . "'");
             $post = $query->row;
             $post = array_merge($post, array(
-                'permalink' => $this->url->link('blog/post', 'year='.$post['year']. '&' . 
+                'permalink' => $this->url->link('blog/'.$post['post_type'], 'year='.$post['year']. '&' . 
                                                 'month='.$post['month']. '&' . 
                                                 'day='.$post['day']. '&' . 
                                                 'daycount='.$post['daycount']. '&' . 
@@ -31,7 +31,7 @@ class ModelBlogPost extends Model {
                                                                                   daycount = '". (int)$daycount . "'");
             $post = $query->row;
             $post = array_merge($post, array(
-                'permalink' => $this->url->link('blog/post', 'year='.$post['year']. '&' . 
+                'permalink' => $this->url->link('blog/'.$post['post_type'], 'year='.$post['year']. '&' . 
                                                 'month='.$post['month']. '&' . 
                                                 'day='.$post['day']. '&' . 
                                                 'daycount='.$post['daycount']. '&' . 
