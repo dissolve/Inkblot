@@ -29,7 +29,7 @@ class ControllerAuthToken extends Controller {
 
             /////////////////////////////////////////////////
             //TODO: once my hosting provider fixes its issue i can remove this
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            //curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             /////////////////////////////////////////////////
 
             $response = curl_exec($ch);

@@ -7,8 +7,8 @@ class ControllerBlogArchive extends Controller {
         $month = $this->request->get['month'];
         $year = $this->request->get['year'];
 
-		$this->document->setTitle('Posts for  '.$month_names[$month] .', '.$year);
-		$data['title'] = 'Posts for '.$month_names[$month] .', '.$year;
+		$this->document->setTitle('Articles for  '.$month_names[$month] .', '.$year);
+		$data['title'] = 'Articles for '.$month_names[$month] .', '.$year;
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
@@ -16,21 +16,21 @@ class ControllerBlogArchive extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 
 		$this->load->model('blog/author');
-		$this->load->model('blog/post');
+		$this->load->model('blog/article');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
 		$this->load->model('blog/like');
 
 
-		$data['posts'] = array();
+		$data['articles'] = array();
 
-		foreach ($this->model_blog_post->getPostsByArchive($year, $month) as $post) {
-                $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
-                $author = $this->model_blog_author->getAuthor($post['author_id']);
-                $comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
-                $like_count = $this->model_blog_like->getLikeCountForPost($post['post_id']);
-                $data['posts'][] = array_merge($post, array(
-                    'body_html' => html_entity_decode($post['body']),
+		foreach ($this->model_blog_article->getArticlesByArchive($year, $month) as $article) {
+                $categories = $this->model_blog_category->getCategoriesForPost($article['article_id']);
+                $author = $this->model_blog_author->getAuthor($article['author_id']);
+                $comment_count = $this->model_blog_comment->getCommentCountForPost($article['article_id']);
+                $like_count = $this->model_blog_like->getLikeCountForPost($article['article_id']);
+                $data['articles'][] = array_merge($article, array(
+                    'body_html' => html_entity_decode($article['body']),
                     'author' => $author,
                     'categories' => $categories,
                     'comment_count' => $comment_count,

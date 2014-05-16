@@ -5,30 +5,30 @@ class ControllerBlogCategory extends Controller {
         $category = $this->model_blog_category->getCategoryByName($this->request->get['name']);
         $category_id = $category['category_id'];
 
-		$this->document->setTitle('Posts Filed Under '.$category['name']);
-		$data['title'] = 'Posts Filed Under '.$category['name'];
+		$this->document->setTitle('Articles Filed Under '.$category['name']);
+		$data['title'] = 'Articles Filed Under '.$category['name'];
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
-		$this->load->model('blog/post');
+		$this->load->model('blog/article');
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
 		$this->load->model('blog/like');
 
 
-		$data['posts'] = array();
+		$data['articles'] = array();
 
-		foreach ($this->model_blog_post->getPostsByCategory($category_id) as $post) {
-                $author = $this->model_blog_author->getAuthor($post['author_id']);
-                $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
-                $comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
-                $like_count = $this->model_blog_like->getLikeCountForPost($post['post_id']);
-                $data['posts'][] = array_merge($post, array(
-                    'body_html' => html_entity_decode($post['body']),
+		foreach ($this->model_blog_article->getArticlesByCategory($category_id) as $article) {
+                $author = $this->model_blog_author->getAuthor($article['author_id']);
+                $categories = $this->model_blog_category->getCategoriesForPost($article['article_id']);
+                $comment_count = $this->model_blog_comment->getCommentCountForPost($article['article_id']);
+                $like_count = $this->model_blog_like->getLikeCountForPost($article['article_id']);
+                $data['articles'][] = array_merge($article, array(
+                    'body_html' => html_entity_decode($article['body']),
                     'author' => $author,
                     'categories' => $categories,
                     'comment_count' => $comment_count,

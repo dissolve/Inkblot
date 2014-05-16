@@ -7,9 +7,10 @@ final class DBMySQL {
 			trigger_error('Error: Could not make a database link using ' . $username . '@' . $hostname);
 		}
 
-		if (!mysql_select_db($database, $this->link)) {
-			trigger_error('Error: Could not connect to database ' . $database);
-		}
+        // this doesn't make sense as I'm not using a specific DB
+		//if (!mysql_select_db($database, $this->link)) {
+			//trigger_error('Error: Could not connect to database ' . $database);
+		//}
 		
 		mysql_query("SET NAMES 'utf8'", $this->link);
 		mysql_query("SET CHARACTER SET utf8", $this->link);

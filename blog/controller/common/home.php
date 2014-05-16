@@ -8,7 +8,6 @@ class ControllerCommonHome extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 
 		$this->load->model('blog/post');
-		$this->load->model('blog/note');
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
@@ -16,27 +15,12 @@ class ControllerCommonHome extends Controller {
 		
 		$data['posts'] = array();
 
-		foreach ($this->model_blog_post->getRecentPosts(5) as $result) {
+		foreach ($this->model_blog_post->getRecentPosts(10) as $result) {
                 $author = $this->model_blog_author->getAuthor($result['author_id']);
                 $categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
                 $comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
                 $like_count = $this->model_blog_like->getLikeCountForPost($result['post_id']);
                 $data['posts'][] = array_merge($result, array(
-                    'body_html' => html_entity_decode($result['body']),
-                    'author' => $author,
-                    'categories' => $categories,
-                    'comment_count' => $comment_count,
-                    'like_count' => $like_count
-                    ));
-    	}
-		$data['notes'] = array();
-
-		foreach ($this->model_blog_note->getRecentNotes(5) as $result) {
-                $author = $this->model_blog_author->getAuthor($result['author_id']);
-                $categories = $this->model_blog_category->getCategoriesForPost($result['note_id']);
-                $comment_count = $this->model_blog_comment->getCommentCountForPost($result['note_id']);
-                $like_count = $this->model_blog_like->getLikeCountForPost($result['note_id']);
-                $data['notes'][] = array_merge($result, array(
                     'body_html' => html_entity_decode($result['body']),
                     'author' => $author,
                     'categories' => $categories,
