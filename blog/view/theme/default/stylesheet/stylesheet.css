@@ -671,9 +671,15 @@ body.single #content .article, body.single #content .page, body.page #content .a
 #content .article, #content .page {
   margin-bottom: 60px;
 }
+#content .article {
+  float:right;
+  width:600px;
+}
 #content .note {
   background-color:lightyellow;
   margin-bottom: 30px;
+  width:200px;
+  float:left;
 }
 #content .article:after, #content .page:after {
   content: ".";
@@ -1414,6 +1420,14 @@ img.comment_author { width:48px; height:48px; }
     width: auto;
     height: auto;
     max-width: 100%;
+  }
+  #content .article {
+    float:none;
+    width:auto;
+  }
+  #content .note {
+    width:auto;
+    float:none;
   }
 }
 /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
