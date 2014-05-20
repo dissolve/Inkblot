@@ -17,7 +17,27 @@ class ControllerAuthMicropub extends Controller {
             $auth_info = $this->model_auth_token->getAuthFromToken($token);
 
             $this->log->write(print_r($auth_info,true));
-            $this->log->write($token);
+            //$this->log->write($token)
+            $upload_shot = $_FILES['photo'];
+            $this->log->write(print_r($upload_shot['name'],true));
+
+            if( $upload_shot['error'] == 0) {
+
+                move_uploaded_file($upload_shot["tmp_name"], DIR_IMAGE .'/uploaded/'. $upload_shot["name"]);
+
+                $this->load->model('blog/photo');
+                $data = array();
+                $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
+
+                $photo_id = $this->model_blog_photo->newPhoto($data);
+
+                $photo = $this->model_blog_photo->getPhoto($photo_id);
+
+                $this->response->addHeader('HTTP/1.1 201 Created');
+                $this->response->addHeader('Location: '. $photo['permalink']);
+
+                $this->response->setOutput($photo['permalink']);
+            }
 
 
         } else {

@@ -7,7 +7,7 @@ class ControllerWebmentionQueue extends Controller {
         } else {
             $this->load->model('webmention/queue');
             $entry = $this->model_webmention_queue->getEntry($this->request->get['id']);
-            $this->log->write($this->request->get['id']);
+            //$this->log->write($this->request->get['id']);
             if($entry){
                 header('Webmention-Status: ' . $entry['webmention_status_code']);
 

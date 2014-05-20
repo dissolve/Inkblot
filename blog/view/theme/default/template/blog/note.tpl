@@ -1,6 +1,6 @@
 <?php echo $header; ?>
 
-          <article id="note-<?php echo $note['note']?>" class="note-<?php echo $note['note']?> note type-note status-publish format-standard category-uncategorized h-entry hentry h-as-article" itemprop="blogNote" itemscope="" itemtype="http://schema.org/BlogNoteing">
+          <article id="note-<?php echo $note['note_id']?>" class="note-<?php echo $note['note_id']?> note type-note status-publish format-standard category-uncategorized h-entry hentry h-as-article" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
   <header class="entry-header">
     <h1 class="entry-title p-name" itemprop="name headline"><a href="<?php echo $note['permalink']?>" class="u-url url" title="Permalink to <?php echo $note['title']?>" rel="bookmark" itemprop="url"><?php echo $note['title']?></a></h1>
 
@@ -16,7 +16,7 @@
         </div><!-- .entry-meta -->
       </header><!-- .entry-header -->
 
-      <div class="entry-content e-content" itemprop="description articleBody">
+      <div class="entry-content e-content p-note" itemprop="description articleBody">
       <?php echo $note['body_html'];?>
       
       </div><!-- .entry-content -->

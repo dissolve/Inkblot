@@ -511,6 +511,7 @@ table {
 article.page,
 article.article,
 article.note,
+article.photo,
 article.attachment {
   -webkit-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
@@ -616,6 +617,21 @@ footer.entry-meta {
   font-size: 13px;
   margin-bottom: 14px;
 }
+.photo .entry-header .entry-title, .photo .entry-header .entry-title a {
+  font-size: 20px;
+}
+.photo .entry-header .entry-title, .photo .entry-header .entry-meta, .photo .entry-content {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.photo .entry-header .entry-meta {
+  font-size: 12px;
+  padding-bottom: 0;
+}
+.photo .entry-content {
+  font-size: 13px;
+  margin-bottom: 14px;
+}
 .format-quote .entry-header .entry-title, .format-video .entry-header .entry-title, .format-audio .entry-header .entry-title, .format-image .entry-header .entry-title, .format-quote .entry-header .entry-title a, .format-video .entry-header .entry-title a, .format-audio .entry-header .entry-title a, .format-image .entry-header .entry-title a {
   font-size: 22px;
   padding-top: 30px;
@@ -674,6 +690,15 @@ body.single #content .article, body.single #content .page, body.page #content .a
 #content .article {
   float:right;
   width:600px;
+}
+#content .photo {
+  background-color:lightyellow;
+  margin-bottom: 30px;
+  width:200px;
+  float:left;
+}
+#content .photo img{
+  width:160px;
 }
 #content .note {
   background-color:lightyellow;
@@ -1426,6 +1451,10 @@ img.comment_author { width:48px; height:48px; }
     width:auto;
   }
   #content .note {
+    width:auto;
+    float:none;
+  }
+  #content .photo {
     width:auto;
     float:none;
   }
