@@ -692,13 +692,15 @@ body.single #content .article, body.single #content .page, body.page #content .a
   width:600px;
 }
 #content #posts-stream .photo {
-  background-color:lightyellow;
+  background-color:slategrey;
   margin-bottom: 30px;
   width:200px;
   float:left;
 }
 #content #posts-stream .photo img{
-  width:160px;
+  width:140px;
+  border: 10px solid white;
+  border-bottom-width:35px;
 }
 #content #posts-stream .note {
   background-color:lightyellow;

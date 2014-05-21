@@ -30,6 +30,8 @@ class ControllerAuthMicropub extends Controller {
                 $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
 
                 $photo_id = $this->model_blog_photo->newPhoto($data);
+                $this->cache->delete('posts')
+                $this->cache->delete('photos')
 
                 $photo = $this->model_blog_photo->getPhoto($photo_id);
 
