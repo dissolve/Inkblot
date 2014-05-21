@@ -687,20 +687,20 @@ body.single #content .article, body.single #content .page, body.page #content .a
 #content .article, #content .page {
   margin-bottom: 60px;
 }
-#content .article {
+#content #posts-stream .article {
   float:right;
   width:600px;
 }
-#content .photo {
+#content #posts-stream .photo {
   background-color:lightyellow;
   margin-bottom: 30px;
   width:200px;
   float:left;
 }
-#content .photo img{
+#content #posts-stream .photo img{
   width:160px;
 }
-#content .note {
+#content #posts-stream .note {
   background-color:lightyellow;
   margin-bottom: 30px;
   width:200px;

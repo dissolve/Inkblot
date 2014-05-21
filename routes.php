@@ -36,7 +36,7 @@ $advanced_routes[] = array('controller' => 'blog/note',
     'reverse' => 'note/{year}/{month}/{day}/{daycount}/{slug}');
 
 $advanced_routes[] = array('controller' => 'blog/photo',
-    'expression' => '`photo/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/.*`i',
+    'expression' => '`photo/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/?.*`i',
     'reverse' => 'photo/{year}/{month}/{day}/{daycount}');
 
 $advanced_routes[] = array('controller' => 'blog/author',
