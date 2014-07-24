@@ -53,6 +53,7 @@
         <?php foreach($melinks as $melink){?>
             <li><a href="<?php echo $melink['url'];?>" rel="me" title="<?php echo $melink['title'];?>" target="<?php echo $melink['target'];?>"><?php echo $melink['value'];?></a></li>
         <?php } ?>
+            <li><a href="/static/ben.gpg" rel="pgpkey" title="PGP KEY" >PGP Key</a></li>
 	</ul>
 </section>
 
