@@ -8,7 +8,7 @@ class ModelBlogPost extends Model {
     //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full posts
 
 	public function getPost($post_id) {
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE `post_type`='post' AND post_id = '". (int)$post_id . "'");
+        $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE `post_type`='article' AND post_id = '". (int)$post_id . "'");
         $post = $query->row;
 
         $post['permalink'] = preg_replace( '`/admin/`', '/',
@@ -22,7 +22,7 @@ class ModelBlogPost extends Model {
 	}
 
 	public function getPostByDayCount($year,$month, $day, $daycount) {
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE `post_type`='post' AND year = '". (int)$year . "' AND
+        $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE `post_type`='article' AND year = '". (int)$year . "' AND
                                                                               month = '". (int)$month . "' AND
                                                                               day = '". (int)$day . "' AND
                                                                               daycount = '". (int)$daycount . "'");
@@ -40,7 +40,7 @@ class ModelBlogPost extends Model {
 
 	public function getRecentPosts($limit=10, $skip=0) {
         $data_array = array();
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='post' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='article' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
         foreach($data as $post){
             $data_array[] = $this->getPost($post['post_id']);
@@ -50,7 +50,7 @@ class ModelBlogPost extends Model {
 	}
 
 	public function getPostsByCategory($category_id, $limit=20, $skip=0) {
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE `post_type`='post' AND category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE `post_type`='article' AND category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
         $data_array = array();
         foreach($data as $post){
@@ -61,7 +61,7 @@ class ModelBlogPost extends Model {
 	}
 
 	public function getPostsByAuthor($author_id, $limit=20, $skip=0) {
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='post' AND author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='article' AND author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
         $data_array = array();
         foreach($data as $post){
@@ -72,7 +72,7 @@ class ModelBlogPost extends Model {
 	}
 
 	public function getPostsByArchive($year, $month, $limit=20, $skip=0) {
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='post' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='article' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
         $data_array = array();
         foreach($data as $post){
@@ -83,13 +83,16 @@ class ModelBlogPost extends Model {
 	}
 
     public function getTotalPosts(){
-        $query = $this->db->query("SELECT count(post_id) as total FROM " . DATABASE . ".posts WHERE `post_type`='post'");
+        $query = $this->db->query("SELECT count(post_id) as total FROM " . DATABASE . ".posts WHERE `post_type`='article'");
         return $query->rows['total'];
     }
 
     public function getPosts($sort='post_id', $order='DESC', $limit=20, $skip=0){
 
-        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='post'
+        $this->log->write("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='article'
+            ORDER BY ".$this->db->escape($sort)." ".$this->db->escape($order)."
+            LIMIT ". (int)$skip . ", " . (int)$limit);
+        $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `post_type`='article'
             ORDER BY ".$this->db->escape($sort)." ".$this->db->escape($order)."
             LIMIT ". (int)$skip . ", " . (int)$limit);
         $data = $query->rows;
@@ -117,7 +120,7 @@ class ModelBlogPost extends Model {
 
         $newcount = $query->row['newval'];
 
-        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='post',
+        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='article',
             `body` = '".$this->db->escape($post['body'])."',
             `title` = '".$this->db->escape($post['title'])."',
             `slug` = '".$this->db->escape($post['slug'])."',

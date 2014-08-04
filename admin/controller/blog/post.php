@@ -67,6 +67,15 @@ class ControllerBlogPost extends Controller {
 
 			$url = '';
 
+			// SEND WEBMENTIONS
+			$post = $this->model_blog_post->getPost($post_id);
+			include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+
+			$client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body']));
+			$client->debug(false);
+			$sent = $client->sendSupportedMentions();
+			// END SEND WEBMENTIONS
+
 			//$this->response->redirect($this->url->link('blog/post', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 			$this->response->redirect($this->url->link('blog/post'), 'post_id='.$post_id, '');
 		}

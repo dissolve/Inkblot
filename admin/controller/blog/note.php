@@ -69,6 +69,14 @@ class ControllerBlogNote extends Controller {
 
 			//$this->response->redirect($this->url->link('blog/note', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 			$this->response->redirect($this->url->link('blog/note'), 'note_id='.$note_id, '');
+			// SEND WEBMENTIONS
+			$note = $this->model_blog_note->getNote($note_id);
+			include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+
+			$client = new IndieWeb\MentionClient($note['permalink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
+			$client->debug(false);
+			$sent = $client->sendSupportedMentions();
+			// END SEND WEBMENTIONS
 		}
 
 		$this->getForm();
