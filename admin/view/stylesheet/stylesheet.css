@@ -495,3 +495,6 @@ input.form-control, select.form-control {
 	vertical-align: middle;
 	display: inline-block;
 }
+.photo-thumb {
+	width:80px;
+}

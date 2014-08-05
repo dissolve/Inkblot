@@ -12,11 +12,13 @@ class ControllerCommonMenu extends Controller {
 
 			$data['home'] = $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], '');
 		}
-        $data['posts'] = $this->url->link('blog/post');
-        $data['pages'] = $this->url->link('blog/page');
-        $data['notes'] = $this->url->link('blog/note');
-        $data['categories'] = $this->url->link('blog/category');
-        $data['comments'] = $this->url->link('blog/comment');
+		$data['posts'] = $this->url->link('blog/post');
+		$data['notes'] = $this->url->link('blog/note');
+		$data['photos'] = $this->url->link('blog/photo');
+
+		$data['pages'] = $this->url->link('blog/page');
+		$data['categories'] = $this->url->link('blog/category');
+		$data['comments'] = $this->url->link('blog/comment');
 		
 		return $this->load->view('common/menu.tpl', $data);
 	}

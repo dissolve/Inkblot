@@ -11,6 +11,7 @@
       <ul>
         <li><a href="<?php echo $posts; ?>">Posts</a></li>
         <li><a href="<?php echo $notes; ?>">Notes</a></li>
+        <li><a href="<?php echo $photos; ?>">Photos</a></li>
         <li><a href="<?php echo $categories; ?>">Categories</a></li>
         <li><a href="<?php echo $comments; ?>">Comments</a></li>
         <li><a href="<?php echo $pages; ?>">Pages</a></li>
