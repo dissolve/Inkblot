@@ -21,7 +21,7 @@
 
       <div class="entry-content e-content" itemprop="description articleBody">
         <?php if($post['image_file']) { ?>
-            <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" />
+            <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>
       <?php echo $post['body_html']?>
       

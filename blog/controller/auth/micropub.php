@@ -28,10 +28,19 @@ class ControllerAuthMicropub extends Controller {
                 $this->load->model('blog/photo');
                 $data = array();
                 $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
+                $data['body'] = $this->request->post['content'];
+
+                //TODO
+                // $this->request->post['h'];
+                // $this->request->post['published'];
+                // $this->request->post['category'];
+                // $this->request->post['location'];
+                // $this->request->post['place_name'];
+                // $this->request->post['photo'];
 
                 $photo_id = $this->model_blog_photo->newPhoto($data);
-                $this->cache->delete('posts')
-                $this->cache->delete('photos')
+                $this->cache->delete('posts');
+                $this->cache->delete('photos');
 
                 $photo = $this->model_blog_photo->getPhoto($photo_id);
 
