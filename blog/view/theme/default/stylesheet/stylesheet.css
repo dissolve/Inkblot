@@ -388,7 +388,7 @@ table {
 -------------------------------------------------------------- */
 #notes-stream {
     float:left;
-    width:16.67%;
+    width:33%;
 }
 #articles-stream {
     float:right;
@@ -546,7 +546,8 @@ body.single #content .article, body.single #content .page, body.page #content .a
 #content #posts-stream {
   width:100%;
 }
-#content .article, #content .page {
+#content .article, #content .page,
+#content .photo, #content .note {
   margin-bottom: 60px;
 }
 #content #posts-stream .article {
@@ -560,7 +561,7 @@ body.single #content .article, body.single #content .page, body.page #content .a
   width:31%;
   float:left;
 }
-#content #posts-stream .photo img{
+#content #notes-stream .photo img{
   width:80%;
   border: 10px solid white;
   border-bottom-width:35px;
@@ -1299,8 +1300,8 @@ img.comment_author { width:48px; height:48px; }
       font-size: 1.2em;
   }
   #content #posts-stream .article,
-  #content #posts-stream .note,
-  #content #posts-stream .photo {
+  #content #notes-stream .note,
+  #content #notes-stream .photo {
     width:100%;
     float:left;
   }
