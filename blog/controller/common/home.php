@@ -15,19 +15,35 @@ class ControllerCommonHome extends Controller {
 		
 		$data['posts'] = array();
 
-		foreach ($this->model_blog_post->getRecentPosts(10) as $result) {
-                $author = $this->model_blog_author->getAuthor($result['author_id']);
-                $categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
-                $comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
-                $like_count = $this->model_blog_like->getLikeCountForPost($result['post_id']);
-                $data['posts'][] = array_merge($result, array(
-                    'body_html' => html_entity_decode($result['body']),
-                    'author' => $author,
-                    'categories' => $categories,
-                    'comment_count' => $comment_count,
-                    'like_count' => $like_count
-                    ));
-    	}
+		foreach ($this->model_blog_post->getPostsByTypes() as $result) {
+			$author = $this->model_blog_author->getAuthor($result['author_id']);
+			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
+			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
+			$like_count = $this->model_blog_like->getLikeCountForPost($result['post_id']);
+			$data['posts'][] = array_merge($result, array(
+			    'body_html' => html_entity_decode($result['body']),
+			    'author' => $author,
+			    'categories' => $categories,
+			    'comment_count' => $comment_count,
+			    'like_count' => $like_count
+			    ));
+		}
+
+		$data['side_posts'] = array();
+
+		foreach ($this->model_blog_post->getPostsByTypes(['note','photo']) as $result) {
+			$author = $this->model_blog_author->getAuthor($result['author_id']);
+			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
+			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
+			$like_count = $this->model_blog_like->getLikeCountForPost($result['post_id']);
+			$data['side_posts'][] = array_merge($result, array(
+			    'body_html' => html_entity_decode($result['body']),
+			    'author' => $author,
+			    'categories' => $categories,
+			    'comment_count' => $comment_count,
+			    'like_count' => $like_count
+			    ));
+		}
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/home.tpl')) {
 			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/common/home.tpl', $data));
