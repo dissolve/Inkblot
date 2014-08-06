@@ -7,3 +7,4 @@ system/cache/cache.*
 system/logs/*.txt
 curr.sql
 parsed.sql
+static/
