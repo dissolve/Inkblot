@@ -20,6 +20,7 @@ class ControllerAuthMicropub extends Controller {
             //$this->log->write($token)
             $upload_shot = $_FILES['photo'];
             $this->log->write(print_r($upload_shot['name'],true));
+            $this->log->write(print_r($this->request->post,true));
 
             if( $upload_shot['error'] == 0) {
 

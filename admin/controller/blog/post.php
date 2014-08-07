@@ -6,53 +6,51 @@ class ControllerBlogPost extends Controller {
 		$this->document->setTitle();
 		$this->load->model('blog/post');
 
-        if($this->request->get['post_id']){
+		if($this->request->get['post_id']){
 			$post = $this->model_blog_post->getPost($this->request->get['post_id']);
-            if($this->request->get['send_mention']){
-                include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+			if($this->request->get['send_mention']){
+				include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
 
-                $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body']));
-                $client->debug(false);
-                $sent = $client->sendSupportedMentions();
-                $this->log->write($sent);
-                $data['success'] = 'Webmentions Sent';
+				$client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body']));
+				$client->debug(false);
+				$sent = $client->sendSupportedMentions();
+				$this->log->write($sent);
+				$data['success'] = 'Webmentions Sent';
+			}
 
-            }
-
-            $post['edit'] = $this->url->link('blog/post/insert', '&id='.$post['post_id'] , ''); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
-            $post['body_html'] = html_entity_decode($post['body']);
+			$post['edit'] = $this->url->link('blog/post/update', '&post_id='.$post['post_id'] , ''); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
+			$post['body_html'] = html_entity_decode($post['body']);
 			$post['send_mention'] = $this->url->link('blog/post', 'send_mention=true&post_id=' . $post['post_id'] . $url, '');
 
 			$data['post'] = $post;
 
-            $data['breadcrumbs'] = array();
+			$data['breadcrumbs'] = array();
 
-            $data['breadcrumbs'][] = array(
-                'text' => 'Home',
-                'href' => $this->url->link('common/dashboard') //, 'token=' . $this->session->data['token'], 'SSL')
-            );
+		        $data['breadcrumbs'][] = array(
+				'text' => 'Home',
+				'href' => $this->url->link('common/dashboard') //, 'token=' . $this->session->data['token'], 'SSL')
+		        );
 
-            $data['breadcrumbs'][] = array(
-                'text' => 'Posts',
-                'href' => $this->url->link('blog/post') //, 'token=' . $this->session->data['token'] . $url, 'SSL')
-            );
+		        $data['breadcrumbs'][] = array(
+				'text' => 'Posts',
+				'href' => $this->url->link('blog/post') //, 'token=' . $this->session->data['token'] . $url, 'SSL')
+		        );
 
-            $data['breadcrumbs'][] = array(
-                'text' => $post['title'],
-                'href' => $this->url->link('blog/post', '&id='.$post['post_id'] , '') //, 'token=' . $this->session->data['token'] . $url, 'SSL')
-            );
+		        $data['breadcrumbs'][] = array(
+				'text' => $post['title'],
+				'href' => $this->url->link('blog/post', '&post_id='.$post['post_id'] , '') //, 'token=' . $this->session->data['token'] . $url, 'SSL')
+		        );
 
-            $data['back'] = $this->url->link('blog/post'); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
+		        $data['back'] = $this->url->link('blog/post'); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
 
-            $data['header'] = $this->load->controller('common/header');
-            $data['menu'] = $this->load->controller('common/menu');
-            $data['footer'] = $this->load->controller('common/footer');
+		        $data['header'] = $this->load->controller('common/header');
+		        $data['menu'] = $this->load->controller('common/menu');
+		        $data['footer'] = $this->load->controller('common/footer');
 
-            $this->response->setOutput($this->load->view('blog/post_single.tpl', $data));
-
-        } else {
-            $this->getList();
-        }
+		        $this->response->setOutput($this->load->view('blog/post_single.tpl', $data));
+		} else {
+			$this->getList();
+		}
 	}
 
 	public function insert() {
@@ -88,7 +86,7 @@ class ControllerBlogPost extends Controller {
 		$this->document->setTitle('Update Post');
 
 		$this->load->model('blog/post');
-        $this->error = array();
+		$this->error = array();
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->model_blog_post->editPost($this->request->get['post_id'], $this->request->post);
@@ -181,17 +179,17 @@ class ControllerBlogPost extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-        $data['breadcrumbs'] = array();
+		$data['breadcrumbs'] = array();
 
-        $data['breadcrumbs'][] = array(
-            'text' => 'Home',
-            'href' => $this->url->link('common/dashboard') //, 'token=' . $this->session->data['token'], 'SSL')
-        );
+		$data['breadcrumbs'][] = array(
+		    'text' => 'Home',
+		    'href' => $this->url->link('common/dashboard') //, 'token=' . $this->session->data['token'], 'SSL')
+		);
 
-        $data['breadcrumbs'][] = array(
-            'text' => 'Posts',
-            'href' => $this->url->link('blog/post') //, 'token=' . $this->session->data['token'] . $url, 'SSL')
-            );
+		$data['breadcrumbs'][] = array(
+		    'text' => 'Posts',
+		    'href' => $this->url->link('blog/post') //, 'token=' . $this->session->data['token'] . $url, 'SSL')
+		);
 
 		$data['insert'] = $this->url->link('blog/post/insert'); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
 		$data['delete'] = $this->url->link('blog/post/delete'); //, 'token=' . $this->session->data['token'] . $url, 'SSL');	
@@ -330,16 +328,23 @@ class ControllerBlogPost extends Controller {
 			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], '')
 		);
 
-		$data['breadcrumbs'][] = array(
-			'text' => 'New Post',
-			'href' => $this->url->link('blog/post', 'token=' . $this->session->data['token'] . $url, '')
-		);
+		if (!isset($this->request->get['post_id'])) {
+			$data['breadcrumbs'][] = array(
+				'text' => 'New Post',
+				'href' => $this->url->link('blog/post', 'token=' . $this->session->data['token'] . $url, '')
+			);
+		} else {
+			$data['breadcrumbs'][] = array(
+				'text' => 'Edit Post',
+				'href' => $this->url->link('blog/post', 'token=' . $this->session->data['token'] . $url, '')
+			);
+		}
 
-        $this->load->model('blog/post');
-        $post = NULL;
+		$this->load->model('blog/post');
+		$post = NULL;
 
 		if (!isset($this->request->get['post_id'])) {
-            $data['insert'] = $this->url->link('blog/post/insert'); //, 'token=' . $this->session->data['token'] . $url, '');
+			$data['insert'] = $this->url->link('blog/post/insert'); //, 'token=' . $this->session->data['token'] . $url, '');
 		} else {
 			$data['action'] = $this->url->link('blog/post/update', 'token=' . $this->session->data['token'] . '&post_id=' . $this->request->get['post_id'] . $url, '');
 			$post = $this->model_blog_post->getPost($this->request->get['post_id']);
@@ -371,19 +376,19 @@ class ControllerBlogPost extends Controller {
 		//if (!$this->user->hasPermission('modify', 'blog/post')) {
 			//$this->error['warning'] = 'No Permission';
 		//}
-        $post = $this->request->post['post'];
+		$post = $this->request->post['post'];
 
-        if ((utf8_strlen($post['title']) < 3) || (utf8_strlen($post['title']) > 100)) {
-            $this->error['title'] = 'Min: 3 characters, Max: 100';
-        }
+		if ((utf8_strlen($post['title']) < 3) || (utf8_strlen($post['title']) > 100)) {
+		    $this->error['title'] = 'Min: 3 characters, Max: 100';
+		}
 
-        if ((utf8_strlen($post['slug']) < 3) || (utf8_strlen($post['slug']) > 100)) {
-            $this->error['slug'] = 'Min: 3 characters, Max: 100';
-        }
+		if ((utf8_strlen($post['slug']) < 3) || (utf8_strlen($post['slug']) > 100)) {
+		    $this->error['slug'] = 'Min: 3 characters, Max: 100';
+		}
 
-        if (utf8_strlen($post['body']) < 3) {
-            $this->error['body'] = 'Body Too Short';
-        }
+		if (utf8_strlen($post['body']) < 3) {
+		    $this->error['body'] = 'Body Too Short';
+		}
 
 		if ($this->error && !isset($this->error['warning'])) {
 			$this->error['warning'] = '';
