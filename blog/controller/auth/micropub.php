@@ -16,39 +16,68 @@ class ControllerAuthMicropub extends Controller {
             $this->load->model('auth/token');
             $auth_info = $this->model_auth_token->getAuthFromToken($token);
 
-            $this->log->write(print_r($auth_info,true));
-            //$this->log->write($token)
-            $upload_shot = $_FILES['photo'];
-            $this->log->write(print_r($upload_shot['name'],true));
-            $this->log->write(print_r($this->request->post,true));
+            if(!empty($auth_info) && $auth_info['scope'] == 'post') {
+                $this->log->write(print_r($this->request->post,true));
 
-            if( $upload_shot['error'] == 0) {
+                
+                if(isset($_FILES['photo']) && !empty($_FILES['photo'])){
+                    $upload_shot = $_FILES['photo'];
 
-                move_uploaded_file($upload_shot["tmp_name"], DIR_IMAGE .'/uploaded/'. $upload_shot["name"]);
+                    if( $upload_shot['error'] == 0) {
 
-                $this->load->model('blog/photo');
-                $data = array();
-                $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
-                $data['body'] = $this->request->post['content'];
+                        move_uploaded_file($upload_shot["tmp_name"], DIR_IMAGE .'/uploaded/'. $upload_shot["name"]);
 
-                //TODO
-                // $this->request->post['h'];
-                // $this->request->post['published'];
-                // $this->request->post['category'];
-                // $this->request->post['location'];
-                // $this->request->post['place_name'];
-                // $this->request->post['photo'];
+                        $this->load->model('blog/photo');
+                        $data = array();
+                        $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
+                        $data['body'] = $this->request->post['content'];
 
-                $photo_id = $this->model_blog_photo->newPhoto($data);
-                $this->cache->delete('posts');
-                $this->cache->delete('photos');
+                        //TODO
+                        // $this->request->post['h'];
+                        // $this->request->post['published'];
+                        // $this->request->post['category'];
+                        // $this->request->post['location'];
+                        // $this->request->post['place_name'];
+                        // $this->request->post['photo'];
 
-                $photo = $this->model_blog_photo->getPhoto($photo_id);
+                        $photo_id = $this->model_blog_photo->newPhoto($data);
+                        $this->cache->delete('posts');
+                        $this->cache->delete('photos');
 
-                $this->response->addHeader('HTTP/1.1 201 Created');
-                $this->response->addHeader('Location: '. $photo['permalink']);
+                        $photo = $this->model_blog_photo->getPhoto($photo_id);
 
-                $this->response->setOutput($photo['permalink']);
+                        $this->response->addHeader('HTTP/1.1 201 Created');
+                        $this->response->addHeader('Location: '. $photo['permalink']);
+
+                        $this->response->setOutput($photo['permalink']);
+                    }
+                } else {
+                        $this->load->model('blog/note');
+                        $data = array();
+                        $data['body'] = $this->request->post['content'];
+                        $data['slug'] = $this->request->post['slug'];
+
+                        //TODO
+                        // $this->request->post['h'];
+                        // $this->request->post['published'];
+                        // $this->request->post['category'];
+                        // $this->request->post['location'];
+                        // $this->request->post['place_name'];
+
+                        $note_id = $this->model_blog_note->newNote($data);
+                        $this->cache->delete('posts');
+                        $this->cache->delete('notes');
+
+                        $note = $this->model_blog_note->getNote($note_id);
+
+                        $this->response->addHeader('HTTP/1.1 201 Created');
+                        $this->response->addHeader('Location: '. $note['permalink']);
+
+                        $this->response->setOutput($note['permalink']);
+                }
+            } else {
+                header('HTTP/1.1 401 Unauthorized');
+                exit();
             }
 
 
