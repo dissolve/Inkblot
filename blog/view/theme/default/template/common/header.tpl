@@ -15,8 +15,8 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <link rel="stylesheet" href="/blog/view/theme/default/normalize.css">
-        <link rel="stylesheet" href="/blog/view/theme/default/main.css">
+        <link rel="stylesheet" href="/blog/view/theme/default/stylesheet/normalize.css">
+        <link rel="stylesheet" href="/blog/view/theme/default/stylesheet/main.css">
 
         <link rel="webmention" href="<?php echo $webmention_handler?>" />
         <link rel="authorization_endpoint" href="<?php echo $authorization_endpoint ?>">
@@ -34,7 +34,8 @@
         <link href="<?php echo $icon; ?>" rel="icon" />
         <?php } ?>
 
-        <script src="/blog/javascript/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="/blog/view/javascript/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="/blog/view/javascript/fragmention.js"></script>
     </head>
 
 
