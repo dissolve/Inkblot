@@ -498,3 +498,8 @@ input.form-control, select.form-control {
 .photo-thumb {
 	width:80px;
 }
+
+.dashboard_stats th,
+.dashboard_stats td {
+	padding:1px 10px 1px 0;
+}
