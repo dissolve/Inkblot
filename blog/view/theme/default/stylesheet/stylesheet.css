@@ -132,7 +132,7 @@ h1 {
 }
 
 body :target, body [fragmention] {
-    background-color: rgba(255,255,0,0.5);
+    background-color: #E0E0FF;
 }
 
 /* =Header
