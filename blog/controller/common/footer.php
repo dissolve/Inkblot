@@ -4,6 +4,16 @@ class ControllerCommonFooter extends Controller {
 		
 		$this->load->model('blog/melink');
 		
+        $data['client_id'] = $this->url->link('');
+        $data['auth_page'] = $this->url->link('auth/login');
+        $data['auth_endpoint'] = AUTH_ENDPOINT;
+
+        if(isset($this->session->data['user_id'])){
+            $data['user_name'] = $this->session->data['user_id'];
+        }
+        $data['logout'] = $this->url->link('auth/logout');
+
+
 		$data['melinks'] = array();
 
 		foreach ($this->model_blog_melink->getLinks() as $result) {
@@ -36,7 +46,15 @@ class ControllerCommonFooter extends Controller {
 		$data['recent_posts'] = array();
 
 		foreach ($this->model_blog_post->getRecentPosts(10) as $result) {
-				$data['recent_posts'][] = $result;
+            if(empty($result['title'])){
+                if($result['post_type'] == 'photo'){
+                    $result['title']='photo';
+                } else {
+                    $result['title'] = substr(strip_tags(html_entity_decode($result['body'])), 0, 30). '...';
+                }
+            }
+            
+            $data['recent_posts'][] = $result;
     	}
 
 		$this->load->model('blog/archive');

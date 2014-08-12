@@ -1,5 +1,8 @@
 <?php echo $header; ?>
 
+<?php if(isset($success)){ 
+    echo $success;
+} ?>
 <div id="notes-stream">
 <div id="notes_pad"></div>
 <?php foreach($side_posts as $post) { ?>

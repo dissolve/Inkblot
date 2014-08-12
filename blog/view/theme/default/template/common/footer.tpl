@@ -81,7 +81,25 @@
 	</ul>
     <div style="clear:both"></div>
 </section>
-<?php } //end if like_coutn > 0 ?>
+<?php } //end if like_count > 0 ?>
+<section id="login" class="widget">
+    <? if(isset($user_name)) { ?>
+    <h3 class="widget-title">Signed In As "<?php echo $user_name?>"</h3>
+    <ul><li>
+        <a href="<?php echo $logout?>">Sign Out</a>
+    </li></ul>
+    <? } else { ?>
+    <h3 class="widget-title">Sign In with IndieAuth</h3>
+    <ul><li>
+        <form action="<?php echo $auth_endpoint?>" method="get">
+          <label for="indie_auth_url">Web Address:</label>
+          <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
+          <p><button type="submit">Sign In</button></p>
+          <input type="hidden" name="client_id" value="<?php echo $client_id?>" />
+          <input type="hidden" name="redirect_uri" value="<?php echo $auth_page?>" />
+        </form>
+    </li></ul>
+    <? } ?>
 
 </div><!-- #secondary .widget-area -->
 
