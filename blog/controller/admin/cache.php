@@ -17,6 +17,7 @@ class ControllerAdminCache extends Controller {
     	$this->cache->delete('notes');
     	$this->cache->delete('likes');
     	$this->cache->delete('comments');
+    	$this->cache->delete('mydata');
 
         $json['success'] = "Full cache cleared!";
         if(isset($this->request->get['reason'])){

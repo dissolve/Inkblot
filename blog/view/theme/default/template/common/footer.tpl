@@ -51,9 +51,8 @@
 <section id="linkcat-3" class="widget widget_links"><h3 class="widget-title">Elsewhere</h3>
 	<ul>
         <?php foreach($melinks as $melink){?>
-            <li><a href="<?php echo $melink['url'];?>" rel="me" title="<?php echo $melink['title'];?>" target="<?php echo $melink['target'];?>"><?php echo $melink['value'];?></a></li>
+            <li><a href="<?php echo $melink['url'];?>" rel="<?php echo $melink['rel']?>" title="<?php echo $melink['title'];?>" target="<?php echo $melink['target'];?>"><?php echo $melink['value'];?></a></li>
         <?php } ?>
-            <li><a href="/static/ben.gpg" rel="pgpkey" title="PGP KEY" >PGP Key</a></li>
 	</ul>
 </section>
 

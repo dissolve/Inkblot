@@ -3,6 +3,7 @@ class ControllerCommonFooter extends Controller {
 	public function index() {
 		
 		$this->load->model('blog/melink');
+		$this->load->model('blog/mycard');
 		
         $data['client_id'] = $this->url->link('');
         $data['auth_page'] = $this->url->link('auth/login');
@@ -16,6 +17,16 @@ class ControllerCommonFooter extends Controller {
 
 		$data['melinks'] = array();
 
+		foreach ($this->model_blog_mycard->getData($this->session->data['user_id']) as $result) {
+				$data['melinks'][] = array(
+					'url'    => str_replace('{}', $result['value'], $result['link_format']),
+					'image'  => $result['image'],
+					'value'  => str_replace('{}', $result['value'], $result['field_label']),
+					'title'  => str_replace('{}', $result['value'], $result['title']),
+					'rel'    => $result['rel'],
+					'target' => $result['target']);
+    	}
+        /*
 		foreach ($this->model_blog_melink->getLinks() as $result) {
 				$data['melinks'][] = array(
 					'url' => $result['url'],
@@ -24,6 +35,7 @@ class ControllerCommonFooter extends Controller {
 					'title' => $result['title'],
 					'target' => $result['target']);
     	}
+         */
 
 		//$data['contact'] = $this->url->link('information/contact');
 		//$data['return'] = $this->url->link('account/return/insert', '', 'SSL');
