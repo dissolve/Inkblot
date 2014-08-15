@@ -16,10 +16,11 @@ class ControllerAuthMicropub extends Controller {
             $this->load->model('auth/token');
             $auth_info = $this->model_auth_token->getAuthFromToken($token);
 
-            $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
 
             if(!empty($auth_info) && in_array('post', explode(' ', $auth_info['scope']))) {
+
                 $token_user = str_replace(array('http://', 'https://'),array('',''), $auth_info['user']);
+                $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
 
                 if($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) {
                     $this->log->write(print_r($this->request->post,true));

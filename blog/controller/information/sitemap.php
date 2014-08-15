@@ -51,8 +51,8 @@ class ControllerInformationSitemap extends Controller {
 		}
 		
 		$this->children = array(
-			'common/footer',
-			'common/header'
+			'common/header',
+			'common/footer'
 		);
 				
  		$this->response->setOutput($this->render());		

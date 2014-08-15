@@ -29,7 +29,7 @@ class ControllerAuthLogin extends Controller {
 
             if($results['me'] == $me){
                 $this->log->write('success logging in '. $results['me']);
-                $this->session->data['user_id'] = $results['me'];
+                $this->session->data['user_site'] = $results['me'];
                 //$data['success'] = "You are now logged in as ".$results['me'];
             }
             //$this->log->write('me: '. $me);

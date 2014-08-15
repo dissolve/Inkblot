@@ -9,8 +9,8 @@ class ControllerCommonFooter extends Controller {
         $data['auth_page'] = $this->url->link('auth/login');
         $data['auth_endpoint'] = AUTH_ENDPOINT;
 
-        if(isset($this->session->data['user_id'])){
-            $data['user_name'] = $this->session->data['user_id'];
+        if(isset($this->session->data['user_site'])){
+            $data['user_name'] = $this->session->data['user_site'];
         }
         $data['logout'] = $this->url->link('auth/logout');
 
@@ -18,7 +18,7 @@ class ControllerCommonFooter extends Controller {
 
 		$data['melinks'] = array();
 
-		foreach ($this->model_blog_mycard->getData($this->session->data['user_id']) as $result) {
+		foreach ($this->model_blog_mycard->getData($this->session->data['user_site']) as $result) {
 				$data['melinks'][] = array(
 					'url'    => str_replace('{}', $result['value'], $result['link_format']),
 					'image'  => $result['image'],
