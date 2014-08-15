@@ -1,7 +1,7 @@
 <?php
 class ModelAuthToken extends Model {
 	public function newToken($user, $scope, $client_id) {
-        $checksum = md5($user. $scope. $client_id. date());
+        $checksum = md5($user. $scope. $client_id. date('Y_z_H_i_s').DATABASE.DB_HOSTNAME. );
         $this->db->query("INSERT INTO " . DATABASE . ".tokens SET 
             user='".$this->db->escape($user)."',
             scope='".$this->db->escape($scope)."',

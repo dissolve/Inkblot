@@ -14,6 +14,7 @@ class ControllerCommonFooter extends Controller {
         }
         $data['logout'] = $this->url->link('auth/logout');
 
+        $data['google_analytics_id'] = GOOGLE_ANALYTICS_ID;
 
 		$data['melinks'] = array();
 

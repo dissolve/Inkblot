@@ -13,6 +13,8 @@ define('SITE_SUBTITLE', 'SysAdmin, Developer, Technologist');
 
 define('EMAIL', 'dev@null.me');
 
+define('GOOGLE_ANALYTICS_ID', 'UA-XXXXXXXX-1');
+
 // DIR
 define('DIR_BASE', (ENVIRONMENT == 'LIVE' ? '/var/www/openbloglocal/': '/var/www/openblog/'));
 
