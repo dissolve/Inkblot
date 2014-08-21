@@ -1,5 +1,5 @@
 <?php
-class ControllerBlogNote extends Controller { 
+class ControllerContactsFriends extends Controller { 
 	private $error = array();
 
 	public function index() {

@@ -1,6 +1,6 @@
 <?php  
 class ControllerWebmentionReceive extends Controller {
-	public function index() {
+    public function index() {
         if(isset($this->request->post['source']) && isset($this->request->post['target'])){
             $this->response->addHeader('HTTP/1.1 202 Accepted');
 
@@ -18,7 +18,7 @@ class ControllerWebmentionReceive extends Controller {
             header('HTTP/1.1 400 Bad Request');
             exit();
         }
-	}
+    }
 
 }
 ?>

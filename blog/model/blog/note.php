@@ -16,15 +16,15 @@ class ModelBlogNote extends Model {
 
         $newcount = $query->row['newval'];
 
-        $slug_line = '';
+        $slug = '_';
         if(isset($data['slug']) && !empty($data['slug'])){
-            $slug_line = ",slug = '".$this->db->escape($data['slug'])."'";
+            $slug = $this->db->escape($data['slug']);
         }
 
         $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='note',
             `body` = '".$this->db->escape($data['body'])."',
             `title` = '',
-            ".$slugline."
+            `slug` = '".$slug."',
             `author_id` = 1,
             `timestamp` = NOW(),
             `year` = '".$year."',

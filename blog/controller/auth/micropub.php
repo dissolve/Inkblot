@@ -55,7 +55,10 @@ class ControllerAuthMicropub extends Controller {
                         $this->load->model('blog/note');
                         $data = array();
                         $data['body'] = $this->request->post['content'];
-                        $data['slug'] = $this->request->post['slug'];
+			$data['slug'] = 'note';
+			if(isset($this->request->post['slug'])) {
+				$data['slug'] = $this->request->post['slug'];
+			}
 
                         //TODO
                         // $this->request->post['h'];
