@@ -1,11 +1,14 @@
 <?php  
+
+include DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
+include DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
+include DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
+
 class ControllerAuthToken extends Controller {
 	public function index() {
         if(isset($this->request->post['code']) && 
             isset($this->request->post['me']) &&
-            isset($this->request->post['redirect_uri']) &&
-            isset($this->request->post['client_id']) &&
-            isset($this->request->post['state'])){
+            isset($this->request->post['redirect_uri'])){
 
 
             $post_data = http_build_query(array(
@@ -16,10 +19,11 @@ class ControllerAuthToken extends Controller {
                 'state'         => $this->request->post['state']
             ));
 
+            $auth_endpoint = IndieAuth\Client::discoverAuthorizationEndpoint($this->request->post['me']);
 
-            $this->log->write('connecting to : ' . AUTH_ENDPOINT);
-            $this->log->write('with : ' . $post_data);
-            $ch = curl_init(AUTH_ENDPOINT);
+            //$this->log->write('connecting to : ' . $auth_endpoint);
+            //$this->log->write('with : ' . $post_data);
+            $ch = curl_init($auth_endpoint);
 
             if(!$ch){$this->log->write('error with curl_init');}
 
@@ -34,7 +38,7 @@ class ControllerAuthToken extends Controller {
 
             $response = curl_exec($ch);
 
-            $this->log->write('response from Auth endpoint: ' . $response);
+            //$this->log->write('response from Auth endpoint: ' . $response);
 
             $results = array();
             parse_str($response, $results);

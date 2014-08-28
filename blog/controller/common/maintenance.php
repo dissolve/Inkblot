@@ -40,8 +40,8 @@ $text_message  = '<h1 style="text-align:center;">We are currently performing som
         }
 		
 		$this->children = array(
-			'common/footer',
-			'common/header'
+			'common/header',
+			'common/footer'
 		);
 		
 		$this->response->setOutput($this->render());

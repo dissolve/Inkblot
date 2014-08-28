@@ -1,6 +1,25 @@
 <?php   
 class ControllerCommonHeader extends Controller {
 	public function index() {
+        $headers = apache_request_headers();
+        if(isset($this->request->post['access_token']) || isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || isset($headers['Authorization'])){
+            $token = $this->request->post['access_token'];
+            if(!$token){
+                $parts = explode(' ', $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
+                $token = $parts[1];
+            }
+            if(!$token){
+                $parts = explode(' ', $headers['Authorization']);
+                $token = $parts[1];
+            }
+            $this->load->model('auth/token');
+            $auth_info = $this->model_auth_token->getAuthFromToken($token);
+            if(!empty($auth_info)) {
+                $this->session->data['user_site'] = $auth_info['user'];
+
+            }
+
+        }
 		$data['title'] = $this->document->getTitle();
 		
 		if ($this->request->server['HTTPS']) {

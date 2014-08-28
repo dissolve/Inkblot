@@ -30,6 +30,7 @@ RewriteRule ^scripts/(.*) /index.php?_route_=error [L]
 RewriteRule ^libraries/(.*) /index.php?_route_=error [L]
 RewriteRule ^system/(.*) /index.php?_route_=error [L]
 RewriteRule ^config/(.*) /index.php?_route_=error [L]
+RewriteRule ^$ index.php [L,QSA,E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !.*\.(ico|gif|jpg|jpeg|png|js|css)
