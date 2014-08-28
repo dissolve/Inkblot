@@ -65,10 +65,6 @@ class ControllerBlogNote extends Controller {
 
 			$this->session->data['success'] = 'success';
 
-			$url = '';
-
-			//$this->response->redirect($this->url->link('blog/note', 'token=' . $this->session->data['token'] . $url, 'SSL'));
-			$this->response->redirect($this->url->link('blog/note'), 'note_id='.$note_id, '');
 			// SEND WEBMENTIONS
 			$note = $this->model_blog_note->getNote($note_id);
 			include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
@@ -77,6 +73,9 @@ class ControllerBlogNote extends Controller {
 			$client->debug(false);
 			$sent = $client->sendSupportedMentions();
 			// END SEND WEBMENTIONS
+            
+			//$this->response->redirect($this->url->link('blog/note', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->response->redirect($this->url->link('blog/note'), 'note_id='.$note_id, '');
 		}
 
 		$this->getForm();

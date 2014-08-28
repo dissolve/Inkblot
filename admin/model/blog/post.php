@@ -130,7 +130,7 @@ class ModelBlogPost extends Model {
             `month` = '".$month."',
             `day` = '".$day."',
             `daycount` = ".$newcount .
-            (isset($post['replyto']) && !empty($post['replyto']) ? ", replyto='".$this->db->escape($post['replyto'])."'" : "");
+            (isset($post['replyto']) && !empty(trim($post['replyto'])) ? ", replyto='".$this->db->escape($post['replyto'])."'" : "");
 
         $query = $this->db->query($sql);
 
@@ -147,7 +147,7 @@ class ModelBlogPost extends Model {
             `body` = '".$this->db->escape($post['body'])."',
             `title` = '".$this->db->escape($post['title'])."',
             `slug` = '".$this->db->escape($post['slug'])."', 
-            `replyto` = ". (isset($post['replyto']) && !empty($post['replyto']) ? "'".$this->db->escape($post['replyto'])."'" : "NULL") .
+            `replyto` = ". (isset($post['replyto']) && !empty(trim($post['replyto'])) ? "'".$this->db->escape($post['replyto'])."'" : "NULL") .
             " WHERE post_id = " . (int)$post_id;
 
         $this->db->query($sql);
