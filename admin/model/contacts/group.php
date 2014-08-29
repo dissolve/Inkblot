@@ -8,12 +8,12 @@ class ModelContactsGroup extends Model {
     }
 
 
-    public function addFriendToGroup($group_id, $friend_url) {
-        $this->db->query("INSERT INTO " . DATABASE . ".group_friend SET group_id=".(int)$group_id.", friend_id=".(int)$friend_id);
+    public function addContactToGroup($group_id, $contact_url) {
+        $this->db->query("INSERT INTO " . DATABASE . ".group_contact SET group_id=".(int)$group_id.", contact_id=".(int)$contact_id);
     }
 
     public function getGroup($group_id){
-        $result = $this->db->query("SELECT * FROM " . DATABASE . ".groups JOIN ".DATABASE.".group_friend USING(group_id) JOIN ".DATABASE.".friends WHERE group_id = ".(int)$group_id);
+        $result = $this->db->query("SELECT * FROM " . DATABASE . ".groups JOIN ".DATABASE.".group_contact USING(group_id) JOIN ".DATABASE.".contacts WHERE group_id = ".(int)$group_id);
         return $result->rows;
     }
 

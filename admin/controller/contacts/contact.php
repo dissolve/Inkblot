@@ -1,5 +1,5 @@
 <?php
-class ControllerContactsFriends extends Controller { 
+class ControllerContactsContact extends Controller { 
 	private $error = array();
 
 	public function index() {
@@ -7,17 +7,8 @@ class ControllerContactsFriends extends Controller {
 		$this->load->model('blog/note');
 
         if($this->request->get['note_id']){
+            /*
 			$note = $this->model_blog_note->getNote($this->request->get['note_id']);
-            if($this->request->get['send_mention']){
-                include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-
-                $client = new IndieWeb\MentionClient($note['permalink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
-                $client->debug(false);
-                $sent = $client->sendSupportedMentions();
-                $this->log->write($sent);
-                $data['success'] = 'Webmentions Sent';
-
-            }
 
             $note['edit'] = $this->url->link('blog/note/insert', '&id='.$note['note_id'] , ''); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
             $note['body_html'] = html_entity_decode($note['body']);
@@ -42,6 +33,7 @@ class ControllerContactsFriends extends Controller {
                 'href' => $this->url->link('blog/note', '&id='.$note['note_id'] , '') //, 'token=' . $this->session->data['token'] . $url, 'SSL')
             );
 
+             */
             $data['back'] = $this->url->link('blog/note'); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
 
             $data['header'] = $this->load->controller('common/header');
@@ -148,17 +140,6 @@ class ControllerContactsFriends extends Controller {
 	}
 
 	protected function getList() {
-		if (isset($this->request->get['sort'])) {
-			$sort = $this->request->get['sort'];
-		} else {
-			$sort = 'post_id';
-		}
-
-		if (isset($this->request->get['order'])) {
-			$order = $this->request->get['order'];
-		} else {
-			$order = 'DESC';
-		}
 
 		if (isset($this->request->get['page'])) {
 			$page = $this->request->get['page'];
@@ -167,14 +148,6 @@ class ControllerContactsFriends extends Controller {
 		}
 
 		$url = '';
-
-		if (isset($this->request->get['sort'])) {
-			$url .= '&sort=' . $this->request->get['sort'];
-		}
-
-		if (isset($this->request->get['order'])) {
-			$url .= '&order=' . $this->request->get['order'];
-		}
 
 		if (isset($this->request->get['page'])) {
 			$url .= '&page=' . $this->request->get['page'];
@@ -188,31 +161,29 @@ class ControllerContactsFriends extends Controller {
         );
 
         $data['breadcrumbs'][] = array(
-            'text' => 'Notes',
-            'href' => $this->url->link('blog/note') //, 'token=' . $this->session->data['token'] . $url, 'SSL')
+            'text' => 'Contacts',
+            'href' => $this->url->link('contacts/contact') //, 'token=' . $this->session->data['token'] . $url, 'SSL')
             );
 
-		$data['insert'] = $this->url->link('blog/note/insert'); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
-		$data['delete'] = $this->url->link('blog/note/delete'); //, 'token=' . $this->session->data['token'] . $url, 'SSL');	
+		$data['insert'] = $this->url->link('contacts/contact/insert'); //, 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$data['delete'] = $this->url->link('contacts/contact/delete'); //, 'token=' . $this->session->data['token'] . $url, 'SSL');	
 
-		$data['notes'] = array();
+		$data['contacts'] = array();
 
 			$start = ($page - 1) * 20;//$this->config->get('config_limit_admin');
 			$limit = 20;//$this->config->get('config_limit_admin');
 
-		$note_total = $this->model_blog_note->getTotalNotes();
+        $this->load->model('contacts/contact');
+		$contact_total = $this->model_contacts_contact->getTotalContacts();
 
-		$results = $this->model_blog_note->getNotes($sort, $order, $limit, $start);
+		$results = $this->model_contacts_contact->getContacts($limit, $start);
 
 		foreach ($results as $result) {
-			$data['notes'][] = array(
-				'note_id' => $result['note_id'],
-				'title'          => $result['title'],
-				'timestamp'      => $result['timestamp'],
-				'permalink'      => $result['permalink'],
-				'send_mention'   => $this->url->link('blog/note', 'send_mention=true&note_id=' . $result['note_id'] . $url, ''),
-				'view'           => $this->url->link('blog/note', 'note_id=' . $result['note_id'] . $url, ''),
-				'edit'           => $this->url->link('blog/note/update', '&note_id=' . $result['note_id'] . $url, '')
+			$data['contacts'][] = array(
+				'contact_id' => $result['contact_id'],
+				'main_url'       => $result['main_url'],
+				'view'           => $this->url->link('contacts/contact', 'contact_id=' . $result['contact_id'] . $url, ''),
+				'edit'           => $this->url->link('contacts/contact/update', '&contact_id=' . $result['contact_id'] . $url, '')
 			);
 		}	
 
@@ -279,7 +250,7 @@ class ControllerContactsFriends extends Controller {
 		$data['menu'] = $this->load->controller('common/menu');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('blog/note_list.tpl', $data));
+		$this->response->setOutput($this->load->view('contacts/contact_list.tpl', $data));
 	}
 
 	protected function getForm() {
@@ -334,14 +305,14 @@ class ControllerContactsFriends extends Controller {
 			'href' => $this->url->link('blog/note', 'token=' . $this->session->data['token'] . $url, '')
 		);
 
-        $this->load->model('blog/note');
+        $this->load->model('contacts/contact');
         $note = NULL;
 
 		if (!isset($this->request->get['note_id'])) {
             $data['insert'] = $this->url->link('blog/note/insert'); //, 'token=' . $this->session->data['token'] . $url, '');
 		} else {
 			$data['action'] = $this->url->link('blog/note/update', 'token=' . $this->session->data['token'] . '&note_id=' . $this->request->get['note_id'] . $url, '');
-			$note = $this->model_blog_note->getNote($this->request->get['note_id']);
+			$note = $this->model_contacts_contact->getNote($this->request->get['note_id']);
 			$data['note'] = $note;
 		}
 
@@ -349,7 +320,7 @@ class ControllerContactsFriends extends Controller {
 		$data['cancel'] = $this->url->link('blog/note', 'token=' . $this->session->data['token'] . $url, '');
 
 		if (isset($this->request->get['note_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
-			$note_info = $this->model_blog_note->getNote($this->request->get['note_id']);
+			$note_info = $this->model_contacts_contact->getNote($this->request->get['note_id']);
 		}
 
 		$data['token'] = $this->session->data['token'];

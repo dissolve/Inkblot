@@ -16,7 +16,7 @@ class ControllerCommonMenu extends Controller {
 		$data['notes'] = $this->url->link('blog/note');
 		$data['photos'] = $this->url->link('blog/photo');
 
-		$data['friends'] = $this->url->link('contacts/friends');
+		$data['contacts'] = $this->url->link('contacts/contact');
 		$data['groups'] = $this->url->link('contacts/groups');
 		$data['mydata'] = $this->url->link('contacts/mydata');
 
