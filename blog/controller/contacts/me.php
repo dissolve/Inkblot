@@ -96,10 +96,23 @@ class ControllerContactsMe extends Controller {
 
         $data['google_analytics_id'] = GOOGLE_ANALYTICS_ID;
 
-		$data['mydata'] = array();
+		$data['mydata_contact'] = array();
 
-		foreach ($this->model_blog_mycard->getData($this->session->data['user_site']) as $result) {
-				$data['mydata'][] = array(
+		foreach ($this->model_blog_mycard->getData($this->session->data['user_site'], 'contact') as $result) {
+				$data['mydata_contact'][] = array(
+					'url'    => str_replace('{}', $result['value'], $result['link_format']),
+					'image'  => $result['image'],
+					'value'  => str_replace('{}', $result['value'], $result['mobile_label']),
+					'title'  => str_replace('{}', $result['value'], $result['title']),
+					'rel'    => $result['rel'],
+					'image'  => $result['field_display_image'],
+					'target' => $result['target']);
+    	}
+
+		$data['mydata_elsewhere'] = array();
+
+		foreach ($this->model_blog_mycard->getData($this->session->data['user_site'], 'elsewhere') as $result) {
+				$data['mydata_elsewhere'][] = array(
 					'url'    => str_replace('{}', $result['value'], $result['link_format']),
 					'image'  => $result['image'],
 					'value'  => str_replace('{}', $result['value'], $result['mobile_label']),

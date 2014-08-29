@@ -69,7 +69,7 @@
 
 <div class="links">
 <ol>
-  <?php foreach($mydata as $data){?>
+  <?php foreach($mydata_contact as $data){?>
       <li>
       <a href="<?php echo $data['url'];?>" rel="<?php echo $data['rel']?>" title="<?php echo $data['title'];?>" target="<?php echo $data['target'];?>"><img src="<?php echo $data['image']?>" alt="" /><span class="iconlabel"><?php echo $data['value'];?></span></a></li>
   <?php } ?>
@@ -82,6 +82,15 @@
     <section id="primary">
       <main id="content" role="main">
 
+<h2>Elsewhere</h2>
+<div class="links">
+<ol>
+  <?php foreach($mydata_elsewhere as $data){?>
+      <li>
+      <a href="<?php echo $data['url'];?>" rel="<?php echo $data['rel']?>" title="<?php echo $data['title'];?>" target="<?php echo $data['target'];?>"><img src="<?php echo $data['image']?>" alt="" /><span class="iconlabel"><?php echo $data['value'];?></span></a></li>
+  <?php } ?>
+</ol>
+</div>
 
 <section id="recent-posts-2" class=" ">
 <h3 class="widget-title">Recent Posts</h3>

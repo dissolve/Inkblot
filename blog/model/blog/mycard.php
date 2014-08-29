@@ -1,6 +1,6 @@
 <?php
 class ModelBlogMycard extends Model {
-	public function getData($contact_site = NULL) {
+	public function getData($contact_site = NULL, $classification='all') {
         
         $contacts = '0';
         if($contact_site){
@@ -15,7 +15,7 @@ class ModelBlogMycard extends Model {
             $contacts = $contacts . ','.$contact_id;
         }
 
-		$data = $this->cache->get('mydata.user.'.$contacts);
+		$data = $this->cache->get('mydata.user.'.$classification.'.'.$contacts);
 		if(!$data){
             $query = $this->db->query("SELECT mydata.*, field_types.* 
                             FROM ".DATABASE.".contact_group 
@@ -23,9 +23,10 @@ class ModelBlogMycard extends Model {
 							JOIN ".DATABASE.".mydata USING(data_id) 
 							JOIN ".DATABASE.".field_types USING(field_type_id) 
 						WHERE contact_id IN (".$contacts.") 
+                        ".($classification == "all" ? "" :" AND classification = '".$classification."' ")."
 						ORDER BY mydata.sorting ASC");
 		    $data = $query->rows;
-		    $this->cache->set('mydata.user.'.$contacts, $data);
+		    $this->cache->set('mydata.user.'.$classification.'.'.$contacts, $data);
 		}
 	
 		return $data;
