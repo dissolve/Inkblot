@@ -82,12 +82,12 @@
 </section>
 <?php } //end if like_count > 0 ?>
 <section id="login" class="widget">
-    <? if(isset($user_name)) { ?>
+    <?php if(isset($user_name)) { ?>
     <h3 class="widget-title">Signed In As "<?php echo $user_name?>"</h3>
     <ul><li>
         <a href="<?php echo $logout?>">Sign Out</a>
     </li></ul>
-    <? } else { ?>
+    <?php } else { ?>
     <h3 class="widget-title">Sign In with IndieAuth</h3>
     <ul><li>
         <form action="<?php echo $auth_endpoint?>" method="get">
@@ -98,7 +98,7 @@
           <input type="hidden" name="redirect_uri" value="<?php echo $auth_page?>" />
         </form>
     </li></ul>
-    <? } ?>
+    <?php } ?>
 
 </div><!-- #secondary .widget-area -->
 

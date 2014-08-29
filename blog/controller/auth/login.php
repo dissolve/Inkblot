@@ -2,10 +2,14 @@
 class ControllerAuthLogin extends Controller {
 	public function index() {
         if(isset($this->request->get['code'])){
-            //TODO login
             $code = $this->request->get['code'];
             $client_id = $this->url->link('');
+
             $redir_url = $this->url->link('auth/login');
+            if(isset($this->request->get['c']) && !empty($this->request->get['c'])){
+                $redir_url = $this->url->link('auth/login', 'c='.$this->request->get['c'], '');
+            }
+
             $me = $this->request->get['me'];
 
             $post_data = http_build_query(array(
@@ -28,7 +32,7 @@ class ControllerAuthLogin extends Controller {
             parse_str($response, $results);
 
             if($results['me'] == $me){
-                $this->log->write('success logging in '. $results['me']);
+                //$this->log->write('success logging in '. $results['me']);
                 $this->session->data['user_site'] = $results['me'];
                 //$data['success'] = "You are now logged in as ".$results['me'];
             }
@@ -36,7 +40,11 @@ class ControllerAuthLogin extends Controller {
             //$this->log->write('response: '. $response);
 
         }
-        $this->response->redirect($this->url->link(''));
+        $url = $this->url->link('');
+        if(isset($this->request->get['c']) && !empty($this->request->get['c'])){
+            $url = $this->url->link($this->request->get['c']);
+        }
+        $this->response->redirect($url);
 	}
 }
 ?>

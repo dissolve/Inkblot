@@ -12,6 +12,7 @@ $routes['token']              = 'auth/token';
 $routes['micropub']           = 'auth/micropub';
 $routes['login']              = 'auth/login';
 $routes['logout']             = 'auth/logout';
+$routes['contact']            = 'contacts/me';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`page/(?P<id>\w+)`i',
