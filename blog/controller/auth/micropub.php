@@ -45,6 +45,9 @@ class ControllerAuthMicropub extends Controller {
                             // $this->request->post['location'];
                             // $this->request->post['place_name'];
                             // $this->request->post['photo'];
+                            if(isset($this->request->post['in-reply-to'])){
+                                $data['replyto'] = $this->request->post['in-reply-to'];
+                            }
 
 
                             $photo_id = $this->model_blog_photo->newPhoto($data);
@@ -53,9 +56,14 @@ class ControllerAuthMicropub extends Controller {
 
                             $photo = $this->model_blog_photo->getPhoto($photo_id);
 
+                            // send webmention
+                            include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+                            $client = new IndieWeb\MentionClient($note['permalink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' . html_entity_decode($photo['body']));
+                            $client->debug(false);
+                            $sent = $client->sendSupportedMentions();
+
                             $this->response->addHeader('HTTP/1.1 201 Created');
                             $this->response->addHeader('Location: '. $photo['permalink']);
-
                             $this->response->setOutput($photo['permalink']);
                         }
                     } else {
@@ -74,6 +82,9 @@ class ControllerAuthMicropub extends Controller {
                             // $this->request->post['category'];
                             // $this->request->post['location'];
                             // $this->request->post['place_name'];
+                            if(isset($this->request->post['in-reply-to'])){
+                                $data['replyto'] = $this->request->post['in-reply-to'];
+                            }
 
                             $note_id = $this->model_blog_note->newNote($data);
                             $this->cache->delete('posts');
@@ -81,9 +92,14 @@ class ControllerAuthMicropub extends Controller {
 
                             $note = $this->model_blog_note->getNote($note_id);
 
+                            // send webmention
+                            include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+                            $client = new IndieWeb\MentionClient($note['permalink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
+                            $client->debug(false);
+                            $sent = $client->sendSupportedMentions();
+
                             $this->response->addHeader('HTTP/1.1 201 Created');
                             $this->response->addHeader('Location: '. $note['permalink']);
-
                             $this->response->setOutput($note['permalink']);
                     }
                 } else {
