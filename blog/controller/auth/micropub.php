@@ -46,18 +46,7 @@ class ControllerAuthMicropub extends Controller {
                             // $this->request->post['place_name'];
                             // $this->request->post['photo'];
 
-<<<<<<< HEAD
-                        $this->response->setOutput($photo['permalink']);
-                    }
-                } else {
-                        $this->load->model('blog/note');
-                        $data = array();
-                        $data['body'] = $this->request->post['content'];
-			$data['slug'] = 'note';
-			if(isset($this->request->post['slug'])) {
-				$data['slug'] = $this->request->post['slug'];
-			}
-=======
+
                             $photo_id = $this->model_blog_photo->newPhoto($data);
                             $this->cache->delete('posts');
                             $this->cache->delete('photos');
@@ -66,7 +55,6 @@ class ControllerAuthMicropub extends Controller {
 
                             $this->response->addHeader('HTTP/1.1 201 Created');
                             $this->response->addHeader('Location: '. $photo['permalink']);
->>>>>>> 51db4400bc3ed21eb061e1547a7da0e5ad5b2a8e
 
                             $this->response->setOutput($photo['permalink']);
                         }
@@ -76,6 +64,10 @@ class ControllerAuthMicropub extends Controller {
                             $data['body'] = $this->request->post['content'];
                             $data['slug'] = $this->request->post['slug'];
 
+                            $data['slug'] = 'note';
+                            if(isset($this->request->post['slug'])) {
+                                $data['slug'] = $this->request->post['slug'];
+                            }
                             //TODO
                             // $this->request->post['h'];
                             // $this->request->post['published'];

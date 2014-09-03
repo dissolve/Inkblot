@@ -47,13 +47,15 @@
       ol li{float:left;width:80px;height:80px;text-align:center;margin:20px 5px 0;}
       span.iconlabel{color:white;font-size:10pt;text-decoration:none; white-space: nowrap}
       a{text-decoration:none;}
-      h1{ clear:both; text-align:center; color:white;width:100%; background-color:black;margin:0;z-index:100;position:relative;}
+      h1{ clear:both; text-align:center; color:white;width:100%; background-color:black;margin:0;z-index:100;position:relative;min-height:70px;}
       .links {width:100%;background:transparent;border:0; border-radius: 40px;position:relative;overflow:hidden;padding:5px 0 25px;z-index:0;box-shadow:0 0 0 30px black;}
+      .elsewhere {background:black; border-radius: 0;box-shadow: inherit;}
       .black {background-color:black;color:white;}
       ul {margin:0;}
       #main {background:black; color:white; padding:15px 10px}
       #main a {color:white;}
       #main a:visited {color:white;}
+      .u-photo {float:left;border-radius:45px;padding:0;margin:7px;}
 
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
@@ -62,9 +64,12 @@
 
 
 <body class="h-card">
-<h1 class='p-name'>
-  <span class='p-given-name'><?php echo $author['first_name'] ?></span>
-  <span class='p-family-name'><?php echo $author['last_name'] ?></span>
+<h1>
+  <img class="u-photo" src="/image/static/icon_64.jpg" />
+  <span class="p-name">
+    <span class='p-given-name'><?php echo $author['first_name'] ?></span>
+    <span class='p-family-name'><?php echo $author['last_name'] ?></span>
+  </span>
 </h1>
 
 <div class="links">
@@ -83,7 +88,7 @@
       <main id="content" role="main">
 
 <h2>Elsewhere</h2>
-<div class="links">
+<div class="links elsewhere">
 <ol>
   <?php foreach($mydata_elsewhere as $data){?>
       <li>
