@@ -61,6 +61,8 @@ class ControllerBlogNote extends Controller {
 		$this->load->model('blog/note');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+            $this->request->post = $this->request->post . '<a href="https://www.brid.gy/publish/twitter"></a>';
+            
 			$note_id = $this->model_blog_note->addNote($this->request->post);
 
 			$this->session->data['success'] = 'success';
