@@ -33,12 +33,18 @@ try {
 		
 	$config->set('config_url', HTTP_SERVER);
 	$config->set('config_ssl', HTTPS_SERVER);	
+	$config->set('config_short_url', HTTP_SHORT);
+	$config->set('config_short_ssl', HTTPS_SHORT);	
 	$config->set('config_secure', true);	
 
 
 // Url
 $url = new Url($config->get('config_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url'));	
 $registry->set('url', $url);
+
+// Short_Url
+$short_url = new Url($config->get('config_short_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_short_url'));	
+$registry->set('short_url', $short_url);
 
 // Log
 $log = new Log('error.txt');

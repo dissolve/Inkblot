@@ -6,6 +6,8 @@ class ControllerAdminCache extends Controller {
         $json = array();
 
     	$this->cache->delete('author');
+    	$this->cache->delete('archives');
+    	$this->cache->delete('article');
     	$this->cache->delete('categories');
     	$this->cache->delete('melinks');
     	$this->cache->delete('mentions');

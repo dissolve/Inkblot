@@ -6,21 +6,10 @@ class ModelBlogArticle extends Model {
     //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full articles
 
 	public function getArticle($article_id) {
-        $article = $this->cache->get('article.'. $article_id);
-        if(!$article){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_type='article' AND post_id = '". (int)$article_id . "'");
-            $article = $query->row;
-            $article = array_merge($article, array(
-                'article_id' => $article['post_id'],
-                'permalink' => $this->url->link('blog/article', 'year='.$article['year']. '&' . 
-                                                'month='.$article['month']. '&' . 
-                                                'day='.$article['day']. '&' . 
-                                                'daycount='.$article['daycount']. '&' . 
-                                                'slug=' . $article['slug'], '')
-            ));
-            $this->cache->set('article.'. $article_id, $article);
-        }
-		return $article;
+        $this->load->model('blog/post');
+        $article = $this->model_blog_post->getPost($article_id);
+        $article['article_id'] = $article['post_id'];
+        return $article;
 	}
 
 	public function getArticleByDayCount($year,$month, $day, $daycount) {
@@ -31,13 +20,15 @@ class ModelBlogArticle extends Model {
                                                                                   day = '". (int)$day . "' AND
                                                                                   daycount = '". (int)$daycount . "'");
             $article = $query->row;
+            $this->load->model('blog/post');
             $article = array_merge($article, array(
                 'article_id' => $article['post_id'],
                 'permalink' => $this->url->link('blog/article', 'year='.$article['year']. '&' . 
                                                 'month='.$article['month']. '&' . 
                                                 'day='.$article['day']. '&' . 
                                                 'daycount='.$article['daycount']. '&' . 
-                                                'slug=' . $article['slug'], '')
+                                                'slug=' . $article['slug'], ''),
+                'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->model_blog_post->num_to_sxg($article['post_id']), '')
             ));
             $this->cache->set('article.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $article);
         }

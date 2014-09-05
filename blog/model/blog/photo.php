@@ -40,20 +40,10 @@ class ModelBlogPhoto extends Model {
     //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full photos
 
 	public function getPhoto($photo_id) {
-        $photo = $this->cache->get('photo.'. $photo_id);
-        if(!$photo){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_type='photo' AND post_id = '". (int)$photo_id . "'");
-            $photo = $query->row;
-            $photo = array_merge($photo, array(
-                'photo_id' => $photo['post_id'],
-                'permalink' => $this->url->link('blog/photo', 'year='.$photo['year']. '&' . 
-                                                'month='.$photo['month']. '&' . 
-                                                'day='.$photo['day']. '&' . 
-                                                'daycount='.$photo['daycount'], '')
-            ));
-            $this->cache->set('photo.'. $photo_id, $photo);
-        }
-		return $photo;
+        $this->load->model('blog/post');
+        $photo = $this->model_blog_post->getPost($photo_id);
+        $photo['photo_id'] = $photo['post_id'];
+        return $photo;
 	}
 
 	public function getPhotoByDayCount($year,$month, $day, $daycount) {
@@ -64,12 +54,14 @@ class ModelBlogPhoto extends Model {
                                                                                   day = '". (int)$day . "' AND
                                                                                   daycount = '". (int)$daycount . "'");
             $photo = $query->row;
+            $this->load->model('blog/post');
             $photo = array_merge($photo, array(
                 'photo_id' => $photo['post_id'],
                 'permalink' => $this->url->link('blog/photo', 'year='.$photo['year']. '&' . 
                                                 'month='.$photo['month']. '&' . 
                                                 'day='.$photo['day']. '&' . 
-                                                'daycount='.$photo['daycount'], '')
+                                                'daycount='.$photo['daycount'], ''),
+                'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->model_blog_post->num_to_sxg($photo['post_id']), '')
             ));
             $this->cache->set('photo.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $photo);
         }

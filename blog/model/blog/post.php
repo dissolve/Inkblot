@@ -48,7 +48,7 @@ class ModelBlogPost extends Model {
                                                 'day='.$post['day']. '&' . 
                                                 'daycount='.$post['daycount']. 
                                                 ($post['slug'] ? '&'.'slug='.$post['slug'] : ''), ''),
-                'shortlink' => $this->url->link('blog/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '')
+                'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '')
             ));
             $this->cache->set('post.'. $post_id, $post);
         }
@@ -68,7 +68,8 @@ class ModelBlogPost extends Model {
 							'month='.$post['month']. '&' . 
 							'day='.$post['day']. '&' . 
 							'daycount='.$post['daycount']. 
-							($post['slug'] ? '&'.'slug='.$post['slug'] : ''), '')
+							($post['slug'] ? '&'.'slug='.$post['slug'] : ''), ''),
+            'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '')
 		    ));
 		    $this->cache->set('post.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $post);
 		}

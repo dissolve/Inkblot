@@ -34,13 +34,17 @@ define('PAGE_TITLE', 'TESTING');
 if(ENVIRONMENT == 'LIVE'){
     // HTTP
     define('HTTP_SERVER', 'http://ben.thatmustbe.me/');
+    define('HTTP_SHORT', 'http://btmb.me/');
     // HTTPS
     define('HTTPS_SERVER', 'https://ben.thatmustbe.me/');
+    define('HTTPS_SHORT', 'https://btmb.me/');
 } else {
     // HTTP
     define('HTTP_SERVER', 'http://www.ben/');
+    define('HTTP_SHORT', 'http://btmb.me/');
     // HTTPS
     define('HTTPS_SERVER', 'https://www.ben/');
+    define('HTTPS_SHORT', 'https://btmb.me/');
 }
 
 define('DIR_SYSTEM', DIR_BASE .'system/');
