@@ -58,7 +58,7 @@ class ControllerAuthMicropub extends Controller {
 
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-                            $client = new IndieWeb\MentionClient($note['permalink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' . html_entity_decode($photo['body']) );
+                            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' . html_entity_decode($photo['body']) );
                             $client->debug(false);
                             $sent = $client->sendSupportedMentions();
 
@@ -72,7 +72,7 @@ class ControllerAuthMicropub extends Controller {
                             $data['body'] = $this->request->post['content'] . '<a href="https://www.brid.gy/publish/twitter"></a>';
                             $data['slug'] = $this->request->post['slug'];
 
-                            $data['slug'] = 'note';
+                            $data['slug'] = '_';
                             if(isset($this->request->post['slug'])) {
                                 $data['slug'] = $this->request->post['slug'];
                             }
@@ -94,7 +94,7 @@ class ControllerAuthMicropub extends Controller {
 
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-                            $client = new IndieWeb\MentionClient($note['permalink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
+                            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
                             $client->debug(false);
                             $sent = $client->sendSupportedMentions();
 

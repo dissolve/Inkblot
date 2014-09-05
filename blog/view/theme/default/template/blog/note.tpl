@@ -1,20 +1,6 @@
 <?php echo $header; ?>
 
           <article id="note-<?php echo $note['note_id']?>" class="note-<?php echo $note['note_id']?> note type-note status-publish format-standard category-uncategorized h-entry hentry h-as-article" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
-  <header class="entry-header">
-    <h1 class="entry-title p-name" itemprop="name headline"><a href="<?php echo $note['permalink']?>" class="u-url url" title="Permalink to <?php echo $note['title']?>" rel="bookmark" itemprop="url"><?php echo $note['title']?></a></h1>
-
-        <div class="entry-meta">      
-      <span class="sep">Posted on </span>
-        <a href="<?php echo $note['permalink']?>" title="<?php echo date("g:i A", strtotime($note['timestamp']))?>" rel="bookmark" class="url u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($note['timestamp']))?>" itemprop="dateModified"><?php echo date("F j, Y", strtotime($note['timestamp']))?></time> </a>
-        <address class="byline"> <span class="sep"> by </span> <span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt='' src='http://0.gravatar.com/avatar/<?php echo md5($note['author']['email_address'])?>?s=40&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=G' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="url uid u-url u-uid fn p-name" href="<?php echo $note['author']['link']?>" title="View all notes by <?php echo $note['author']['display_name']?>" rel="author" itemprop="url"><span itemprop="name"><?php echo $note['author']['display_name']?></span></a></span></address>
-        <?php if($note['replyto']) { ?>
-            <div class="repyto">
-               In Reply To <a class="u-url u-in-reply-to" rel="in-reply-to" href="<?php echo $note['replyto']?>">This</a>
-            </div>
-        <?php }  // end if replyto?>
-        </div><!-- .entry-meta -->
-      </header><!-- .entry-header -->
 
       <div class="entry-content e-content p-note" itemprop="description articleBody">
       <?php echo $note['body_html'];?>
@@ -22,6 +8,16 @@
       </div><!-- .entry-content -->
   
   <footer class="entry-meta">
+        <div class="entry-meta">      
+        <?php if($note['replyto']) { ?>
+            <div class="repyto">
+               In Reply To <a class="u-url u-in-reply-to" rel="in-reply-to" href="<?php echo $note['replyto']?>">This</a>
+            </div>
+        <?php }  // end if replyto?>
+      <span class="sep">Posted on </span>
+        <a href="<?php echo $note['permalink']?>" title="<?php echo date("g:i A", strtotime($note['timestamp']))?>" rel="bookmark" class="url u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($note['timestamp']))?>" itemprop="dateModified"><?php echo date("F j, Y", strtotime($note['timestamp']))?></time> </a>
+        <address class="byline"> <span class="sep"> by </span> <span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt='' src='http://0.gravatar.com/avatar/<?php echo md5($note['author']['email_address'])?>?s=40&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=G' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="url uid u-url u-uid fn p-name" href="<?php echo $note['author']['link']?>" title="View all notes by <?php echo $note['author']['display_name']?>" rel="author" itemprop="url"><span itemprop="name"><?php echo $note['author']['display_name']?></span></a></span></address>
+        </div><!-- .entry-meta -->
   
   <?php if($note['categories']){ ?>
       <?php foreach($note['categories'] as $category) { ?>

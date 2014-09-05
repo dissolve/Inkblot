@@ -35,12 +35,12 @@ class ControllerBlogNote extends Controller {
             ));
 
         if(empty($data['note']['title'])){
-            $data['note']['title'] = htmlentities(substr(html_entity_decode(strip_tags($data['note']['body_html'])), 0, 27). '...');
+            $data['note']['title'] = htmlentities(substr(html_entity_decode(strip_tags($data['note']['body_html'])), 0, 57). '...');
         }
 
         $title = strip_tags($data['note']['title']);
         $body = strip_tags($data['note']['body_html']);
-        $short_title = (strlen(html_entity_decode($title)) > 30 ? htmlentities(substr(html_entity_decode($title), 0, 27). '...') : $title);
+        $short_title = (strlen(html_entity_decode($title)) > 60 ? htmlentities(substr(html_entity_decode($title), 0, 57). '...') : $title);
         $description = (strlen(html_entity_decode($body)) > 200 ? htmlentities(substr(html_entity_decode($body), 0, 197). '...') : $body);
 
 		$this->document->setTitle($title);
