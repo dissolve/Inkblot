@@ -31,7 +31,7 @@ $advanced_routes[] = array('controller' => 'blog/category',
     'reverse' => 'category/{name}');
 
 $advanced_routes[] = array('controller' => 'blog/shortener',
-    'expression' => '`s/(?P<eid>.+)',
+    'expression' => '`s/(?P<eid>.+)`',
     'reverse' => 's/{eid}');
 
 $advanced_routes[] = array('controller' => 'blog/article',

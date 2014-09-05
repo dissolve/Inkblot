@@ -4,7 +4,7 @@ class ControllerBlogShortener extends Controller {
 
         $id = $this->request->get['eid'];
 
-		$this->load->model('blog/note');
+		$this->load->model('blog/post');
 		
 		$post = $this->model_blog_post->getPost($id);
 
