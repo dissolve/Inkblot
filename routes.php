@@ -30,6 +30,10 @@ $advanced_routes[] = array('controller' => 'blog/category',
     'expression' => '`category/(?P<name>\w+)`i',
     'reverse' => 'category/{name}');
 
+$advanced_routes[] = array('controller' => 'blog/shortener',
+    'expression' => '`s/(?P<eid>.+)',
+    'reverse' => 's/{eid}');
+
 $advanced_routes[] = array('controller' => 'blog/article',
     'expression' => '`post/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/.*`i',
     'reverse' => 'post/{year}/{month}/{day}/{daycount}/{slug}');

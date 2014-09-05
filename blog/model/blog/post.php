@@ -15,7 +15,8 @@ class ModelBlogPost extends Model {
                                                 'month='.$post['month']. '&' . 
                                                 'day='.$post['day']. '&' . 
                                                 'daycount='.$post['daycount']. 
-                                                ($post['slug'] ? '&'.'slug='.$post['slug'] : ''), '')
+                                                ($post['slug'] ? '&'.'slug='.$post['slug'] : ''), ''),
+                'shortlink' => $this->url->link('blog/shortener', 'eid='.$post['id'], '')
             ));
             $this->cache->set('post.'. $post_id, $post);
         }
