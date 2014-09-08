@@ -13,6 +13,8 @@ $routes['micropub']           = 'auth/micropub';
 $routes['login']              = 'auth/login';
 $routes['logout']             = 'auth/logout';
 $routes['contact']            = 'contacts/me';
+$routes['new']                = 'blog/micropub';
+$routes['micropub-send']      = 'blog/micropub/send';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`page/(?P<id>\w+)`i',

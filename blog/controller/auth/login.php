@@ -6,6 +6,8 @@ class ControllerAuthLogin extends Controller {
             $code = $this->request->get['code'];
             $client_id = $this->url->link('');
 
+            $this->log->write(print_r($this->request->get,true));
+
             $redir_url = $this->url->link('auth/login');
             if(isset($this->request->get['c']) && !empty($this->request->get['c'])){
                 $redir_url = $this->url->link('auth/login', 'c='.$this->request->get['c'], '');
@@ -31,10 +33,12 @@ class ControllerAuthLogin extends Controller {
 
             $results = array();
             parse_str($response, $results);
+            $this->log->write(print_r($results,true));
 
             if($results['me'] == $me){
                 //$this->log->write('success logging in '. $results['me']);
                 $this->session->data['user_site'] = $results['me'];
+                //$this->session->data['code'] = $code;
                 $this->session->data['success'] = "You are now logged in as ".$results['me'];
             }
             //$this->log->write('me: '. $me);

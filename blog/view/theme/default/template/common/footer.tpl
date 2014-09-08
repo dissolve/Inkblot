@@ -96,6 +96,7 @@
           <p><button type="submit">Log In</button></p>
           <input type="hidden" name="client_id" value="<?php echo $client_id?>" />
           <input type="hidden" name="redirect_uri" value="<?php echo $auth_page?>" />
+          <input type="hidden" name="scope" value="post" />
         </form>
     </li></ul>
     <?php } ?>
