@@ -1222,9 +1222,11 @@ ol.commentlist {
   color: inherit;
 }
 
-#comments {
-  padding-top: 40px;
-}
+.comment{background-color:white; box-shadow: 0 1px 5px 0 rgba(0,0,0,0.2); margin:10px;}
+.comment_header{font-weight:bold; font-size:14px;}
+.comment_body{margin-left:45px;}
+img.comment_author { width:30px; height:30px; }
+
 
 /* =Widgets
 -------------------------------------------------------------- */
@@ -1274,7 +1276,6 @@ ol.commentlist {
 }
 #general-likes ul li, #general-likes .likewrapper { float:left; }
 #general-likes img { width:24px; height:24px; }
-img.comment_author { width:48px; height:48px; }
 
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {

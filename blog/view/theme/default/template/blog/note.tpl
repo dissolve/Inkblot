@@ -44,15 +44,15 @@
 
     <?php if($note['comment_count'] > 0) { ?>
 <br>
-<span id="general-comments" class="widget widget_links"><a id="comment"><h3 class="widget-title">Comments:</h3></a>
+<span id="comments" class="widget widget_links"><h3 class="widget-title">Comments:</h3>
         <?php foreach($note['comments'] as $comment){?>
                 <div class="comment">
                 <div class='comment_header'>
                 <a href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow">
                     <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>"
                         title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'Author Image') ?>" /></a>
-                <a href="<?php echo $comment['source_url']?>" rel="nofollow">Permalink</a>
-                <?php echo $comment['source_name']?>
+                <a href="<?php echo $comment['source_url']?>" rel="nofollow"><i class="fa fa-link"></i></a>
+                <?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?> <!-- <?php echo $comment['source_name']?> -->
                 </div>
                 <div class='comment_body'>
                 <?php echo $comment['body']?>
