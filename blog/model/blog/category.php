@@ -8,7 +8,7 @@ class ModelBlogCategory extends Model {
             $data_array = array();
             foreach($data as $category){
                 $data_array[] = array_merge($category, array(
-					'permalink' => $this->url->link('blog/category', 'name='.$category['name'], '')
+					'permalink' => $this->url->link('blog/category', 'name='.$this->db->escape($category['name']), '')
                 ));
             }
             $this->cache->set('categories.all', $data_array);
@@ -25,7 +25,7 @@ class ModelBlogCategory extends Model {
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".categories WHERE name = '".$this->db->escape($name)."'");
             $data = $query->row;
             if($data){
-                $data['permalink'] = $this->url->link('blog/category', 'name='.$data['name'], '');
+                $data['permalink'] = $this->url->link('blog/category', 'name='.$this->db->escape($data['name']), '');
             }
             $this->cache->set('category.'.$name, $data);
         }
@@ -45,7 +45,7 @@ class ModelBlogCategory extends Model {
             $data_array = array();
             foreach($data as $category){
                 $data_array[] = array_merge($category, array(
-					'permalink' => $this->url->link('blog/category', 'name='.$category['name'], '')
+					'permalink' => $this->url->link('blog/category', 'name='.$this->db->escape($category['name']), '')
                 ));
             }
             $this->cache->set('categories.post.'.$post_id, $data_array);

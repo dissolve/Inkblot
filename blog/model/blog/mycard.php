@@ -12,7 +12,7 @@ class ModelBlogMycard extends Model {
                                         OR main_url='http://".$this->db->escape($contact_site)."'
                                         OR main_url='https://".$this->db->escape($contact_site)."'");
             $contact_id = $query->row['contact_id'];
-            $contacts = $contacts . ','.$contact_id;
+            $contacts = $contacts . ','.(int)$contact_id;
         }
 
 		$data = $this->cache->get('mydata.user.'.$classification.'.'.$contacts);
@@ -23,7 +23,7 @@ class ModelBlogMycard extends Model {
 							JOIN ".DATABASE.".mydata USING(data_id) 
 							JOIN ".DATABASE.".field_types USING(field_type_id) 
 						WHERE contact_id IN (".$contacts.") 
-                        ".($classification == "all" ? "" :" AND classification = '".$classification."' ")."
+                        ".($classification == "all" ? "" :" AND classification = '".$this->db->escape($classification)."' ")."
 						ORDER BY mydata.sorting ASC");
 		    $data = $query->rows;
 		    $this->cache->set('mydata.user.'.$classification.'.'.$contacts, $data);
