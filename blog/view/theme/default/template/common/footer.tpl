@@ -50,8 +50,8 @@
 
 <section id="linkcat-3" class="widget widget_links"><h3 class="widget-title">Elsewhere</h3>
 	<ul>
-        <?php foreach($melinks as $melink){?>
-            <li><a href="<?php echo $melink['url'];?>" rel="<?php echo $melink['rel']?>" title="<?php echo $melink['title'];?>" target="<?php echo $melink['target'];?>"><?php echo $melink['value'];?></a></li>
+        <?php foreach($mylinks as $mylink){?>
+            <li><a href="<?php echo $mylink['url'];?>" rel="<?php echo $mylink['rel']?>" title="<?php echo $mylink['title'];?>" target="<?php echo $mylink['target'];?>"><?php echo $mylink['value'];?></a></li>
         <?php } ?>
 	</ul>
 </section>
@@ -83,17 +83,17 @@
 <?php } //end if like_count > 0 ?>
 <section id="login" class="widget">
     <?php if(isset($user_name)) { ?>
-    <h3 class="widget-title">Signed In As "<?php echo $user_name?>"</h3>
+    <h3 class="widget-title">Logged In As "<?php echo $user_name?>"</h3>
     <ul><li>
-        <a href="<?php echo $logout?>">Sign Out</a>
+        <a href="<?php echo $logout?>">Log Out</a>
     </li></ul>
     <?php } else { ?>
-    <h3 class="widget-title">Sign In with IndieAuth</h3>
+    <h3 class="widget-title">Log In with IndieAuth</h3>
     <ul><li>
         <form action="<?php echo $auth_endpoint?>" method="get">
           <label for="indie_auth_url">Web Address:</label>
           <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
-          <p><button type="submit">Sign In</button></p>
+          <p><button type="submit">Log In</button></p>
           <input type="hidden" name="client_id" value="<?php echo $client_id?>" />
           <input type="hidden" name="redirect_uri" value="<?php echo $auth_page?>" />
         </form>

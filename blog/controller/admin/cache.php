@@ -9,7 +9,6 @@ class ControllerAdminCache extends Controller {
     	$this->cache->delete('archives');
     	$this->cache->delete('article');
     	$this->cache->delete('categories');
-    	$this->cache->delete('melinks');
     	$this->cache->delete('mentions');
     	$this->cache->delete('post');
     	$this->cache->delete('posts');

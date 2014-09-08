@@ -2,7 +2,6 @@
 class ControllerCommonFooter extends Controller {
 	public function index() {
 		
-		$this->load->model('blog/melink');
 		$this->load->model('blog/mycard');
 		
         $data['client_id'] = $this->url->link('');
@@ -16,10 +15,10 @@ class ControllerCommonFooter extends Controller {
 
         $data['google_analytics_id'] = GOOGLE_ANALYTICS_ID;
 
-		$data['melinks'] = array();
+		$data['mylinks'] = array();
 
 		foreach ($this->model_blog_mycard->getData($this->session->data['user_site']) as $result) {
-				$data['melinks'][] = array(
+				$data['mylinks'][] = array(
 					'url'    => str_replace('{}', $result['value'], $result['link_format']),
 					'image'  => $result['image'],
 					'value'  => str_replace('{}', $result['value'], $result['field_label']),
@@ -27,20 +26,7 @@ class ControllerCommonFooter extends Controller {
 					'rel'    => $result['rel'],
 					'target' => $result['target']);
     	}
-        /*
-		foreach ($this->model_blog_melink->getLinks() as $result) {
-				$data['melinks'][] = array(
-					'url' => $result['url'],
-					'image' => $result['image'],
-					'value' => $result['value'],
-					'title' => $result['title'],
-					'target' => $result['target']);
-    	}
-         */
 
-		//$data['contact'] = $this->url->link('information/contact');
-		//$data['return'] = $this->url->link('account/return/insert', '', 'SSL');
-    	//$data['sitemap'] = $this->url->link('information/sitemap');
 		
 		$this->load->model('blog/mention');
 		$data['recent_mentions'] = array();

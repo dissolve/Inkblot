@@ -46,6 +46,11 @@ class ControllerCommonHeader extends Controller {
 		$data['token_endpoint'] = $token_endpoint;
 		$data['micropub_endpoint'] = $micropub_endpoint;
 
+        if(isset($this->session->data['success'])){
+            $data['success'] = $this->session->data['success'];
+            unset($this->session->data['success']);
+        }
+
 		$data['base'] = $server;
 		$data['description'] = $this->document->getDescription();
 		$data['keywords'] = $this->document->getKeywords();

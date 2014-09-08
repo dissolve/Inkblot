@@ -51,10 +51,12 @@
   <div id="main">
     <section id="primary">
       <main id="content" role="main">
+      <?php if(isset($success)){ ?>
+        <div class="success"><?php echo $success?></div>
+      <?php } ?>
 
       
-          <nav id="nav-above">
-    <h1 class="assistive-text section-heading">Post navigation</h1>
-
+      <nav id="nav-above">
+        <h1 class="assistive-text section-heading">Post navigation</h1>
   
-  </nav><!-- #nav-above -->
+      </nav><!-- #nav-above -->

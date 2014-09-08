@@ -2,6 +2,7 @@
 class ControllerAuthLogin extends Controller {
 	public function index() {
         if(isset($this->request->get['code'])){
+
             $code = $this->request->get['code'];
             $client_id = $this->url->link('');
 
@@ -34,7 +35,7 @@ class ControllerAuthLogin extends Controller {
             if($results['me'] == $me){
                 //$this->log->write('success logging in '. $results['me']);
                 $this->session->data['user_site'] = $results['me'];
-                //$data['success'] = "You are now logged in as ".$results['me'];
+                $this->session->data['success'] = "You are now logged in as ".$results['me'];
             }
             //$this->log->write('me: '. $me);
             //$this->log->write('response: '. $response);
