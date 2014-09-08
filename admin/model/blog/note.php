@@ -10,6 +10,7 @@ class ModelBlogNote extends Model {
 	public function getNote($post_id) {
         $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE `post_type`='note' AND post_id = '". (int)$post_id . "'");
         $post = $query->row;
+        $this->load->model('blog/post');
 
         $post['note_id'] = $post['post_id'];
         $post['permalink'] = preg_replace( '`/admin/`', '/',
@@ -18,6 +19,7 @@ class ModelBlogNote extends Model {
                                         'day='.$post['day']. '&' . 
                                         'daycount='.$post['daycount']. '&' . 
                                         'slug=' . $post['slug'], '')), 1);
+        $post['shortlink'] = $this->short_url->link('blog/shortener', 'eid='.$this->model_blog_post->num_to_sxg($post['post_id']), '');
 
 		return $post;
 	}
@@ -28,6 +30,7 @@ class ModelBlogNote extends Model {
                                                                               day = '". (int)$day . "' AND
                                                                               daycount = '". (int)$daycount . "'");
         $post = $query->row;
+        $this->load->model('blog/post');
 
         $post['note_id'] = $post['post_id'];
         $post['permalink'] = preg_replace( '`/admin/`', '/',
@@ -36,6 +39,7 @@ class ModelBlogNote extends Model {
                                         'day='.$post['day']. '&' . 
                                         'daycount='.$post['daycount']. '&' . 
                                         'slug=' . $post['slug'], '')), 1);
+        $post['shortlink'] = $this->short_url->link('blog/shortener', 'eid='.$this->model_blog_post->num_to_sxg($post['post_id']), '');
 
 		return $post;
 	}

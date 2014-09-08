@@ -35,11 +35,17 @@ try {
 
 	$config->set('config_url', HTTP_SERVER);
 	$config->set('config_ssl', HTTPS_SERVER);	
+	$config->set('config_short_url', HTTP_SHORT);
+	$config->set('config_short_ssl', HTTPS_SHORT);	
 	$config->set('config_secure', true);	
 
 // Url
 $url = new Url($config->get('config_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url'));	
 $registry->set('url', $url);
+
+// Short_Url
+$short_url = new Url($config->get('config_short_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_short_url'));	
+$registry->set('short_url', $short_url);
 
 function error_handler($errno, $errstr, $errfile, $errline) {
 	global $log, $config;
@@ -84,6 +90,7 @@ $registry->set('cache', $cache);
 
 include '../libraries/php-mf2/Mf2/Parser.php';
 include '../libraries/php-comments/src/indieweb/comments.php';
+include '../libraries/cassis/cassis-loader.php';
 
 
 //check if target is at this site
@@ -97,7 +104,7 @@ while($webmention){
 
     $webmention_id = $webmention['webmention_id'];
 
-    //echo $webmention_id;
+    //echo 'id=' . $webmention_id;
 
     //to verify that target is on my site
     $c = curl_init();
@@ -151,6 +158,12 @@ while($webmention){
         try {
             $loader->model($model);
             $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_data);
+            //echo 'debug 1:';
+            //print_r($data);
+            //echo 'debug 2:';
+            //print_r($webmention_id);
+            //echo 'debug 3:';
+            //print_r($comment_data);
         } catch (Exception $e) {
             if(isset($comment_data['type']) && $comment_data['type'] == 'like'){
                 $db->query("INSERT INTO ". DATABASE.".likes SET source_url = '".$comment_data['url']."'".

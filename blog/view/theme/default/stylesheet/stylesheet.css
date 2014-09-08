@@ -524,6 +524,7 @@ footer.entry-meta {
   font-size: 13px;
   margin-bottom: 14px;
 }
+.u-photo {margin-top:20px;}
 .format-quote .entry-header .entry-title, .format-video .entry-header .entry-title, .format-audio .entry-header .entry-title, .format-image .entry-header .entry-title, .format-quote .entry-header .entry-title a, .format-video .entry-header .entry-title a, .format-audio .entry-header .entry-title a, .format-image .entry-header .entry-title a {
   font-size: 22px;
   padding-top: 30px;

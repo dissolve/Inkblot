@@ -61,7 +61,7 @@ class ControllerBlogNote extends Controller {
 		$this->load->model('blog/note');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-            $this->request->post = $this->request->post . '<a href="https://www.brid.gy/publish/twitter"></a>';
+            $this->request->post['body'] .= '<a href="https://www.brid.gy/publish/twitter"></a>';
             
 			$note_id = $this->model_blog_note->addNote($this->request->post);
 
@@ -71,7 +71,7 @@ class ControllerBlogNote extends Controller {
 			$note = $this->model_blog_note->getNote($note_id);
 			include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
 
-			$client = new IndieWeb\MentionClient($note['permalink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
+            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
 			$client->debug(false);
 			$sent = $client->sendSupportedMentions();
 			// END SEND WEBMENTIONS

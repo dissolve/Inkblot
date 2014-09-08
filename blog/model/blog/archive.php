@@ -3,7 +3,7 @@ class ModelBlogArchive extends Model {
 	public function getArchives() {
         $data = $this->cache->get('archives.all');
         if(!$data){
-            $query = $this->db->query("SELECT `year`, `month` FROM " . DATABASE . ".posts group by `YEAR`,`MONTH` ORDER BY `year` DESC, `month` DESC");
+            $query = $this->db->query("SELECT `year`, `month` FROM " . DATABASE . ".posts where post_type = 'article' group by `YEAR`,`MONTH` ORDER BY `year` DESC, `month` DESC");
             $data = $query->rows;
             $data_array = array();
 
@@ -11,7 +11,7 @@ class ModelBlogArchive extends Model {
 
             foreach($data as $archive){
                 $data_array[] = array(
-					'name' => $month_names[$archive['month']] .' ' .$archive['year'],
+					'name' => $month_names[$archive['month']-1] .' ' .$archive['year'],
 					'permalink' => $this->url->link('blog/archive', 'year='.$archive['year'] . '&' .'month='.$archive['month'] , '')
                 );
             }

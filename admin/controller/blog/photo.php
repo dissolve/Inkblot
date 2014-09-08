@@ -61,22 +61,23 @@ class ControllerBlogPhoto extends Controller {
 		$this->load->model('blog/photo');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+            $this->request->post['body'] .= '<a href="https://www.brid.gy/publish/twitter"></a>';
+
 			$photo_id = $this->model_blog_photo->addPhoto($this->request->post);
 
 			$this->session->data['success'] = 'success';
 
-			$url = '';
-
-			//$this->response->redirect($this->url->link('blog/photo', 'token=' . $this->session->data['token'] . $url, 'SSL'));
-			$this->response->redirect($this->url->link('blog/photo'), 'photo_id='.$photo_id, '');
 			// SEND WEBMENTIONS
 			$photo = $this->model_blog_photo->getPhoto($photo_id);
 			include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
 
-			$client = new IndieWeb\MentionClient($photo['permalink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' . html_entity_decode($photo['body']));
+			$client = new IndieWeb\MentionClient($photo['shortlink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' . html_entity_decode($photo['body']));
 			$client->debug(false);
 			$sent = $client->sendSupportedMentions();
 			// END SEND WEBMENTIONS
+            
+			//$this->response->redirect($this->url->link('blog/photo', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->response->redirect($this->url->link('blog/photo'), 'photo_id='.$photo_id, '');
 		}
 
 		$this->getForm();

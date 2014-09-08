@@ -11,7 +11,7 @@ class ControllerBlogPost extends Controller {
 			if($this->request->get['send_mention']){
 				include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
 
-				$client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body']));
+				$client = new IndieWeb\MentionClient($post['shortlink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body']));
 				$client->debug(false);
 				$sent = $client->sendSupportedMentions();
 				$this->log->write($sent);
@@ -59,17 +59,17 @@ class ControllerBlogPost extends Controller {
 		$this->load->model('blog/post');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+            $this->request->post['body'] .= '<a href="https://www.brid.gy/publish/twitter"></a><a href="https://www.brid.gy/publish/facebook"></a>';
+            
 			$post_id = $this->model_blog_post->addPost($this->request->post);
 
 			$this->session->data['success'] = 'success';
-
-			$url = '';
 
 			// SEND WEBMENTIONS
 			$post = $this->model_blog_post->getPost($post_id);
 			include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
 
-			$client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body']));
+            $client = new IndieWeb\MentionClient($post['shortlink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body']));
 			$client->debug(false);
 			$sent = $client->sendSupportedMentions();
 			// END SEND WEBMENTIONS
@@ -208,7 +208,7 @@ class ControllerBlogPost extends Controller {
 				'post_id' => $result['post_id'],
 				'title'          => $result['title'],
 				'timestamp'      => $result['timestamp'],
-				'permalink'      => $result['permalink'],
+				'permalink'      => $result['shortlink'],
 				'send_mention'   => $this->url->link('blog/post', 'send_mention=true&post_id=' . $result['post_id'] . $url, ''),
 				'view'           => $this->url->link('blog/post', '&post_id=' . $result['post_id'] . $url, ''),
 				'edit'           => $this->url->link('blog/post/update', '&post_id=' . $result['post_id'] . $url, '')

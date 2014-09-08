@@ -54,6 +54,7 @@ class ControllerBlogPhoto extends Controller {
 		$this->document->addMeta('og:type', 'article');
 		$this->document->addMeta('og:title', $short_title);
 		$this->document->addMeta('og:description', $description);
+		$this->document->addMeta('og:image', '/image/static/icon_128.jpg');
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');

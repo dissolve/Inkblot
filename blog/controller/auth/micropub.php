@@ -58,7 +58,9 @@ class ControllerAuthMicropub extends Controller {
 
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-                            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' . html_entity_decode($photo['body']) );
+        
+                            $client = new IndieWeb\MentionClient($photo['shortlink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' .
+                                            '<img src="'.$photo['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($photo['body']) );
                             $client->debug(false);
                             $sent = $client->sendSupportedMentions();
 
