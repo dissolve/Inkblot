@@ -1,5 +1,5 @@
 <?php  
-class ControllerAuthMicropub extends Controller {
+class ControllerMicropubReceive extends Controller {
 	public function index() {
         $headers = apache_request_headers();
         if(isset($this->request->post['access_token']) || isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || isset($headers['Authorization'])){

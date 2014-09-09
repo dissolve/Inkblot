@@ -9,12 +9,14 @@ $routes['clearcache']         = 'admin/cache';
 $routes['clearrevision']      = 'admin/cache/revision';
 $routes['webmention']         = 'webmention/receive';
 $routes['token']              = 'auth/token';
-$routes['micropub']           = 'auth/micropub';
+$routes['micropub']           = 'micropub/receive';
 $routes['login']              = 'auth/login';
+$routes['login_callback']     = 'auth/login/callback';
+$routes['login_token']        = 'auth/login/tokencallback';
 $routes['logout']             = 'auth/logout';
 $routes['contact']            = 'contacts/me';
-$routes['new']                = 'blog/micropub';
-$routes['micropub-send']      = 'blog/micropub/send';
+$routes['new']                = 'micropub/client';
+$routes['micropub-send']      = 'micropub/client/send';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`page/(?P<id>\w+)`i',

@@ -12,6 +12,7 @@ class ControllerCommonFooter extends Controller {
             $data['user_name'] = $this->session->data['user_site'];
         }
         $data['logout'] = $this->url->link('auth/logout');
+        $data['login'] = $this->url->link('auth/login');
 
         $data['google_analytics_id'] = GOOGLE_ANALYTICS_ID;
 

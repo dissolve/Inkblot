@@ -1,5 +1,9 @@
 <?php  
-class ControllerBlogMicropub extends Controller {
+include DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
+include DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
+include DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
+
+class ControllerMicropubClient extends Controller {
 	public function index() {
 
 		$this->document->setTitle('Create a New Post');
@@ -7,21 +11,21 @@ class ControllerBlogMicropub extends Controller {
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');
+        $data['login'] = $this->url->link('auth/login');
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
         if(isset($this->session->data['user_site'])){
-            include DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
-            include DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
-            include DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
             $data['user_name'] = $this->session->data['user_site'];
             $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
             if($endpoint){
                 $data['micropubEndpoint'] = $endpoint;
-                $data['action'] = $this->url->link('blog/micropub/send', '', 'SSL');
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
             }
 
         }
+
+        $data['token'] = isset($this->session->data['token']);
 
 
 
@@ -36,17 +40,17 @@ class ControllerBlogMicropub extends Controller {
 
         $post_data_array = array(
             'h'             => 'entry',
-            'content'            => $this->request->post['me']
+            'content'       => $this->request->post['content']
         );
         if(isset($this->request->post['in-reply-to'])){
             $post_data_array['in-reply-to']  = $this->request->post['in-reply-to'];
         }
+        if(isset($this->request->post['slug'])){
+            $post_data_array['slug']  = $this->request->post['slug'];
+        }
 
         $post_data = http_build_query($post_data_array);
 
-        include DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
-        include DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
-        include DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
         $user = $this->session->data['user_site'];
         $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
 
@@ -56,6 +60,7 @@ class ControllerBlogMicropub extends Controller {
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '. $this->session->data['token']));
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 
         /////////////////////////////////////////////////
@@ -64,6 +69,7 @@ class ControllerBlogMicropub extends Controller {
         /////////////////////////////////////////////////
 
         $response = curl_exec($ch);
+        print_r($response);
     }
 }
 ?>

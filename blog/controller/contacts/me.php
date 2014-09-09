@@ -33,7 +33,7 @@ class ControllerContactsMe extends Controller {
 		$webmention_handler = $this->url->link('webmention/receive');
         $auth_endpoint = AUTH_ENDPOINT;
         $token_endpoint = $this->url->link('auth/token');
-        $micropub_endpoint = $this->url->link('auth/micropub');
+        $micropub_endpoint = $this->url->link('micropub/receive');
 
         $this->response->addHeader('Link: <'. $webmention_handler.'>; rel="webmention"');
         $this->response->addHeader('Link: <'. $auth_endpoint.'>; rel="authorization_endpoint"');

@@ -90,13 +90,10 @@
     <?php } else { ?>
     <h3 class="widget-title">Log In with IndieAuth</h3>
     <ul><li>
-        <form action="<?php echo $auth_endpoint?>" method="get">
+        <form action="<?php echo $login?>" method="get">
           <label for="indie_auth_url">Web Address:</label>
           <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
           <p><button type="submit">Log In</button></p>
-          <input type="hidden" name="client_id" value="<?php echo $client_id?>" />
-          <input type="hidden" name="redirect_uri" value="<?php echo $auth_page?>" />
-          <input type="hidden" name="scope" value="post" />
         </form>
     </li></ul>
     <?php } ?>
