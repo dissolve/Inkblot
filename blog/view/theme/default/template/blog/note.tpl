@@ -11,7 +11,7 @@
         <div class="entry-meta">      
         <?php if($note['replyto']) { ?>
             <div class="repyto">
-               In Reply To <a class="u-url u-in-reply-to" rel="in-reply-to" href="<?php echo $note['replyto']?>">This</a>
+               In Reply To <a class="u-in-reply-to" rel="in-reply-to" href="<?php echo $note['replyto']?>">This</a>
             </div>
         <?php }  // end if replyto?>
       <span class="sep">Posted on </span>

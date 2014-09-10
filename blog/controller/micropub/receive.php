@@ -77,8 +77,7 @@ class ControllerMicropubReceive extends Controller {
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
         
-                            $client = new IndieWeb\MentionClient($photo['shortlink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' .
-                                            '<img src="'.$photo['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($photo['body']) );
+                            $client = new IndieWeb\MentionClient($photo['shortlink']);
                             $client->debug(false);
                             $sent = $client->sendSupportedMentions();
 
@@ -119,9 +118,10 @@ class ControllerMicropubReceive extends Controller {
                             }
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-                            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
-                            $client->debug(false);
+                            $client = new IndieWeb\MentionClient($note['shortlink']);
+                            $client->debug(true);
                             $sent = $client->sendSupportedMentions();
+                            $this->log->write(print_r($sent,true));
 
                             $this->response->addHeader('HTTP/1.1 201 Created');
                             $this->response->addHeader('Location: '. $note['permalink']);
