@@ -68,7 +68,7 @@ class ControllerMicropubReceive extends Controller {
 
                             $photo = $this->model_blog_photo->getPhoto($photo_id);
 
-                            if($photo && isset($this->request->post['syndication'])){
+                            if($photo && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
                                 $this->load->model('blog/post');
                                 $this->model_blog_post->addSyndication($photo['post_id'], $this->request->post['syndication']);
                                 $this->cache->delete('post.'.$photo['post_id']);
@@ -77,7 +77,8 @@ class ControllerMicropubReceive extends Controller {
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
         
-                            $client = new IndieWeb\MentionClient($photo['shortlink']);
+                            $client = new IndieWeb\MentionClient($photo['shortlink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' .
+                                '<img src="'.$photo['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($photo['body']) );
                             $client->debug(false);
                             $sent = $client->sendSupportedMentions();
 
@@ -111,15 +112,15 @@ class ControllerMicropubReceive extends Controller {
 
                             $note = $this->model_blog_note->getNote($note_id);
 
-                            if($note && isset($this->request->post['syndication'])){
+                            if($note && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
                                 $this->load->model('blog/post');
                                 $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
                                 $this->cache->delete('post.'.$note['post_id']);
                             }
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-                            $client = new IndieWeb\MentionClient($note['shortlink']);
-                            $client->debug(true);
+                            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
+                            $client->debug(false);
                             $sent = $client->sendSupportedMentions();
                             $this->log->write(print_r($sent,true));
 
