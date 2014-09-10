@@ -23,10 +23,22 @@ class ControllerMicropubReceive extends Controller {
                 $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
 
                 if($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) {
-                    $this->log->write(print_r($this->request->post,true));
+                    //$this->log->write(print_r($this->request->post,true));
 
-                    
-                    if(isset($_FILES['photo']) && !empty($_FILES['photo'])){
+                    if(isset($this->request->post['url']) && !empty($this->request->post['url'])){
+                        //EDITING!
+                        $post = $this->getPostByURL($this->request->post['url']);
+                        if($post && isset($this->request->post['syndication'])){
+                            $this->load->model('blog/post');
+                            $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
+                            $this->cache->delete('post.'.$post['post_id']);
+
+                            $this->response->addHeader('HTTP/1.1 201 Created');
+                            $this->response->addHeader('Location: '. $post['permalink']);
+                            $this->response->setOutput($post['permalink']);
+                        }
+                        //END EDITING
+                    } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
                         $upload_shot = $_FILES['photo'];
 
                         if( $upload_shot['error'] == 0) {
@@ -55,6 +67,12 @@ class ControllerMicropubReceive extends Controller {
                             $this->cache->delete('photos');
 
                             $photo = $this->model_blog_photo->getPhoto($photo_id);
+
+                            if($photo && isset($this->request->post['syndication'])){
+                                $this->load->model('blog/post');
+                                $this->model_blog_post->addSyndication($photo['post_id'], $this->request->post['syndication']);
+                                $this->cache->delete('post.'.$photo['post_id']);
+                            }
 
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
@@ -94,6 +112,11 @@ class ControllerMicropubReceive extends Controller {
 
                             $note = $this->model_blog_note->getNote($note_id);
 
+                            if($note && isset($this->request->post['syndication'])){
+                                $this->load->model('blog/post');
+                                $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
+                                $this->cache->delete('post.'.$note['post_id']);
+                            }
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
                             $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
@@ -122,6 +145,32 @@ class ControllerMicropubReceive extends Controller {
             exit();
         }
 	}
+
+    private function getPostByURL($real_url){
+        include DIR_BASE . '/routes.php';
+
+        $data = array();
+        foreach($advanced_routes as $adv_route){
+            $matches = array();
+            preg_match($adv_route['expression'], $real_url, $matches);
+            if(!empty($matches)){
+                $model = $adv_route['controller'];
+                    foreach($matches as $field => $value){
+                        $data[$field] = $value;
+                    }
+            }
+        }
+     try {
+            $this->load->model($model);
+            $post = $this->registry->get('model_'. str_replace('/', '_', $model))->getByData($data);
+            return $post;
+        } catch (Exception $e) {
+            $this->log->write('failed to parse ' . $real_url . ' as a url for the site');
+            return null;
+        }
+
+
+    }
 
 }
 ?>

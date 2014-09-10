@@ -359,6 +359,26 @@ LOCK TABLES `pages` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `post_syndication`
+--
+
+DROP TABLE IF EXISTS `post_syndication`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `post_syndication` (
+  `post_id` int(11) NOT NULL,
+  `syndication_site_id` int(11) NOT NULL,
+  `syndication_url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`post_id`,`syndication_site_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `post_syndication`
+--
+
+
+--
 -- Table structure for table `posts`
 --
 
@@ -391,6 +411,27 @@ LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `syndication_site`
+--
+
+DROP TABLE IF EXISTS `syndication_site`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `syndication_site` (
+  `syndication_site_id` int(11) NOT NULL AUTO_INCREMENT,
+  `site_name` varchar(45) DEFAULT NULL,
+  `image` varchar(150) DEFAULT NULL,
+  `site_url_match` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`syndication_site_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `syndication_site`
+--
+
 
 --
 -- Table structure for table `tokens`

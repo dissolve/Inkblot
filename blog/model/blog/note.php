@@ -51,27 +51,29 @@ class ModelBlogNote extends Model {
         return $note;
 	}
 
+    public function getByData($data){
+        if(isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount'])) {
+            return $this->getNoteByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
+        } else {
+            return null;
+        }
+    }
+	public function getByDayCount($year,$month, $day, $daycount) {
+        return $this->getNoteByDayCount($year,$month, $day, $daycount);
+    }
+
 	public function getNoteByDayCount($year,$month, $day, $daycount) {
-        $note = $this->cache->get('note.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
-        if(!$note){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_type='note' AND year = '". (int)$year . "' AND
+        $note_id = $this->cache->get('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
+        if(!$note_id){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='note' AND year = '". (int)$year . "' AND
                                                                                   month = '". (int)$month . "' AND
                                                                                   day = '". (int)$day . "' AND
                                                                                   daycount = '". (int)$daycount . "'");
-            $note = $query->row;
-            $this->load->model('blog/post');
-            $note = array_merge($note, array(
-                'note_id' => $note['post_id'],
-                'permalink' => $this->url->link('blog/note', 'year='.$note['year']. '&' . 
-                                                'month='.$note['month']. '&' . 
-                                                'day='.$note['day']. '&' . 
-                                                'daycount='.$note['daycount']. '&' . 
-                                                'slug=' . $note['slug'], ''),
-                'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->model_blog_post->num_to_sxg($note['post_id']), '')
-            ));
-            $this->cache->set('note.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $note);
+            $note_id = $query->row['post_id'];
+            $this->cache->set('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $note_id);
         }
-		return $note;
+
+		return $this->getNote($note_id);
 	}
 
 	public function getRecentNotes($limit=10, $skip=0) {

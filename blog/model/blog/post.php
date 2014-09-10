@@ -42,7 +42,9 @@ class ModelBlogPost extends Model {
         if(!$post){
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = '". (int)$post_id . "'");
             $post = $query->row;
+	        $syndications = $this->getSyndications($post['post_id']);
             $post = array_merge($post, array(
+                'syndications' => $syndications,
                 'permalink' => $this->url->link('blog/'.$post['post_type'], 'year='.$post['year']. '&' . 
                                                 'month='.$post['month']. '&' . 
                                                 'day='.$post['day']. '&' . 
@@ -55,25 +57,21 @@ class ModelBlogPost extends Model {
 		return $post;
 	}
 
+	public function getByDayCount($year, $month, $day, $daycount) {
+	    return getPostByDayCount($year, $month, $day, $daycount);
+    }
 	public function getPostByDayCount($year,$month, $day, $daycount) {
-		$post = $this->cache->get('post.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
-		if(!$post){
-		    $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE year = '". (int)$year . "' AND
-											  month = '". (int)$month . "' AND
-											  day = '". (int)$day . "' AND
-											  daycount = '". (int)$daycount . "'");
-		    $post = $query->row;
-		    $post = array_merge($post, array(
-			'permalink' => $this->url->link('blog/'.$post['post_type'], 'year='.$post['year']. '&' . 
-							'month='.$post['month']. '&' . 
-							'day='.$post['day']. '&' . 
-							'daycount='.$post['daycount']. 
-							($post['slug'] ? '&'.'slug='.$post['slug'] : ''), ''),
-            'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '')
-		    ));
-		    $this->cache->set('post.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $post);
-		}
-		return $post;
+        $post_id = $this->cache->get('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
+        if(!$post_id){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE year = '". (int)$year . "' AND
+                                                                                  month = '". (int)$month . "' AND
+                                                                                  day = '". (int)$day . "' AND
+                                                                                  daycount = '". (int)$daycount . "'");
+            $post_id = $query->row['post_id'];
+            $this->cache->set('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $post_id);
+        }
+
+		return $this->getPost($post_id);
 	}
 
 	public function getRecentPosts($limit=10, $skip=0) {
@@ -212,5 +210,31 @@ class ModelBlogPost extends Model {
             //throwing an exception will go back to calling script and run the generic add
         }
     }
+
+	public function getSyndications($post_id) {
+        $query = $this->db->query("SELECT * FROM ".DATABASE.".post_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE post_id = ".(int)$post_id);
+
+        return $query->rows;
+	}
+
+	public function addSyndication($post_id, $syndication_url) {
+        if(!empty($syndication_url)){
+            $syndication_url = trim($syndication_url);
+            //figure out what site this is.
+            $sites_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site ");
+            $sites = $sites_query->rows;
+
+            $syn_site_id = 0;
+            foreach($sites as $site){
+                if(strpos($syndication_url, $site['site_url_match']) === 0){
+                    $syn_site_id = $site['syndication_site_id'];
+                    break;
+                }
+            }
+
+            // add site to DB
+            $query = $this->db->query("INSERT INTO ".DATABASE.".post_syndication SET post_id = ".(int)$post_id.", syndication_site_id=".(int)$syn_site_id.", syndication_url = '".$this->db->escape($syndication_url)."'");
+        }
+	}
 
 }

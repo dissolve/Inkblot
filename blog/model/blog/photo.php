@@ -46,26 +46,29 @@ class ModelBlogPhoto extends Model {
         return $photo;
 	}
 
+    public function getByData($data){
+        if(isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount'])) {
+            return $this->getPhotoByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
+        } else {
+            return null;
+        }
+    }
+
+	public function getByDayCount($year,$month, $day, $daycount) {
+	    return $this->getPhotoByDayCount($year,$month, $day, $daycount);
+    }
 	public function getPhotoByDayCount($year,$month, $day, $daycount) {
-        $photo = $this->cache->get('photo.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
-        if(!$photo){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_type='photo' AND year = '". (int)$year . "' AND
+        $photo_id = $this->cache->get('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
+        if(!$photo_id){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='photo' AND year = '". (int)$year . "' AND
                                                                                   month = '". (int)$month . "' AND
                                                                                   day = '". (int)$day . "' AND
                                                                                   daycount = '". (int)$daycount . "'");
-            $photo = $query->row;
-            $this->load->model('blog/post');
-            $photo = array_merge($photo, array(
-                'photo_id' => $photo['post_id'],
-                'permalink' => $this->url->link('blog/photo', 'year='.$photo['year']. '&' . 
-                                                'month='.$photo['month']. '&' . 
-                                                'day='.$photo['day']. '&' . 
-                                                'daycount='.$photo['daycount'], ''),
-                'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->model_blog_post->num_to_sxg($photo['post_id']), '')
-            ));
-            $this->cache->set('photo.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $photo);
+            $photo_id = $query->row['post_id'];
+            $this->cache->set('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $photo_id);
         }
-		return $photo;
+
+		return $this->getPhoto($photo_id);
 	}
 
 	public function getRecentPhotos($limit=10, $skip=0) {

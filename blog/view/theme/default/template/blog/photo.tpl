@@ -17,6 +17,22 @@
       <span class="sep">Posted on </span>
         <a href="<?php echo $photo['permalink']?>" title="<?php echo date("g:i A", strtotime($photo['timestamp']))?>" rel="bookmark" class="url u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($photo['timestamp']))?>" itemprop="dateModified"><?php echo date("F j, Y", strtotime($photo['timestamp']))?></time> </a>
         <address class="byline"> <span class="sep"> by </span> <span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt='' src='http://0.gravatar.com/avatar/<?php echo md5($photo['author']['email_address'])?>?s=40&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=G' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="url uid u-url u-uid fn p-name" href="<?php echo $photo['author']['link']?>" title="View all Images by <?php echo $photo['author']['display_name']?>" rel="author" itemprop="url"><span itemprop="name"><?php echo $photo['author']['display_name']?></span></a></span></address>
+
+  <?php if(!empty($photo['syndications'])){ ?>
+    <div id="syndications">
+    Elsewhere:
+    <?php foreach($photo['syndications'] as $elsewhere){ ?>
+
+      <?php if(isset($elsewhere['image'])){ ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><img src="<?php echo $elsewhere['image']?>" title="<?php echo $elsewhere['site_name']?>" /></a>
+      <?php } else { ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><i class="fa fa-link"></i></a>
+      <?php } ?>
+      
+    <?php } //end foreach ?>
+    </div>
+  <?php } ?>
+
         </div><!-- .entry-meta -->
   
   <?php if($photo['categories']){ ?>
@@ -40,6 +56,7 @@
     <div style="clear:both"></div>
 	</span>
     <?php } ?>
+
   </footer><!-- #entry-meta --></article><!-- #photo-<?php echo $photo['photo_id']?> -->
 
     <?php if($photo['comment_count'] > 0) { ?>

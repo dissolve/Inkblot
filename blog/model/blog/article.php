@@ -12,27 +12,30 @@ class ModelBlogArticle extends Model {
         return $article;
 	}
 
+
+    public function getByData($data){
+        if(isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount'])) {
+            return $this->getArticleByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
+        } else {
+            return null;
+        }
+    }
+	public function getByDayCount($year,$month, $day, $daycount) {
+	    return $this->getArticleByDayCount($year,$month, $day, $daycount);
+    }
+
 	public function getArticleByDayCount($year,$month, $day, $daycount) {
-        $article = $this->cache->get('article.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
-        if(!$article){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_type='article' AND year = '". (int)$year . "' AND
+        $article_id = $this->cache->get('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
+        if(!$article_id){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND year = '". (int)$year . "' AND
                                                                                   month = '". (int)$month . "' AND
                                                                                   day = '". (int)$day . "' AND
                                                                                   daycount = '". (int)$daycount . "'");
-            $article = $query->row;
-            $this->load->model('blog/post');
-            $article = array_merge($article, array(
-                'article_id' => $article['post_id'],
-                'permalink' => $this->url->link('blog/article', 'year='.$article['year']. '&' . 
-                                                'month='.$article['month']. '&' . 
-                                                'day='.$article['day']. '&' . 
-                                                'daycount='.$article['daycount']. '&' . 
-                                                'slug=' . $article['slug'], ''),
-                'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->model_blog_post->num_to_sxg($article['post_id']), '')
-            ));
-            $this->cache->set('article.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $article);
+            $article_id = $query->row['post_id'];
+            $this->cache->set('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $article_id);
         }
-		return $article;
+
+		return $this->getArticle($article_id);
 	}
 
 	public function getRecentArticles($limit=10, $skip=0) {

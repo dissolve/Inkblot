@@ -40,13 +40,21 @@ class ControllerMicropubClient extends Controller {
 
         $post_data_array = array(
             'h'             => 'entry',
-            'content'       => $this->request->post['content']
         );
+        if(isset($this->request->post['content'])){
+            $post_data_array['content']  = $this->request->post['content'];
+        }
         if(isset($this->request->post['in-reply-to'])){
             $post_data_array['in-reply-to']  = $this->request->post['in-reply-to'];
         }
         if(isset($this->request->post['slug'])){
             $post_data_array['slug']  = $this->request->post['slug'];
+        }
+        if(isset($this->request->post['url'])){
+            $post_data_array['url']  = $this->request->post['url'];
+        }
+        if(isset($this->request->post['syndication'])){
+            $post_data_array['syndication']  = $this->request->post['syndication'];
         }
 
         $post_data = http_build_query($post_data_array);
