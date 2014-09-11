@@ -68,10 +68,9 @@ class ControllerMicropubReceive extends Controller {
 
                             $photo = $this->model_blog_photo->getPhoto($photo_id);
 
+                            $this->load->model('blog/post');
                             if($photo && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
-                                $this->load->model('blog/post');
                                 $this->model_blog_post->addSyndication($photo['post_id'], $this->request->post['syndication']);
-                                $this->cache->delete('post.'.$photo['post_id']);
                             }
 
                             // send webmention
@@ -81,6 +80,12 @@ class ControllerMicropubReceive extends Controller {
                                 '<img src="'.$photo['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($photo['body']) );
                             $client->debug(false);
                             $sent = $client->sendSupportedMentions();
+                            $urls = $client->getReturnedUrls();
+                            //$this->log->write(print_r($urls,true));
+                            foreach($urls as $syn_url){
+                                $this->model_blog_post->addSyndication($photo['post_id'], $syn_url);
+                            }
+                            $this->cache->delete('post.'.$photo['post_id']);
 
                             $this->response->addHeader('HTTP/1.1 201 Created');
                             $this->response->addHeader('Location: '. $photo['permalink']);
@@ -122,7 +127,11 @@ class ControllerMicropubReceive extends Controller {
                             $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
                             $client->debug(false);
                             $sent = $client->sendSupportedMentions();
-                            $this->log->write(print_r($sent,true));
+                            $urls = $client->getReturnedUrls();
+                            foreach($urls as $syn_url){
+                                $this->model_blog_post->addSyndication($note['post_id'], $syn_url);
+                            }
+                            $this->cache->delete('post.'.$note['post_id']);
 
                             $this->response->addHeader('HTTP/1.1 201 Created');
                             $this->response->addHeader('Location: '. $note['permalink']);

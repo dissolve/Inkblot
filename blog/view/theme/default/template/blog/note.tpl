@@ -19,6 +19,21 @@
         <address class="byline"> <span class="sep"> by </span> <span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt='' src='http://0.gravatar.com/avatar/<?php echo md5($note['author']['email_address'])?>?s=40&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=G' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="url uid u-url u-uid fn p-name" href="<?php echo $note['author']['link']?>" title="View all notes by <?php echo $note['author']['display_name']?>" rel="author" itemprop="url"><span itemprop="name"><?php echo $note['author']['display_name']?></span></a></span></address>
         </div><!-- .entry-meta -->
   
+  <?php if(!empty($note['syndications'])){ ?>
+    <div id="syndications">
+    Elsewhere:
+    <?php foreach($note['syndications'] as $elsewhere){ ?>
+
+      <?php if(isset($elsewhere['image'])){ ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><img src="<?php echo $elsewhere['image']?>" title="<?php echo $elsewhere['site_name']?>" /></a>
+      <?php } else { ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><i class="fa fa-link"></i></a>
+      <?php } ?>
+      
+    <?php } //end foreach ?>
+    </div>
+  <?php } ?>
+
   <?php if($note['categories']){ ?>
       <?php foreach($note['categories'] as $category) { ?>
           <span class="category-link"><a class="p-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>

@@ -69,6 +69,7 @@ class ControllerMicropubClient extends Controller {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '. $this->session->data['token']));
+        curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 
         /////////////////////////////////////////////////
@@ -77,7 +78,13 @@ class ControllerMicropubClient extends Controller {
         /////////////////////////////////////////////////
 
         $response = curl_exec($ch);
-        print_r($response);
+        $result = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if (in_array($result, array(200,201))){
+            $this->session->data['success'] = 'Post Created.';
+        } else {
+            $this->session->data['error'] = 'Error in Creation.  Return code '.$result.'.';
+        }
+        $this->response->redirect($this->url->link('micropub/client'));
     }
 }
 ?>
