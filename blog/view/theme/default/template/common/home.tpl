@@ -3,6 +3,7 @@
 <?php if(isset($success)){ 
     echo $success;
 } ?>
+<div class="hfeed h-feed feed">
 <div id="notes-stream">
 <div id="notes_pad"></div>
 <?php foreach($side_posts as $post) { ?>
@@ -47,6 +48,20 @@
   
       <?php } // end for post_categories as category ?>
   <?php } // end if post_categories ?>
+
+  <?php if(!empty($post['syndications'])){ ?>
+    <div id="syndications">
+    <?php foreach($post['syndications'] as $elsewhere){ ?>
+
+      <?php if(isset($elsewhere['image'])){ ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><img src="<?php echo $elsewhere['image']?>" title="<?php echo $elsewhere['site_name']?>" /></a>
+      <?php } else { ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><i class="fa fa-link"></i></a>
+      <?php } ?>
+      
+    <?php } //end foreach ?>
+    </div>
+  <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
 <?php } //end foreach posts ?>
@@ -95,8 +110,22 @@
   
       <?php } // end for post_categories as category ?>
   <?php } // end if post_categories ?>
+  <?php if(!empty($post['syndications'])){ ?>
+    <div id="syndications">
+    <?php foreach($post['syndications'] as $elsewhere){ ?>
+
+      <?php if(isset($elsewhere['image'])){ ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><img src="<?php echo $elsewhere['image']?>" title="<?php echo $elsewhere['site_name']?>" /></a>
+      <?php } else { ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><i class="fa fa-link"></i></a>
+      <?php } ?>
+      
+    <?php } //end foreach ?>
+    </div>
+  <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
 <?php } //end foreach posts ?>
+</div>
 </div>
 <?php echo $footer; ?>

@@ -1250,7 +1250,7 @@ ol.commentlist {
 .comment_body{margin-left:45px;}
 img.comment_author { width:30px; height:30px; }
 
-#syndications img {height:20px;}
+#syndications img {height:20px; width:20px !important; border:none !important; margin:none;padding:none;}
 
 /* =Widgets
 -------------------------------------------------------------- */

@@ -23,6 +23,20 @@
   
   <footer class="entry-meta">
     
+  <?php if(!empty($article['syndications'])){ ?>
+    <div id="syndications">
+    Elsewhere:
+    <?php foreach($article['syndications'] as $elsewhere){ ?>
+
+      <?php if(isset($elsewhere['image'])){ ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><img src="<?php echo $elsewhere['image']?>" title="<?php echo $elsewhere['site_name']?>" /></a>
+      <?php } else { ?>
+      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><i class="fa fa-link"></i></a>
+      <?php } ?>
+      
+    <?php } //end foreach ?>
+    </div>
+  <?php } ?>
   
   <?php if($article['categories']){ ?>
       <?php foreach($article['categories'] as $category) { ?>

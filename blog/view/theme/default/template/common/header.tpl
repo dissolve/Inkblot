@@ -39,7 +39,7 @@
     </head>
 
 
-<body class="home blog custom-background multi-column single-author custom-header hfeed h-feed feed" itemscope="" itemtype="http://schema.org/Blog">
+<body class="home blog custom-background multi-column single-author custom-header" itemscope="" itemtype="http://schema.org/Blog">
 <div id="page">
   <header id="branding" role="banner">
     <h1 id="site-title" itemprop="name" class="p-name"><a href="<?php echo $home?>" title="<?php echo $site_title?>" rel="home" itemprop="url" class="u-url url"><?php echo $site_title?></a></h1>

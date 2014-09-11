@@ -75,88 +75,81 @@ class ModelBlogPost extends Model {
 	}
 
 	public function getRecentPosts($limit=10, $skip=0) {
-		$data = $this->cache->get('posts.recent.'. $skip . '.'.  $limit);
-		if(!$data){
-		    $data_array = array();
+		$post_id_array = $this->cache->get('posts.recent.'. $skip . '.'.  $limit);
+		if(!$post_id_array){
 		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-		    $data = $query->rows;
-		    foreach($data as $post){
-			$data_array[] = $this->getPost($post['post_id']);
-		    }
-		    $this->cache->set('posts.recent.'. $skip . '.' .$limit, $data_array);
-		} else {
-		    $data_array = $data;
+		    $post_id_array = $query->rows;
+		    $this->cache->set('posts.recent.'. $skip . '.' .$limit, $post_id_array);
 		}
+	
+        $data_array = array();
+        foreach($post_id_array as $post){
+            $data_array[] = $this->getPost($post['post_id']);
+        }
 	
 		return $data_array;
 	}
 
 	public function getPostsByTypes($type_list = ['article'], $limit=20, $skip=0) {
-		$data = $this->cache->get('posts.type.'. implode('.',$type_list) . '.'. $skip . '.'.  $limit);
-		if(!$data){
+		$post_id_array = $this->cache->get('posts.type.'. implode('.',$type_list) . '.'. $skip . '.'.  $limit);
+		if(!$post_id_array){
 			// todo need to map this->db->escape
 		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type IN ('".implode("','",$type_list)."') ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-		    $data = $query->rows;
-		    $data_array = array();
-		    foreach($data as $post){
-			$data_array[] = $this->getPost($post['post_id']);
-		    }
-		    $this->cache->set('posts.type.'.implode('.',$type_list) . '.'. $skip . '.'.  $limit, $data_array);
-		} else {
-		    $data_array = $data;
+		    $post_id_array = $query->rows;
+		    $this->cache->set('posts.type.'.implode('.',$type_list) . '.'. $skip . '.'.  $limit, $post_id_array);
 		}
+
+        $data_array = array();
+        foreach($post_id_array as $post){
+            $data_array[] = $this->getPost($post['post_id']);
+        }
 	
 		return $data_array;
 	}
 
 	public function getPostsByCategory($category_id, $limit=20, $skip=0) {
-		$data = $this->cache->get('posts.category.'. $category_id . '.'. $skip . '.'.  $limit);
-		if(!$data){
+		$post_id_array = $this->cache->get('posts.category.'. $category_id . '.'. $skip . '.'.  $limit);
+		if(!$post_id_array){
 		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-		    $data = $query->rows;
-		    $data_array = array();
-		    foreach($data as $post){
-			$data_array[] = $this->getPost($post['post_id']);
-		    }
-		    $this->cache->set('posts.category.'.$category_id . '.'. $skip . '.'.  $limit, $data_array);
-		} else {
-		    $data_array = $data;
+		    $post_id_array = $query->rows;
+		    $this->cache->set('posts.category.'.$category_id . '.'. $skip . '.'.  $limit, $post_id_array);
 		}
+	
+        $data_array = array();
+        foreach($post_id_array as $post){
+            $data_array[] = $this->getPost($post['post_id']);
+        }
 	
 		return $data_array;
 	}
 
 	public function getPostsByAuthor($author_id, $limit=20, $skip=0) {
-        $data = $this->cache->get('posts.author.'. $author_id . '.'. $skip . '.'.  $limit);
-        if(!$data){
+        $post_id_array = $this->cache->get('posts.author.'. $author_id . '.'. $skip . '.'.  $limit);
+        if(!$post_id_array){
             $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-            $data = $query->rows;
-            $data_array = array();
-            foreach($data as $post){
-                $data_array[] = $this->getPost($post['post_id']);
-            }
-            $this->cache->set('posts.author.'.$author_id . '.'. $skip . '.'.  $limit, $data_array);
-        } else {
-            $data_array = $data;
+            $post_id_array = $query->rows;
+            $this->cache->set('posts.author.'.$author_id . '.'. $skip . '.'.  $limit, $post_id_array);
         }
 	
+        $data_array = array();
+        foreach($post_id_array as $post){
+            $data_array[] = $this->getPost($post['post_id']);
+        }
 		return $data_array;
 	}
 
 	public function getPostsByArchive($year, $month, $limit=20, $skip=0) {
-        $data = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
-        if(!$data){
+        $post_id_array = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
+        if(!$post_id_array){
             $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-            $data = $query->rows;
-            $data_array = array();
-            foreach($data as $post){
-                $data_array[] = $this->getPost($post['post_id']);
-            }
-            $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
-        } else {
-            $data_array = $data;
+            $post_id_array = $query->rows;
+            $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $post_id_array);
         }
 	
+        $data_array = array();
+        foreach($post_id_array as $post){
+            $data_array[] = $this->getPost($post['post_id']);
+        }
 		return $data_array;
 	}
 

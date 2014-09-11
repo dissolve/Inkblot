@@ -8,6 +8,8 @@
 //
 define('ENVIRONMENT', 'dev'); //TODO: at launch set to 'LIVE"
 
+define('LOCALTIMEZONE', 'America/New_York');
+
 define('SITE_TITLE', 'Ben Roberts');
 define('SITE_SUBTITLE', 'SysAdmin, Developer, Technologist');
 
