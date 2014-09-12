@@ -13,6 +13,7 @@ class ControllerBlogPhoto extends Controller {
 		$this->load->model('blog/comment');
 		$this->load->model('blog/like');
 		$this->load->model('blog/mention');
+		$this->load->model('blog/context');
 		
 		$photo = $this->model_blog_photo->getPhotoByDayCount($year, $month, $day, $daycount);
         $author = $this->model_blog_author->getAuthor($photo['author_id']);
@@ -22,22 +23,22 @@ class ControllerBlogPhoto extends Controller {
         $mentions = $this->model_blog_mention->getMentionsForPost($photo['photo_id']);
         $like_count = $this->model_blog_like->getLikeCountForPost($photo['photo_id']);
         $likes = $this->model_blog_like->getLikesForPost($photo['photo_id']);
+        $context = $this->model_blog_context->getAllContextForPost($note['note_id']);
 
         $data['photo'] = array_merge($photo, array(
             'body_html' => html_entity_decode($photo['body']),
             'image_file' => $photo['image_file'],
             'author' => $author,
+            'author_image' => '/image/static/icon_128.jpg',
             'categories' => $categories,
             'comment_count' => $comment_count,
             'comments' => $comments,
             'mentions' => $mentions,
             'like_count' => $like_count,
-            'likes' => $likes
+            'likes' => $likes,
+            'context' => $context
             ));
 
-        if(empty($data['photo']['title'])){
-            $data['photo']['title'] = htmlentities(substr(html_entity_decode(strip_tags($data['photo']['body_html'])), 0, 27). '...');
-        }
 
         $title = strip_tags($data['photo']['title']);
         $body = strip_tags($data['photo']['body_html']);

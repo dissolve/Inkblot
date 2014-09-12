@@ -141,6 +141,16 @@ class ModelBlogPhoto extends Model {
 
 
     public function addWebmention($data, $webmention_id, $comment_data){
+        if(isset($comment_data['published']) && !empty($comment_data['published'])){
+            // do our best to conver to local time
+            date_default_timezone_set(LOCALTIMEZONE);
+            $date = new DateTime($comment_data['published']);
+            $now = new DateTime;
+            $tz = $now->getTimezone();
+            $date->setTimezone($tz);
+            $comment_data['published'] = $date->format('Y-m-d H:i:s')."\n";
+        }
+
         if(isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount'])) {
             $photo = $this->getPhotoByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
 

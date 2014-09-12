@@ -1,28 +1,55 @@
 <?php echo $header; ?>
-
-          <article id="article-<?php echo $article['article_id']?>" class="article-<?php echo $article['article_id']?> article type-article status-publish format-standard category-uncategorized h-entry hentry h-as-article" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
-  <header class="entry-header">
-    <h1 class="entry-title p-name" itemprop="name headline"><a href="<?php echo $article['permalink']?>" class="u-url url" title="Permalink to <?php echo $article['title']?>" rel="bookmark" itemprop="url"><?php echo $article['title']?></a></h1>
-
-        <div class="entry-meta">      
-      <span class="sep">Posted on </span>
-        <a href="<?php echo $article['permalink']?>" title="<?php echo date("g:i A", strtotime($article['timestamp']))?>" rel="bookmark" class="url u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($article['timestamp']))?>" itemprop="dateModified"><?php echo date("F j, Y", strtotime($article['timestamp']))?></time> </a>
-        <address class="byline"> <span class="sep"> by </span> <span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt='' src='http://0.gravatar.com/avatar/<?php echo md5($article['author']['email_address'])?>?s=40&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=G' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="url uid u-url u-uid fn p-name" href="<?php echo $article['author']['link']?>" title="View all articles by <?php echo $article['author']['display_name']?>" rel="author" itemprop="url"><span itemprop="name"><?php echo $article['author']['display_name']?></span></a></span></address>
-        <?php if($article['replyto']) { ?>
-            <div class="repyto">
-               In Reply To <a class="u-in-reply-to" rel="in-reply-to" href="<?php echo $article['replyto']?>">This</a>
+<div class="h-entry hentry">
+  <div class="context_history">
+  <?php foreach($article['context'] as $ctx){ ?>
+        <div class="comment h-cite entry-meta" >
+            <div class="comment_header">    
+                <span class="minicard h-card vcard author p-author">
+                    <img class="comment_author logo u-photo" src="<?php echo $ctx['author_image']?>" alt="<?php echo $ctx['author_name']?>" width="48" />
+                </span>
+                <a class="p-name fn value name u-url" href="<?php echo $ctx['author_url']?>"><?php echo $ctx['author_name']?></a>
+                <a href="<?php echo $ctx['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $ctx['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($ctx['timestamp']))?></time></a>
             </div>
-        <?php }  // end if replyto?>
-        </div><!-- .entry-meta -->
-      </header><!-- .entry-header -->
+                                                           
+            <div class="h-cite entry-meta comment_body">
+                <div class="quote-text"><div class="e-content p-name"><?php echo $ctx['body']?></div></div>
+            </div>
+        </div>
+    <?php } ?>
+    </div>
 
-      <div class="entry-content e-content" itemprop="description articleBody">
-      <?php echo $article['body_html'];?>
+          <article id="article-<?php echo $article['article_id']?>" class="article-<?php echo $article['article_id']?> article type-article status-publish format-standard category-uncategorized">
+
+  <header class="entry-meta comment_header">
+        <div class="entry-meta">      
+        <span class="author p-author vcard hcard h-card">
+            <img alt='' src='<?php echo $article['author_image']?>' class='u-photo ' height='40' width='40' /> 
+            <a class="url uid u-url u-uid fn p-name" href="<?php echo $article['author']['link']?>" title="View all article by <?php echo $article['author']['display_name']?>" rel="author">
+                <?php echo $article['author']['display_name']?>
+            </a>
+        </span>
+        <a href="<?php echo $article['permalink']?>" title="<?php echo date("g:i A", strtotime($article['timestamp']))?>" rel="bookmark" class="permalink u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($article['timestamp']))?>" ><?php echo date("F j, Y g:i A", strtotime($article['timestamp']))?></time></a>
+
+        <span class='in_reply_url'>
+        <?php if(!empty($note['replyto'])){ ?>
+       In Reply To <a class="u-in-reply-to u-url" rel="in-reply-to" href="<?php echo $note['replyto']?>"><?php echo $note['replyto']?></a>
+       <?php } ?>
+       </span>
+        </div><!-- .entry-meta -->
+    </header>
+  <div class='articlebody'>
+
+    <?php if(!empty($article['title'])){ ?>
+    <h1 class="entry-title p-name"><a href="<?php echo $article['permalink']?>" class="u-url url" title="Permalink to <?php echo $article['title']?>" rel="bookmark" ><?php echo $article['title']?></a></h1>
+    <?php } ?>
+      <div class="entry-content e-content p-article">
+          <?php echo $article['body_html'];?>
       
       </div><!-- .entry-content -->
+  </div>
   
   <footer class="entry-meta">
-    
+
   <?php if(!empty($article['syndications'])){ ?>
     <div id="syndications">
     Elsewhere:
@@ -62,23 +89,25 @@
   </footer><!-- #entry-meta --></article><!-- #article-<?php echo $article['article_id']?> -->
 
     <?php if($article['comment_count'] > 0) { ?>
-<br>
-<span id="comments" class="widget widget_links"><h3 class="widget-title">Comments:</h3>
-        <?php foreach($article['comments'] as $comment){?>
-                <div class="comment">
+        <?php foreach($article['comments'] as $comment) { ?>
+            <div class="comment">
                 <div class='comment_header'>
-                <a href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow">
-                    <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>"
-                        title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'Author Image') ?>" /></a>
-                <a href="<?php echo $comment['source_url']?>" rel="nofollow"><i class="fa fa-link"></i></a>
-                <?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?> <!-- <?php echo $comment['source_name']?> -->
+                    <span class="minicard h-card vcard author p-author">
+                        <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>"
+                    </span>
+                    <a class="p-name fn value name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" /></a>
+                    <?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?> <!-- <?php echo $comment['source_name']?> -->
+                    </a>
+
+                    <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($comment['timestamp']))?></time></a>
                 </div>
                 <div class='comment_body'>
-                <?php echo $comment['body']?>
+                    <?php echo $comment['body']?>
                 </div>
-                </div>
+            </div>
         <?php } ?>
-	</span>
+	</div>
     <?php } ?>
+</div>
 
 <?php echo $footer; ?>

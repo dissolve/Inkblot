@@ -77,20 +77,27 @@ function get_context_id($db, $source_url){
 
             $context_id = $db->getLastId();
 
-            if(!empty($mf2_parsed['items'][0]['properties']['in-reply-to']) &&
-                !empty($mf2_parsed['items'][0]['properties']['in-reply-to'][0]['properties']['url'][0])){
-                    $reply_to_urls = $mf2_parsed['items'][0]['properties']['in-reply-to'][0]['properties']['url'];
-
-
-                    foreach($reply_to_urls as $reply_to_url){
+            foreach($mf2_parsed['items'][0]['properties']['in-reply-to'] as $citation) {
+                if(isset($citation['properties'])){
+                    foreach($citation['properties']['url'] as $reply_to_url){
                         $ctx_id = get_context_id($db, $reply_to_url);
                         if($ctx_id){
                             $db->query("INSERT INTO ". DATABASE.".context_to_context SET 
-                                context_id = ".(int)$context_id.",
-                                parent_context_id = ".(int)$ctx_id);
+                            context_id = ".(int)$context_id.",
+                            parent_context_id = ".(int)$ctx_id);
                         }
 
                     }
+                } else  {
+                    $reply_to_url = $citation;
+
+                    $ctx_id = get_context_id($db, $reply_to_url);
+                    if($ctx_id){
+                        $db->query("INSERT INTO ". DATABASE.".context_to_context SET 
+                        context_id = ".(int)$context_id.",
+                        parent_context_id = ".(int)$ctx_id);
+                    }
+                }
 
             }
             return $context_id;

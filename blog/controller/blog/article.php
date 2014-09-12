@@ -13,6 +13,7 @@ class ControllerBlogArticle extends Controller {
 		$this->load->model('blog/comment');
 		$this->load->model('blog/like');
 		$this->load->model('blog/mention');
+		$this->load->model('blog/context');
 		
 		$article = $this->model_blog_article->getArticleByDayCount($year, $month, $day, $daycount);
         $author = $this->model_blog_author->getAuthor($article['author_id']);
@@ -22,21 +23,21 @@ class ControllerBlogArticle extends Controller {
         $mentions = $this->model_blog_mention->getMentionsForPost($article['article_id']);
         $like_count = $this->model_blog_like->getLikeCountForPost($article['article_id']);
         $likes = $this->model_blog_like->getLikesForPost($article['article_id']);
+        $context = $this->model_blog_context->getAllContextForPost($note['note_id']);
 
         $data['article'] = array_merge($article, array(
             'body_html' => html_entity_decode($article['body']),
             'author' => $author,
+            'author_image' => '/image/static/icon_128.jpg',
             'categories' => $categories,
             'comment_count' => $comment_count,
             'comments' => $comments,
             'mentions' => $mentions,
             'like_count' => $like_count,
-            'likes' => $likes
+            'likes' => $likes,
+            'context' => $context
             ));
 
-        //if(empty($data['note']['title'])){
-            //$data['note']['title'] = htmlentities(substr(html_entity_decode(strip_tags($data['note']['body_html'])), 0, 27). '...');
-        //}
 
         $title = strip_tags($data['article']['title']);
         $body = strip_tags($data['article']['body_html']);
