@@ -131,4 +131,5 @@ while($post){
     $post = $result->row;
 
 } //end while($post) loop
+$cache->delete('context');
  

@@ -181,6 +181,47 @@ CREATE TABLE `contacts` (
 -- Dumping data for table `contacts`
 --
 
+--
+-- Table structure for table `context`
+--
+
+DROP TABLE IF EXISTS `context`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `context` (
+  `context_id` int(11) NOT NULL AUTO_INCREMENT,
+  `author_name` varchar(200) DEFAULT NULL,
+  `author_url` varchar(300) DEFAULT NULL,
+  `author_image` varchar(300) DEFAULT NULL,
+  `source_name` varchar(45) DEFAULT NULL,
+  `source_url` varchar(300) DEFAULT NULL,
+  `timestamp` datetime DEFAULT NULL,
+  `body` text,
+  PRIMARY KEY (`context_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=202 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `context`
+--
+
+--
+-- Table structure for table `context_to_context`
+--
+
+DROP TABLE IF EXISTS `context_to_context`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `context_to_context` (
+  `context_id` int(11) NOT NULL,
+  `parent_context_id` int(11) NOT NULL,
+  PRIMARY KEY (`context_id`,`parent_context_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `context_to_context`
+--
 
 --
 -- Table structure for table `field_types`
@@ -359,6 +400,24 @@ LOCK TABLES `pages` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `post_context`
+--
+
+DROP TABLE IF EXISTS `post_context`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `post_context` (
+  `post_id` int(11) NOT NULL,
+  `context_id` int(11) NOT NULL,
+  PRIMARY KEY (`post_id`,`context_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `post_context`
+--
+
+--
 -- Table structure for table `post_syndication`
 --
 
@@ -399,6 +458,7 @@ CREATE TABLE `posts` (
   `post_type` enum('article','note','photo','checkin','event') DEFAULT 'article',
   `replyto` varchar(300) DEFAULT NULL,
   `image_file` varchar(100) DEFAULT NULL,
+  `context_parsed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

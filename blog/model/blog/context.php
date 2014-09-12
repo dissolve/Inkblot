@@ -18,7 +18,6 @@ class ModelBlogContext extends Model {
             
             $ids = array();
             $query = $this->db->query("SELECT context_id FROM " . DATABASE . ".post_context WHERE post_id = ".(int)$post_id);
-            $this->log->write("SELECT context_id FROM " . DATABASE . ".post_context WHERE post_id = ".(int)$post_id);
 
             foreach($query->rows as $toAdd){
                 if(!in_array((int)$toAdd['context_id'], $ids)){
@@ -31,7 +30,6 @@ class ModelBlogContext extends Model {
                 $prev = count($ids);
 
                 $query = $this->db->query("SELECT parent_context_id AS context_id FROM " . DATABASE . ".context_to_context WHERE context_id in (".implode(',',$ids).")");
-                $this->log->write("SELECT parent_context_id AS context_id FROM " . DATABASE . ".context_to_context WHERE context_id in (".implode(',',$ids).")");
                 foreach($query->rows as $toAdd){
                     if(!in_array((int)$toAdd['context_id'], $ids)){
                         $ids[] = (int)$toAdd['context_id'];
@@ -40,7 +38,6 @@ class ModelBlogContext extends Model {
             }
 
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".context WHERE context_id in (".implode(',',$ids).") ORDER BY `timestamp` ASC");
-            $this->log->write("SELECT * FROM " . DATABASE . ".context WHERE context_id in (".implode(',',$ids).") ORDER BY `timestamp` ASC");
             $data = $query->rows;
 
             $this->cache->set('context.all.post.'.$post_id, $data);
