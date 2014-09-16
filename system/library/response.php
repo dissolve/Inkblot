@@ -4,8 +4,8 @@ class Response {
 	private $level = 0;
 	private $output;
 
-	public function addHeader($header) {
-		$this->headers[] = $header;
+	public function addHeader($header, $replace=true) {
+		$this->headers[] = array($header, $replace);
 	}
 
 	public function resetHeaders() {
@@ -65,8 +65,8 @@ class Response {
 			}
 
 			if (!headers_sent()) {
-				foreach ($this->headers as $header) {
-					header($header, true);
+				foreach ($this->headers as $headerArray) {
+					header($headerArray[0], $headerArray[1]);
 				}
 			}
 
