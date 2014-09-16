@@ -23,6 +23,7 @@ RewriteEngine On
 #RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
 
 RewriteCond %{HTTPS} off
+RewriteCond %{QUERY_STRING} !_route_=s/.*
 RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L]
 
 RewriteBase /
