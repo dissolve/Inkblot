@@ -48,7 +48,7 @@ class ControllerMicropubReceive extends Controller {
                             $this->load->model('blog/photo');
                             $data = array();
                             $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
-                            $data['body'] = $this->request->post['content'] . '<a href="https://www.brid.gy/publish/twitter"></a>';
+                            $data['body'] = $this->request->post['content'];
 
                             //TODO
                             // $this->request->post['h'];
@@ -60,6 +60,8 @@ class ControllerMicropubReceive extends Controller {
                             if(isset($this->request->post['in-reply-to'])){
                                 $data['replyto'] = $this->request->post['in-reply-to'];
                             }
+                            $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter"></a>';
+                            //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
 
 
                             $photo_id = $this->model_blog_photo->newPhoto($data);
@@ -77,7 +79,7 @@ class ControllerMicropubReceive extends Controller {
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
         
                             $client = new IndieWeb\MentionClient($photo['shortlink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' .
-                                '<img src="'.$photo['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($photo['body']) );
+                                '<img src="'.$photo['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($photo['body'].$photo['syndication_extra']) );
                             $client->debug(false);
                             $sent = $client->sendSupportedMentions();
                             $urls = $client->getReturnedUrls();
@@ -94,7 +96,7 @@ class ControllerMicropubReceive extends Controller {
                     } else {
                             $this->load->model('blog/note');
                             $data = array();
-                            $data['body'] = $this->request->post['content'] . '<a href="https://www.brid.gy/publish/twitter"></a>';
+                            $data['body'] = $this->request->post['content'];
                             $data['slug'] = $this->request->post['slug'];
 
                             $data['slug'] = '_';
@@ -111,6 +113,13 @@ class ControllerMicropubReceive extends Controller {
                                 $data['replyto'] = $this->request->post['in-reply-to'];
                             }
 
+                            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+                                $data['syndication_extra'] = '';
+                                foreach($this->request->post['syndicate-to'] as $synto){
+                                    $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
+                                }
+                            }
+                            
                             $note_id = $this->model_blog_note->newNote($data);
                             $this->cache->delete('posts');
                             $this->cache->delete('notes');
@@ -124,7 +133,7 @@ class ControllerMicropubReceive extends Controller {
                             }
                             // send webmention
                             include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-                            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body']));
+                            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body'].$note['syndication_extra']) );
                             $client->debug(false);
                             $sent = $client->sendSupportedMentions();
                             $urls = $client->getReturnedUrls();

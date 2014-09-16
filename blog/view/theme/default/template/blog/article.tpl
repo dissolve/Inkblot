@@ -44,6 +44,7 @@
     <?php } ?>
       <div class="entry-content e-content p-article">
           <?php echo $article['body_html'];?>
+          <?php echo $article['syndication_extra'];?>
       
       </div><!-- .entry-content -->
   </div>
@@ -52,7 +53,6 @@
 
   <?php if(!empty($article['syndications'])){ ?>
     <div id="syndications">
-    Elsewhere:
     <?php foreach($article['syndications'] as $elsewhere){ ?>
 
       <?php if(isset($elsewhere['image'])){ ?>

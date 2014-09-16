@@ -22,6 +22,9 @@ RewriteEngine On
 #RewriteCond %{HTTP_HOST} !^www\.
 #RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
 
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L]
+
 RewriteBase /
 RewriteRule ^sitemap.xml$ index.php?route=feed/google_sitemap [L]
 RewriteRule ^googlebase.xml$ index.php?route=feed/google_base [L]

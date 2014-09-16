@@ -15,7 +15,12 @@ class ControllerCommonHome extends Controller {
 		
 		$data['posts'] = array();
 
-		foreach ($this->model_blog_post->getPostsByTypes() as $result) {
+        $skip=0;
+        if(isset($this->request->get['skip'])){
+            $skip = $this->request->get['skip'];
+        }
+
+		foreach ($this->model_blog_post->getPostsByTypes(['article'], 20, $skip) as $result) {
 			$author = $this->model_blog_author->getAuthor($result['author_id']);
 			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
 			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
@@ -23,6 +28,7 @@ class ControllerCommonHome extends Controller {
 			$data['posts'][] = array_merge($result, array(
 			    'body_html' => html_entity_decode($result['body']),
 			    'author' => $author,
+                'author_image' => '/image/static/icon_128.jpg',
 			    'categories' => $categories,
 			    'comment_count' => $comment_count,
 			    'like_count' => $like_count
@@ -31,14 +37,15 @@ class ControllerCommonHome extends Controller {
 
 		$data['side_posts'] = array();
 
-		foreach ($this->model_blog_post->getPostsByTypes(['note','photo'], 30) as $result) {
+		foreach ($this->model_blog_post->getPostsByTypes(['photo','note'], 20, $skip) as $result) {
 			$author = $this->model_blog_author->getAuthor($result['author_id']);
 			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
 			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
 			$like_count = $this->model_blog_like->getLikeCountForPost($result['post_id']);
 			$data['side_posts'][] = array_merge($result, array(
-			    'body_html' => html_entity_decode($result['body']),
+			    'body_html' => html_entity_decode(isset($result['excerpt']) ? $result['excerpt']. '...' : $result['body']),
 			    'author' => $author,
+                'author_image' => '/image/static/icon_128.jpg',
 			    'categories' => $categories,
 			    'comment_count' => $comment_count,
 			    'like_count' => $like_count

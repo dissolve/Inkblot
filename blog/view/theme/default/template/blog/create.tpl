@@ -101,6 +101,16 @@
                   </div>
                 </div>
 
+                <div class="form-group group-create">
+                  <label class="col-sm-2 control-label" for="input-replyto">Syndicate To</label>
+                  <div class="col-sm-10">
+                    <select name="syndicate-to[]" id="sydicate_to_select" multiple="multiple">
+                        <option value="https://www.brid.gy/publish/twitter">Brid.gy Twitter</option>
+                        <option value="https://www.brid.gy/publish/facebook">Brid.gy Facebook</option>
+                    </select>
+                  </div>
+                </div>
+
             </div>
             <?php if(isset($micropubEndpoint) && $token) { ?>
             <input type="submit" value="Submit" />

@@ -153,8 +153,33 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
+	public function getSyndications($post_id) {
+        $query = $this->db->query("SELECT * FROM ".DATABASE.".post_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE post_id = ".(int)$post_id);
 
-    public function addWebmention($data, $webmention_id, $comment_data){
+        return $query->rows;
+	}
+
+	public function addSyndication($post_id, $syndication_url) {
+        if(!empty($syndication_url)){
+            $syndication_url = trim($syndication_url);
+            //figure out what site this is.
+            $sites_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site ");
+            $sites = $sites_query->rows;
+
+            $syn_site_id = 0;
+            foreach($sites as $site){
+                if(strpos($syndication_url, $site['site_url_match']) === 0){
+                    $syn_site_id = $site['syndication_site_id'];
+                    break;
+                }
+            }
+
+            // add site to DB
+            $query = $this->db->query("INSERT INTO ".DATABASE.".post_syndication SET post_id = ".(int)$post_id.", syndication_site_id=".(int)$syn_site_id.", syndication_url = '".$this->db->escape($syndication_url)."'");
+        }
+	}
+
+    public function addWebmention($data, $webmention_id, $comment_data, $post_id = null){
         if(isset($comment_data['published']) && !empty($comment_data['published'])){
             // do our best to conver to local time
             date_default_timezone_set(LOCALTIMEZONE);
@@ -165,8 +190,13 @@ class ModelBlogPost extends Model {
             $comment_data['published'] = $date->format('Y-m-d H:i:s')."\n";
         }
 
-        if(isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount'])) {
-            $post = $this->getPostByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
+        if($post_id || (isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount']))) {
+            $post = null;
+            if($post_id){
+                $post= $this->getPost($post_id);
+            } else {
+                $post = $this->getPostByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
+            }
 
             switch($comment_data['type']) {
             case 'like':
@@ -214,30 +244,128 @@ class ModelBlogPost extends Model {
         }
     }
 
-	public function getSyndications($post_id) {
-        $query = $this->db->query("SELECT * FROM ".DATABASE.".post_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE post_id = ".(int)$post_id);
+    public function editWebmention($data, $webmention_id, $comment_data, $post_id = null){
+        $query = $db->query("SELECT * FROM ". DATABASE.".webmentions WHERE webmention_id = ".(int)$webmention_id." LIMIT 1");
+        $webmention = $query->row;
+        $resulting_comment_id = (int)$webmention['resulting_comment_id'];
+        $resulting_mention_id = (int)$webmention['resulting_mention_id'];
+        $resulting_like_id = (int)$webmention['resulting_like_id'];
 
-        return $query->rows;
-	}
+        if(isset($comment_data['published']) && !empty($comment_data['published'])){
+            // do our best to conver to local time
+            date_default_timezone_set(LOCALTIMEZONE);
+            $date = new DateTime($comment_data['published']);
+            $now = new DateTime;
+            $tz = $now->getTimezone();
+            $date->setTimezone($tz);
+            $comment_data['published'] = $date->format('Y-m-d H:i:s')."\n";
+        }
 
-	public function addSyndication($post_id, $syndication_url) {
-        if(!empty($syndication_url)){
-            $syndication_url = trim($syndication_url);
-            //figure out what site this is.
-            $sites_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site ");
-            $sites = $sites_query->rows;
-
-            $syn_site_id = 0;
-            foreach($sites as $site){
-                if(strpos($syndication_url, $site['site_url_match']) === 0){
-                    $syn_site_id = $site['syndication_site_id'];
-                    break;
-                }
+        if($post_id || (isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount']))) {
+            $post = null;
+            if($post_id){
+                $post= $this->getPost($post_id);
+            } else {
+                $post = $this->getPostByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
             }
 
-            // add site to DB
-            $query = $this->db->query("INSERT INTO ".DATABASE.".post_syndication SET post_id = ".(int)$post_id.", syndication_site_id=".(int)$syn_site_id.", syndication_url = '".$this->db->escape($syndication_url)."'");
+            switch($comment_data['type']) {
+            case 'like':
+                if($resulting_like_id > 0) {
+                    $this->db->query("DELETE FROM ". DATABASE.".likes WHERE like_id = ". (int)$resulting_like_id);
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_like_id = null, webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                }
+                if($resulting_mention_id > 0) {
+                    $this->db->query("DELETE FROM ". DATABASE.".mentions WHERE mention_id = ". (int)$resulting_mention_id);
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = null, webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                    $this->cache->delete('mentions');
+                }
+                if($resulting_comment_id > 0) {
+                    $this->db->query("DELETE FROM ". DATABASE.".comments WHERE comment_id = ". (int)$resulting_comment_id);
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_comment_id = null, webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                    $this->cache->delete('comments');
+                }
+
+                $this->db->query("INSERT INTO ". DATABASE.".likes SET source_url = '".$comment_data['url']."'".
+                    ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$this->db->escape($comment_data['author']['name'])."'" : "") .
+                    ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$this->db->escape($comment_data['author']['url'])."'" : "") .
+                    ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$this->db->escape($comment_data['author']['photo'])."'" : "") .
+                    ", post_id = ".(int)$post['post_id']);
+                $like_id = $this->db->getLastId();
+                $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_like_id = '".(int)$like_id."', webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                $this->cache->delete('likes');
+                break;
+
+            case 'reply':
+                if($resulting_mention_id > 0) {
+                    $this->db->query("DELETE FROM ". DATABASE.".mentions WHERE mention_id = ". (int)$resulting_mention_id);
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = null, webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                    $this->cache->delete('mentions');
+                }
+                if($resulting_like_id > 0) {
+                    $this->db->query("DELETE FROM ". DATABASE.".likes WHERE like_id = ". (int)$resulting_like_id);
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_like_id = null, webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                    $this->cache->delete('likes');
+                }
+                if($resulting_comment_id > 0) {
+                    $this->db->query("UPDATE ". DATABASE.".comments SET source_url = '".$comment_data['url']."'".
+                        ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$this->db->escape($comment_data['author']['name'])."'" : "") .
+                        ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$this->db->escape($comment_data['author']['url'])."'" : "") .
+                        ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$this->db->escape($comment_data['author']['photo'])."'" : "") .
+                        ((isset($comment_data['text'])  && !empty($comment_data['text']))? ", body='".$this->db->escape($comment_data['text'])."'" : "") .
+                        ((isset($comment_data['name'])  && !empty($comment_data['name']))? ", source_name='".$this->db->escape($comment_data['name'])."'" : "") .
+                        ((isset($comment_data['published'])  && !empty($comment_data['published']))? ", `timestamp`='".$this->db->escape($comment_data['published'])."'" : ", `timestamp`=NOW()") .
+                        ", post_id = ".(int)$post['post_id'] .", approved=1 WHERE comment_id = ".(int)$resulting_comment_id);
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                } else {
+                    $this->db->query("INSERT INTO ". DATABASE.".comments SET source_url = '".$comment_data['url']."'".
+                        ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$this->db->escape($comment_data['author']['name'])."'" : "") .
+                        ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$this->db->escape($comment_data['author']['url'])."'" : "") .
+                        ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$this->db->escape($comment_data['author']['photo'])."'" : "") .
+                        ((isset($comment_data['text'])  && !empty($comment_data['text']))? ", body='".$this->db->escape($comment_data['text'])."'" : "") .
+                        ((isset($comment_data['name'])  && !empty($comment_data['name']))? ", source_name='".$this->db->escape($comment_data['name'])."'" : "") .
+                        ((isset($comment_data['published'])  && !empty($comment_data['published']))? ", `timestamp`='".$this->db->escape($comment_data['published'])."'" : ", `timestamp`=NOW()") .
+                        ", post_id = ".(int)$post['post_id'] .", approved=1");
+                    $comment_id = $this->db->getLastId();
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_comment_id = '".(int)$comment_id."', webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                }
+                $this->cache->delete('comments');
+                break;
+
+            case 'rsvp':
+            case 'repost':
+            case 'mention':
+            default:
+                if($resulting_mention_id > 0) {
+                    $this->db->query("DELETE FROM ". DATABASE.".mentions WHERE mention_id = ". (int)$resulting_mention_id);
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = null, webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                    $this->cache->delete('mentions');
+                }
+                if($resulting_like_id > 0) {
+                    $this->db->query("DELETE FROM ". DATABASE.".likes WHERE like_id = ". (int)$resulting_like_id);
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_like_id = null, webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                    $this->cache->delete('likes');
+                }
+                if($resulting_comment_id > 0) {
+                    $this->db->query("DELETE FROM ". DATABASE.".comments WHERE comment_id = ". (int)$resulting_comment_id);
+                    $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_comment_id = null, webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                    $this->cache->delete('comments');
+                }
+
+                $this->db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$comment_data['url']."'".
+                    ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$this->db->escape($comment_data['author']['name'])."'" : "") .
+                    ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$this->db->escape($comment_data['author']['url'])."'" : "") .
+                    ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$this->db->escape($comment_data['author']['photo'])."'" : "") .
+                    ", post_id = ".(int)$post['post_id'] .", parse_timestamp = NOW(), approved=1");
+                $mention_id = $this->db->getLastId();
+                $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'Updated' WHERE webmention_id = ". (int)$webmention_id);
+                $this->cache->delete('mentions');
+                break;
+            }
+        } else {
+            throw new Exception('Cannot look up record');
+            //throwing an exception will go back to calling script and run the generic add
         }
-	}
+    }
 
 }

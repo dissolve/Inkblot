@@ -18,7 +18,13 @@ while($webmention){
 
     $webmention_id = $webmention['webmention_id'];
 
-    //echo 'id=' . $webmention_id;
+    $resulting_comment_id = (int)$webmention['resulting_comment_id'];
+    $resulting_mention_id = (int)$webmention['resulting_mention_id'];
+    $resulting_like_id = (int)$webmention['resulting_like_id'];
+    $editing = FALSE;
+    if($resulting_comment_id > 0 || $resulting_mention_id > 0 || $resulting_like_id > 0){
+        $editing = TRUE;
+    }
 
     //to verify that target is on my site
     $c = curl_init();
@@ -34,14 +40,33 @@ while($webmention){
     curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($c, CURLOPT_URL, $source_url);
     curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($c, CURLOPT_HEADER, true);
     $real_source_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
     $page_content = curl_exec($c);
+
+    $return_code = curl_getinfo($c, CURLINFO_HTTP_CODE);
+
     curl_close($c);
     unset($c);
 
     if($page_content === FALSE){
-        //our curl command failed to fetch the source site
-        $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Failed To Fetch Source' WHERE webmention_id = ". (int)$webmention_id);
+        if($editing && $return_code == 410){
+            if($resulting_comment_id > 0){
+                $db->query("UPDATE ". DATABASE.".comments SET body = '*Comment Deleted*' WHERE comment_id = ". (int)$resulting_comment_id);
+            }
+            if($resulting_mention_id > 0){
+                $db->query("DELETE FROM ". DATABASE.".mentions WHERE mention_id = ". (int)$resulting_mention_id);
+            }
+            if($resulting_like_id > 0){
+                $db->query("DELETE FROM ". DATABASE.".likes WHERE like_id = ". (int)$resulting_like_id);
+            }
+            //our curl command failed to fetch the source site
+            $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '410', webmention_status = 'Deleted' WHERE webmention_id = ". (int)$webmention_id);
+
+        } else {
+            //our curl command failed to fetch the source site
+            $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Failed To Fetch Source' WHERE webmention_id = ". (int)$webmention_id);
+        }
 
     //} elseif(strpos($real_url, HTTP_SERVER) !== 0 && strpos($real_url, HTTPS_SERVER) !== 0){
         ////target_url does not point actually redirect to our site
@@ -50,6 +75,15 @@ while($webmention){
     } elseif(stristr($page_content, $target_url) === FALSE){
         //we could not find the target_url anywhere on the source page.
         $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Target Link Not Found At Source' WHERE webmention_id = ". (int)$webmention_id);
+            if($resulting_comment_id > 0){
+                $db->query("UPDATE ". DATABASE.".comments SET body = '*Comment Deleted*' WHERE comment_id = ". (int)$resulting_comment_id);
+            }
+            if($resulting_mention_id > 0){
+                $db->query("DELETE FROM ". DATABASE.".mentions WHERE mention_id = ". (int)$resulting_mention_id);
+            }
+            if($resulting_like_id > 0){
+                $db->query("DELETE FROM ". DATABASE.".likes WHERE like_id = ". (int)$resulting_like_id);
+            }
 
     } else {
         $mf2_parsed = Mf2\parse($page_content, $real_source_url);
@@ -71,13 +105,11 @@ while($webmention){
 
         try {
             $loader->model($model);
-            $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_data);
-            //echo 'debug 1:';
-            //print_r($data);
-            //echo 'debug 2:';
-            //print_r($webmention_id);
-            //echo 'debug 3:';
-            //print_r($comment_data);
+            if($editing){
+                $registry->get('model_'. str_replace('/', '_', $model))->editWebmention($data, $webmention_id, $comment_data);
+            } else {
+                $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_data);
+            }
         } catch (Exception $e) {
             if(isset($comment_data['type']) && $comment_data['type'] == 'like'){
                 $db->query("INSERT INTO ". DATABASE.".likes SET source_url = '".$comment_data['url']."'".

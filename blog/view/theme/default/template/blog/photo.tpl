@@ -45,6 +45,7 @@
       <div class="entry-content e-content p-photo">
         <img src="<?php echo $photo['image_file']?>" class="u-photo photo-post" /><br>
         <?php echo $photo['body_html'];?>
+        <?php echo $photo['syndication_extra'];?>
       </div><!-- .entry-content -->
   </div>
   
@@ -52,7 +53,6 @@
 
   <?php if(!empty($photo['syndications'])){ ?>
     <div id="syndications">
-    Elsewhere:
     <?php foreach($photo['syndications'] as $elsewhere){ ?>
 
       <?php if(isset($elsewhere['image'])){ ?>

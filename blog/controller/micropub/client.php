@@ -56,6 +56,9 @@ class ControllerMicropubClient extends Controller {
         if(isset($this->request->post['syndication'])){
             $post_data_array['syndication']  = $this->request->post['syndication'];
         }
+        if(isset($this->request->post['syndicate-to'])){
+            $post_data_array['syndicate-to']  = $this->request->post['syndicate-to'];
+        }
 
         $post_data = http_build_query($post_data_array);
 

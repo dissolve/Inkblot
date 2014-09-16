@@ -30,6 +30,7 @@ class ControllerBlogCategory extends Controller {
                 $data['articles'][] = array_merge($article, array(
                     'body_html' => html_entity_decode($article['body']),
                     'author' => $author,
+                    'author_image' => '/image/static/icon_128.jpg',
                     'categories' => $categories,
                     'comment_count' => $comment_count,
                     'like_count' => $like_count
