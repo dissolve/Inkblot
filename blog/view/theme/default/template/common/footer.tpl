@@ -103,6 +103,7 @@
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   ga('create', '<?php echo $google_analytics_id?>', 'auto');
+  ga('require', 'displayfeatures');
   ga('send', 'pageview');
 
 </script>
