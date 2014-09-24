@@ -1,6 +1,47 @@
 <?php
 class ModelBlogArticle extends Model {
 
+    public function newArticle($data){
+
+        $year = date('Y');
+        $month = date('n');
+        $day = date('j');
+
+        $query = $this->db->query("
+            SELECT COALESCE(MAX(daycount), 0) + 1 AS newval
+                FROM ".DATABASE.".posts 
+                WHERE `year` = '".$year."'
+                    AND `month` = '".$month."' 
+                    AND `day` = '".$day."';");
+
+        $newcount = $query->row['newval'];
+
+        $syndication_extra = '';
+        if(isset($data['syndication_extra']) && !empty($data['syndication_extra'])){
+            $syndication_extra = $this->db->escape($data['syndication_extra']);
+        }
+
+
+        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='article',
+            `body` = '".$this->db->escape($data['body'])."',
+            `title` = '".$this->db->escape($data['title'])."',
+            `slug` = '".$this->db->escape($data['slug'])."',
+            `syndication_extra` = '".$syndication_extra."',
+            `author_id` = 1,
+            `timestamp` = NOW(),
+            `year` = '".$year."',
+            `month` = '".$month."',
+            `day` = '".$day."',
+            `daycount` = ".$newcount .
+            (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='".$this->db->escape($data['replyto'])."'" : "");
+
+        $query = $this->db->query($sql);
+
+        $id = $this->db->getLastId();
+        
+        return $id;
+	
+    }
 
     //TODO: add a boolean flag to for ASC, so change the sort order
     //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full articles

@@ -16,7 +16,7 @@
                   <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
                   <p><button type="submit">Log In</button></p>
                   <input type="hidden" name="scope" value="post" />
-                  <input type="hidden" name="c" value="micropub/client" />
+                  <input type="hidden" name="c" value="micropub/client/article" />
                 </form>
               <?php } ?>
           <?php } else { ?>
@@ -29,14 +29,14 @@
           <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
           <p><button type="submit">Log In</button></p>
           <input type="hidden" name="scope" value="post" />
-          <input type="hidden" name="c" value="micropub/client" />
+          <input type="hidden" name="c" value="micropub/client/article" />
         </form>
       <?php } ?>
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
             <div class="content">
                 <div class="form-group">
                   <div class="col-sm-10">
-                    <script>
+                    <!--<script>
                         function setDisplay(theClass,display){
                                 var elements = document.getElementsByClassName(theClass), i;
 
@@ -48,31 +48,30 @@
                     </script>
                     <style>
                         .group-edit{display:none}
-                    </style>
-                    <input type="radio" name="edit-type" value="" id="radio-create" checked class="form-control" onclick="setDisplay('group-edit','none');setDisplay('group-create','block');" /> Create
-                    <input type="radio" name="edit-type" value="" id="radio-edit" class="form-control" onclick="setDisplay('group-create','none');setDisplay('group-edit','block');" /> Edit
+                    </style>-->
+                    <span> Type: 
+                    <a href="<?php echo $note_create_link?>">Note</a>
+                    <b>Article</b>
+                    </span>
+                    <br>
+                    <input type="hidden" name="type" value="article" />
+                    <!--<input type="radio" name="edit-type" value="" id="radio-create" checked class="form-control" onclick="setDisplay('group-edit','none');setDisplay('group-create','block');" /> Create
+                    <input type="radio" name="edit-type" value="" id="radio-edit" class="form-control" onclick="setDisplay('group-create','none');setDisplay('group-edit','block');" /> Edit-->
                   </div>
                 </div>
             <div class="content">
-                <div class="form-group group-edit" >
-                  <label class="col-sm-2 control-label" for="input-url">URL</label>
+
+                <div class="form-group required group-create">
+                  <label class="col-sm-2 control-label" for="input-title">Title</label>
                   <div class="col-sm-10">
-                    <input type="text" name="url" value="" placeholder="Permalink to Entry" id="input-url" class="form-control" />
-                    <?php if (isset($error_url)) { ?>
-                    <span class="text-danger"><?php echo $error_url; ?></span>
+                    <input type="text" name="title" value="<?php echo isset($post) ? $post['title'] : ''; ?>" placeholder="<?php echo $entry_title; ?>" id="input-title" class="form-control" />
+                    <?php if (isset($error_title)) { ?>
+                    <span class="text-danger"><?php echo $error_title; ?></span>
                     <?php } ?>
                   </div>
                 </div>
-                <div class="form-group group-edit">
-                  <label class="col-sm-2 control-label" for="input-syndication">Syndication URL to Add</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="syndication" value="" placeholder="Permalink to Sydicated Copy" id="input-syndication" class="form-control" />
-                    <?php if (isset($error_syndication)) { ?>
-                    <span class="text-danger"><?php echo $error_syndication; ?></span>
-                    <?php } ?>
-                  </div>
-                </div>
-                <div class="form-group group-create">
+
+                <div class="form-group required group-create">
                   <label class="col-sm-2 control-label" for="input-slug">Slug</label>
                   <div class="col-sm-10">
                     <input type="text" name="slug" value="<?php echo isset($post) ? $post['slug'] : ''; ?>" placeholder="<?php echo $entry_slug; ?>" id="input-slug" class="form-control" />
@@ -81,6 +80,7 @@
                     <?php } ?>
                   </div>
                 </div>
+
                 <div class="form-group required group-create">
                   <label class="col-sm-2 control-label" for="input-body">Body</label>
                   <div class="col-sm-10">
@@ -97,6 +97,16 @@
                     <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="<?php echo $entry_replyto; ?>" id="input-replyto" class="form-control" />
                     <?php if (isset($error_replyto)) { ?>
                     <span class="text-danger"><?php echo $error_replyto; ?></span>
+                    <?php } ?>
+                  </div>
+                </div>
+
+                <div class="form-group group-create">
+                  <label class="col-sm-2 control-label" for="input-syndication">Syndication URL</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="syndication" value="" placeholder="Permalink to Sydicated Copy" id="input-syndication" class="form-control" />
+                    <?php if (isset($error_syndication)) { ?>
+                    <span class="text-danger"><?php echo $error_syndication; ?></span>
                     <?php } ?>
                   </div>
                 </div>
@@ -127,8 +137,8 @@
 
   </footer><!-- #entry-meta --></article>
 
-<!-- <script type="text/javascript" src="blog/view/javascript/ckeditor/ckeditor.js"></script> 
+<script type="text/javascript" src="blog/view/javascript/ckeditor/ckeditor.js"></script> 
 <script type="text/javascript">
 CKEDITOR.replace('input-body');
-</script>  -->
+</script>
 <?php echo $footer; ?>

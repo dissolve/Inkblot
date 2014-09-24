@@ -16,6 +16,8 @@ $routes['login_token']        = 'auth/login/tokencallback';
 $routes['logout']             = 'auth/logout';
 $routes['contact']            = 'contacts/me';
 $routes['new']                = 'micropub/client';
+$routes['new_note']           = 'micropub/client';
+$routes['new_article']        = 'micropub/client/article';
 $routes['micropub-send']      = 'micropub/client/send';
 
 $advanced_routes[] = array('controller' => 'blog/pages',

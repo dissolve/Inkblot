@@ -27,12 +27,49 @@ class ControllerMicropubClient extends Controller {
 
         $data['token'] = isset($this->session->data['token']);
 
+        $data['article_create_link'] = $this->url->link('micropub/client/article', '', '');
+        $data['note_create_link'] = $this->url->link('micropub/client', '', '');
 
 
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/create.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/create.tpl', $data));
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/note.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/note.tpl', $data));
 		} else {
-			$this->response->setOutput($this->load->view('default/template/blog/archive.tpl', $data));
+			$this->response->setOutput($this->load->view('default/template/micropub/note.tpl', $data));
+		}
+	}
+
+	public function article() {
+
+
+		$this->document->setTitle('Create a New Article');
+		$data['title'] = 'Create a New Article';
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['footer'] = $this->load->controller('common/footer');
+        $data['login'] = $this->url->link('auth/login');
+
+		$this->document->setDescription($this->config->get('config_meta_description'));
+
+        if(isset($this->session->data['user_site'])){
+            $data['user_name'] = $this->session->data['user_site'];
+            $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
+            if($endpoint){
+                $data['micropubEndpoint'] = $endpoint;
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
+            }
+
+        }
+
+        $data['token'] = isset($this->session->data['token']);
+
+        $data['article_create_link'] = $this->url->link('micropub/client/article', '', '');
+        $data['note_create_link'] = $this->url->link('micropub/client', '', '');
+
+
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/article.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/article.tpl', $data));
+		} else {
+			$this->response->setOutput($this->load->view('default/template/micropub/article.tpl', $data));
 		}
 	}
 
@@ -41,23 +78,12 @@ class ControllerMicropubClient extends Controller {
         $post_data_array = array(
             'h'             => 'entry',
         );
-        if(isset($this->request->post['content'])){
-            $post_data_array['content']  = $this->request->post['content'];
-        }
-        if(isset($this->request->post['in-reply-to'])){
-            $post_data_array['in-reply-to']  = $this->request->post['in-reply-to'];
-        }
-        if(isset($this->request->post['slug'])){
-            $post_data_array['slug']  = $this->request->post['slug'];
-        }
-        if(isset($this->request->post['url'])){
-            $post_data_array['url']  = $this->request->post['url'];
-        }
-        if(isset($this->request->post['syndication'])){
-            $post_data_array['syndication']  = $this->request->post['syndication'];
-        }
-        if(isset($this->request->post['syndicate-to'])){
-            $post_data_array['syndicate-to']  = $this->request->post['syndicate-to'];
+        foreach($this->request->post as $post_field => $post_data){
+            if($post_field == 'content' && isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
+                $post_data_array[$post_field]  = html_entity_decode($post_data);
+            } else {
+                $post_data_array[$post_field]  = $post_data;
+            }
         }
 
         $post_data = http_build_query($post_data_array);
@@ -83,11 +109,15 @@ class ControllerMicropubClient extends Controller {
         $response = curl_exec($ch);
         $result = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if (in_array($result, array(200,201))){
-            $this->session->data['success'] = 'Post Created.';
+            $this->session->data['success'] = 'Post Submitted.';
         } else {
             $this->session->data['error'] = 'Error in Creation.  Return code '.$result.'.';
         }
-        $this->response->redirect($this->url->link('micropub/client'));
+        if(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
+            $this->response->redirect($this->url->link('micropub/client/article'));
+        } else {
+            $this->response->redirect($this->url->link('micropub/client'));
+        }
     }
 }
 ?>

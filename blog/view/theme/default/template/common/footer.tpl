@@ -82,6 +82,7 @@
         </form>
     </li></ul>
     <?php } ?>
+</section>
 
 </div><!-- #secondary .widget-area -->
 

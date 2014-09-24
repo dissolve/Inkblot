@@ -24,9 +24,9 @@
         <div class="entry-meta">      
         <span class="author p-author vcard hcard h-card">
             <img alt='' src='<?php echo $note['author_image']?>' class='u-photo ' height='40' width='40' /> 
-            <a class="url uid u-url u-uid fn p-name" href="<?php echo $note['author']['link']?>" title="View all notes by <?php echo $note['author']['display_name']?>" rel="author">
+            <span class="p-name"><a class="url uid u-url u-uid fn" href="<?php echo $note['author']['link']?>" title="View all notes by <?php echo $note['author']['display_name']?>" rel="author">
                 <?php echo $note['author']['display_name']?>
-            </a>
+            </a></span>
         </span>
         <a href="<?php echo $note['permalink']?>" title="<?php echo date("g:i A", strtotime($note['timestamp']))?>" rel="bookmark" class="permalink u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($note['timestamp']))?>" ><?php echo date("F j, Y g:i A", strtotime($note['timestamp']))?></time></a>
 
@@ -42,7 +42,7 @@
     <?php if(!empty($note['title'])){ ?>
     <h1 class="entry-title p-name"><a href="<?php echo $note['permalink']?>" class="u-url url" title="Permalink to <?php echo $note['title']?>" rel="bookmark" ><?php echo $note['title']?></a></h1>
     <?php } ?>
-      <div class="entry-content e-content p-note">
+      <div class="entry-content e-content p-note <?php echo (empty($note['title']) ? 'p-name' : '')?>">
       <?php echo $note['body_html'];?>
       <?php echo $note['syndication_extra'];?>
       
