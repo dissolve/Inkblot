@@ -24,12 +24,16 @@ class ControllerMicropubReceive extends Controller {
 
                 if($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) {
 
-                    if(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
+                    if(isset($this->request->post['delete']) && intval($this->request->post['delete']) == 1){
+                        $this->deletePost();
+                    } elseif(isset($this->request->post['delete']) && intval($this->request->post['delete']) == 0){
+                        $this->undeletePost();
+                    } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
                         $this->createArticle();
                     } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
                         $this->createPhoto();
                     } elseif(isset($this->request->post['url']) && !empty($this->request->post['url'])){
-                        $this->editNote();
+                        $this->editPost();
                     } else {
                         $this->createNote();
                     }
@@ -48,14 +52,40 @@ class ControllerMicropubReceive extends Controller {
         }
     }
 
-    private function editNote(){
+    private function undeletePost(){
+        $post = $this->getPostByURL($this->request->post['url']);
+        if($post && isset($this->request->post['syndication'])){
+            $this->load->model('blog/post');
+            $this->model_blog_post->undeletePost($post['post_id']);
+            $this->cache->delete('post.'.$post['post_id']);
+
+            $this->response->addHeader('HTTP/1.1 200 OK');
+            $this->response->addHeader('Location: '. $post['permalink']);
+            $this->response->setOutput($post['permalink']);
+        }
+    }
+
+    private function deletePost(){
+        $post = $this->getPostByURL($this->request->post['url']);
+        if($post && isset($this->request->post['syndication'])){
+            $this->load->model('blog/post');
+            $this->model_blog_post->deletePost($post['post_id']);
+            $this->cache->delete('post.'.$post['post_id']);
+
+            $this->response->addHeader('HTTP/1.1 200 OK');
+            $this->response->addHeader('Location: '. $post['permalink']);
+            $this->response->setOutput($post['permalink']);
+        }
+    }
+
+    private function editPost(){
         $post = $this->getPostByURL($this->request->post['url']);
         if($post && isset($this->request->post['syndication'])){
             $this->load->model('blog/post');
             $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
             $this->cache->delete('post.'.$post['post_id']);
 
-            $this->response->addHeader('HTTP/1.1 201 Created');
+            $this->response->addHeader('HTTP/1.1 200 OK');
             $this->response->addHeader('Location: '. $post['permalink']);
             $this->response->setOutput($post['permalink']);
         }
@@ -71,14 +101,23 @@ class ControllerMicropubReceive extends Controller {
         if(isset($this->request->post['slug'])) {
             $data['slug'] = $this->request->post['slug'];
         }
+
+        if(isset($this->request->post['draft'])){
+            $data['draft'] = $this->request->post['draft'];
+        }
+
         //TODO
         // $this->request->post['h'];
         // $this->request->post['published'];
         // $this->request->post['category'];
-        // $this->request->post['location'];
-        // $this->request->post['place_name'];
         if(isset($this->request->post['in-reply-to'])){
             $data['replyto'] = $this->request->post['in-reply-to'];
+        }
+        if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
+            $data['location'] = $this->request->post['location'];
+        }
+        if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
+            $data['place_name'] = $this->request->post['place_name'];
         }
 
         if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
@@ -99,15 +138,18 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
             $this->cache->delete('post.'.$note['post_id']);
         }
-        // send webmention
-        include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-        $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body'].$note['syndication_extra']) );
-        $client->debug(false);
-        $sent = $client->sendSupportedMentions();
-        $urls = $client->getReturnedUrls();
-        foreach($urls as $syn_url){
-            $this->model_blog_post->addSyndication($note['post_id'], $syn_url);
+        if($node['draft'] != 1){
+            // send webmention
+            include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body'].$note['syndication_extra']) );
+            $client->debug(false);
+            $sent = $client->sendSupportedMentions();
+            $urls = $client->getReturnedUrls();
+            foreach($urls as $syn_url){
+                $this->model_blog_post->addSyndication($note['post_id'], $syn_url);
+            }
         }
+
         $this->cache->delete('post.'.$note['post_id']);
 
         $this->response->addHeader('HTTP/1.1 201 Created');
@@ -116,21 +158,30 @@ class ControllerMicropubReceive extends Controller {
 	}
 
     private function createArticle(){
-        $this->log->write('called createArticle');
+        //$this->log->write($this->request->post['content']);
+        //$this->log->write('called createArticle');
         $this->load->model('blog/article');
         $data = array();
         $data['body'] = $this->request->post['content'];
         $data['title'] = $this->request->post['title'];
         $data['slug'] = $this->request->post['slug'];
 
+        if(isset($this->request->post['draft'])){
+            $data['draft'] = $this->request->post['draft'];
+        }
+
         //TODO
         // $this->request->post['h'];
         // $this->request->post['published'];
         // $this->request->post['category'];
-        // $this->request->post['location'];
-        // $this->request->post['place_name'];
         if(isset($this->request->post['in-reply-to'])){
             $data['replyto'] = $this->request->post['in-reply-to'];
+        }
+        if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
+            $data['location'] = $this->request->post['location'];
+        }
+        if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
+            $data['place_name'] = $this->request->post['place_name'];
         }
 
         if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
@@ -151,15 +202,19 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_post->addSyndication($article['post_id'], $this->request->post['syndication']);
             $this->cache->delete('post.'.$article['post_id']);
         }
-        // send webmention
-        include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-        $client = new IndieWeb\MentionClient($article['shortlink'], '<a href="'.$article['replyto'].'">ReplyTo</a>' . html_entity_decode($article['body'].$article['syndication_extra']) );
-        $client->debug(false);
-        $sent = $client->sendSupportedMentions();
-        $urls = $client->getReturnedUrls();
-        foreach($urls as $syn_url){
-            $this->model_blog_post->addSyndication($article['post_id'], $syn_url);
+
+        if($article['draft'] != 1){
+            // send webmention
+            include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+            $client = new IndieWeb\MentionClient($article['shortlink'], '<a href="'.$article['replyto'].'">ReplyTo</a>' . html_entity_decode($article['body'].$article['syndication_extra']) );
+            $client->debug(false);
+            $sent = $client->sendSupportedMentions();
+            $urls = $client->getReturnedUrls();
+            foreach($urls as $syn_url){
+                $this->model_blog_post->addSyndication($article['post_id'], $syn_url);
+            }
         }
+
         $this->cache->delete('post.'.$article['post_id']);
 
         $this->response->addHeader('HTTP/1.1 201 Created');
@@ -183,11 +238,15 @@ class ControllerMicropubReceive extends Controller {
             // $this->request->post['h'];
             // $this->request->post['published'];
             // $this->request->post['category'];
-            // $this->request->post['location'];
-            // $this->request->post['place_name'];
             // $this->request->post['photo'];
             if(isset($this->request->post['in-reply-to'])){
                 $data['replyto'] = $this->request->post['in-reply-to'];
+            }
+            if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
+                $data['location'] = $this->request->post['location'];
+            }
+            if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
+                $data['place_name'] = $this->request->post['place_name'];
             }
             $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter"></a>';
             //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';

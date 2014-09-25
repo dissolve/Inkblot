@@ -7,6 +7,11 @@ class ModelBlogPhoto extends Model {
         $month = date('n');
         $day = date('j');
 
+        $draft= 0;
+        if(isset($data['draft']) && ($data['draft'] == 1 || $data['draft'] == '1')){
+            $draft= 1;
+        }
+
         $query = $this->db->query("
             SELECT COALESCE(MAX(daycount), 0) + 1 AS newval
                 FROM ".DATABASE.".posts 
@@ -28,10 +33,12 @@ class ModelBlogPhoto extends Model {
             `image_file` = '".$this->db->escape($data['image_file'])."',
             `author_id` = 1,
             `timestamp` = NOW(),
-            `year` = '".$year."',
-            `month` = '".$month."',
-            `day` = '".$day."',
-            `daycount` = ".$newcount .
+            `year` = ".(int)$year.",
+            `month` = ".(int)$month.",
+            `day` = ".(int)$day.",
+            `draft` = ".(int)$draft.",
+            `deleted` = 0,
+            `daycount` = ".(int)$newcount .
             (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='".$this->db->escape($data['replyto'])."'" : "");
 
         $query = $this->db->query($sql);
@@ -39,7 +46,16 @@ class ModelBlogPhoto extends Model {
         $id = $this->db->getLastId();
         
         return $id;
-	
+    }
+
+    public function deletePhoto($photo_id){
+        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = ".(int)$photo_id;
+        $this->db->query($sql);
+    }
+
+    public function undeletePhoto($photo_id){
+        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=0 WHERE post_id = ".(int)$photo_id;
+        $this->db->query($sql);
     }
 
     //TODO: add a boolean flag to for ASC, so change the sort order
@@ -81,7 +97,7 @@ class ModelBlogPhoto extends Model {
         $data = $this->cache->get('photos.recent.'. $skip . '.'.  $limit);
         if(!$data){
             $data_array = array();
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='photo' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='photo' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             foreach($data as $photo){
                 $data_array[] = $this->getPhoto($photo['post_id']);
@@ -97,7 +113,7 @@ class ModelBlogPhoto extends Model {
 	public function getPhotosByCategory($category_id, $limit=20, $skip=0) {
         $data = $this->cache->get('photos.category.'. $category_id . '.'. $skip . '.'.  $limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE post_type='photo' AND category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE post_type='photo' AND category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
             foreach($data as $photo){
@@ -114,7 +130,7 @@ class ModelBlogPhoto extends Model {
 	public function getPhotosByAuthor($author_id, $limit=20, $skip=0) {
         $data = $this->cache->get('photos.author.'. $author_id . '.'. $skip . '.'.  $limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='photo' AND author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='photo' AND author_id = '".(int)$author_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
             foreach($data as $photo){
@@ -131,7 +147,7 @@ class ModelBlogPhoto extends Model {
 	public function getPhotosByArchive($year, $month, $limit=20, $skip=0) {
         $data = $this->cache->get('photos.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='photo' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='photo' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
             foreach($data as $photo){

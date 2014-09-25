@@ -91,6 +91,31 @@ INSERT INTO `categories_posts` VALUES (0,5),(0,6),(2,7);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `comment_syndication`
+--
+
+DROP TABLE IF EXISTS `comment_syndication`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `comment_syndication` (
+  `comment_syndication_id` int(11) NOT NULL AUTO_INCREMENT,
+  `comment_id` int(11) DEFAULT NULL,
+  `syndication_site_id` int(11) DEFAULT NULL,
+  `syndication_url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`comment_syndication_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comment_syndication`
+--
+
+LOCK TABLES `comment_syndication` WRITE;
+/*!40000 ALTER TABLE `comment_syndication` DISABLE KEYS */;
+/*!40000 ALTER TABLE `comment_syndication` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `comments`
 --
 
@@ -116,6 +141,11 @@ CREATE TABLE `comments` (
 --
 -- Dumping data for table `comments`
 --
+
+LOCK TABLES `comments` WRITE;
+/*!40000 ALTER TABLE `comments` DISABLE KEYS */;
+/*!40000 ALTER TABLE `comments` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `contact_field`
@@ -161,6 +191,10 @@ CREATE TABLE `contact_group` (
 -- Dumping data for table `contact_group`
 --
 
+LOCK TABLES `contact_group` WRITE;
+/*!40000 ALTER TABLE `contact_group` DISABLE KEYS */;
+/*!40000 ALTER TABLE `contact_group` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `contacts`
@@ -180,6 +214,11 @@ CREATE TABLE `contacts` (
 --
 -- Dumping data for table `contacts`
 --
+
+LOCK TABLES `contacts` WRITE;
+/*!40000 ALTER TABLE `contacts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `contacts` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `context`
@@ -205,6 +244,36 @@ CREATE TABLE `context` (
 -- Dumping data for table `context`
 --
 
+LOCK TABLES `context` WRITE;
+/*!40000 ALTER TABLE `context` DISABLE KEYS */;
+/*!40000 ALTER TABLE `context` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `context_syndication`
+--
+
+DROP TABLE IF EXISTS `context_syndication`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `context_syndication` (
+  `context_syndication_id` int(11) NOT NULL AUTO_INCREMENT,
+  `context_id` int(11) DEFAULT NULL,
+  `syndication_site_id` int(11) DEFAULT NULL,
+  `syndication_url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`context_syndication_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `context_syndication`
+--
+
+LOCK TABLES `context_syndication` WRITE;
+/*!40000 ALTER TABLE `context_syndication` DISABLE KEYS */;
+/*!40000 ALTER TABLE `context_syndication` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Table structure for table `context_to_context`
 --
@@ -222,6 +291,11 @@ CREATE TABLE `context_to_context` (
 --
 -- Dumping data for table `context_to_context`
 --
+
+LOCK TABLES `context_to_context` WRITE;
+/*!40000 ALTER TABLE `context_to_context` DISABLE KEYS */;
+/*!40000 ALTER TABLE `context_to_context` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `field_types`
@@ -300,6 +374,10 @@ CREATE TABLE `likes` (
 -- Dumping data for table `likes`
 --
 
+LOCK TABLES `likes` WRITE;
+/*!40000 ALTER TABLE `likes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `likes` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `mentions`
@@ -355,6 +433,10 @@ CREATE TABLE `mydata` (
 -- Dumping data for table `mydata`
 --
 
+LOCK TABLES `mydata` WRITE;
+/*!40000 ALTER TABLE `mydata` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mydata` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `mydata_group`
@@ -374,6 +456,10 @@ CREATE TABLE `mydata_group` (
 -- Dumping data for table `mydata_group`
 --
 
+LOCK TABLES `mydata_group` WRITE;
+/*!40000 ALTER TABLE `mydata_group` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mydata_group` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `pages`
@@ -417,6 +503,35 @@ CREATE TABLE `post_context` (
 -- Dumping data for table `post_context`
 --
 
+LOCK TABLES `post_context` WRITE;
+/*!40000 ALTER TABLE `post_context` DISABLE KEYS */;
+/*!40000 ALTER TABLE `post_context` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `post_replyto`
+--
+
+DROP TABLE IF EXISTS `post_replyto`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `post_replyto` (
+  `post_replyto_id` int(11) NOT NULL AUTO_INCREMENT,
+  `post_id` int(11) DEFAULT NULL,
+  `in-reply-to` varchar(300) DEFAULT NULL,
+  PRIMARY KEY (`post_replyto_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `post_replyto`
+--
+
+LOCK TABLES `post_replyto` WRITE;
+/*!40000 ALTER TABLE `post_replyto` DISABLE KEYS */;
+/*!40000 ALTER TABLE `post_replyto` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Table structure for table `post_syndication`
 --
@@ -425,17 +540,22 @@ DROP TABLE IF EXISTS `post_syndication`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `post_syndication` (
-  `post_id` int(11) NOT NULL,
-  `syndication_site_id` int(11) NOT NULL,
+  `post_syndication_id` int(11) NOT NULL AUTO_INCREMENT,
+  `post_id` int(11) DEFAULT NULL,
+  `syndication_site_id` int(11) DEFAULT NULL,
   `syndication_url` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`post_id`,`syndication_site_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`post_syndication_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `post_syndication`
 --
 
+LOCK TABLES `post_syndication` WRITE;
+/*!40000 ALTER TABLE `post_syndication` DISABLE KEYS */;
+/*!40000 ALTER TABLE `post_syndication` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `posts`
@@ -455,10 +575,20 @@ CREATE TABLE `posts` (
   `day` tinyint(2) unsigned DEFAULT NULL COMMENT 'daycount is the post number for that specific day',
   `daycount` tinyint(3) unsigned DEFAULT NULL,
   `slug` varchar(100) DEFAULT NULL,
-  `post_type` enum('article','note','photo','checkin','event') DEFAULT 'article',
+  `post_type` enum('article','note','photo','checkin','event','rsvp') DEFAULT 'article',
+  `excerpt` varchar(255) DEFAULT NULL,
   `replyto` varchar(300) DEFAULT NULL,
   `image_file` varchar(100) DEFAULT NULL,
   `context_parsed` tinyint(1) DEFAULT '0',
+  `syndication_extra` varchar(255) DEFAULT NULL,
+  `draft` tinyint(1) DEFAULT '0',
+  `edit_timestamp` datetime DEFAULT NULL,
+  `event_start_timestamp` datetime DEFAULT NULL,
+  `event_end_timestamp` datetime DEFAULT NULL,
+  `location` varchar(100) DEFAULT NULL,
+  `place_name` varchar(100) DEFAULT NULL,
+  `deleted` tinyint(1) DEFAULT '0',
+  `rsvp_attending` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -492,6 +622,10 @@ CREATE TABLE `syndication_site` (
 -- Dumping data for table `syndication_site`
 --
 
+LOCK TABLES `syndication_site` WRITE;
+/*!40000 ALTER TABLE `syndication_site` DISABLE KEYS */;
+/*!40000 ALTER TABLE `syndication_site` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `tokens`

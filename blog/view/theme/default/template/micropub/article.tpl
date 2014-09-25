@@ -121,6 +121,13 @@
                   </div>
                 </div>
 
+                <div class="form-group group-create">
+                  <div class="col-sm-10">
+                    <input type="checkbox" name="draft" value="1" id="input-draft" class="form-control" />
+                  <label class="col-sm-2 control-label" for="input-replyto">This is a Draft, do not publish</label>
+                  </div>
+                </div>
+
             </div>
             <?php if(isset($micropubEndpoint) && $token) { ?>
             <input type="submit" value="Submit" />

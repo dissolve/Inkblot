@@ -86,6 +86,7 @@ class ControllerMicropubClient extends Controller {
             }
         }
 
+        //$this->log->write(print_r($post_data_array, true));
         $post_data = http_build_query($post_data_array);
 
         $user = $this->session->data['user_site'];

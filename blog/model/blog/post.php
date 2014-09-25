@@ -37,6 +37,16 @@ class ModelBlogPost extends Model {
            return $n;
     }
 
+    public function deletePost($post_id){
+        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = ".(int)$post_id;
+        $this->db->query($sql);
+    }
+
+    public function undeletePost($post_id){
+        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=0 WHERE post_id = ".(int)$post_id;
+        $this->db->query($sql);
+    }
+
 	public function getPost($post_id) {
         $post = $this->cache->get('post.'. $post_id);
         if(!$post){
@@ -77,7 +87,7 @@ class ModelBlogPost extends Model {
 	public function getRecentPosts($limit=10, $skip=0) {
 		$post_id_array = $this->cache->get('posts.recent.'. $skip . '.'.  $limit);
 		if(!$post_id_array){
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
 		    $post_id_array = $query->rows;
 		    $this->cache->set('posts.recent.'. $skip . '.' .$limit, $post_id_array);
 		}
@@ -94,7 +104,7 @@ class ModelBlogPost extends Model {
 		$post_id_array = $this->cache->get('posts.type.'. implode('.',$type_list) . '.'. $skip . '.'.  $limit);
 		if(!$post_id_array){
 			// todo need to map this->db->escape
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type IN ('".implode("','",$type_list)."') ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type IN ('".implode("','",$type_list)."') AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
 		    $post_id_array = $query->rows;
 		    $this->cache->set('posts.type.'.implode('.',$type_list) . '.'. $skip . '.'.  $limit, $post_id_array);
 		}
@@ -110,7 +120,7 @@ class ModelBlogPost extends Model {
 	public function getPostsByCategory($category_id, $limit=20, $skip=0) {
 		$post_id_array = $this->cache->get('posts.category.'. $category_id . '.'. $skip . '.'.  $limit);
 		if(!$post_id_array){
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
 		    $post_id_array = $query->rows;
 		    $this->cache->set('posts.category.'.$category_id . '.'. $skip . '.'.  $limit, $post_id_array);
 		}
@@ -126,7 +136,7 @@ class ModelBlogPost extends Model {
 	public function getPostsByAuthor($author_id, $limit=20, $skip=0) {
         $post_id_array = $this->cache->get('posts.author.'. $author_id . '.'. $skip . '.'.  $limit);
         if(!$post_id_array){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE author_id = '".(int)$author_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $post_id_array = $query->rows;
             $this->cache->set('posts.author.'.$author_id . '.'. $skip . '.'.  $limit, $post_id_array);
         }
@@ -141,7 +151,7 @@ class ModelBlogPost extends Model {
 	public function getPostsByArchive($year, $month, $limit=20, $skip=0) {
         $post_id_array = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
         if(!$post_id_array){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $post_id_array = $query->rows;
             $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $post_id_array);
         }

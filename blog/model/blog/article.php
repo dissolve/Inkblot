@@ -7,6 +7,11 @@ class ModelBlogArticle extends Model {
         $month = date('n');
         $day = date('j');
 
+        $draft= 0;
+        if(isset($data['draft']) && ($data['draft'] == 1 || $data['draft'] == '1')){
+            $draft= 1;
+        }
+
         $query = $this->db->query("
             SELECT COALESCE(MAX(daycount), 0) + 1 AS newval
                 FROM ".DATABASE.".posts 
@@ -21,7 +26,6 @@ class ModelBlogArticle extends Model {
             $syndication_extra = $this->db->escape($data['syndication_extra']);
         }
 
-
         $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='article',
             `body` = '".$this->db->escape($data['body'])."',
             `title` = '".$this->db->escape($data['title'])."',
@@ -29,10 +33,12 @@ class ModelBlogArticle extends Model {
             `syndication_extra` = '".$syndication_extra."',
             `author_id` = 1,
             `timestamp` = NOW(),
-            `year` = '".$year."',
-            `month` = '".$month."',
-            `day` = '".$day."',
-            `daycount` = ".$newcount .
+            `year` = ".(int)$year.",
+            `month` = ".(int)$month.",
+            `day` = ".(int)$day.",
+            `draft` = ".(int)$draft.",
+            `deleted` = 0,
+            `daycount` = ".(int)$newcount .
             (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='".$this->db->escape($data['replyto'])."'" : "");
 
         $query = $this->db->query($sql);
@@ -40,7 +46,16 @@ class ModelBlogArticle extends Model {
         $id = $this->db->getLastId();
         
         return $id;
-	
+    }
+
+    public function deleteArticle($article_id){
+        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = ".(int)$article_id;
+        $this->db->query($sql);
+    }
+
+    public function undeleteArticle($article_id){
+        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=0 WHERE post_id = ".(int)$article_id;
+        $this->db->query($sql);
     }
 
     //TODO: add a boolean flag to for ASC, so change the sort order
@@ -83,7 +98,7 @@ class ModelBlogArticle extends Model {
         $data = $this->cache->get('articles.recent.'. $skip . '.'.  $limit);
         if(!$data){
             $data_array = array();
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             foreach($data as $article){
                 $data_array[] = $this->getArticle($article['post_id']);
@@ -99,7 +114,7 @@ class ModelBlogArticle extends Model {
 	public function getArticlesByCategory($category_id, $limit=20, $skip=0) {
         $data = $this->cache->get('articles.category.'. $category_id . '.'. $skip . '.'.  $limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE post_type='article' AND category_id = '".(int)$category_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE post_type='article' AND category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
             foreach($data as $article){
@@ -116,7 +131,7 @@ class ModelBlogArticle extends Model {
 	public function getArticlesByAuthor($author_id, $limit=20, $skip=0) {
         $data = $this->cache->get('articles.author.'. $author_id . '.'. $skip . '.'.  $limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND author_id = '".(int)$author_id."' ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND author_id = '".(int)$author_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
             foreach($data as $article){
@@ -133,7 +148,7 @@ class ModelBlogArticle extends Model {
 	public function getArticlesByArchive($year, $month, $limit=20, $skip=0) {
         $data = $this->cache->get('articles.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."'  ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
             foreach($data as $article){
