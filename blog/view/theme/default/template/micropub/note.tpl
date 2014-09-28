@@ -77,6 +77,17 @@
                     <?php } ?>
                   </div>
                 </div>
+
+                <div class="form-group group-create">
+                  <label class="col-sm-2 control-label" for="input-title">Title</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="title" value="<?php echo isset($post) ? $post['title'] : ''; ?>" placeholder="<?php echo $entry_title; ?>" id="input-title" class="form-control" />
+                    <?php if (isset($error_title)) { ?>
+                    <span class="text-danger"><?php echo $error_title; ?></span>
+                    <?php } ?>
+                  </div>
+                </div>
+
                 <div class="form-group group-create">
                   <label class="col-sm-2 control-label" for="input-slug">Slug</label>
                   <div class="col-sm-10">

@@ -138,16 +138,9 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
             $this->cache->delete('post.'.$note['post_id']);
         }
-        if($node['draft'] != 1){
-            // send webmention
-            include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-            $client = new IndieWeb\MentionClient($note['shortlink'], '<a href="'.$note['replyto'].'">ReplyTo</a>' . html_entity_decode($note['body'].$note['syndication_extra']) );
-            $client->debug(false);
-            $sent = $client->sendSupportedMentions();
-            $urls = $client->getReturnedUrls();
-            foreach($urls as $syn_url){
-                $this->model_blog_post->addSyndication($note['post_id'], $syn_url);
-            }
+        if($note['draft'] != 1){
+            $this->load->model('blog/wmqueue');
+            $this->model_blog_wmqueue->addEntry($note_id);
         }
 
         $this->cache->delete('post.'.$note['post_id']);
@@ -204,15 +197,8 @@ class ControllerMicropubReceive extends Controller {
         }
 
         if($article['draft'] != 1){
-            // send webmention
-            include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
-            $client = new IndieWeb\MentionClient($article['shortlink'], '<a href="'.$article['replyto'].'">ReplyTo</a>' . html_entity_decode($article['body'].$article['syndication_extra']) );
-            $client->debug(false);
-            $sent = $client->sendSupportedMentions();
-            $urls = $client->getReturnedUrls();
-            foreach($urls as $syn_url){
-                $this->model_blog_post->addSyndication($article['post_id'], $syn_url);
-            }
+            $this->load->model('blog/wmqueue');
+            $this->model_blog_wmqueue->addEntry($article_id);
         }
 
         $this->cache->delete('post.'.$article['post_id']);
@@ -263,18 +249,9 @@ class ControllerMicropubReceive extends Controller {
                 $this->model_blog_post->addSyndication($photo['post_id'], $this->request->post['syndication']);
             }
 
-            // send webmention
-            include DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
+            $this->load->model('blog/wmqueue');
+            $this->model_blog_wmqueue->addEntry($photo_id);
 
-            $client = new IndieWeb\MentionClient($photo['shortlink'], '<a href="'.$photo['replyto'].'">ReplyTo</a>' .
-                '<img src="'.$photo['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($photo['body'].$photo['syndication_extra']) );
-            $client->debug(false);
-            $sent = $client->sendSupportedMentions();
-            $urls = $client->getReturnedUrls();
-            //$this->log->write(print_r($urls,true));
-            foreach($urls as $syn_url){
-                $this->model_blog_post->addSyndication($photo['post_id'], $syn_url);
-            }
             $this->cache->delete('post.'.$photo['post_id']);
 
             $this->response->addHeader('HTTP/1.1 201 Created');

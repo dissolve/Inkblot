@@ -21,6 +21,7 @@ class ModelWebmentionShipper extends Model {
                 return $parsed['rels']['webmention'][0];
             } elseif(isset($parsed['rels']['http://webmention.org/']) && isset($parsed['rels']['http://webmention.org/'][0])) {
                 return $parsed['rels']['http://webmention.org/'][0];
+            }
         } else {
             return null;
         }
