@@ -104,7 +104,7 @@
                 <div class="form-group group-create">
                   <label class="col-sm-2 control-label" for="input-syndication">Syndication URL</label>
                   <div class="col-sm-10">
-                    <input type="text" name="syndication" value="" placeholder="Permalink to Sydicated Copy" id="input-syndication" class="form-control" />
+                    <input type="text" name="syndication" value="" placeholder="Permalink to Syndicated Copy" id="input-syndication" class="form-control" />
                     <?php if (isset($error_syndication)) { ?>
                     <span class="text-danger"><?php echo $error_syndication; ?></span>
                     <?php } ?>
@@ -114,7 +114,7 @@
                 <div class="form-group group-create">
                   <label class="col-sm-2 control-label" for="input-replyto">Syndicate To</label>
                   <div class="col-sm-10">
-                    <select name="syndicate-to[]" id="sydicate_to_select" multiple="multiple">
+                    <select name="syndicate-to[]" id="syndicate_to_select" multiple="multiple">
                         <option value="https://www.brid.gy/publish/twitter">Brid.gy Twitter</option>
                         <option value="https://www.brid.gy/publish/facebook">Brid.gy Facebook</option>
                     </select>
