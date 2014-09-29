@@ -55,6 +55,7 @@
                     </span>
                     <br>
                     <input type="hidden" name="type" value="article" />
+                    <input type="hidden" name="operation" value="create" />
                     <!--<input type="radio" name="edit-type" value="" id="radio-create" checked class="form-control" onclick="setDisplay('group-edit','none');setDisplay('group-create','block');" /> Create
                     <input type="radio" name="edit-type" value="" id="radio-edit" class="form-control" onclick="setDisplay('group-create','none');setDisplay('group-edit','block');" /> Edit-->
                   </div>

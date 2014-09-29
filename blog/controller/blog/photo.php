@@ -25,7 +25,7 @@ class ControllerBlogPhoto extends Controller {
         $likes = $this->model_blog_like->getLikesForPost($photo['photo_id']);
         $context = $this->model_blog_context->getAllContextForPost($note['note_id']);
 
-        $data['photo'] = array_merge($photo, array(
+        $data['post'] = array_merge($photo, array(
             'body_html' => html_entity_decode($photo['body']),
             'image_file' => $photo['image_file'],
             'author' => $author,
@@ -40,8 +40,8 @@ class ControllerBlogPhoto extends Controller {
             ));
 
 
-        $title = strip_tags($data['photo']['title']);
-        $body = strip_tags($data['photo']['body_html']);
+        $title = strip_tags($data['post']['title']);
+        $body = strip_tags($data['post']['body_html']);
         $short_title = (strlen(html_entity_decode($title)) > 30 ? htmlentities(substr(html_entity_decode($title), 0, 27). '...') : $title);
         $description = (strlen(html_entity_decode($body)) > 200 ? htmlentities(substr(html_entity_decode($body), 0, 197). '...') : $body);
 

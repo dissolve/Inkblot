@@ -1,6 +1,7 @@
 <?php  
 class ControllerMicropubReceive extends Controller {
 	public function index() {
+        $this->log->write('good');
         $headers = apache_request_headers();
         if(isset($this->request->post['access_token']) || isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || isset($headers['Authorization'])){
             $token = $this->request->post['access_token'];
@@ -18,24 +19,32 @@ class ControllerMicropubReceive extends Controller {
 
 
             if(!empty($auth_info) && in_array('post', explode(' ', $auth_info['scope']))) {
+        $this->log->write('good 2');
 
                 $token_user = str_replace(array('http://', 'https://'),array('',''), $auth_info['user']);
                 $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
 
                 if($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) {
+        $this->log->write('good 3');
 
-                    $this->log->write(print_r($this->request->post, true));
-                    if(isset($this->request->post['delete']) && intval($this->request->post['delete']) == 1){
+                    //$this->log->write(print_r($this->request->post, true));
+                    if(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'delete'){
+        $this->log->write('debug 4');
                         $this->deletePost();
-                    } elseif(isset($this->request->post['delete']) && intval($this->request->post['delete']) == 0){
+                    } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'undelete'){
+        $this->log->write('debug 5');
                         $this->undeletePost();
                     } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
+        $this->log->write('debug 6');
                         $this->createArticle();
                     } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
+        $this->log->write('debug 7');
                         $this->createPhoto();
-                    } elseif(isset($this->request->post['url']) && !empty($this->request->post['url'])){
+                    } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'edit'){
+        $this->log->write('debug 8');
                         $this->editPost();
                     } else {
+        $this->log->write('debug 9');
                         $this->createNote();
                     }
                     
@@ -54,6 +63,7 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function undeletePost(){
+        $this->log->write('called undeletePost()');
         $post = $this->getPostByURL($this->request->post['url']);
         if($post && isset($this->request->post['syndication'])){
             $this->load->model('blog/post');
@@ -70,7 +80,6 @@ class ControllerMicropubReceive extends Controller {
     private function deletePost(){
         $this->log->write('called deletePost()');
         $post = $this->getPostByURL($this->request->post['url']);
-        $this->log->write(print_r($post,true));
         if($post && isset($this->request->post['syndication'])){
             $this->load->model('blog/post');
             $this->model_blog_post->deletePost($post['post_id']);
@@ -89,6 +98,7 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function editPost(){
+        $this->log->write('called editPost()');
         $post = $this->getPostByURL($this->request->post['url']);
         if($post && isset($this->request->post['syndication'])){
             $this->load->model('blog/post');
@@ -102,6 +112,7 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function createNote(){
+        $this->log->write('called createNote()');
         $this->load->model('blog/note');
         $data = array();
         $data['body'] = $this->request->post['content'];
@@ -137,7 +148,9 @@ class ControllerMicropubReceive extends Controller {
             }
         }
         
+        $this->log->write(print_r($data,true));
         $note_id = $this->model_blog_note->newNote($data);
+        $this->log->write($note_id);
         $this->cache->delete('posts');
         $this->cache->delete('notes');
 
@@ -161,6 +174,7 @@ class ControllerMicropubReceive extends Controller {
 	}
 
     private function createArticle(){
+        $this->log->write('called createArticle()');
         //$this->log->write($this->request->post['content']);
         //$this->log->write('called createArticle');
         $this->load->model('blog/article');
@@ -219,6 +233,7 @@ class ControllerMicropubReceive extends Controller {
 	}
 
     private function createPhoto(){
+        $this->log->write('called createPhoto()');
         $upload_shot = $_FILES['photo'];
 
         if( $upload_shot['error'] == 0) {
@@ -243,6 +258,14 @@ class ControllerMicropubReceive extends Controller {
             }
             if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
                 $data['place_name'] = $this->request->post['place_name'];
+            }
+            if(isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
+                $inputval = strtolower($this->request->post['rsvp']);
+                if($inputval == 'yes'){
+                    $data['rsvp'] = 'yes';
+                } else {
+                    $data['rsvp'] = 'no';
+                }
             }
             $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter"></a>';
             //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';

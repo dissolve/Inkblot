@@ -3,6 +3,8 @@ class ModelBlogNote extends Model {
 
     public function newNote($data){
 
+        $this->log->write( 'called newNote');
+
         $year = date('Y');
         $month = date('n');
         $day = date('j');
@@ -31,6 +33,23 @@ class ModelBlogNote extends Model {
             $slug = $this->db->escape($data['slug']);
         }
 
+        $this->log->write( "INSERT INTO " . DATABASE . ".posts SET `post_type`='note',
+            `body` = '".$this->db->escape($data['body'])."',
+            `title` = '',
+            `slug` = '".$slug."',
+            `syndication_extra` = '".$syndication_extra."',
+            `author_id` = 1,
+            `timestamp` = NOW(),
+            `year` = ".(int)$year.",
+            `month` = ".(int)$month.",
+            `day` = ".(int)$day.",
+            `draft` = ".(int)$draft.",
+            `deleted` = 0,
+            `daycount` = ".(int)$newcount .
+            (isset($data['rsvp']) && !empty($data['rsvp']) ? ", rsvp='".$this->db->escape($data['rsvp'])."'" : "").
+            (isset($data['location']) && !empty($data['location']) ? ", location='".$this->db->escape($data['location'])."'" : "").
+            (isset($data['place_name']) && !empty($data['place_name']) ? ", place_name='".$this->db->escape($data['place_name'])."'" : "").
+            (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='".$this->db->escape($data['replyto'])."'" : "") );
         $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='note',
             `body` = '".$this->db->escape($data['body'])."',
             `title` = '',
@@ -44,6 +63,9 @@ class ModelBlogNote extends Model {
             `draft` = ".(int)$draft.",
             `deleted` = 0,
             `daycount` = ".(int)$newcount .
+            (isset($data['rsvp']) && !empty($data['rsvp']) ? ", rsvp='".$this->db->escape($data['rsvp'])."'" : "").
+            (isset($data['location']) && !empty($data['location']) ? ", location='".$this->db->escape($data['location'])."'" : "").
+            (isset($data['place_name']) && !empty($data['place_name']) ? ", place_name='".$this->db->escape($data['place_name'])."'" : "").
             (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='".$this->db->escape($data['replyto'])."'" : "");
 
         $query = $this->db->query($sql);

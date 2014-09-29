@@ -44,7 +44,7 @@ class ControllerBlogNote extends Controller {
             $likes = $this->model_blog_like->getLikesForPost($note['note_id']);
             $context = $this->model_blog_context->getAllContextForPost($note['note_id']);
 
-            $data['note'] = array_merge($note, array(
+            $data['post'] = array_merge($note, array(
                 'body_html' => html_entity_decode($note['body']),
                 'author' => $author,
                 'author_image' => '/image/static/icon_128.jpg',
@@ -58,8 +58,8 @@ class ControllerBlogNote extends Controller {
                 ));
 
 
-            $title = strip_tags($data['note']['title']);
-            $body = strip_tags($data['note']['body_html']);
+            $title = strip_tags($data['post']['title']);
+            $body = strip_tags($data['post']['body_html']);
             $short_title = (strlen(html_entity_decode($title)) > 60 ? htmlentities(substr(html_entity_decode($title), 0, 57). '...') : $title);
             $description = (strlen(html_entity_decode($body)) > 200 ? htmlentities(substr(html_entity_decode($body), 0, 197). '...') : $body);
 
