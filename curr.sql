@@ -380,6 +380,29 @@ LOCK TABLES `likes` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `mention_send_queue`
+--
+
+DROP TABLE IF EXISTS `mention_send_queue`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mention_send_queue` (
+  `queue_id` int(11) NOT NULL AUTO_INCREMENT,
+  `post_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`queue_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mention_send_queue`
+--
+
+LOCK TABLES `mention_send_queue` WRITE;
+/*!40000 ALTER TABLE `mention_send_queue` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mention_send_queue` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `mentions`
 --
 
