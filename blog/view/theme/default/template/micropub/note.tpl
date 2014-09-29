@@ -38,28 +38,38 @@
                   <div class="col-sm-10">
                     <script>
                         function setDisplay(theClass,display){
-                                var elements = document.getElementsByClassName(theClass), i;
+                            var elements = document.getElementsByClassName(theClass), i;
 
-                                for (var i = 0; i < elements.length; i ++) {
-                                    elements[i].style.display = display;
-                                    }
+                            for (var i = 0; i < elements.length; i ++) {
+                                elements[i].style.display = display;
+                                }
+                        }
+                        function enableGroup(groupName){
+                            setDisplay('group-create','none');
+                            setDisplay('group-edit','none');
+                            setDisplay('group-delete','none');
+                            setDisplay('group-undelete','none');
+                            setDisplay(groupName,'block');
+                        }
 
-                            }
                     </script>
                     <style>
                         .group-edit{display:none}
+                        .group-delete{display:none}
+                        .group-undelete{display:none}
                     </style>
                     <span> Type: <b>Note</b>
                     <a href="<?php echo $article_create_link?>">Article</a>
                     </span>
                     <br>
                     <input type="hidden" name="type" value="note" />
-                    <input type="radio" name="edit-type" value="" id="radio-create" checked class="form-control" onclick="setDisplay('group-edit','none');setDisplay('group-create','block');" /> Create
-                    <input type="radio" name="edit-type" value="" id="radio-edit" class="form-control" onclick="setDisplay('group-create','none');setDisplay('group-edit','block');" /> Edit
+                    <input type="radio" name="edit-type" value="" id="radio-create" checked class="form-control" onclick="enableGroup('group-create');" /> Create
+                    <input type="radio" name="edit-type" value="" id="radio-edit" class="form-control" onclick="enableGroup('group-edit');" /> Edit
+                    <input type="radio" name="edit-type" value="" id="radio-delete" class="form-control" onclick="enableGroup('group-delete');" /> Delete
                   </div>
                 </div>
             <div class="content">
-                <div class="form-group group-edit" >
+                <div class="form-group group-edit group-delete" >
                   <label class="col-sm-2 control-label" for="input-url">URL</label>
                   <div class="col-sm-10">
                     <input type="text" name="url" value="" placeholder="Permalink to Entry" id="input-url" class="form-control" />
@@ -68,6 +78,8 @@
                     <?php } ?>
                   </div>
                 </div>
+
+
                 <div class="form-group group-edit">
                   <label class="col-sm-2 control-label" for="input-syndication">Syndication URL to Add</label>
                   <div class="col-sm-10">
@@ -77,6 +89,7 @@
                     <?php } ?>
                   </div>
                 </div>
+
 
                 <div class="form-group group-create">
                   <label class="col-sm-2 control-label" for="input-title">Title</label>
@@ -127,10 +140,28 @@
                   </div>
                 </div>
 
+                <?php if(isset($micropubEndpoint) && $token) { ?>
+                <div class="form-group group-create">
+                  <div class="col-sm-10">
+                    <input type="submit" value="Submit" />
+                  </div>
+                </div>
+                <div class="form-group group-edit">
+                  <div class="col-sm-10">
+                    <input type="submit" value="Submit" />
+                  </div>
+                </div>
+
+                <div class="form-group group-delete">
+                  <div class="col-sm-10">
+                    <input type="hidden" name="delete" value="1" />
+                    <input type="submit" value="Delete" name="" />
+                  </div>
+                </div>
+
+
+                <?php } ?>
             </div>
-            <?php if(isset($micropubEndpoint) && $token) { ?>
-            <input type="submit" value="Submit" />
-            <?php } ?>
 
       </form>
       </div><!-- .entry-content -->

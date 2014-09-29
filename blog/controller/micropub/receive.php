@@ -24,6 +24,7 @@ class ControllerMicropubReceive extends Controller {
 
                 if($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) {
 
+                    $this->log->write(print_r($this->request->post, true));
                     if(isset($this->request->post['delete']) && intval($this->request->post['delete']) == 1){
                         $this->deletePost();
                     } elseif(isset($this->request->post['delete']) && intval($this->request->post['delete']) == 0){
@@ -58,6 +59,7 @@ class ControllerMicropubReceive extends Controller {
             $this->load->model('blog/post');
             $this->model_blog_post->undeletePost($post['post_id']);
             $this->cache->delete('post.'.$post['post_id']);
+            $this->cache->delete('posts.'.$post['post_id']);
 
             $this->response->addHeader('HTTP/1.1 200 OK');
             $this->response->addHeader('Location: '. $post['permalink']);
@@ -66,15 +68,23 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function deletePost(){
+        $this->log->write('called deletePost()');
         $post = $this->getPostByURL($this->request->post['url']);
+        $this->log->write(print_r($post,true));
         if($post && isset($this->request->post['syndication'])){
             $this->load->model('blog/post');
             $this->model_blog_post->deletePost($post['post_id']);
+
             $this->cache->delete('post.'.$post['post_id']);
+
+            $this->load->model('blog/wmqueue');
+            $this->model_blog_wmqueue->addEntry($post['post_id']);
 
             $this->response->addHeader('HTTP/1.1 200 OK');
             $this->response->addHeader('Location: '. $post['permalink']);
             $this->response->setOutput($post['permalink']);
+
+
         }
     }
 
