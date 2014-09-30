@@ -23,11 +23,7 @@ class ControllerAuthLogin extends Controller {
         // make sure they actually submitted something
         if(!empty($me)){
         
-            //clean up the url given to us, just in case
-            $me = trim($me);
-            if(strpos($me, 'http') !== 0){
-                $me = 'http://'.$me;
-            }
+            $me = $this->normalize_url($me);
 
             //look up user's auth provider
             $auth_endpoint = IndieAuth\Client::discoverAuthorizationEndpoint($me);
@@ -39,19 +35,23 @@ class ControllerAuthLogin extends Controller {
 
                 $redir_url = $this->url->link('auth/login/callback', ($controller ? 'c='.$controller : ''), '');
                 if($scope){
+                    // if a scope is given we are actually looking to get a token
                     $redir_url = $this->url->link('auth/login/tokencallback', ($controller ? 'c='.$controller : ''), '');
                 }
 
                 //build our get request
+                $trimmed_me = trim($me, '/'); //in case we get it back without the /
                 $data_array = array(
                     'me' => $me,
                     'redirect_uri' => $redir_url,
-                    'response_type' => 'code',
-                    'state' => substr(md5($me.$this->url->link('')),0,8),
+                    'response_type' => 'id',
+                    'state' => substr(md5($trimmed_me.$this->url->link('')),0,8),
                     'client_id' => $this->url->link('')
                 );
+                $this->log->write(print_r($data_array,true));
                 if($scope){
                     $data_array['scope'] = $scope;
+                    $data_array['response_type'] = 'code';
                 }
 
                 $get_data = http_build_query($data_array);
@@ -79,16 +79,28 @@ class ControllerAuthLogin extends Controller {
             $redir_url = $this->url->link('auth/login/callback', 'c='.$this->request->get['c'], '');
         }
 
-        $me = $this->request->get['me'];
+        $me = $this->normalize_url($this->request->get['me']);
         $code = $this->request->get['code'];
         $state = (isset($this->request->get['state']) ? $this->request->get['state'] : null); 
+
+        $this->log->write('callback received ...');
+        $this->log->write(print_r($this->request->get,true));
 
         $result = $this->confirm_auth($me, $code, $redir_url, $state);
 
         if($result){
             // we successfullly confirmed auth
             $this->session->data['user_site'] = $this->request->get['me'];
-            $this->session->data['success'] = "You are now logged in as ".$this->request->get['me'];
+            $this->session->data['success'] = "You are now logged in as ".$me;
+
+            $token_user = str_replace(array('http://', 'https://'),array('',''), $me);
+
+            $myself = trim($this->normalize_url(HTTP_SERVER),'/');
+            $myself = trim(str_replace(array('http://', 'https://'),array('',''), $myself), '/');
+
+            if($token_user == $myself) {
+                $this->session->data['is_owner'] = true;
+            }
         }
 
         $this->response->redirect($url);
@@ -108,11 +120,12 @@ class ControllerAuthLogin extends Controller {
             $redir_url = $this->url->link('auth/login/tokencallback', 'c='.$this->request->get['c'], '');
         }
 
-        $me = $this->request->get['me'];
+        $me = $this->normalize_url($this->request->get['me']);
         $code = $this->request->get['code'];
         $state = (isset($this->request->get['state']) ? $this->request->get['state'] : null); 
 
         $result = $this->confirm_auth($me, $code, $redir_url, $state);
+        $this->log->write($result);
 
         if($result){
             // we successfullly confirmed auth
@@ -146,6 +159,8 @@ class ControllerAuthLogin extends Controller {
         }
 
         $post_data = http_build_query($post_array);
+        $this->log->write('post_data: '.$post_data);
+        $this->log->write('endpoint: '.$auth_endpoint);
 
         $ch = curl_init($auth_endpoint);
 
@@ -159,11 +174,19 @@ class ControllerAuthLogin extends Controller {
 
         $results = array();
         parse_str($response, $results);
-        
+        $this->log->write('endpoint_response: '.$response);
+        //$this->log->write(print_r($results, true));
+
+        $results['me'] = $this->normalize_url($results['me']);
+
+        $trimmed_me = trim($me, '/');
+        $trimmed_result_me = trim($results['me'], '/');
+
         if($state){
-            return ($results['me'] == $me && $state == substr(md5($me.$client_id),0,8));
+            //$this->log->write('state = '.$state. ' ' .substr(md5($trimmed_me.$client_id),0,8));
+            return ($trimmed_result_me == $trimmed_me && $state == substr(md5($trimmed_me.$client_id),0,8));
         } else {
-            return $results['me'] == $me ;
+            return $trimmed_result_me == $trimmed_me ;
         }
 
 	}
@@ -206,6 +229,15 @@ class ControllerAuthLogin extends Controller {
         //$this->log->write(print_r($results, true));
         
         return $results;
+    }
+
+
+    private function normalize_url($url) {
+            $url = trim($url);
+            if(strpos($url, 'http') !== 0){
+                $url = 'http://'.$url;
+            }
+            return $url;
     }
 }
 ?>

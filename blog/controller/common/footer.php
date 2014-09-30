@@ -15,6 +15,7 @@ class ControllerCommonFooter extends Controller {
         $data['login'] = $this->url->link('auth/login');
 
         $data['google_analytics_id'] = GOOGLE_ANALYTICS_ID;
+        $data['sitesearch'] = trim(str_replace(array('http://','https://'),array('',''), HTTP_SERVER), '/');
 
 		$data['mylinks'] = array();
 
@@ -28,23 +29,20 @@ class ControllerCommonFooter extends Controller {
 					'target' => $result['target']);
     	}
 
+        if($this->session->data['is_owner']){
+            $this->load->model('blog/post');
+            $data['recent_drafts'] = $this->model_blog_post->getRecentDrafts(10);
+        }
 		
 		$this->load->model('blog/mention');
-		$data['recent_mentions'] = array();
-		foreach ($this->model_blog_mention->getRecentMentions(10) as $result) {
-				$data['recent_mentions'][] = $result;
-    	}
+		$data['recent_mentions'] = $this->model_blog_mention->getRecentMentions(10);
 
 		$this->load->model('blog/like');
-		$data['likes'] = array();
+		$data['likes'] = $this->model_blog_like->getGenericLikes();
 		$data['like_count'] = $this->model_blog_like->getGenericLikeCount();
-		foreach ($this->model_blog_like->getGenericLikes() as $result) {
-				$data['likes'][] = $result;
-    	}
 		
 		$this->load->model('blog/post');
 		$data['recent_posts'] = array();
-
 		foreach ($this->model_blog_post->getRecentPosts(10) as $result) {
             if(empty($result['title'])){
                 if($result['post_type'] == 'photo'){

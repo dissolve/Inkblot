@@ -1,8 +1,21 @@
 <?php  
 class ControllerCommonHome extends Controller {
 	public function index() {
-		$this->document->setTitle($this->config->get('config_meta_title'));
-		$this->document->setDescription($this->config->get('config_meta_description'));
+        $short_title = SITE_TITLE;
+        $description = "OpenBlog site: ".SITE_TITLE;
+
+		$this->document->setTitle($short_title);
+		$this->document->setDescription($description);
+
+        $this->document->addMeta('twitter:card', 'summary');
+        $this->document->addMeta('twitter:title', $short_title);
+        $this->document->addMeta('twitter:description', $description);
+        $this->document->addMeta('twitter:image', '/image/static/icon_200.jpg');
+
+        $this->document->addMeta('og:type', 'website');
+        $this->document->addMeta('og:title', $short_title);
+        $this->document->addMeta('og:description', $description);
+        $this->document->addMeta('og:image', '/image/static/icon_200.jpg');
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -12,6 +25,7 @@ class ControllerCommonHome extends Controller {
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
 		$this->load->model('blog/like');
+
 		
 		$data['posts'] = array();
 
@@ -28,7 +42,7 @@ class ControllerCommonHome extends Controller {
 			$data['posts'][] = array_merge($result, array(
 			    'body_html' => html_entity_decode($result['body']),
 			    'author' => $author,
-                'author_image' => '/image/static/icon_128.jpg',
+                'author_image' => '/image/static/icon_200.jpg',
 			    'categories' => $categories,
 			    'comment_count' => $comment_count,
 			    'like_count' => $like_count
@@ -45,7 +59,7 @@ class ControllerCommonHome extends Controller {
 			$data['side_posts'][] = array_merge($result, array(
 			    'body_html' => html_entity_decode(isset($result['excerpt']) ? $result['excerpt']. '...' : $result['body']),
 			    'author' => $author,
-                'author_image' => '/image/static/icon_128.jpg',
+                'author_image' => '/image/static/icon_200.jpg',
 			    'categories' => $categories,
 			    'comment_count' => $comment_count,
 			    'like_count' => $like_count

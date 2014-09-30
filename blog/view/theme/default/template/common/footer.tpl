@@ -10,13 +10,31 @@
 
   <aside id="sidebar">
     <div id="secondary" class="widget-area" role="complementary">
-<!-- <section id="search-2" class="widget widget_search"><form role="search" method="get" class="search-form" action="http://ben.thatmustbe.me/">
+<section id="search-2" class="widget widget_search">
+  <form role="search" method="get" class="search-form" action="https://www.google.com/search">
     <label>
         <span class="screen-reader-text">Search for:</span>
-        <input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s" title="Search for:" />
+        <input type="search" class="search-field" placeholder="Search &hellip;" value="" name="q" title="Search for:" />
+        <input type="hidden" name='as_sitesearch' value='<?php echo $sitesearch ?>' />
     </label>
     <input type="submit" class="search-submit" value="Search" />
-</form></section> -->
+  </form>
+</section>
+
+
+<?php if($recent_drafts) { ?>
+    <section id="recent-drafts-2" class="widget widget_recent_entries">
+    <h3 class="widget-title">Recent Drafts</h3>
+    <ul>
+    <?php foreach($recent_drafts as $post){ ?>
+        <li>
+            <a href="<?php echo $post['permalink']?>"><?php echo $post['title']?></a>
+        </li>
+    <?php } // end foreach recent_drafts?>
+    </ul>
+    </section>
+<?php } ?>
+
 <section id="recent-posts-2" class="widget widget_recent_entries">
 <h3 class="widget-title">Recent Posts</h3>
 <ul>

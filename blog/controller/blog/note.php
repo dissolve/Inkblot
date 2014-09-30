@@ -69,11 +69,12 @@ class ControllerBlogNote extends Controller {
             $this->document->addMeta('twitter:card', 'summary');
             $this->document->addMeta('twitter:title', $short_title);
             $this->document->addMeta('twitter:description', $description);
+            $this->document->addMeta('twitter:image', '/image/static/icon_200.jpg');
 
             $this->document->addMeta('og:type', 'article');
             $this->document->addMeta('og:title', $short_title);
             $this->document->addMeta('og:description', $description);
-            $this->document->addMeta('og:image', '/image/static/icon_128.jpg');
+            $this->document->addMeta('og:image', '/image/static/icon_200.jpg');
 
             $data['header'] = $this->load->controller('common/header');
             $data['footer'] = $this->load->controller('common/footer');

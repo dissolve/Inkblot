@@ -100,6 +100,22 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
+	public function getRecentDrafts( $limit=20, $skip=0) {
+		$post_id_array = $this->cache->get('posts.drafts.'. $skip . '.'.  $limit);
+		if(!$post_id_array){
+		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE deleted=0 AND draft=1 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+		    $post_id_array = $query->rows;
+		    $this->cache->set('posts.drafts.'. $skip . '.'.  $limit, $post_id_array);
+		}
+
+        $data_array = array();
+        foreach($post_id_array as $post){
+            $data_array[] = $this->getPost($post['post_id']);
+        }
+	
+		return $data_array;
+	}
+
 	public function getPostsByTypes($type_list = ['article'], $limit=20, $skip=0) {
 		$post_id_array = $this->cache->get('posts.type.'. implode('.',$type_list) . '.'. $skip . '.'.  $limit);
 		if(!$post_id_array){
