@@ -48,7 +48,7 @@ class ControllerAuthLogin extends Controller {
                     'state' => substr(md5($trimmed_me.$this->url->link('')),0,8),
                     'client_id' => $this->url->link('')
                 );
-                $this->log->write(print_r($data_array,true));
+                //$this->log->write(print_r($data_array,true));
                 if($scope){
                     $data_array['scope'] = $scope;
                     $data_array['response_type'] = 'code';
@@ -83,8 +83,8 @@ class ControllerAuthLogin extends Controller {
         $code = $this->request->get['code'];
         $state = (isset($this->request->get['state']) ? $this->request->get['state'] : null); 
 
-        $this->log->write('callback received ...');
-        $this->log->write(print_r($this->request->get,true));
+        //$this->log->write('callback received ...');
+        //$this->log->write(print_r($this->request->get,true));
 
         $result = $this->confirm_auth($me, $code, $redir_url, $state);
 
@@ -125,11 +125,11 @@ class ControllerAuthLogin extends Controller {
         $state = (isset($this->request->get['state']) ? $this->request->get['state'] : null); 
 
         $result = $this->confirm_auth($me, $code, $redir_url, $state);
-        $this->log->write($result);
 
         if($result){
             // we successfullly confirmed auth
             $this->session->data['user_site'] = $this->request->get['me'];
+            $this->log->write($this->request->get['me'] . ' has logged in.');
 
             //TODO token stuff
             $token_results = $this->get_token($me, $code, $redir_url, $state);
@@ -159,8 +159,8 @@ class ControllerAuthLogin extends Controller {
         }
 
         $post_data = http_build_query($post_array);
-        $this->log->write('post_data: '.$post_data);
-        $this->log->write('endpoint: '.$auth_endpoint);
+        //$this->log->write('post_data: '.print_r($post_array,true));
+        //$this->log->write('endpoint: '.$auth_endpoint);
 
         $ch = curl_init($auth_endpoint);
 
