@@ -50,6 +50,10 @@ class ControllerCommonHeader extends Controller {
             $data['success'] = $this->session->data['success'];
             unset($this->session->data['success']);
         }
+        if(isset($this->session->data['error'])){
+            $data['error'] = $this->session->data['error'];
+            unset($this->session->data['error']);
+        }
 
 		$data['base'] = $server;
 		$data['description'] = $this->document->getDescription();

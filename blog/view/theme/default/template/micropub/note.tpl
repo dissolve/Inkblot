@@ -137,9 +137,9 @@
                 </div>
 
                 <div class="form-group group-create">
-                  <label class="col-sm-2 control-label" for="input-location">Location</label>
+                  <label class="col-sm-2 control-label" for="input-place_name">Place Name</label>
                   <div class="col-sm-10">
-                    <input type="text" name="location" value="<?php echo isset($post) ? $post['location'] : ''; ?>" placeholder="<?php echo $entry_location; ?>" id="input-location" class="form-control" />
+                    <input type="text" name="place_name" value="<?php echo isset($post) ? $post['place_name'] : ''; ?>" placeholder="<?php echo $entry_place_name; ?>" id="input-place_name" class="form-control" />
                   </div>
                 </div>
 

@@ -1,6 +1,8 @@
 <?php  
 class ControllerMicropubReceive extends Controller {
 	public function index() {
+        $this->log->write(print_r($this->request->post, true));
+        $this->log->write(file_get_contents("php://input"));
         $headers = apache_request_headers();
         if(isset($this->request->post['access_token']) || isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || isset($headers['Authorization'])){
             $token = $this->request->post['access_token'];

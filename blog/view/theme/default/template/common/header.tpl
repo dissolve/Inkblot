@@ -54,6 +54,9 @@
       <?php if(isset($success)){ ?>
         <div class="success"><?php echo $success?></div>
       <?php } ?>
+      <?php if(isset($error)){ ?>
+        <div class="error"><?php echo $error?></div>
+      <?php } ?>
 
       
       <nav id="nav-above">

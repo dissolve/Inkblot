@@ -75,19 +75,20 @@ class ControllerMicropubClient extends Controller {
 
     public function send() {
 
-        $post_data_array = array(
-            'h'             => 'entry',
-        );
-        foreach($this->request->post as $post_field => $post_data){
-            if($post_field == 'content' && isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
-                $post_data_array[$post_field]  = html_entity_decode($post_data);
-            } else {
-                $post_data_array[$post_field]  = $post_data;
-            }
+        $post_data_array = $this->request->post;
+        $post_data_array['h'] = 'entry';
+
+        if(isset($post_data_array['type']) && $post_data_array['type'] == 'article'){
+            $post_data_array['content']  = html_entity_decode($post_data_array['content']);
         }
 
-        $this->log->write(print_r($post_data_array, true));
-        $post_data = http_build_query($post_data_array);
+       $syn_to_hack = ''; 
+        if(isset($post_data_array['syndicate-to'])){
+            $syn_to_hack = 'syndicate-to='.urlencode(implode(',', $post_data_array['syndicate-to'])) . '&';
+        }
+
+        //$this->log->write(print_r($post_data_array, true));
+        $post_data = $syn_to_hack . http_build_query($post_data_array);
 
         $user = $this->session->data['user_site'];
         $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);

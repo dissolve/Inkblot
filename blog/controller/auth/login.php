@@ -48,7 +48,7 @@ class ControllerAuthLogin extends Controller {
                     'state' => substr(md5($trimmed_me.$this->url->link('')),0,8),
                     'client_id' => $this->url->link('')
                 );
-                //$this->log->write(print_r($data_array,true));
+                $this->log->write(print_r($data_array,true));
                 if($scope){
                     $data_array['scope'] = $scope;
                     $data_array['response_type'] = 'code';
@@ -61,6 +61,7 @@ class ControllerAuthLogin extends Controller {
             }
             
         } else {
+            $this->session->data['error'] = 'No Input';
             $this->response->redirect($fail_url);
         }
     }
@@ -83,8 +84,8 @@ class ControllerAuthLogin extends Controller {
         $code = $this->request->get['code'];
         $state = (isset($this->request->get['state']) ? $this->request->get['state'] : null); 
 
-        //$this->log->write('callback received ...');
-        //$this->log->write(print_r($this->request->get,true));
+        $this->log->write('callback received ...');
+        $this->log->write(print_r($this->request->get,true));
 
         $result = $this->confirm_auth($me, $code, $redir_url, $state);
 
@@ -101,6 +102,8 @@ class ControllerAuthLogin extends Controller {
             if($token_user == $myself) {
                 $this->session->data['is_owner'] = true;
             }
+        } else {
+            $this->session->data['error'] = 'Authorization Failed.';
         }
 
         $this->response->redirect($url);
@@ -137,6 +140,10 @@ class ControllerAuthLogin extends Controller {
             $this->session->data['token'] = $token_results['access_token'];
 
             $this->session->data['success'] = "You are now logged in as ".$this->request->get['me'];
+        } else {
+            $this->session->data['error'] = 'Authorization Step Failed.';
+            $this->log->write('error authorizing');
+            $this->log->write(print_r($this->request->get,true));
         }
 
         $this->response->redirect($url);
@@ -159,8 +166,8 @@ class ControllerAuthLogin extends Controller {
         }
 
         $post_data = http_build_query($post_array);
-        //$this->log->write('post_data: '.print_r($post_array,true));
-        //$this->log->write('endpoint: '.$auth_endpoint);
+        $this->log->write('post_data: '.print_r($post_array,true));
+        $this->log->write('endpoint: '.$auth_endpoint);
 
         $ch = curl_init($auth_endpoint);
 
@@ -175,7 +182,7 @@ class ControllerAuthLogin extends Controller {
         $results = array();
         parse_str($response, $results);
         $this->log->write('endpoint_response: '.$response);
-        //$this->log->write(print_r($results, true));
+        $this->log->write(print_r($results, true));
 
         $results['me'] = $this->normalize_url($results['me']);
 
@@ -183,7 +190,7 @@ class ControllerAuthLogin extends Controller {
         $trimmed_result_me = trim($results['me'], '/');
 
         if($state){
-            //$this->log->write('state = '.$state. ' ' .substr(md5($trimmed_me.$client_id),0,8));
+            $this->log->write('state = '.$state. ' ' .substr(md5($trimmed_me.$client_id),0,8));
             return ($trimmed_result_me == $trimmed_me && $state == substr(md5($trimmed_me.$client_id),0,8));
         } else {
             return $trimmed_result_me == $trimmed_me ;
