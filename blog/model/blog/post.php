@@ -68,7 +68,7 @@ class ModelBlogPost extends Model {
 	}
 
 	public function getByDayCount($year, $month, $day, $daycount) {
-	    return getPostByDayCount($year, $month, $day, $daycount);
+	    return $this->getPostByDayCount($year, $month, $day, $daycount);
     }
 	public function getPostByDayCount($year,$month, $day, $daycount) {
         $post_id = $this->cache->get('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
@@ -202,6 +202,8 @@ class ModelBlogPost extends Model {
 
             // add site to DB
             $query = $this->db->query("INSERT INTO ".DATABASE.".post_syndication SET post_id = ".(int)$post_id.", syndication_site_id=".(int)$syn_site_id.", syndication_url = '".$this->db->escape($syndication_url)."'");
+
+            $this->cache->delete('post.'. $post_id);
         }
 	}
 

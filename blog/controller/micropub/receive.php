@@ -33,6 +33,12 @@ class ControllerMicropubReceive extends Controller {
                         $this->undeletePost();
                     } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
                         $this->createArticle();
+                    } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'checkin'){
+                        $this->createCheckin();
+                    } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
+                        $this->createBookmark();
+                    } elseif(isset($this->request->post['like']) && !empty($this->request->post['like'])){
+                        $this->createLike();
                     } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
                         $this->createPhoto();
                     } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'edit'){
@@ -123,7 +129,9 @@ class ControllerMicropubReceive extends Controller {
         //TODO
         // $this->request->post['h'];
         // $this->request->post['published'];
-        // $this->request->post['category'];
+        if(isset($this->request->post['category'])){
+            $data['category'] = $this->request->post['category'];
+        }
         if(isset($this->request->post['in-reply-to'])){
             $data['replyto'] = $this->request->post['in-reply-to'];
         }
@@ -182,7 +190,9 @@ class ControllerMicropubReceive extends Controller {
         //TODO
         // $this->request->post['h'];
         // $this->request->post['published'];
-        // $this->request->post['category'];
+        if(isset($this->request->post['category'])){
+            $data['category'] = $this->request->post['category'];
+        }
         if(isset($this->request->post['in-reply-to'])){
             $data['replyto'] = $this->request->post['in-reply-to'];
         }
@@ -240,8 +250,10 @@ class ControllerMicropubReceive extends Controller {
             //TODO
             // $this->request->post['h'];
             // $this->request->post['published'];
-            // $this->request->post['category'];
             // $this->request->post['photo'];
+            if(isset($this->request->post['category'])){
+                $data['category'] = $this->request->post['category'];
+            }
             if(isset($this->request->post['in-reply-to'])){
                 $data['replyto'] = $this->request->post['in-reply-to'];
             }
@@ -283,6 +295,167 @@ class ControllerMicropubReceive extends Controller {
             $this->response->addHeader('Location: '. $photo['permalink']);
             $this->response->setOutput($photo['permalink']);
         }
+	}
+    private function createBookmark(){
+        //$this->log->write('called createNote()');
+        $this->load->model('blog/note');
+        $data = array();
+        $data['body'] = $this->request->post['content'];
+        $data['slug'] = $this->request->post['slug'];
+
+        $data['slug'] = '_';
+        if(isset($this->request->post['slug'])) {
+            $data['slug'] = $this->request->post['slug'];
+        }
+
+        if(isset($this->request->post['draft'])){
+            $data['draft'] = $this->request->post['draft'];
+        }
+
+        //TODO
+        // $this->request->post['h'];
+        // $this->request->post['published'];
+        if(isset($this->request->post['category'])){
+            $data['category'] = $this->request->post['category'];
+        }
+        if(isset($this->request->post['in-reply-to'])){
+            $data['replyto'] = $this->request->post['in-reply-to'];
+        }
+        if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
+            $data['location'] = $this->request->post['location'];
+        }
+        if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
+            $data['place_name'] = $this->request->post['place_name'];
+        }
+
+        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+            $data['syndication_extra'] = '';
+            foreach($this->request->post['syndicate-to'] as $synto){
+                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
+            }
+        }
+        
+        //$this->log->write(print_r($data,true));
+        $note_id = $this->model_blog_note->newNote($data);
+        //$this->log->write($note_id);
+        $this->cache->delete('posts');
+        $this->cache->delete('notes');
+
+        $note = $this->model_blog_note->getNote($note_id);
+
+        if($note && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+            $this->load->model('blog/post');
+            $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
+            $this->cache->delete('post.'.$note['post_id']);
+        }
+        if($note['draft'] != 1){
+            $this->load->model('blog/wmqueue');
+            $this->model_blog_wmqueue->addEntry($note_id);
+        }
+
+        $this->cache->delete('post.'.$note['post_id']);
+
+        $this->response->addHeader('HTTP/1.1 201 Created');
+        $this->response->addHeader('Location: '. $note['permalink']);
+        $this->response->setOutput($note['permalink']);
+	}
+    private function createCheckin(){
+        //$this->log->write('called createNote()');
+        $this->load->model('blog/note');
+        $data = array();
+        $data['body'] = $this->request->post['content'];
+        $data['slug'] = $this->request->post['slug'];
+
+        $data['slug'] = '_';
+        if(isset($this->request->post['slug'])) {
+            $data['slug'] = $this->request->post['slug'];
+        }
+
+        if(isset($this->request->post['draft'])){
+            $data['draft'] = $this->request->post['draft'];
+        }
+
+        //TODO
+        // $this->request->post['h'];
+        // $this->request->post['published'];
+        if(isset($this->request->post['in-reply-to'])){
+            $data['replyto'] = $this->request->post['in-reply-to'];
+        }
+        if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
+            $data['location'] = $this->request->post['location'];
+        }
+        if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
+            $data['place_name'] = $this->request->post['place_name'];
+        }
+
+        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+            $data['syndication_extra'] = '';
+            foreach($this->request->post['syndicate-to'] as $synto){
+                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
+            }
+        }
+        
+        //$this->log->write(print_r($data,true));
+        $note_id = $this->model_blog_note->newNote($data);
+        //$this->log->write($note_id);
+        $this->cache->delete('posts');
+        $this->cache->delete('notes');
+
+        $note = $this->model_blog_note->getNote($note_id);
+
+        if($note && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+            $this->load->model('blog/post');
+            $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
+            $this->cache->delete('post.'.$note['post_id']);
+        }
+        if($note['draft'] != 1){
+            $this->load->model('blog/wmqueue');
+            $this->model_blog_wmqueue->addEntry($note_id);
+        }
+
+        $this->cache->delete('post.'.$note['post_id']);
+
+        $this->response->addHeader('HTTP/1.1 201 Created');
+        $this->response->addHeader('Location: '. $note['permalink']);
+        $this->response->setOutput($note['permalink']);
+	}
+    private function createLike(){
+        //$this->log->write('called createNote()');
+        $this->load->model('blog/note');
+        $data = array();
+        $data['like'] = $this->request->post['like'];
+
+
+        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+            $data['syndication_extra'] = '';
+            foreach($this->request->post['syndicate-to'] as $synto){
+                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
+            }
+        }
+        
+        //$this->log->write(print_r($data,true));
+        $note_id = $this->model_blog_note->newNote($data);
+        //$this->log->write($note_id);
+        $this->cache->delete('posts');
+        $this->cache->delete('notes');
+
+        $note = $this->model_blog_note->getNote($note_id);
+
+        if($note && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+            $this->load->model('blog/post');
+            $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
+            $this->cache->delete('post.'.$note['post_id']);
+        }
+        if($note['draft'] != 1){
+            $this->load->model('blog/wmqueue');
+            $this->model_blog_wmqueue->addEntry($note_id);
+        }
+
+        $this->cache->delete('post.'.$note['post_id']);
+
+        $this->response->addHeader('HTTP/1.1 201 Created');
+        $this->response->addHeader('Location: '. $note['permalink']);
+        $this->response->setOutput($note['permalink']);
 	}
 
     private function getPostByURL($real_url){

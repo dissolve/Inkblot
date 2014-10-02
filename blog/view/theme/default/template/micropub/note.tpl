@@ -59,13 +59,14 @@
                         .group-undelete{display:none}
                         .group-create{display:block}
                     </style>
-                    <span> Type:
-		      <b>Note</b>
-                      <a href="<?php echo $article_create_link?>">Article</a>
-                      <a href="<?php echo $rsvp_create_link?>">RSVP</a>
-                      <a href="<?php echo $checkin_create_link?>">Checkin</a>
-                    </span>
-                    <br>
+                    <ul class="mp-type-list">
+                      <li class="mp-selected">Note</li>
+                      <li><a href="<?php echo $article_create_link?>">Article</a></li>
+                      <li><a href="<?php echo $rsvp_create_link?>">RSVP</a></li>
+                      <li><a href="<?php echo $checkin_create_link?>">Checkin</a></li>
+                      <li><a href="<?php echo $like_create_link?>">Like</a></li>
+                      <li><a href="<?php echo $bookmark_create_link?>">Bookmark</a></li>
+                    </ul>
                     <input type="hidden" name="type" value="note" />
                     <input type="radio" name="operation" value="create" id="radio-create" checked class="form-control" onclick="enableGroup('group-create');" /> Create
                     <input type="radio" name="operation" value="edit" id="radio-edit" class="form-control" onclick="enableGroup('group-edit');" /> Edit
@@ -113,6 +114,13 @@
                   <label class="col-sm-2 control-label" for="input-replyto">Reply To</label>
                   <div class="col-sm-10">
                     <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="<?php echo $entry_replyto; ?>" id="input-replyto" class="form-control" />
+                  </div>
+                </div>
+
+                <div class="form-group group-create">
+                  <label class="col-sm-2 control-label" for="input-category">Category</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="category" value="<?php echo isset($post) ? $post['category'] : ''; ?>" placeholder="Category to file bookmark under" id="input-category" class="form-control" />
                   </div>
                 </div>
 

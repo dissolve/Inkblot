@@ -48,6 +48,26 @@ class ModelBlogPhoto extends Model {
 
         $id = $this->db->getLastId();
         
+        if(isset($data['category']) && !empty($data['category'])){
+            $categories = explode(',',$data['category']);
+            foreach ($categories as $cat) {
+                $trimmed_cat = trim($cat);
+                $query = $this->db->query("SELECT category_id FROM ".DATABASE.".categories where name='".$this->db->escape($trimmed_cat)."'");
+                $find_cat = $query->row;
+                $cid = 0;
+                if(empty($find_cat)){
+                    $this->db->query("INSERT INTO ".DATABASE.".categories SET name='".$this->db->escape($trimmed_cat)."'");
+                    $cid = $this->db->getLastId();
+
+                } else {
+                    $cid = $find_cat['category_id'];
+
+                }
+                $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$id);
+
+            }
+        }
+        
         return $id;
     }
 

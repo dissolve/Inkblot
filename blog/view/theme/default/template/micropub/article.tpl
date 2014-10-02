@@ -49,13 +49,14 @@
                     <style>
                         .group-edit{display:none}
                     </style>-->
-                    <span> Type: 
-                      <a href="<?php echo $note_create_link?>">Note</a>
-                      <b>Article</b>
-                      <a href="<?php echo $rsvp_create_link?>">RSVP</a>
-                      <a href="<?php echo $checkin_create_link?>">Checkin</a>
-                    </span>
-                    <br>
+                      <ul class="mp-type-list">
+                      <li><a href="<?php echo $note_create_link?>">Note</a></li>
+                      <li class="mp-selected">Article</li>
+                      <li><a href="<?php echo $rsvp_create_link?>">RSVP</a></li>
+                      <li><a href="<?php echo $checkin_create_link?>">Checkin</a></li>
+                      <li><a href="<?php echo $like_create_link?>">Like</a></li>
+                      <li><a href="<?php echo $bookmark_create_link?>">Bookmark</a></li>
+                    </ul>
                     <input type="hidden" name="type" value="article" />
                     <input type="hidden" name="operation" value="create" />
                     <!--<input type="radio" name="edit-type" value="" id="radio-create" checked class="form-control" onclick="setDisplay('group-edit','none');setDisplay('group-create','block');" /> Create
@@ -91,6 +92,13 @@
                     <?php if (isset($error_body)) { ?>
                     <span class="text-danger"><?php echo $error_body; ?></span>
                     <?php } ?>
+                  </div>
+                </div>
+
+                <div class="form-group group-create">
+                  <label class="col-sm-2 control-label" for="input-category">Category</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="category" value="<?php echo isset($post) ? $post['category'] : ''; ?>" placeholder="Category to file bookmark under" id="input-category" class="form-control" />
                   </div>
                 </div>
 

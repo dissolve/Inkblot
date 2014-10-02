@@ -59,57 +59,26 @@
                         .group-undelete{display:none}
                         .group-create{display:block}
                     </style>
-                    <ul class="mp-type-list">
-                      <li><a href="<?php echo $note_create_link?>">Note</a></li>
-                      <li><a href="<?php echo $article_create_link?>">Article</a></li>
-                      <li class="mp-selected">RSVP</li>
-                      <li><a href="<?php echo $checkin_create_link?>">Checkin</a></li>
-                      <li><a href="<?php echo $like_create_link?>">Like</a></li>
-                      <li><a href="<?php echo $bookmark_create_link?>">Bookmark</a></li>
-                    </ul>
-                    <input type="hidden" name="type" value="rsvp" />
+                      <ul class="mp-type-list">
+                        <li><a href="<?php echo $note_create_link?>">Note</a></li>
+                        <li><a href="<?php echo $article_create_link?>">Article</a></li>
+                        <li><a href="<?php echo $rsvp_create_link?>">RSVP</a></li>
+                        <li><a href="<?php echo $checkin_create_link?>">Checkin</a></li>
+                        <li class="mp-selected">Like</li>
+                        <li><a href="<?php echo $bookmark_create_link?>">Bookmark</a></li>
+                      </ul>
+                    <input type="hidden" name="type" value="like" />
                     <input type="radio" name="operation" value="create" id="radio-create" checked class="form-control" onclick="enableGroup('group-create');" /> Create
-                    <input type="radio" name="operation" value="edit" id="radio-edit" class="form-control" onclick="enableGroup('group-edit');" /> Edit
                     <input type="radio" name="operation" value="delete" id="radio-delete" class="form-control" onclick="enableGroup('group-delete');" /> Delete
                   </div>
                 </div>
+
             <div class="content">
-                <div class="form-group group-edit group-delete" >
-                  <label class="col-sm-2 control-label" for="input-url">URL</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="url" value="" placeholder="Permalink to Entry" id="input-url" class="form-control" />
-                  </div>
-                </div>
 
-
-                <div class="form-group group-edit">
-                  <label class="col-sm-2 control-label" for="input-syndication">Syndication URL to Add</label>
+                <div class="form-group group-create">
+                  <label class="col-sm-2 control-label required" for="input-replyto">Like Of</label>
                   <div class="col-sm-10">
-                    <input type="text" name="syndication" value="" placeholder="Permalink to Syndicated Copy" id="input-syndication" class="form-control" />
-                  </div>
-                </div>
-
-
-                <div class="form-group required group-create">
-                  <label class="col-sm-2 control-label" for="input-body">Body</label>
-                  <div class="col-sm-10">
-                    <textarea name="content" placeholder="Body of Post" id="input-body" class="form-control"><?php echo isset($post['body']) ? $post['body'] : ''; ?></textarea>
-                  </div>
-                </div>
-
-                <div class="form-group group-create required">
-                  <label class="col-sm-2 control-label" for="input-replyto">Event URL</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="<?php echo $entry_replyto; ?>" id="input-replyto" class="form-control" />
-                  </div>
-                </div>
-                <div class="form-group group-create group-edit required">
-                  <label class="col-sm-2 control-label" for="input-rsvp">RSVP:</label>
-                  <div class="col-sm-10">
-                    <select name="rsvp" id="input-rsvp" class="form-control">
-                        <option value="yes">Attending</option>
-                        <option value="no">Not Attending</option>
-                    </select>
+                    <input type="text" name="like" value="<?php echo isset($post) ? $post['like'] : ''; ?>" placeholder="URL of item to Like" id="input-like" class="form-control" />
                   </div>
                 </div>
 

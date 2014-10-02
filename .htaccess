@@ -11,6 +11,9 @@ Options -Indexes
 
 # Prevent Direct Access to files
 <FilesMatch "\.(tpl|ini|log)">
+ # apache 2.4
+ #Require all denied
+ # apache 2.2
  Order deny,allow
  Deny from all
 </FilesMatch>

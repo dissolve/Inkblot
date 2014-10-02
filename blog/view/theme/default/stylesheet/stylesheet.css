@@ -1327,6 +1327,11 @@ img.comment_author { width:30px; height:30px; }
 #general-likes ul li, #general-likes .likewrapper { float:left; }
 #general-likes img { width:24px; height:24px; }
 
+ul.mp-type-list { list-style-type:none; padding:0;}
+ul.mp-type-list li { display:inline-block; color:white; background-color:#ccc; padding:0.2em 1.25em; margin:2px; border-radius:2em; min-width: 40px;text-align:center; } 
+ul.mp-type-list li a { color:black;}
+ul.mp-type-list li.mp-selected { background-color:#471; color:white;}
+
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
 }

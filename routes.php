@@ -19,6 +19,8 @@ $routes['micropub-send']      = 'micropub/client/send';
 $routes['new/rsvp']           = 'micropub/client/rsvp';
 $routes['new/checkin']        = 'micropub/client/checkin';
 $routes['new/article']        = 'micropub/client/article';
+$routes['new/like']           = 'micropub/client/like';
+$routes['new/bookmark']       = 'micropub/client/bookmark';
 $routes['new']                = 'micropub/client';
 $routes['new/note']           = 'micropub/client';
 

@@ -1,7 +1,9 @@
 <?php
-class ModelBlogArticle extends Model {
+class ModelBlogRsvp extends Model {
 
-    public function newArticle($data){
+    public function newRsvp($data){
+
+        $this->log->write( 'called newRsvp');
 
         $year = date('Y');
         $month = date('n');
@@ -26,10 +28,16 @@ class ModelBlogArticle extends Model {
             $syndication_extra = $this->db->escape($data['syndication_extra']);
         }
 
-        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='article',
+        $slug = 'rsvp';
+        if(isset($data['slug']) && !empty($data['slug'])){
+            $slug = $this->db->escape($data['slug']);
+        }
+
+        //TODO: default body?
+        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='rsvp',
             `body` = '".$this->db->escape($data['body'])."',
-            `title` = '".$this->db->escape($data['title'])."',
-            `slug` = '".$this->db->escape($data['slug'])."',
+            `title` = '',
+            `slug` = '".$slug."',
             `syndication_extra` = '".$syndication_extra."',
             `author_id` = 1,
             `timestamp` = NOW(),
@@ -67,67 +75,64 @@ class ModelBlogArticle extends Model {
 
             }
         }
-        
-        
         return $id;
     }
 
-    public function deleteArticle($article_id){
-        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = ".(int)$article_id;
+    public function deleteRsvp($rsvp_id){
+        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = ".(int)$rsvp_id;
         $this->db->query($sql);
     }
 
-    public function undeleteArticle($article_id){
-        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=0 WHERE post_id = ".(int)$article_id;
+    public function undeleteRsvp($rsvp_id){
+        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=0 WHERE post_id = ".(int)$rsvp_id;
         $this->db->query($sql);
     }
 
     //TODO: add a boolean flag to for ASC, so change the sort order
-    //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full articles
+    //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full rsvps
 
-	public function getArticle($article_id) {
+	public function getRsvp($rsvp_id) {
         $this->load->model('blog/post');
-        $article = $this->model_blog_post->getPost($article_id);
-        $article['article_id'] = $article['post_id'];
-        return $article;
+        $rsvp = $this->model_blog_post->getPost($rsvp_id);
+        $rsvp['rsvp_id'] = $rsvp['post_id'];
+        return $rsvp;
 	}
-
 
     public function getByData($data){
         if(isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount'])) {
-            return $this->getArticleByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
+            return $this->getRsvpByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
         } else {
             return null;
         }
     }
 	public function getByDayCount($year,$month, $day, $daycount) {
-	    return $this->getArticleByDayCount($year,$month, $day, $daycount);
+        return $this->getRsvpByDayCount($year,$month, $day, $daycount);
     }
 
-	public function getArticleByDayCount($year,$month, $day, $daycount) {
-        $article_id = $this->cache->get('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
-        if(!$article_id){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND year = '". (int)$year . "' AND
+	public function getRsvpByDayCount($year,$month, $day, $daycount) {
+        $rsvp_id = $this->cache->get('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
+        if(!$rsvp_id){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='rsvp' AND year = '". (int)$year . "' AND
                                                                                   month = '". (int)$month . "' AND
                                                                                   day = '". (int)$day . "' AND
                                                                                   daycount = '". (int)$daycount . "'");
-            $article_id = $query->row['post_id'];
-            $this->cache->set('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $article_id);
+            $rsvp_id = $query->row['post_id'];
+            $this->cache->set('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $rsvp_id);
         }
 
-		return $this->getArticle($article_id);
+		return $this->getRsvp($rsvp_id);
 	}
 
-	public function getRecentArticles($limit=10, $skip=0) {
-        $data = $this->cache->get('articles.recent.'. $skip . '.'.  $limit);
+	public function getRecentRsvps($limit=10, $skip=0) {
+        $data = $this->cache->get('rsvps.recent.'. $skip . '.'.  $limit);
         if(!$data){
             $data_array = array();
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='rsvp' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
-            foreach($data as $article){
-                $data_array[] = $this->getArticle($article['post_id']);
+            foreach($data as $rsvp){
+                $data_array[] = $this->getRsvp($rsvp['post_id']);
             }
-            $this->cache->set('articles.recent.'. $skip . '.' .$limit, $data_array);
+            $this->cache->set('rsvps.recent.'. $skip . '.' .$limit, $data_array);
         } else {
             $data_array = $data;
         }
@@ -135,16 +140,16 @@ class ModelBlogArticle extends Model {
 		return $data_array;
 	}
 
-	public function getArticlesByCategory($category_id, $limit=20, $skip=0) {
-        $data = $this->cache->get('articles.category.'. $category_id . '.'. $skip . '.'.  $limit);
+	public function getRsvpsByCategory($category_id, $limit=20, $skip=0) {
+        $data = $this->cache->get('rsvps.category.'. $category_id . '.'. $skip . '.'.  $limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE post_type='article' AND category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE post_type='rsvp' AND category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
-            foreach($data as $article){
-                $data_array[] = $this->getArticle($article['post_id']);
+            foreach($data as $rsvp){
+                $data_array[] = $this->getRsvp($rsvp['post_id']);
             }
-            $this->cache->set('articles.category.'.$category_id . '.'. $skip . '.'.  $limit, $data_array);
+            $this->cache->set('rsvps.category.'.$category_id . '.'. $skip . '.'.  $limit, $data_array);
         } else {
             $data_array = $data;
         }
@@ -152,16 +157,16 @@ class ModelBlogArticle extends Model {
 		return $data_array;
 	}
 
-	public function getArticlesByAuthor($author_id, $limit=20, $skip=0) {
-        $data = $this->cache->get('articles.author.'. $author_id . '.'. $skip . '.'.  $limit);
+	public function getRsvpsByAuthor($author_id, $limit=20, $skip=0) {
+        $data = $this->cache->get('rsvps.author.'. $author_id . '.'. $skip . '.'.  $limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND author_id = '".(int)$author_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='rsvp' AND author_id = '".(int)$author_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
-            foreach($data as $article){
-                $data_array[] = $this->getArticle($article['post_id']);
+            foreach($data as $rsvp){
+                $data_array[] = $this->getRsvp($rsvp['post_id']);
             }
-            $this->cache->set('articles.author.'.$author_id . '.'. $skip . '.'.  $limit, $data_array);
+            $this->cache->set('rsvps.author.'.$author_id . '.'. $skip . '.'.  $limit, $data_array);
         } else {
             $data_array = $data;
         }
@@ -169,16 +174,16 @@ class ModelBlogArticle extends Model {
 		return $data_array;
 	}
 
-	public function getArticlesByArchive($year, $month, $limit=20, $skip=0) {
-        $data = $this->cache->get('articles.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
+	public function getRsvpsByArchive($year, $month, $limit=20, $skip=0) {
+        $data = $this->cache->get('rsvps.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
         if(!$data){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='article' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='rsvp' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
-            foreach($data as $article){
-                $data_array[] = $this->getArticle($article['post_id']);
+            foreach($data as $rsvp){
+                $data_array[] = $this->getRsvp($rsvp['post_id']);
             }
-            $this->cache->set('articles.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
+            $this->cache->set('rsvps.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
         } else {
             $data_array = $data;
         }
