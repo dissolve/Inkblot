@@ -11,7 +11,7 @@ class ControllerBlogPhoto extends Controller {
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
-		$this->load->model('blog/like');
+		$this->load->model('blog/post');
 		$this->load->model('blog/mention');
 		$this->load->model('blog/context');
 		
@@ -21,8 +21,8 @@ class ControllerBlogPhoto extends Controller {
         $comment_count = $this->model_blog_comment->getCommentCountForPost($photo['photo_id']);
         $comments = $this->model_blog_comment->getCommentsForPost($photo['photo_id']);
         $mentions = $this->model_blog_mention->getMentionsForPost($photo['photo_id']);
-        $like_count = $this->model_blog_like->getLikeCountForPost($photo['photo_id']);
-        $likes = $this->model_blog_like->getLikesForPost($photo['photo_id']);
+        $like_count = $this->model_blog_post->getLikeCountForPost($photo['photo_id']);
+        $likes = $this->model_blog_post->getLikesForPost($photo['photo_id']);
         $context = $this->model_blog_context->getAllContextForPost($note['note_id']);
 
         $data['post'] = array_merge($photo, array(

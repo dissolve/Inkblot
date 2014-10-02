@@ -19,7 +19,7 @@ class ControllerBlogArchive extends Controller {
 		$this->load->model('blog/article');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
-		$this->load->model('blog/like');
+		$this->load->model('blog/post');
 
 
 		$data['articles'] = array();
@@ -28,7 +28,7 @@ class ControllerBlogArchive extends Controller {
                 $categories = $this->model_blog_category->getCategoriesForPost($article['article_id']);
                 $author = $this->model_blog_author->getAuthor($article['author_id']);
                 $comment_count = $this->model_blog_comment->getCommentCountForPost($article['article_id']);
-                $like_count = $this->model_blog_like->getLikeCountForPost($article['article_id']);
+                $like_count = $this->model_blog_post->getLikeCountForPost($article['article_id']);
                 $data['articles'][] = array_merge($article, array(
                     'body_html' => html_entity_decode($article['body']),
                     'author' => $author,

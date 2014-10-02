@@ -24,7 +24,6 @@ class ControllerCommonHome extends Controller {
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
-		$this->load->model('blog/like');
 
 		
 		$data['posts'] = array();
@@ -38,7 +37,7 @@ class ControllerCommonHome extends Controller {
 			$author = $this->model_blog_author->getAuthor($result['author_id']);
 			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
 			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
-			$like_count = $this->model_blog_like->getLikeCountForPost($result['post_id']);
+			$like_count = $this->model_blog_post->getLikeCountForPost($result['post_id']);
 			$data['posts'][] = array_merge($result, array(
 			    'body_html' => html_entity_decode($result['body']),
 			    'author' => $author,
@@ -55,7 +54,7 @@ class ControllerCommonHome extends Controller {
 			$author = $this->model_blog_author->getAuthor($result['author_id']);
 			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
 			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
-			$like_count = $this->model_blog_like->getLikeCountForPost($result['post_id']);
+			$like_count = $this->model_blog_post->getLikeCountForPost($result['post_id']);
 			$data['side_posts'][] = array_merge($result, array(
 			    'body_html' => html_entity_decode(isset($result['excerpt']) ? $result['excerpt']. '...' : $result['body']),
 			    'author' => $author,

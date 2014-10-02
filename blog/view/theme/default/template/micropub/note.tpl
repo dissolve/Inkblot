@@ -54,30 +54,39 @@
 
                     </script>
                     <style>
+                        .group-create{display:none}
                         .group-edit{display:none}
                         .group-delete{display:none}
                         .group-undelete{display:none}
-                        .group-create{display:block}
+			<?php if(isset($op) && $op=="edit") { ?>
+				.group-edit{display:block}
+			<?php } elseif(isset($op) && $op=="delete") { ?>
+				.group-delete{display:block}
+			<?php } elseif(isset($op) && $op=="undelete") { ?>
+				.group-undelete{display:block}
+			<?php } else { ?>
+				.group-create{display:block}
+			<?php } ?>
                     </style>
                     <ul class="mp-type-list">
-                      <li class="mp-selected">Note</li>
-                      <li><a href="<?php echo $article_create_link?>">Article</a></li>
-                      <li><a href="<?php echo $rsvp_create_link?>">RSVP</a></li>
-                      <li><a href="<?php echo $checkin_create_link?>">Checkin</a></li>
-                      <li><a href="<?php echo $like_create_link?>">Like</a></li>
-                      <li><a href="<?php echo $bookmark_create_link?>">Bookmark</a></li>
+                      <li class="mp-list-item mp-selected">Note</li>
+                      <li><a class="mp-list-item" href="<?php echo $article_create_link?>">Article</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $rsvp_create_link?>">RSVP</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $checkin_create_link?>">Checkin</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $like_create_link?>">Like</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $bookmark_create_link?>">Bookmark</a></li>
                     </ul>
                     <input type="hidden" name="type" value="note" />
-                    <input type="radio" name="operation" value="create" id="radio-create" checked class="form-control" onclick="enableGroup('group-create');" /> Create
-                    <input type="radio" name="operation" value="edit" id="radio-edit" class="form-control" onclick="enableGroup('group-edit');" /> Edit
-                    <input type="radio" name="operation" value="delete" id="radio-delete" class="form-control" onclick="enableGroup('group-delete');" /> Delete
+                    <input type="radio" name="operation" value="create" id="radio-create" <?php echo($op == 'edit' || $op == 'delete' || $op=='undelete' ? '' :'checked')?> class="form-control" onclick="enableGroup('group-create');" /> Create
+                    <input type="radio" name="operation" value="edit" id="radio-edit" <?php echo($op == 'edit' ? 'checked':'')?> class="form-control" onclick="enableGroup('group-edit');" /> Edit
+                    <input type="radio" name="operation" value="delete" id="radio-delete" <?php echo($op == 'delete' ? 'checked': '')?> class="form-control" onclick="enableGroup('group-delete');" /> Delete
                   </div>
                 </div>
             <div class="content">
                 <div class="form-group group-edit group-delete" >
                   <label class="col-sm-2 control-label" for="input-url">URL</label>
                   <div class="col-sm-10">
-                    <input type="text" name="url" value="" placeholder="Permalink to Entry" id="input-url" class="form-control" />
+                    <input type="text" name="url" value="<?php echo isset($post) ? $post['permalink'] : ''; ?>" placeholder="Permalink to Entry" id="input-url" class="form-control" />
                   </div>
                 </div>
 
@@ -90,17 +99,17 @@
                 </div>
 
 
-                <div class="form-group group-create">
+                <div class="form-group group-create group-edit">
                   <label class="col-sm-2 control-label" for="input-title">Title</label>
                   <div class="col-sm-10">
-                    <input type="text" name="title" value="<?php echo isset($post) ? $post['title'] : ''; ?>" placeholder="<?php echo $entry_title; ?>" id="input-title" class="form-control" />
+                    <input type="text" name="title" value="<?php echo isset($post) ? $post['title'] : ''; ?>" placeholder="Sample Title" id="input-title" class="form-control" />
                   </div>
                 </div>
 
-                <div class="form-group group-create">
+                <div class="form-group group-create group-edit">
                   <label class="col-sm-2 control-label" for="input-slug">Slug</label>
                   <div class="col-sm-10">
-                    <input type="text" name="slug" value="<?php echo isset($post) ? $post['slug'] : ''; ?>" placeholder="<?php echo $entry_slug; ?>" id="input-slug" class="form-control" />
+                    <input type="text" name="slug" value="<?php echo isset($post) ? $post['slug'] : ''; ?>" placeholder="sample_note_title" id="input-slug" class="form-control" />
                   </div>
                 </div>
                 <div class="form-group required group-create">
@@ -113,21 +122,21 @@
                 <div class="form-group group-create">
                   <label class="col-sm-2 control-label" for="input-replyto">Reply To</label>
                   <div class="col-sm-10">
-                    <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="<?php echo $entry_replyto; ?>" id="input-replyto" class="form-control" />
+                    <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
                   </div>
                 </div>
 
                 <div class="form-group group-create">
                   <label class="col-sm-2 control-label" for="input-category">Category</label>
                   <div class="col-sm-10">
-                    <input type="text" name="category" value="<?php echo isset($post) ? $post['category'] : ''; ?>" placeholder="Category to file bookmark under" id="input-category" class="form-control" />
+                    <input type="text" name="category" value="<?php echo isset($post) ? $post['category'] : ''; ?>" placeholder="Category1, Category2" id="input-category" class="form-control" />
                   </div>
                 </div>
 
                 <div class="form-group group-create">
                   <label class="col-sm-2 control-label" for="input-place_name">Place Name</label>
                   <div class="col-sm-10">
-                    <input type="text" name="place_name" value="<?php echo isset($post) ? $post['place_name'] : ''; ?>" placeholder="<?php echo $entry_place_name; ?>" id="input-place_name" class="form-control" />
+                    <input type="text" name="place_name" value="<?php echo isset($post) ? $post['place_name'] : ''; ?>" placeholder="Name or Title of place" id="input-place_name" class="form-control" />
                   </div>
                 </div>
                 <div class="form-group group-create">

@@ -11,7 +11,7 @@ class ControllerBlogNote extends Controller {
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
-		$this->load->model('blog/like');
+		$this->load->model('blog/post');
 		$this->load->model('blog/mention');
 		$this->load->model('blog/context');
 		
@@ -40,8 +40,8 @@ class ControllerBlogNote extends Controller {
             $comment_count = $this->model_blog_comment->getCommentCountForPost($note['note_id']);
             $comments = $this->model_blog_comment->getCommentsForPost($note['note_id']);
             $mentions = $this->model_blog_mention->getMentionsForPost($note['note_id']);
-            $like_count = $this->model_blog_like->getLikeCountForPost($note['note_id']);
-            $likes = $this->model_blog_like->getLikesForPost($note['note_id']);
+            $like_count = $this->model_blog_post->getLikeCountForPost($note['note_id']);
+            $likes = $this->model_blog_post->getLikesForPost($note['note_id']);
             $context = $this->model_blog_context->getAllContextForPost($note['note_id']);
 
             $data['post'] = array_merge($note, array(

@@ -60,12 +60,12 @@
                         .group-create{display:block}
                     </style>
                     <ul class="mp-type-list">
-                      <li><a href="<?php echo $note_create_link?>">Note</a></li>
-                      <li><a href="<?php echo $article_create_link?>">Article</a></li>
-                      <li><a href="<?php echo $rsvp_create_link?>">RSVP</a></li>
-                      <li class="mp-selected">Checkin</li>
-                      <li><a href="<?php echo $like_create_link?>">Like</a></li>
-                      <li><a href="<?php echo $bookmark_create_link?>">Bookmark</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $note_create_link?>">Note</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $article_create_link?>">Article</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $rsvp_create_link?>">RSVP</a></li>
+                      <li class="mp-list-item mp-selected">Checkin</li>
+                      <li><a class="mp-list-item" href="<?php echo $like_create_link?>">Like</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $bookmark_create_link?>">Bookmark</a></li>
                     </ul>
                     <input type="hidden" name="type" value="checkin" />
                     <input type="radio" name="operation" value="create" id="radio-create" checked class="form-control" onclick="enableGroup('group-create');" /> Create

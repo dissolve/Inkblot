@@ -11,7 +11,7 @@ class ControllerBlogArticle extends Controller {
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
-		$this->load->model('blog/like');
+		$this->load->model('blog/post');
 		$this->load->model('blog/mention');
 		$this->load->model('blog/context');
 		
@@ -21,8 +21,8 @@ class ControllerBlogArticle extends Controller {
         $comment_count = $this->model_blog_comment->getCommentCountForPost($article['article_id']);
         $comments = $this->model_blog_comment->getCommentsForPost($article['article_id']);
         $mentions = $this->model_blog_mention->getMentionsForPost($article['article_id']);
-        $like_count = $this->model_blog_like->getLikeCountForPost($article['article_id']);
-        $likes = $this->model_blog_like->getLikesForPost($article['article_id']);
+        $like_count = $this->model_blog_post->getLikeCountForPost($article['article_id']);
+        $likes = $this->model_blog_post->getLikesForPost($article['article_id']);
         $context = $this->model_blog_context->getAllContextForPost($note['note_id']);
 
         $data['post'] = array_merge($article, array(

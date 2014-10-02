@@ -13,7 +13,7 @@ class ControllerMicropubClient extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['login'] = $this->url->link('auth/login');
 
-			$this->document->setDescription($this->config->get('config_meta_description'));
+		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		if(isset($this->session->data['user_site'])){
 		    $data['user_name'] = $this->session->data['user_site'];
@@ -28,6 +28,9 @@ class ControllerMicropubClient extends Controller {
 		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
 		    $this->load->model('blog/post');
 		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
+		if(isset($this->request->get['op'])){
+		   $data['op'] = $this->request->get['op'];
 		}
 
 		$data['token'] = isset($this->session->data['token']);

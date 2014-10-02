@@ -16,7 +16,7 @@ class ControllerBlogAuthor extends Controller {
 		$this->load->model('blog/article');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
-		$this->load->model('blog/like');
+		$this->load->model('blog/post');
 
 
 		$data['articles'] = array();
@@ -24,7 +24,7 @@ class ControllerBlogAuthor extends Controller {
 		foreach ($this->model_blog_article->getArticlesByAuthor($author_id) as $article) {
                 $categories = $this->model_blog_category->getCategoriesForPost($article['article_id']);
                 $comment_count = $this->model_blog_comment->getCommentCountForPost($article['article_id']);
-                $like_count = $this->model_blog_like->getLikeCountForPost($article['article_id']);
+                $like_count = $this->model_blog_post->getLikeCountForPost($article['article_id']);
                 $data['articles'][] = array_merge($article, array(
                     'body_html' => html_entity_decode($article['body']),
                     'author' => $author,
