@@ -59,16 +59,15 @@
                         .group-undelete{display:none}
                         .group-create{display:block}
                     </style>
-                    <span> Type:
-		      <b>Note</b>
+                    <span> Type: 
+		      <a href="<?php echo $note_create_link?>">Note</a>
                       <a href="<?php echo $article_create_link?>">Article</a>
                       <a href="<?php echo $rsvp_create_link?>">RSVP</a>
-                      <a href="<?php echo $checkin_create_link?>">Checkin</a>
+                      <b>Checkin</b>
                     </span>
                     <br>
-                    <input type="hidden" name="type" value="note" />
+                    <input type="hidden" name="type" value="checkin" />
                     <input type="radio" name="operation" value="create" id="radio-create" checked class="form-control" onclick="enableGroup('group-create');" /> Create
-                    <input type="radio" name="operation" value="edit" id="radio-edit" class="form-control" onclick="enableGroup('group-edit');" /> Edit
                     <input type="radio" name="operation" value="delete" id="radio-delete" class="form-control" onclick="enableGroup('group-delete');" /> Delete
                   </div>
                 </div>
@@ -89,30 +88,10 @@
                 </div>
 
 
-                <div class="form-group group-create">
-                  <label class="col-sm-2 control-label" for="input-title">Title</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="title" value="<?php echo isset($post) ? $post['title'] : ''; ?>" placeholder="<?php echo $entry_title; ?>" id="input-title" class="form-control" />
-                  </div>
-                </div>
-
-                <div class="form-group group-create">
-                  <label class="col-sm-2 control-label" for="input-slug">Slug</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="slug" value="<?php echo isset($post) ? $post['slug'] : ''; ?>" placeholder="<?php echo $entry_slug; ?>" id="input-slug" class="form-control" />
-                  </div>
-                </div>
                 <div class="form-group required group-create">
                   <label class="col-sm-2 control-label" for="input-body">Body</label>
                   <div class="col-sm-10">
                     <textarea name="content" placeholder="Body of Post" id="input-body" class="form-control"><?php echo isset($post['body']) ? $post['body'] : ''; ?></textarea>
-                  </div>
-                </div>
-
-                <div class="form-group group-create">
-                  <label class="col-sm-2 control-label" for="input-replyto">Reply To</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="<?php echo $entry_replyto; ?>" id="input-replyto" class="form-control" />
                   </div>
                 </div>
 
@@ -122,6 +101,7 @@
                     <input type="text" name="place_name" value="<?php echo isset($post) ? $post['place_name'] : ''; ?>" placeholder="<?php echo $entry_place_name; ?>" id="input-place_name" class="form-control" />
                   </div>
                 </div>
+
                 <div class="form-group group-create">
                   <label class="col-sm-2 control-label" for="input-location">Location</label>
                   <div class="col-sm-10">

@@ -11,24 +11,31 @@ class ControllerMicropubClient extends Controller {
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');
-        $data['login'] = $this->url->link('auth/login');
+		$data['login'] = $this->url->link('auth/login');
 
-		$this->document->setDescription($this->config->get('config_meta_description'));
+			$this->document->setDescription($this->config->get('config_meta_description'));
 
-        if(isset($this->session->data['user_site'])){
-            $data['user_name'] = $this->session->data['user_site'];
-            $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-            if($endpoint){
-                $data['micropubEndpoint'] = $endpoint;
-                $data['action'] = $this->url->link('micropub/client/send', '', '');
-            }
+		if(isset($this->session->data['user_site'])){
+		    $data['user_name'] = $this->session->data['user_site'];
+		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
+		    if($endpoint){
+			$data['micropubEndpoint'] = $endpoint;
+			$data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
 
-        }
+		}
 
-        $data['token'] = isset($this->session->data['token']);
+		if(isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    $this->load->model('blog/post');
+		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
 
-        $data['article_create_link'] = $this->url->link('micropub/client/article', '', '');
-        $data['note_create_link'] = $this->url->link('micropub/client', '', '');
+		$data['token'] = isset($this->session->data['token']);
+
+		$data['article_create_link'] = $this->url->link('micropub/client/article');
+		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
+		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
+		$data['note_create_link'] = $this->url->link('micropub/client');
 
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/note.tpl')) {
@@ -39,37 +46,116 @@ class ControllerMicropubClient extends Controller {
 	}
 
 	public function article() {
-
-
 		$this->document->setTitle('Create a New Article');
 		$data['title'] = 'Create a New Article';
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');
-        $data['login'] = $this->url->link('auth/login');
+		$data['login'] = $this->url->link('auth/login');
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
-        if(isset($this->session->data['user_site'])){
-            $data['user_name'] = $this->session->data['user_site'];
-            $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-            if($endpoint){
-                $data['micropubEndpoint'] = $endpoint;
-                $data['action'] = $this->url->link('micropub/client/send', '', '');
-            }
+		if(isset($this->session->data['user_site'])){
+		    $data['user_name'] = $this->session->data['user_site'];
+		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
+		    if($endpoint){
+			$data['micropubEndpoint'] = $endpoint;
+			$data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
+		}
+		
+		if(isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    $this->load->model('blog/post');
+		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
 
-        }
+		$data['token'] = isset($this->session->data['token']);
 
-        $data['token'] = isset($this->session->data['token']);
-
-        $data['article_create_link'] = $this->url->link('micropub/client/article', '', '');
-        $data['note_create_link'] = $this->url->link('micropub/client', '', '');
-
+		$data['article_create_link'] = $this->url->link('micropub/client/article');
+		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
+		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
+		$data['note_create_link'] = $this->url->link('micropub/client');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/article.tpl')) {
 			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/article.tpl', $data));
 		} else {
 			$this->response->setOutput($this->load->view('default/template/micropub/article.tpl', $data));
+		}
+	}
+
+	public function checkin() {
+		$this->document->setTitle('Create a New Article');
+		$data['title'] = 'Create a New Article';
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['login'] = $this->url->link('auth/login');
+
+		$this->document->setDescription($this->config->get('config_meta_description'));
+
+		if(isset($this->session->data['user_site'])){
+		    $data['user_name'] = $this->session->data['user_site'];
+		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
+		    if($endpoint){
+			$data['micropubEndpoint'] = $endpoint;
+			$data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
+		}
+
+		if(isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    $this->load->model('blog/post');
+		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
+
+		$data['token'] = isset($this->session->data['token']);
+
+		$data['article_create_link'] = $this->url->link('micropub/client/article');
+		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
+		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
+		$data['note_create_link'] = $this->url->link('micropub/client');
+
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/checkin.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/checkin.tpl', $data));
+		} else {
+			$this->response->setOutput($this->load->view('default/template/micropub/checkin.tpl', $data));
+		}
+	}
+
+	public function rsvp() {
+		$this->document->setTitle('Create a New Article');
+		$data['title'] = 'Create a New Article';
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['login'] = $this->url->link('auth/login');
+
+		$this->document->setDescription($this->config->get('config_meta_description'));
+
+		if(isset($this->session->data['user_site'])){
+		    $data['user_name'] = $this->session->data['user_site'];
+		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
+		    if($endpoint){
+			$data['micropubEndpoint'] = $endpoint;
+			$data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
+		}
+
+		if(isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    $this->load->model('blog/post');
+		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
+
+		$data['token'] = isset($this->session->data['token']);
+
+		$data['article_create_link'] = $this->url->link('micropub/client/article');
+		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
+		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
+		$data['note_create_link'] = $this->url->link('micropub/client');
+
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/rsvp.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/rsvp.tpl', $data));
+		} else {
+			$this->response->setOutput($this->load->view('default/template/micropub/rsvp.tpl', $data));
 		}
 	}
 

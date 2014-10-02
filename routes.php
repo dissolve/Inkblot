@@ -15,10 +15,12 @@ $routes['login_callback']     = 'auth/login/callback';
 $routes['login_token']        = 'auth/login/tokencallback';
 $routes['logout']             = 'auth/logout';
 $routes['contact']            = 'contacts/me';
-$routes['new']                = 'micropub/client';
-$routes['new_note']           = 'micropub/client';
-$routes['new_article']        = 'micropub/client/article';
 $routes['micropub-send']      = 'micropub/client/send';
+$routes['new/rsvp']           = 'micropub/client/rsvp';
+$routes['new/checkin']        = 'micropub/client/checkin';
+$routes['new/article']        = 'micropub/client/article';
+$routes['new']                = 'micropub/client';
+$routes['new/note']           = 'micropub/client';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`page/(?P<id>\w+)`i',

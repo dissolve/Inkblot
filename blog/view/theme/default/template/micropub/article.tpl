@@ -50,8 +50,10 @@
                         .group-edit{display:none}
                     </style>-->
                     <span> Type: 
-                    <a href="<?php echo $note_create_link?>">Note</a>
-                    <b>Article</b>
+                      <a href="<?php echo $note_create_link?>">Note</a>
+                      <b>Article</b>
+                      <a href="<?php echo $rsvp_create_link?>">RSVP</a>
+                      <a href="<?php echo $checkin_create_link?>">Checkin</a>
                     </span>
                     <br>
                     <input type="hidden" name="type" value="article" />
@@ -88,16 +90,6 @@
                     <textarea name="content" placeholder="Body of Post" id="input-body" class="form-control"><?php echo isset($post['body']) ? $post['body'] : ''; ?></textarea>
                     <?php if (isset($error_body)) { ?>
                     <span class="text-danger"><?php echo $error_body; ?></span>
-                    <?php } ?>
-                  </div>
-                </div>
-
-                <div class="form-group group-create">
-                  <label class="col-sm-2 control-label" for="input-replyto">Reply To</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="<?php echo $entry_replyto; ?>" id="input-replyto" class="form-control" />
-                    <?php if (isset($error_replyto)) { ?>
-                    <span class="text-danger"><?php echo $error_replyto; ?></span>
                     <?php } ?>
                   </div>
                 </div>

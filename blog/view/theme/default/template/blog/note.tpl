@@ -30,6 +30,8 @@
         </span>
         <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="permalink u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($post['timestamp']))?>" ><?php echo date("F j, Y g:i A", strtotime($post['timestamp']))?></time></a>
 
+        <a href="<?php echo $post['shortlink']?>" title="Shortlink" rel="bookmark" class="shortlink u-shortlink u-url">Shortlink</a>
+
         <span class='in_reply_url'>
         <?php if(!empty($post['replyto'])){ ?>
        In Reply To <a class="u-in-reply-to u-url" rel="in-reply-to" href="<?php echo $post['replyto']?>"><?php echo $post['replyto']?></a>
