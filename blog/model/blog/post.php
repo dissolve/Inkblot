@@ -49,15 +49,6 @@ class ModelBlogPost extends Model {
                 $set_data[] = "title =''";
             }
 
-            if(isset($data['slug']) && !empty($data['slug'])){
-                $set_data[] = "slug ='".$this->db->escape($data['slug'])."'";
-            } elseif($data['type'] == 'rsvp' || $data['type'] == 'checkin' ||
-                     $data['type'] == 'like' || $data['type'] == 'bookmark') {
-                $set_data[] = "slug ='".$data['type']."'";
-            } else {
-                $set_data[] = "slug ='_'";
-            }
-
             if(isset($data['body']) && !empty($data['body'])){
                 $set_data[] = "body ='".$this->db->escape($data['body'])."'";
             } else {

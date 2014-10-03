@@ -19,47 +19,87 @@ class ControllerMicropubClient extends Controller {
 		    $data['user_name'] = $this->session->data['user_site'];
 		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
 		    if($endpoint){
-			$data['micropubEndpoint'] = $endpoint;
-			$data['action'] = $this->url->link('micropub/client/send', '', '');
+                $data['micropubEndpoint'] = $endpoint;
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
 		    }
-
 		}
 
 		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
 		    $this->load->model('blog/post');
 		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
 		}
+
+		if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
+		    $data['post'] = $this->download_entry($this->request->get['url']);
+		}
+
 		if(isset($this->request->get['op'])){
 		   $data['op'] = $this->request->get['op'];
 		}
 
 		$data['token'] = isset($this->session->data['token']);
 
-		$data['article_create_link'] = $this->url->link('micropub/client/article');
-		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
-		$data['like_create_link'] = $this->url->link('micropub/client/like');
-		$data['bookmark_create_link'] = $this->url->link('micropub/client/bookmark');
-		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
-		$data['note_create_link'] = $this->url->link('micropub/client');
+		$data['new_entry_link'] = $this->url->link('micropub/client');
+		$data['edit_entry_link'] = $this->url->link('micropub/client/edit');
+		$data['delete_entry_link'] = $this->url->link('micropub/client/delete');
 
 
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/note.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/note.tpl', $data));
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/new.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/new.tpl', $data));
 		} else {
-			$this->response->setOutput($this->load->view('default/template/micropub/note.tpl', $data));
+			$this->response->setOutput($this->load->view('default/template/micropub/new.tpl', $data));
 		}
 	}
 
-	public function photo() {
-        $this->index();
-    }
-	public function note() {
-        $this->index();
-    }
+	public function editPost() {
 
-	public function article() {
-		$this->document->setTitle('Create a New Article');
-		$data['title'] = 'Create a New Article';
+		$this->document->setTitle('Edit a New Post');
+		$data['title'] = 'Edit a New Post';
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['login'] = $this->url->link('auth/login');
+
+		$this->document->setDescription($this->config->get('config_meta_description'));
+
+		if(isset($this->session->data['user_site'])){
+		    $data['user_name'] = $this->session->data['user_site'];
+		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
+		    if($endpoint){
+                $data['micropubEndpoint'] = $endpoint;
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
+		}
+
+		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    $this->load->model('blog/post');
+		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
+
+		if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
+		    $data['post'] = $this->download_entry($this->request->get['url']);
+		}
+
+		if(isset($this->request->get['op'])){
+		   $data['op'] = $this->request->get['op'];
+		}
+
+		$data['token'] = isset($this->session->data['token']);
+
+		$data['new_entry_link'] = $this->url->link('micropub/client');
+		$data['edit_entry_link'] = $this->url->link('micropub/client/edit');
+		$data['delete_entry_link'] = $this->url->link('micropub/client/delete');
+
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/edit.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/edit.tpl', $data));
+		} else {
+			$this->response->setOutput($this->load->view('default/template/micropub/edit.tpl', $data));
+		}
+	}
+
+	public function deletePost() {
+		$this->document->setTitle('Delete a Post');
+		$data['title'] = 'Delete a Post';
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -81,179 +121,22 @@ class ControllerMicropubClient extends Controller {
 		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
 		}
 
-		$data['token'] = isset($this->session->data['token']);
-
-		$data['article_create_link'] = $this->url->link('micropub/client/article');
-		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
-		$data['like_create_link'] = $this->url->link('micropub/client/like');
-		$data['bookmark_create_link'] = $this->url->link('micropub/client/bookmark');
-		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
-		$data['note_create_link'] = $this->url->link('micropub/client');
-
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/article.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/article.tpl', $data));
-		} else {
-			$this->response->setOutput($this->load->view('default/template/micropub/article.tpl', $data));
-		}
-	}
-
-	public function checkin() {
-		$this->document->setTitle('Create a New Check-in');
-		$data['title'] = 'Create a New Check-in';
-
-		$data['header'] = $this->load->controller('common/header');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['login'] = $this->url->link('auth/login');
-
-		$this->document->setDescription($this->config->get('config_meta_description'));
-
-		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-			$data['micropubEndpoint'] = $endpoint;
-			$data['action'] = $this->url->link('micropub/client/send', '', '');
-		    }
+		if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
+		    //$data['post'] = $this->download_entry($this->request->get['url'], true);
+		    $data['post'] = array('permalink'=>$this->request->get['url']);
 		}
 
-		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
-		    $this->load->model('blog/post');
-		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
-		}
 
 		$data['token'] = isset($this->session->data['token']);
 
-		$data['article_create_link'] = $this->url->link('micropub/client/article');
-		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
-		$data['like_create_link'] = $this->url->link('micropub/client/like');
-		$data['bookmark_create_link'] = $this->url->link('micropub/client/bookmark');
-		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
-		$data['note_create_link'] = $this->url->link('micropub/client');
+		$data['new_entry_link'] = $this->url->link('micropub/client');
+		$data['edit_entry_link'] = $this->url->link('micropub/client/edit');
+		$data['delete_entry_link'] = $this->url->link('micropub/client/delete');
 
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/checkin.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/checkin.tpl', $data));
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/delete.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/delete.tpl', $data));
 		} else {
-			$this->response->setOutput($this->load->view('default/template/micropub/checkin.tpl', $data));
-		}
-	}
-
-	public function rsvp() {
-		$this->document->setTitle('New RSVP');
-		$data['title'] = 'New RSVP';
-
-		$data['header'] = $this->load->controller('common/header');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['login'] = $this->url->link('auth/login');
-
-		$this->document->setDescription($this->config->get('config_meta_description'));
-
-		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-			$data['micropubEndpoint'] = $endpoint;
-			$data['action'] = $this->url->link('micropub/client/send', '', '');
-		    }
-		}
-
-		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
-		    $this->load->model('blog/post');
-		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
-		}
-
-		$data['token'] = isset($this->session->data['token']);
-
-		$data['article_create_link'] = $this->url->link('micropub/client/article');
-		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
-		$data['like_create_link'] = $this->url->link('micropub/client/like');
-		$data['bookmark_create_link'] = $this->url->link('micropub/client/bookmark');
-		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
-		$data['note_create_link'] = $this->url->link('micropub/client');
-
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/rsvp.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/rsvp.tpl', $data));
-		} else {
-			$this->response->setOutput($this->load->view('default/template/micropub/rsvp.tpl', $data));
-		}
-	}
-
-	public function like() {
-		$this->document->setTitle('New Like');
-		$data['title'] = 'New Like';
-
-		$data['header'] = $this->load->controller('common/header');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['login'] = $this->url->link('auth/login');
-
-		$this->document->setDescription($this->config->get('config_meta_description'));
-
-		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-			$data['micropubEndpoint'] = $endpoint;
-			$data['action'] = $this->url->link('micropub/client/send', '', '');
-		    }
-		}
-
-		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
-		    $this->load->model('blog/post');
-		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
-		}
-
-		$data['token'] = isset($this->session->data['token']);
-
-		$data['article_create_link'] = $this->url->link('micropub/client/article');
-		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
-		$data['like_create_link'] = $this->url->link('micropub/client/like');
-		$data['bookmark_create_link'] = $this->url->link('micropub/client/bookmark');
-		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
-		$data['note_create_link'] = $this->url->link('micropub/client');
-
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/like.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/like.tpl', $data));
-		} else {
-			$this->response->setOutput($this->load->view('default/template/micropub/like.tpl', $data));
-		}
-	}
-
-	public function bookmark() {
-		$this->document->setTitle('New Bookmark');
-		$data['title'] = 'New Bookmark';
-
-		$data['header'] = $this->load->controller('common/header');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['login'] = $this->url->link('auth/login');
-
-		$this->document->setDescription($this->config->get('config_meta_description'));
-
-		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-			$data['micropubEndpoint'] = $endpoint;
-			$data['action'] = $this->url->link('micropub/client/send', '', '');
-		    }
-		}
-
-		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
-		    $this->load->model('blog/post');
-		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
-		}
-
-		$data['token'] = isset($this->session->data['token']);
-
-		$data['article_create_link'] = $this->url->link('micropub/client/article');
-		$data['rsvp_create_link'] = $this->url->link('micropub/client/rsvp');
-		$data['like_create_link'] = $this->url->link('micropub/client/like');
-		$data['bookmark_create_link'] = $this->url->link('micropub/client/bookmark');
-		$data['checkin_create_link'] = $this->url->link('micropub/client/checkin');
-		$data['note_create_link'] = $this->url->link('micropub/client');
-
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/bookmark.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/bookmark.tpl', $data));
-		} else {
-			$this->response->setOutput($this->load->view('default/template/micropub/bookmark.tpl', $data));
+			$this->response->setOutput($this->load->view('default/template/micropub/delete.tpl', $data));
 		}
 	}
 
@@ -294,16 +177,58 @@ class ControllerMicropubClient extends Controller {
 
         $response = curl_exec($ch);
         $result = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (in_array($result, array(200,201))){
-            $this->session->data['success'] = 'Post Submitted.';
+        if (in_array($result, array(200,201,204,301,302))){
+            if(in_array($result, array(201,301,302))){
+                $target_url =  curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+                $this->session->data['success_url'] = $target_url;
+            }
+            $this->session->data['success'] = 'Post Submitted.'.' '.$target_url;
         } else {
-            $this->session->data['error'] = 'Error in Creation.  Return code '.$result.'.';
+            $this->session->data['error'] = 'Error:  Return code '.$result.'.';
         }
         if(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
             $this->response->redirect($this->url->link('micropub/client/article'));
         } else {
             $this->response->redirect($this->url->link('micropub/client'));
         }
+    }
+
+    private function download_entry($entry_url, $as_html=false){
+        $ch = curl_init($entry_url);
+
+        if(!$ch){$this->log->write('error with curl_init');}
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        $real_source_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+        $page_content = curl_exec($ch);
+        $mf = Mf2\parse($page_content, $real_source_url)['items'][0];
+        //$this->log->write($response);
+        $post = array();
+        if(array_key_exists('type', $mf) && in_array('h-entry', $mf['type']) && array_key_exists('properties', $mf)) {
+            $properties = $mf['properties'];
+            $this->log->write(print_r($properties,true));
+
+            if(array_key_exists('content', $properties)) {
+                if($as_html){
+                    $post['body'] = $properties['content'][0]['html'];
+                } else {
+                    $post['body'] = strip_tags($properties['content'][0]['html']);
+                }
+            }
+
+            if(array_key_exists('name', $properties)) {
+                $post['title'] = $properties['name'][0];
+            }
+
+            if(array_key_exists('in-reply-to', $properties)) {
+                $post['replyto'] = $properties['in-reply-to'][0]['value'];
+            }
+            $post['permalink'] = $real_source_url;
+        }
+
+        //$post['body'] = print_r($mf2_parsed['items'][0],true);
+        return $post;
     }
 }
 ?>

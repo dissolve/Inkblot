@@ -107,11 +107,6 @@ class ControllerMicropubReceive extends Controller {
                 $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
             }
             
-            if(isset($this->request->post['slug'])){
-                $post['slug'] = $this->request->post['slug'];
-            } else {
-                $post['slug'] = '';
-            }
             if(isset($this->request->post['title'])){
                 $post['title'] = $this->request->post['title'];
             } else {
