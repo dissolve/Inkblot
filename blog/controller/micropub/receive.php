@@ -64,22 +64,22 @@ class ControllerMicropubReceive extends Controller {
     private function undeletePost(){
         //$this->log->write('called undeletePost()');
         $post = $this->getPostByURL($this->request->post['url']);
-        if($post && isset($this->request->post['syndication'])){
+        if($post) {
             $this->load->model('blog/post');
             $this->model_blog_post->undeletePost($post['post_id']);
             $this->cache->delete('post.'.$post['post_id']);
             $this->cache->delete('posts.'.$post['post_id']);
 
             $this->response->addHeader('HTTP/1.1 200 OK');
-            $this->response->addHeader('Location: '. $post['permalink']);
+            //$this->response->addHeader('Location: '. $post['permalink']);
             $this->response->setOutput($post['permalink']);
         }
     }
 
     private function deletePost(){
-        //$this->log->write('called deletePost()');
+        $this->log->write('called deletePost()');
         $post = $this->getPostByURL($this->request->post['url']);
-        if($post && isset($this->request->post['syndication'])){
+        if($post) {
             $this->load->model('blog/post');
             $this->model_blog_post->deletePost($post['post_id']);
 
@@ -89,7 +89,7 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_wmqueue->addEntry($post['post_id']);
 
             $this->response->addHeader('HTTP/1.1 200 OK');
-            $this->response->addHeader('Location: '. $post['permalink']);
+            //$this->response->addHeader('Location: '. $post['permalink']);
             $this->response->setOutput($post['permalink']);
 
 
@@ -99,13 +99,37 @@ class ControllerMicropubReceive extends Controller {
     private function editPost(){
         //$this->log->write('called editPost()');
         $post = $this->getPostByURL($this->request->post['url']);
-        if($post && isset($this->request->post['syndication'])){
+        if($post){
+            //$this->log->write('post set');
+            //$this->log->write(print_r($post,true));
             $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
-            $this->cache->delete('post.'.$post['post_id']);
+            if(isset($this->request->post['syndication'])){
+                $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
+            }
+            
+            if(isset($this->request->post['slug'])){
+                $post['slug'] = $this->request->post['slug'];
+            } else {
+                $post['slug'] = '';
+            }
+            if(isset($this->request->post['title'])){
+                $post['title'] = $this->request->post['title'];
+            } else {
+                $post['title'] = '';
+            }
+            if(isset($this->request->post['content'])){
+                $post['body'] = $this->request->post['content'];
+            } else {
+                $post['body'] = '';
+            }
+
+            //$this->log->write(print_r($post,true));
+            $this->model_blog_post->editPost($post);
+            
+
 
             $this->response->addHeader('HTTP/1.1 200 OK');
-            $this->response->addHeader('Location: '. $post['permalink']);
+            //$this->response->addHeader('Location: '. $post['permalink']);
             $this->response->setOutput($post['permalink']);
         }
     }

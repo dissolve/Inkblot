@@ -112,7 +112,7 @@
                     <input type="text" name="slug" value="<?php echo isset($post) ? $post['slug'] : ''; ?>" placeholder="sample_note_title" id="input-slug" class="form-control" />
                   </div>
                 </div>
-                <div class="form-group required group-create">
+                <div class="form-group required group-create group-edit">
                   <label class="col-sm-2 control-label" for="input-body">Body</label>
                   <div class="col-sm-10">
                     <textarea name="content" placeholder="Body of Post" id="input-body" class="form-control"><?php echo isset($post['body']) ? $post['body'] : ''; ?></textarea>

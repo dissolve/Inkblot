@@ -40,7 +40,7 @@ try {
 	$config->set('config_secure', true);	
 
 // Url
-$url = new Url($config->get('config_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url'));	
+$url = new Url($config->get('config_ssl'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url'));	
 $registry->set('url', $url);
 
 // Short_Url

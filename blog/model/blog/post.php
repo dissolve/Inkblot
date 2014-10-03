@@ -37,6 +37,67 @@ class ModelBlogPost extends Model {
            return $n;
     }
 
+    public function editPost($data){
+        //$this->log->write('called editPost');
+        //$this->log->write(print_r($data,true));
+        if(isset($data['post_id'])){
+            $set_data = array();
+
+            if(isset($data['title']) && !empty($data['title'])){
+                $set_data[] = "title ='".$this->db->escape($data['title'])."'";
+            } else {
+                $set_data[] = "title =''";
+            }
+
+            if(isset($data['slug']) && !empty($data['slug'])){
+                $set_data[] = "slug ='".$this->db->escape($data['slug'])."'";
+            } elseif($data['type'] == 'rsvp' || $data['type'] == 'checkin' ||
+                     $data['type'] == 'like' || $data['type'] == 'bookmark') {
+                $set_data[] = "slug ='".$data['type']."'";
+            } else {
+                $set_data[] = "slug ='_'";
+            }
+
+            if(isset($data['body']) && !empty($data['body'])){
+                $set_data[] = "body ='".$this->db->escape($data['body'])."'";
+            } else {
+                $set_data[] = "body =''";
+            }
+
+            if(isset($data['location']) && !empty($data['location'])){
+                $set_data[] = "location ='".$this->db->escape($data['location'])."'";
+            } else {
+                $set_data[] = "location =''";
+            }
+
+            if(isset($data['place_name']) && !empty($data['place_name'])){
+                $set_data[] = "place_name ='".$this->db->escape($data['place_name'])."'";
+            } else {
+                $set_data[] = "place_name =''";
+            }
+
+            if(isset($data['like']) && !empty($data['like'])){
+                $set_data[] = "bookmark_like_url ='".$this->db->escape($data['like'])."'";
+            } else {
+                $set_data[] = "bookmark_like_url =''";
+            }
+
+            if(isset($data['bookmark']) && !empty($data['bookmark'])){
+                $set_data[] = "bookmark_like_url ='".$this->db->escape($data['bookmark'])."'";
+            } else {
+                $set_data[] = "bookmark_like_url =''";
+            }
+
+            //$this->log->write(print_r($set_data,true));
+            //todo category
+            //todo syndicate-to
+
+            $sql = "UPDATE ".DATABASE.".posts SET ".implode(' , ', $set_data)." WHERE post_id=".(int)$data['post_id'];
+            $this->db->query($sql);
+            $this->cache->delete('post.'.$data['post_id']);
+        }
+    }
+
     public function deletePost($post_id){
         $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = ".(int)$post_id;
         $this->db->query($sql);
@@ -50,7 +111,7 @@ class ModelBlogPost extends Model {
 	public function getPost($post_id) {
         $post = $this->cache->get('post.'. $post_id);
         if(!$post){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = '". (int)$post_id . "'");
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = ". (int)$post_id);
             $post = $query->row;
 	        $syndications = $this->getSyndications($post['post_id']);
             $post = array_merge($post, array(

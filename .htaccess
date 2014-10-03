@@ -11,11 +11,15 @@ Options -Indexes
 
 # Prevent Direct Access to files
 <FilesMatch "\.(tpl|ini|log)">
- # apache 2.4
- #Require all denied
- # apache 2.2
- Order deny,allow
- Deny from all
+ <IfModule mod_authz_core.c>
+   # apache 2.4
+   Require all denied
+ </IfModule>
+ <IfModule !mod_authz_core.c>
+   # apache 2.2
+   Order deny,allow
+   Deny from all
+ </IfModule>
 </FilesMatch>
 
 # SEO URL Settings

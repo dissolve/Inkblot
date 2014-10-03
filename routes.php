@@ -22,6 +22,8 @@ $routes['new/article']        = 'micropub/client/article';
 $routes['new/like']           = 'micropub/client/like';
 $routes['new/bookmark']       = 'micropub/client/bookmark';
 $routes['new']                = 'micropub/client';
+$routes['new']                = 'micropub/client/note';
+$routes['new']                = 'micropub/client/photo';
 $routes['new/note']           = 'micropub/client';
 
 $advanced_routes[] = array('controller' => 'blog/pages',

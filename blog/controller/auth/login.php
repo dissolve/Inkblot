@@ -139,6 +139,15 @@ class ControllerAuthLogin extends Controller {
 
             $this->session->data['token'] = $token_results['access_token'];
 
+            $token_user = str_replace(array('http://', 'https://'),array('',''), $me);
+
+            $myself = trim($this->normalize_url(HTTP_SERVER),'/');
+            $myself = trim(str_replace(array('http://', 'https://'),array('',''), $myself), '/');
+
+            if($token_user == $myself) {
+                $this->session->data['is_owner'] = true;
+            }
+
             $this->session->data['success'] = "You are now logged in as ".$this->request->get['me'];
         } else {
             $this->session->data['error'] = 'Authorization Step Failed.';

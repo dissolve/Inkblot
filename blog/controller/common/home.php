@@ -38,14 +38,20 @@ class ControllerCommonHome extends Controller {
 			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
 			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
 			$like_count = $this->model_blog_post->getLikeCountForPost($result['post_id']);
-			$data['posts'][] = array_merge($result, array(
+
+            $extra_data_array = array(
 			    'body_html' => html_entity_decode($result['body']),
 			    'author' => $author,
                 'author_image' => '/image/static/icon_200.jpg',
 			    'categories' => $categories,
 			    'comment_count' => $comment_count,
-			    'like_count' => $like_count
-			    ));
+                'like_count' => $like_count);
+
+            if($this->session->data['is_owner']){
+                $extra_data_array['editlink'] = $this->url->link('micropub/client/'.$result['post_type'], 'op=edit&id='.$result['post_id'],'');
+            }
+
+            $data['posts'][] = array_merge($result, $extra_data_array);
 		}
 
 		$data['side_posts'] = array();
@@ -55,14 +61,20 @@ class ControllerCommonHome extends Controller {
 			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
 			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
 			$like_count = $this->model_blog_post->getLikeCountForPost($result['post_id']);
-			$data['side_posts'][] = array_merge($result, array(
+
+			$extra_data_array = array(
 			    'body_html' => html_entity_decode(isset($result['excerpt']) ? $result['excerpt']. '...' : $result['body']),
 			    'author' => $author,
                 'author_image' => '/image/static/icon_200.jpg',
 			    'categories' => $categories,
 			    'comment_count' => $comment_count,
-			    'like_count' => $like_count
-			    ));
+			    'like_count' => $like_count);
+
+            if($this->session->data['is_owner']){
+                $extra_data_array['editlink'] = $this->url->link('micropub/client/'.$result['post_type'], 'op=edit&id='.$result['post_id'],'');
+            }
+
+            $data['side_posts'][] = array_merge($result, $extra_data_array);
 		}
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/home.tpl')) {

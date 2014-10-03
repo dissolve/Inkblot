@@ -62,6 +62,9 @@
     <?php } //end foreach ?>
     </div>
   <?php } ?>
+  <?php if(isset($post['editlink'])){ ?>
+    <a href="<?php echo $post['editlink'] ?>">Edit</a>
+  <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
 <?php } //end foreach posts ?>
@@ -122,6 +125,9 @@
       
     <?php } //end foreach ?>
     </div>
+  <?php } ?>
+  <?php if(isset($post['editlink'])){ ?>
+    <a href="<?php echo $post['editlink'] ?>">Edit</a>
   <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 

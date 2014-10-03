@@ -50,6 +50,13 @@ class ControllerMicropubClient extends Controller {
 		}
 	}
 
+	public function photo() {
+        $this->index();
+    }
+	public function note() {
+        $this->index();
+    }
+
 	public function article() {
 		$this->document->setTitle('Create a New Article');
 		$data['title'] = 'Create a New Article';
