@@ -7,7 +7,7 @@
 <div id="notes-stream">
 <div id="notes_pad"></div>
 <?php foreach($side_posts as $post) { ?>
-          <article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
+          <article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
   <header class="entry-header">
     <h1 class="entry-title p-name" itemprop="name headline"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" itemprop="url"><?php echo $post['title']?></a></h1>
 
@@ -50,7 +50,7 @@
   <?php } // end if post_categories ?>
 
   <?php if(!empty($post['syndications'])){ ?>
-    <div id="syndications">
+    <div class="syndications">
     <?php foreach($post['syndications'] as $elsewhere){ ?>
 
       <?php if(isset($elsewhere['image'])){ ?>
@@ -62,9 +62,18 @@
     <?php } //end foreach ?>
     </div>
   <?php } ?>
-  <?php if(isset($post['editlink'])){ ?>
-    <a href="<?php echo $post['editlink'] ?>">Edit</a>
-  <?php } ?>
+    <div class="admin-controls">
+      <?php if(isset($post['editlink'])){ ?>
+        <a href="<?php echo $post['editlink'] ?>"><i class="fa fa-edit"></i></a>
+      <?php } ?>
+      <?php if(isset($post['deletelink'])){ ?>
+        <a href="<?php echo $post['deletelink'] ?>"><i class="fa fa-trash"></i></a>
+      <?php } ?>
+      <?php if(isset($post['undeletelink'])){ ?>
+        <a href="<?php echo $post['undeletelink'] ?>"><i class="fa fa-undo">Undo</i></a>
+      <?php } ?>
+    </div>
+
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
 <?php } //end foreach posts ?>
@@ -72,7 +81,7 @@
 <div id="posts-stream">
 <div id="stream_pad"></div>
 <?php foreach($posts as $post) { ?>
-          <article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
+<article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
   <header class="entry-header">
     <h1 class="entry-title p-name" itemprop="name headline"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" itemprop="url"><?php echo $post['title']?></a></h1>
 
@@ -114,7 +123,7 @@
       <?php } // end for post_categories as category ?>
   <?php } // end if post_categories ?>
   <?php if(!empty($post['syndications'])){ ?>
-    <div id="syndications">
+    <div class="syndications">
     <?php foreach($post['syndications'] as $elsewhere){ ?>
 
       <?php if(isset($elsewhere['image'])){ ?>
@@ -126,9 +135,17 @@
     <?php } //end foreach ?>
     </div>
   <?php } ?>
-  <?php if(isset($post['editlink'])){ ?>
-    <a href="<?php echo $post['editlink'] ?>">Edit</a>
-  <?php } ?>
+    <div class="admin-controls">
+      <?php if(isset($post['editlink'])){ ?>
+        <a href="<?php echo $post['editlink'] ?>"><i class="fa fa-edit"></i></a>
+      <?php } ?>
+      <?php if(isset($post['deletelink'])){ ?>
+        <a href="<?php echo $post['deletelink'] ?>"><i class="fa fa-trash"></i></a>
+      <?php } ?>
+      <?php if(isset($post['undeletelink'])){ ?>
+        <a href="<?php echo $post['undeletelink'] ?>"><i class="fa fa-undo"></i></a>
+      <?php } ?>
+    </div>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
 <?php } //end foreach posts ?>

@@ -18,7 +18,7 @@
     <?php } ?>
     </div>
 
-          <article id="note-<?php echo $post['post_id']?>" class="note-<?php echo $post['post_id']?> note type-note status-publish format-standard category-uncategorized">
+          <article id="note-<?php echo $post['post_id']?>" class="note-<?php echo $post['post_id']?> note type-note status-publish format-standard category-uncategorized <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
 
     <header class="entry-meta comment_header">
         <div class="entry-meta">      
@@ -74,6 +74,17 @@
     <?php } //end foreach ?>
     </div>
   <?php } ?>
+    <div class="admin-controls">
+      <?php if(isset($post['editlink'])){ ?>
+        <a href="<?php echo $post['editlink'] ?>"><i class="fa fa-edit"></i></a>
+      <?php } ?>
+      <?php if(isset($post['deletelink'])){ ?>
+        <a href="<?php echo $post['deletelink'] ?>"><i class="fa fa-trash"></i></a>
+      <?php } ?>
+      <?php if(isset($post['undeletelink'])){ ?>
+        <a href="<?php echo $post['undeletelink'] ?>"><i class="fa fa-undo">Undo</i></a>
+      <?php } ?>
+    </div>
 
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
@@ -95,29 +106,6 @@
         <?php } ?>
     <div style="clear:both"></div>
 	</span>
-    <?php } ?>
-<?php if($is_owner){ ?>
-    <div class="actions">
-        <ul>
-            <li>
-                <indie-action with="<?php echo urlencode($post['permalink']) ?>" do="edit">
-                    <a href="web+action://ben.thatmustbe.me/edit?type=article&url=<?php echo urlencode($post['permalink']) ?>" target="">Edit</a>
-                </indie-action>
-            </li>
-            <?php if($deleted){ ?>
-            <li>
-                <indie-action with="<?php echo urlencode($post['permalink']) ?>" do="undelete">
-                    <a href="https://ben.thatmustbe.me/undelete?type=article&url=<?php echo urlencode($post['permalink']) ?>" target="">Undelete</a>
-                </indie-action>
-            </li>
-            <?php } else { ?>
-                <indie-action with="<?php echo urlencode($post['permalink']) ?>" do="delete">
-                    <a href="https://ben.thatmustbe.me/delete?type=article&url=<?php echo urlencode($post['permalink']) ?>" target="">Delete</a>
-                </indie-action>
-            <?php } ?>
-        </ul>
-
-    </div>
     <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
@@ -142,7 +130,6 @@
         <?php } ?>
 	</div>
     <?php } ?>
-
 </div>
 
 <?php echo $footer; ?>

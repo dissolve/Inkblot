@@ -19,6 +19,7 @@ $routes['micropub-send']      = 'micropub/client/send';
 $routes['new']                = 'micropub/client';
 $routes['edit']               = 'micropub/client/editPost';
 $routes['delete']             = 'micropub/client/deletePost';
+$routes['undelete']           = 'micropub/client/undeletePost';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`page/(?P<id>\w+)`i',

@@ -1276,7 +1276,22 @@ img.comment_author { width:30px; height:30px; }
 }
 
 #syndications img {height:20px; width:20px !important; border:none !important; margin:none;padding:none;}
+.syndications img {height:20px; width:20px !important; border:none !important; margin:none;padding:none;}
+.admin-controls { text-align:right; font-size:10pt;}
+
 .context_history {margin-bottom:35px;}
+
+article.deleted .admin-controls:before{
+    content:'Deleted';
+    color:red;
+    font-weight:bold;
+}
+article.draft:before{
+    content:'Draft';
+    float:right;
+    color:blue;
+    font-weight:bold;
+}
 
 /* =Widgets
 -------------------------------------------------------------- */
@@ -1333,8 +1348,9 @@ ul.mp-type-list .mp-list-item { display:inline-block; color:white; background-co
 ul.mp-type-list a.mp-list-item{ color:black;}
 ul.mp-type-list .mp-list-item.mp-selected { background-color:#471; color:white;}
 
-.type-select-label{margin-right:10px;padding-left;5px;}
 .type-select{margin-right:3px}
+.type-select-label{margin-right:10px;margin-left:5px;font-size:12pt;}
+
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
 }
