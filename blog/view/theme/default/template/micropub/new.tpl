@@ -77,12 +77,14 @@
                       <li><a class="mp-list-item" href="<?php echo $edit_entry_link?>">Edit</a></li>
                       <li><a class="mp-list-item" href="<?php echo $delete_entry_link?>">Delete</a></li>
                     </ul>
-                    <input type="radio" name="type" value="note" id="radio-note" <?php echo($type == 'note' ? '' :'checked')?> class="form-control" onclick="enableGroup('new-note');" /> Note
-                    <input type="radio" name="type" value="article" id="radio-article" <?php echo($type == 'article' ? 'checked':'')?> class="form-control" onclick="enableGroup('new-article');" /> Article
-                    <input type="radio" name="type" value="rsvp" id="radio-rsvp" <?php echo($type == 'rsvp' ? 'checked': '')?> class="form-control" onclick="enableGroup('new-rsvp');" /> RSVP
-                    <input type="radio" name="type" value="checkin" id="radio-checkin" <?php echo($type == 'checkin' ? 'checked': '')?> class="form-control" onclick="enableGroup('new-checkin');" /> Checkin
-                    <input type="radio" name="type" value="like" id="radio-like" <?php echo($type == 'like' ? 'checked': '')?> class="form-control" onclick="enableGroup('new-like');" /> Like
-                    <input type="radio" name="type" value="bookmark" id="radio-bookmark" <?php echo($type == 'bookmark' ? 'checked': '')?> class="form-control" onclick="enableGroup('new-bookmark');" /> Bookmark
+		    <input type="hidden" name="operation" value="create" />
+
+                    <input type="radio" name="type" class="type-select" value="note" id="radio-note" <?php echo($type == 'note' ? '' :'checked')?> class="form-control" onclick="enableGroup('new-note');" /><label class="type-select-label" for="radio-note">Note</label>
+                    <input type="radio" name="type" class="type-select" value="article" id="radio-article" <?php echo($type == 'article' ? 'checked':'')?> class="form-control" onclick="enableGroup('new-article');" /><label class="type-select-label" for="radio-article">Article</label>
+                    <input type="radio" name="type" class="type-select" value="rsvp" id="radio-rsvp" <?php echo($type == 'rsvp' ? 'checked': '')?> class="form-control" onclick="enableGroup('new-rsvp');" /><label class="type-select-label" for="radio-rsvp">RSVP</label>
+                    <input type="radio" name="type" class="type-select" value="checkin" id="radio-checkin" <?php echo($type == 'checkin' ? 'checked': '')?> class="form-control" onclick="enableGroup('new-checkin');" /><label class="type-select-label" for="radio-checkin">Checkin</label>
+                    <input type="radio" name="type" class="type-select" value="like" id="radio-like" <?php echo($type == 'like' ? 'checked': '')?> class="form-control" onclick="enableGroup('new-like');" /><label class="type-select-label" for="radio-like">Like</label>
+                    <input type="radio" name="type" class="type-select" value="bookmark" id="radio-bookmark" <?php echo($type == 'bookmark' ? 'checked': '')?> class="form-control" onclick="enableGroup('new-bookmark');" /><label class="type-select-label" for="radio-bookmark">Bookmark</label>
                   </div>
                 </div>
             <div class="content">

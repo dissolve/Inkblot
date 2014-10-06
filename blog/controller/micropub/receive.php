@@ -141,9 +141,9 @@ class ControllerMicropubReceive extends Controller {
             $data['slug'] = $this->request->post['slug'];
         }
 
-        if(isset($this->request->post['draft'])){
-            $data['draft'] = $this->request->post['draft'];
-        }
+        //if(isset($this->request->post['draft'])){
+            //$data['draft'] = $this->request->post['draft'];
+        //}
 
         //TODO
         // $this->request->post['h'];

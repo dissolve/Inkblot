@@ -550,7 +550,7 @@ footer.entry-meta {
   font-size: 13px;
   margin-bottom: 14px;
 }
-.photo {margin-top:20px;}
+/*.photo {margin-top:20px;}*/
 .format-quote .entry-header .entry-title, .format-video .entry-header .entry-title, .format-audio .entry-header .entry-title, .format-image .entry-header .entry-title, .format-quote .entry-header .entry-title a, .format-video .entry-header .entry-title a, .format-audio .entry-header .entry-title a, .format-image .entry-header .entry-title a {
   font-size: 22px;
   padding-top: 30px;
@@ -1333,6 +1333,8 @@ ul.mp-type-list .mp-list-item { display:inline-block; color:white; background-co
 ul.mp-type-list a.mp-list-item{ color:black;}
 ul.mp-type-list .mp-list-item.mp-selected { background-color:#471; color:white;}
 
+.type-select-label{margin-right:10px;padding-left;5px;}
+.type-select{margin-right:3px}
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
 }

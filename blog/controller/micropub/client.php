@@ -182,7 +182,7 @@ class ControllerMicropubClient extends Controller {
                 $target_url =  curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
                 $this->session->data['success_url'] = $target_url;
             }
-            $this->session->data['success'] = 'Post Submitted.'.' '.$target_url;
+            $this->session->data['success'] = 'Post Submitted.';
         } else {
             $this->session->data['error'] = 'Error:  Return code '.$result.'.';
         }
