@@ -30,7 +30,7 @@
         </span>
         <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="permalink u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($post['timestamp']))?>" ><?php echo date("F j, Y g:i A", strtotime($post['timestamp']))?></time></a>
 
-        <a href="<?php echo $post['shortlink']?>" title="Shortlink" rel="bookmark" class="shortlink u-shortlink u-url">Shortlink</a>
+        <a href="<?php echo $post['shortlink']?>" title="Shortlink" rel="shortlink" class="shortlink u-shortlink u-url">Shortlink</a>
 
         <span class='in_reply_url'>
         <?php if(!empty($post['replyto'])){ ?>
@@ -96,6 +96,29 @@
     <div style="clear:both"></div>
 	</span>
     <?php } ?>
+<?php if($is_owner){ ?>
+    <div class="actions">
+        <ul>
+            <li>
+                <indie-action with="<?php echo urlencode($post['permalink']) ?>" do="edit">
+                    <a href="web+action://ben.thatmustbe.me/edit?type=article&url=<?php echo urlencode($post['permalink']) ?>" target="">Edit</a>
+                </indie-action>
+            </li>
+            <?php if($deleted){ ?>
+            <li>
+                <indie-action with="<?php echo urlencode($post['permalink']) ?>" do="undelete">
+                    <a href="https://ben.thatmustbe.me/undelete?type=article&url=<?php echo urlencode($post['permalink']) ?>" target="">Undelete</a>
+                </indie-action>
+            </li>
+            <?php } else { ?>
+                <indie-action with="<?php echo urlencode($post['permalink']) ?>" do="delete">
+                    <a href="https://ben.thatmustbe.me/delete?type=article&url=<?php echo urlencode($post['permalink']) ?>" target="">Delete</a>
+                </indie-action>
+            <?php } ?>
+        </ul>
+
+    </div>
+    <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
     <?php if($post['comment_count'] > 0) { ?>
@@ -119,6 +142,7 @@
         <?php } ?>
 	</div>
     <?php } ?>
+
 </div>
 
 <?php echo $footer; ?>

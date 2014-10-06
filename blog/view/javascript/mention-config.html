@@ -1,0 +1,16 @@
+<script>
+(function() {
+  if (window.parent !== window) {
+    window.parent.postMessage(JSON.stringify({
+      // The endpoint you use to write replies
+      edit: 'https://ben.thatmustbe.me/edit?url={url}'
+      new: 'https://ben.thatmustbe.me/new',
+      reply: 'https://ben.thatmustbe.me/new?reply_to={url}',
+      delete: 'https://ben.thatmustbe.me/delete?url={url}',
+      undelete: 'https://ben.thatmustbe.me/delete?url={url}'
+
+    }), '*');
+  }
+}());
+</script>
+

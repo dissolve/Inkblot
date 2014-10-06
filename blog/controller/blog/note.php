@@ -16,8 +16,12 @@ class ControllerBlogNote extends Controller {
 		$this->load->model('blog/context');
 		
 		$note = $this->model_blog_note->getNoteByDayCount($year, $month, $day, $daycount);
+        if($this->session->data['is_owner']){
+            $data['is_owner'] = true;
+        }
 
         if(intval($note['deleted']) == 1){
+            $data['deleted'] = true;
 
             $this->document->setTitle('Deleted');
             $this->document->setDescription('Entry Deleted');

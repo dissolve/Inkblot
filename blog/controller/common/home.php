@@ -48,7 +48,7 @@ class ControllerCommonHome extends Controller {
                 'like_count' => $like_count);
 
             if($this->session->data['is_owner']){
-                $extra_data_array['editlink'] = $this->url->link('micropub/client/'.$result['post_type'], 'op=edit&id='.$result['post_id'],'');
+                $extra_data_array['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$result['post_id'],'');
             }
 
             $data['posts'][] = array_merge($result, $extra_data_array);

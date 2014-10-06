@@ -7,6 +7,12 @@
       Logged in as <?php echo $user_name?><br>
           <?php if(isset($micropubEndpoint)) { ?>
               Found Micropub Endpoint at <?php echo $micropubEndpoint?><br>
+<?php if($is_owner){ ?>
+<script>
+window.navigator.registerProtocolHandler('web+action', 'https://ben.thatmustbe.me/blog/view/javascript/mention-config.html?handler=%s', 'OpenBlog');
+</script>
+<?php } ?>
+                
               <?php if($token){ ?>
                 Access Token Found 
               <?php } else { ?>
@@ -60,12 +66,16 @@
             .new-like{display:none}
             .new-checkin{display:none}
             .new-rsvp{display:none}
-			<?php if(isset($op) && $op=="edit") { ?>
-				.group-edit{display:block}
-			<?php } elseif(isset($op) && $op=="delete") { ?>
-				.group-delete{display:block}
-			<?php } elseif(isset($op) && $op=="undelete") { ?>
-				.group-undelete{display:block}
+			<?php if(isset($type) && $type=="article") { ?>
+				.new-article{display:block}
+			<?php } elseif(isset($type) && $type=="bookmark") { ?>
+				.new-bookmark{display:block}
+			<?php } elseif(isset($type) && $type=="like") { ?>
+				.new-like{display:block}
+			<?php } elseif(isset($type) && $type=="checkin") { ?>
+				.new-checkin{display:block}
+			<?php } elseif(isset($type) && $type=="rsvp") { ?>
+				.new-rsvp{display:block}
 			<?php } else { ?>
 				.new-note{display:block}
 			<?php } ?>
