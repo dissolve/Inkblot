@@ -25,7 +25,7 @@ class ModelBlogNote extends Model {
             $syndication_extra = $this->db->escape($data['syndication_extra']);
         }
 
-        $slug = '_';
+        $slug = '';
         if(isset($data['slug']) && !empty($data['slug'])){
             $slug = $this->db->escape($data['slug']);
         }

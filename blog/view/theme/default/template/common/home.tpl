@@ -1,8 +1,4 @@
 <?php echo $header; ?>
-
-<?php if(isset($success)){ 
-    echo $success;
-} ?>
 <div class="hfeed h-feed feed">
 <div id="notes-stream">
 <div id="notes_pad"></div>

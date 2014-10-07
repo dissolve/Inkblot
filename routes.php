@@ -22,40 +22,44 @@ $routes['delete']             = 'micropub/client/deletePost';
 $routes['undelete']           = 'micropub/client/undeletePost';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
-    'expression' => '`page/(?P<id>\w+)`i',
+    'expression' => '`^page/(?P<id>\w+)`i',
     'reverse' => 'page/{slug}');
 
 $advanced_routes[] = array('controller' => 'webmention/queue',
-    'expression' => '`queue/(?P<id>\d+)`i',
+    'expression' => '`^queue/(?P<id>\d+)`i',
     'reverse' => 'queue/{id}');
 
 $advanced_routes[] = array('controller' => 'blog/archive',
-    'expression' => '`archive/(?P<year>\d{4})-(?P<month>\d{1,2})`i',
+    'expression' => '`^archive/(?P<year>\d{4})-(?P<month>\d{1,2})`i',
     'reverse' => 'archive/{year}-{month}');
 
 $advanced_routes[] = array('controller' => 'blog/category',
-    'expression' => '`category/(?P<name>\w+)`i',
+    'expression' => '`^category/(?P<name>\w+)`i',
     'reverse' => 'category/{name}');
 
 $advanced_routes[] = array('controller' => 'blog/shortener',
-    'expression' => '`s/(?P<eid>.+)`',
+    'expression' => '`^s/(?P<eid>.+)`',
     'reverse' => 's/{eid}');
 
 $advanced_routes[] = array('controller' => 'blog/article',
-    'expression' => '`post/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/.*`i',
+    'expression' => '`^post/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/?.*`i',
     'reverse' => 'post/{year}/{month}/{day}/{daycount}/{slug}');
 
 $advanced_routes[] = array('controller' => 'blog/note',
-    'expression' => '`note/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/.*`i',
+    'expression' => '`^note/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/?.*`i',
     'reverse' => 'note/{year}/{month}/{day}/{daycount}/{slug}');
 
 $advanced_routes[] = array('controller' => 'blog/photo',
-    'expression' => '`photo/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/?.*`i',
+    'expression' => '`^photo/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/?.*`i',
     'reverse' => 'photo/{year}/{month}/{day}/{daycount}');
 
 $advanced_routes[] = array('controller' => 'blog/author',
-    'expression' => '`author/(?P<id>\d+)`i',
+    'expression' => '`^author/(?P<id>\d+)`i',
     'reverse' => 'author/{id}');
+
+$advanced_routes[] = array('controller' => 'blog/archive/day',
+    'expression' => '`^(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/?`i',
+    'reverse' => '{year}/{month}/{day}');
 
 
 ?>

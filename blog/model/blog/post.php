@@ -215,6 +215,23 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
+	public function getPostsByDay($year, $month, $day) {
+		$post_id_array = $this->cache->get('posts.day.'. $year . '.'. $month . '.'.  $day);
+		if(!$post_id_array){
+		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND `day` = ".(int)$day." AND deleted=0 AND draft=0 ORDER BY timestamp DESC");
+		    $post_id_array = $query->rows;
+		    $this->cache->set('posts.day.'.$year . '.'. $month . '.'.  $day, $post_id_array);
+		}
+	
+        $data_array = array();
+        foreach($post_id_array as $post){
+            $data_array[] = $this->getPost($post['post_id']);
+        }
+	
+		return $data_array;
+	}
+
 	public function getPostsByAuthor($author_id, $limit=20, $skip=0) {
         $post_id_array = $this->cache->get('posts.author.'. $author_id . '.'. $skip . '.'.  $limit);
         if(!$post_id_array){

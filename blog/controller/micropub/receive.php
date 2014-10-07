@@ -136,7 +136,7 @@ class ControllerMicropubReceive extends Controller {
         $data['body'] = $this->request->post['content'];
         $data['slug'] = $this->request->post['slug'];
 
-        $data['slug'] = '_';
+        $data['slug'] = '';
         if(isset($this->request->post['slug'])) {
             $data['slug'] = $this->request->post['slug'];
         }
@@ -367,7 +367,7 @@ class ControllerMicropubReceive extends Controller {
         $data['body'] = $this->request->post['content'];
         $data['slug'] = $this->request->post['slug'];
 
-        $data['slug'] = '_';
+        $data['slug'] = '';
         if(isset($this->request->post['slug'])) {
             $data['slug'] = $this->request->post['slug'];
         }
