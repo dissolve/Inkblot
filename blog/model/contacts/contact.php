@@ -1,5 +1,6 @@
 <?php
 class ModelContactsContact extends Model {
+    //todo remove "Main url" from the main contact structure.  not all will have a single main url
     public function addContact($name, $contact_url) {
         $this->db->query("INSERT INTO " . DATABASE . ".contacts SET name='".$this->db->escape($name)."', main_url='".$this->db->escape($contact_url)."' LIMIT 1");
         return $this->db->getLastId();

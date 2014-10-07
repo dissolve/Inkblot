@@ -38,7 +38,21 @@ class ControllerBlogNote extends Controller {
             $author = $this->model_blog_author->getAuthor($note['author_id']);
             $categories = $this->model_blog_category->getCategoriesForPost($note['note_id']);
             $comment_count = $this->model_blog_comment->getCommentCountForPost($note['note_id']);
-            $comments = $this->model_blog_comment->getCommentsForPost($note['note_id']);
+            $fetch_comments = $this->model_blog_comment->getCommentsForPost($note['note_id']);
+            $comments = array();
+            if(!isset($this->session->data['user_site'])){
+                $comments = $fetch_comments;
+            } else {
+                foreach($fetch_comments as $comm){
+                    $clean_comm = trim(str_replace(array('http://','https://'),array('',''), $comm['source_url']), '/');
+                    $clean_user = trim(str_replace(array('http://','https://'),array('',''), $this->session->data['user_site']), '/');
+                    if($clean_comm == $clean_user){
+                        $comm['editlink'] = $this->url->link('micropub/client/edit', 'url='.$comm['source_url']);
+                    }
+                    $comments[] = $comm;
+                }
+            }
+
             $mentions = $this->model_blog_mention->getMentionsForPost($note['note_id']);
             $like_count = $this->model_blog_post->getLikeCountForPost($note['note_id']);
             $likes = $this->model_blog_post->getLikesForPost($note['note_id']);
