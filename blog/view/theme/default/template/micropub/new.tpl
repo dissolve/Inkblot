@@ -23,7 +23,6 @@ window.navigator.registerProtocolHandler('web+action', 'https://ben.thatmustbe.m
                   <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
                   <p><button type="submit">Log In</button></p>
                   <input type="hidden" name="scope" value="post" />
-                  <input type="hidden" name="c" value="micropub/client" />
                 </form>
               <?php } ?>
           <?php } else { ?>
@@ -37,7 +36,6 @@ window.navigator.registerProtocolHandler('web+action', 'https://ben.thatmustbe.m
           <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
           <p><button type="submit">Log In</button></p>
           <input type="hidden" name="scope" value="post" />
-          <input type="hidden" name="c" value="micropub/client" />
         </form>
       <?php } ?>
       <form action="<?php echo ($token?$action:''); ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">

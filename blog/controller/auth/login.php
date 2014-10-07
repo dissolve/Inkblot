@@ -11,6 +11,10 @@ class ControllerAuthLogin extends Controller {
         $me = $this->request->get['me'];
 
         $controller = (isset($this->request->get['c']) ? $this->request->get['c'] : null) ; 
+        if(!$controller){
+            $this->session->data['auth_redir'] = $_SERVER['HTTP_REFERER'];
+            //$this->log->write('set session' . $_SERVER['HTTP_REFERER']);
+        }
 
         $scope = (isset($this->request->get['scope']) ? $this->request->get['scope'] : null) ; 
         
@@ -48,7 +52,7 @@ class ControllerAuthLogin extends Controller {
                     'state' => substr(md5($trimmed_me.$this->url->link('')),0,8),
                     'client_id' => $this->url->link('')
                 );
-                $this->log->write(print_r($data_array,true));
+                //$this->log->write(print_r($data_array,true));
                 if($scope){
                     $data_array['scope'] = $scope;
                     $data_array['response_type'] = 'code';
@@ -72,6 +76,9 @@ class ControllerAuthLogin extends Controller {
         $url = $this->url->link('');
         if(isset($this->request->get['c']) && !empty($this->request->get['c'])){
             $url = $this->url->link($this->request->get['c']);
+        } elseif(isset($this->session->data['auth_redir']) && !empty($this->session->data['auth_redir'])){
+            $url = $this->session->data['auth_redir'];
+            unset($this->session->data['auth_redir']);
         }
 
         //recalculate the callback url
@@ -84,8 +91,8 @@ class ControllerAuthLogin extends Controller {
         $code = $this->request->get['code'];
         $state = (isset($this->request->get['state']) ? $this->request->get['state'] : null); 
 
-        $this->log->write('callback received ...');
-        $this->log->write(print_r($this->request->get,true));
+        //$this->log->write('callback received ...');
+        //$this->log->write(print_r($this->request->get,true));
 
         $result = $this->confirm_auth($me, $code, $redir_url, $state);
 
@@ -115,7 +122,12 @@ class ControllerAuthLogin extends Controller {
         $url = $this->url->link('');
         if(isset($this->request->get['c']) && !empty($this->request->get['c'])){
             $url = $this->url->link($this->request->get['c']);
+        } elseif(isset($this->session->data['auth_redir']) && !empty($this->session->data['auth_redir'])){
+            $url = $this->session->data['auth_redir'];
+            unset($this->session->data['auth_redir']);
         }
+        //$this->log->write('url:' . $url);
+        //$this->log->write('session: ' .print_r($this->session->data,true));
 
         //recalculate the callback url
         $redir_url = $this->url->link('auth/login/tokencallback', '', '');
@@ -175,8 +187,8 @@ class ControllerAuthLogin extends Controller {
         }
 
         $post_data = http_build_query($post_array);
-        $this->log->write('post_data: '.print_r($post_array,true));
-        $this->log->write('endpoint: '.$auth_endpoint);
+        //$this->log->write('post_data: '.print_r($post_array,true));
+        //$this->log->write('endpoint: '.$auth_endpoint);
 
         $ch = curl_init($auth_endpoint);
 
@@ -190,8 +202,8 @@ class ControllerAuthLogin extends Controller {
 
         $results = array();
         parse_str($response, $results);
-        $this->log->write('endpoint_response: '.$response);
-        $this->log->write(print_r($results, true));
+        //$this->log->write('endpoint_response: '.$response);
+        //$this->log->write(print_r($results, true));
 
         $results['me'] = $this->normalize_url($results['me']);
 
@@ -199,7 +211,7 @@ class ControllerAuthLogin extends Controller {
         $trimmed_result_me = trim($results['me'], '/');
 
         if($state){
-            $this->log->write('state = '.$state. ' ' .substr(md5($trimmed_me.$client_id),0,8));
+            //$this->log->write('state = '.$state. ' ' .substr(md5($trimmed_me.$client_id),0,8));
             return ($trimmed_result_me == $trimmed_me && $state == substr(md5($trimmed_me.$client_id),0,8));
         } else {
             return $trimmed_result_me == $trimmed_me ;

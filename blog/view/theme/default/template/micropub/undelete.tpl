@@ -16,7 +16,6 @@
                   <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
                   <p><button type="submit">Log In</button></p>
                   <input type="hidden" name="scope" value="post" />
-                  <input type="hidden" name="c" value="micropub/client" />
                 </form>
               <?php } ?>
           <?php } else { ?>
@@ -29,7 +28,6 @@
           <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
           <p><button type="submit">Log In</button></p>
           <input type="hidden" name="scope" value="post" />
-          <input type="hidden" name="c" value="micropub/client" />
         </form>
       <?php } ?>
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
@@ -59,7 +57,7 @@
 
                 <div class="form-group group-delete">
                   <div class="col-sm-12">
-                    <input type="submit" value="Delete" name="" class="form-control"/>
+                    <input type="submit" value="Undelete" name="" class="form-control"/>
                   </div>
                 </div>
 
