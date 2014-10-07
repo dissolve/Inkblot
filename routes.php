@@ -29,12 +29,8 @@ $advanced_routes[] = array('controller' => 'webmention/queue',
     'expression' => '`^queue/(?P<id>\d+)`i',
     'reverse' => 'queue/{id}');
 
-$advanced_routes[] = array('controller' => 'blog/archive',
-    'expression' => '`^archive/(?P<year>\d{4})-(?P<month>\d{1,2})`i',
-    'reverse' => 'archive/{year}-{month}');
-
 $advanced_routes[] = array('controller' => 'blog/category',
-    'expression' => '`^category/(?P<name>\w+)`i',
+    'expression' => '`^category/(?P<name>\w+)/?`i',
     'reverse' => 'category/{name}');
 
 $advanced_routes[] = array('controller' => 'blog/shortener',
@@ -60,6 +56,10 @@ $advanced_routes[] = array('controller' => 'blog/author',
 $advanced_routes[] = array('controller' => 'blog/archive/day',
     'expression' => '`^(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/?`i',
     'reverse' => '{year}/{month}/{day}');
+
+$advanced_routes[] = array('controller' => 'blog/archive',
+    'expression' => '`^(?P<year>\d{4})/(?P<month>\d{1,2})/?`i',
+    'reverse' => '{year}/{month}');
 
 
 ?>
