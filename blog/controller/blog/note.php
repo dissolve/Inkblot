@@ -44,7 +44,7 @@ class ControllerBlogNote extends Controller {
             $author = $this->model_blog_author->getAuthor($post['author_id']);
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
             $comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
-            $fetch_comments = $this->model_blog_comment->getCommentsForPost($note['note_id']);
+            $fetch_comments = $this->model_blog_comment->getCommentsForPost($post['post_id']);
             $comments = array();
             if(!isset($this->session->data['user_site'])){
                 $comments = $fetch_comments;
@@ -52,8 +52,9 @@ class ControllerBlogNote extends Controller {
                 foreach($fetch_comments as $comm){
                     $clean_comm = trim(str_replace(array('http://','https://'),array('',''), $comm['source_url']), '/');
                     $clean_user = trim(str_replace(array('http://','https://'),array('',''), $this->session->data['user_site']), '/');
-                    if($clean_comm == $clean_user){
-                        $comm['editlink'] = $this->url->link('micropub/client/edit', 'url='.$comm['source_url']);
+                    if(strpos($clean_comm,$clean_user) === 0){
+                        $comm['editlink'] = $this->url->link('micropub/client/editPost', 'url='.$comm['source_url']);
+                        $comm['deletelink'] = $this->url->link('micropub/client/deletePost', 'url='.$comm['source_url']);
                     }
                     $comments[] = $comm;
                 }

@@ -114,6 +114,18 @@
                     </a>
 
                     <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($comment['timestamp']))?></time></a>
+                   <span class="other-controls">
+                  <?php if(isset($comment['editlink'])){ ?>
+                  <indie-action do="edit" with="<?php echo $comment['source_name']?>">
+                    <a href="<?php echo $comment['editlink'] ?>"><i class="fa fa-edit">Edit</i></a>
+                  </indie-action>
+                  <?php } ?>
+                  <?php if(isset($comment['deletelink'])){ ?>
+                  <indie-action do="delete" with="<?php echo $comment['source_name']?>">
+                    <a href="<?php echo $comment['deletelink'] ?>"><i class="fa fa-trash">Delete</i></a>
+                  </indie-action>
+                  <?php } ?>
+                  </span>
                 </div>
                 <div class='comment_body'>
                     <?php echo $comment['body']?>

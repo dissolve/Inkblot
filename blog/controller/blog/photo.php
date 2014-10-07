@@ -44,7 +44,22 @@ class ControllerBlogPhoto extends Controller {
             $author = $this->model_blog_author->getAuthor($post['author_id']);
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
             $comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
-            $comments = $this->model_blog_comment->getCommentsForPost($post['post_id']);
+            $fetch_comments = $this->model_blog_comment->getCommentsForPost($post['post_id']);
+            $comments = array();
+            if(!isset($this->session->data['user_site'])){
+                $comments = $fetch_comments;
+            } else {
+                foreach($fetch_comments as $comm){
+                    $clean_comm = trim(str_replace(array('http://','https://'),array('',''), $comm['source_url']), '/');
+                    $clean_user = trim(str_replace(array('http://','https://'),array('',''), $this->session->data['user_site']), '/');
+                    if(strpos($clean_comm,$clean_user) === 0){
+                        $comm['editlink'] = $this->url->link('micropub/client/editPost', 'url='.$comm['source_url']);
+                        $comm['deletelink'] = $this->url->link('micropub/client/deletePost', 'url='.$comm['source_url']);
+                    }
+                    $comments[] = $comm;
+                }
+            }
+
             $mentions = $this->model_blog_mention->getMentionsForPost($post['post_id']);
             $like_count = $this->model_blog_post->getLikeCountForPost($post['post_id']);
             $likes = $this->model_blog_post->getLikesForPost($post['post_id']);
