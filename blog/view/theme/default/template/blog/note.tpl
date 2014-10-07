@@ -75,14 +75,14 @@
     </div>
   <?php } ?>
     <div class="admin-controls">
-      <?php if(isset($post['repostlink'])){ ?>
-      <indie-action do="repost" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-repeat"></i></a>
-      </indie-action>
-      <?php } ?>
       <?php if(isset($post['editlink'])){ ?>
       <indie-action do="edit" with="<?php echo $post['permalink']?>">
         <a href="<?php echo $post['editlink'] ?>" title="Edit"><i class="fa fa-edit"></i></a>
+      </indie-action>
+      <?php } ?>
+      <?php if(isset($post['undeletelink'])){ ?>
+      <indie-action do="undelete" with="<?php echo $post['permalink']?>">
+        <a href="<?php echo $post['undeletelink'] ?>" title="Undelete"><i class="fa fa-undo"></i></a>
       </indie-action>
       <?php } ?>
       <?php if(isset($post['deletelink'])){ ?>
@@ -90,9 +90,9 @@
         <a href="<?php echo $post['deletelink'] ?>" title="Delete"><i class="fa fa-trash"></i></a>
       </indie-action>
       <?php } ?>
-      <?php if(isset($post['undeletelink'])){ ?>
-      <indie-action do="undelete" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['undeletelink'] ?>" title="Undelete"><i class="fa fa-undo"></i></a>
+      <?php if(isset($post['repostlink'])){ ?>
+      <indie-action do="repost" with="<?php echo $post['permalink']?>">
+        <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-repeat"></i></a>
       </indie-action>
       <?php } ?>
     </div>
