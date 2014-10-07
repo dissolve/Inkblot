@@ -17,6 +17,10 @@ class ControllerCommonFooter extends Controller {
         $data['google_analytics_id'] = GOOGLE_ANALYTICS_ID;
         $data['sitesearch'] = trim(str_replace(array('http://','https://'),array('',''), HTTP_SERVER), '/');
 
+        if($this->session->data['is_owner']){
+            $data['newlink'] = $this->url->link('micropub/client', '', '');
+        }
+
 		$data['mylinks'] = array();
 
 		foreach ($this->model_blog_mycard->getData($this->session->data['user_site']) as $result) {

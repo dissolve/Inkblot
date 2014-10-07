@@ -92,11 +92,15 @@ class ModelBlogPost extends Model {
     public function deletePost($post_id){
         $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = ".(int)$post_id;
         $this->db->query($sql);
+        $this->cache->delete('post.'. $post_id);
+        $this->cache->delete('posts');
     }
 
     public function undeletePost($post_id){
         $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=0 WHERE post_id = ".(int)$post_id;
         $this->db->query($sql);
+        $this->cache->delete('post.'. $post_id);
+        $this->cache->delete('posts');
     }
 
 	public function getPost($post_id) {
@@ -169,14 +173,24 @@ class ModelBlogPost extends Model {
 	}
 
 	public function getPostsByTypes($type_list = ['article'], $limit=20, $skip=0) {
-		$post_id_array = $this->cache->get('posts.type.'. implode('.',$type_list) . '.'. $skip . '.'.  $limit);
-		if(!$post_id_array){
-			// todo need to map this->db->escape
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type IN ('".implode("','",$type_list)."') AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-		    $post_id_array = $query->rows;
-		    $this->cache->set('posts.type.'.implode('.',$type_list) . '.'. $skip . '.'.  $limit, $post_id_array);
-		}
+        if($this->session->data['is_owner']){
+            $post_id_array = $this->cache->get('posts.type.owner.'. implode('.',$type_list) . '.'. $skip . '.'.  $limit);
+            if(!$post_id_array){
+                // todo need to map this->db->escape
+                $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type IN ('".implode("','",$type_list)."') AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+                $post_id_array = $query->rows;
+                $this->cache->set('posts.type.owner.'.implode('.',$type_list) . '.'. $skip . '.'.  $limit, $post_id_array);
+            }
+        } else {
+            $post_id_array = $this->cache->get('posts.type.'. implode('.',$type_list) . '.'. $skip . '.'.  $limit);
+            if(!$post_id_array){
+                // todo need to map this->db->escape
+                $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type IN ('".implode("','",$type_list)."') AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+                $post_id_array = $query->rows;
+                $this->cache->set('posts.type.'.implode('.',$type_list) . '.'. $skip . '.'.  $limit, $post_id_array);
+            }
 
+        }
         $data_array = array();
         foreach($post_id_array as $post){
             $data_array[] = $this->getPost($post['post_id']);

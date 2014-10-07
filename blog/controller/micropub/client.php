@@ -13,6 +13,10 @@ class ControllerMicropubClient extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['login'] = $this->url->link('auth/login');
 
+        if($this->session->data['is_owner']){
+            $data['is_owner'] = true;
+        }
+
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		if(isset($this->session->data['user_site'])){
@@ -30,18 +34,18 @@ class ControllerMicropubClient extends Controller {
 		}
 
 		if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
-		    $data['post'] = $this->download_entry($this->request->get['url']);
+		    $data['post'] = $this->download_entry($this->request->get['url'], isset($this->request->get['type']) && $this->request->get['type']);
 		}
 
-		if(isset($this->request->get['op'])){
-		   $data['op'] = $this->request->get['op'];
+		if(isset($this->request->get['type'])){
+		   $data['type'] = $this->request->get['type'];
 		}
 
 		$data['token'] = isset($this->session->data['token']);
 
 		$data['new_entry_link'] = $this->url->link('micropub/client');
-		$data['edit_entry_link'] = $this->url->link('micropub/client/edit');
-		$data['delete_entry_link'] = $this->url->link('micropub/client/delete');
+		$data['edit_entry_link'] = $this->url->link('micropub/client/editPost');
+		$data['delete_entry_link'] = $this->url->link('micropub/client/deletePost');
 
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/new.tpl')) {
@@ -53,8 +57,8 @@ class ControllerMicropubClient extends Controller {
 
 	public function editPost() {
 
-		$this->document->setTitle('Edit a New Post');
-		$data['title'] = 'Edit a New Post';
+		$this->document->setTitle('Edit a Post');
+		$data['title'] = 'Edit a Post';
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -87,8 +91,8 @@ class ControllerMicropubClient extends Controller {
 		$data['token'] = isset($this->session->data['token']);
 
 		$data['new_entry_link'] = $this->url->link('micropub/client');
-		$data['edit_entry_link'] = $this->url->link('micropub/client/edit');
-		$data['delete_entry_link'] = $this->url->link('micropub/client/delete');
+		$data['edit_entry_link'] = $this->url->link('micropub/client/editPost');
+		$data['delete_entry_link'] = $this->url->link('micropub/client/deletePost');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/edit.tpl')) {
 			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/edit.tpl', $data));
@@ -130,13 +134,55 @@ class ControllerMicropubClient extends Controller {
 		$data['token'] = isset($this->session->data['token']);
 
 		$data['new_entry_link'] = $this->url->link('micropub/client');
-		$data['edit_entry_link'] = $this->url->link('micropub/client/edit');
-		$data['delete_entry_link'] = $this->url->link('micropub/client/delete');
+		$data['edit_entry_link'] = $this->url->link('micropub/client/editPost');
+		$data['delete_entry_link'] = $this->url->link('micropub/client/deletePost');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/delete.tpl')) {
 			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/delete.tpl', $data));
 		} else {
 			$this->response->setOutput($this->load->view('default/template/micropub/delete.tpl', $data));
+		}
+	}
+	public function unDeletePost() {
+		$this->document->setTitle('Undelete a Post');
+		$data['title'] = 'Undelete a Post';
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['login'] = $this->url->link('auth/login');
+
+		$this->document->setDescription($this->config->get('config_meta_description'));
+
+		if(isset($this->session->data['user_site'])){
+		    $data['user_name'] = $this->session->data['user_site'];
+		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
+		    if($endpoint){
+			$data['micropubEndpoint'] = $endpoint;
+			$data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
+		}
+		
+		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    $this->load->model('blog/post');
+		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
+
+		if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
+		    //$data['post'] = $this->download_entry($this->request->get['url'], true);
+		    $data['post'] = array('permalink'=>$this->request->get['url']);
+		}
+
+
+		$data['token'] = isset($this->session->data['token']);
+
+		$data['new_entry_link'] = $this->url->link('micropub/client');
+		$data['edit_entry_link'] = $this->url->link('micropub/client/editPost');
+		$data['delete_entry_link'] = $this->url->link('micropub/client/deletePost');
+
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/undelete.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/undelete.tpl', $data));
+		} else {
+			$this->response->setOutput($this->load->view('default/template/micropub/undelete.tpl', $data));
 		}
 	}
 

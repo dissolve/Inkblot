@@ -15,9 +15,13 @@ class ControllerBlogNote extends Controller {
 		$this->load->model('blog/mention');
 		$this->load->model('blog/context');
 		
-		$note = $this->model_blog_note->getNoteByDayCount($year, $month, $day, $daycount);
+		$post = $this->model_blog_note->getNoteByDayCount($year, $month, $day, $daycount);
+        if($this->session->data['is_owner']){
+            $data['is_owner'] = true;
+        }
 
-        if(intval($note['deleted']) == 1){
+        if(intval($post['deleted']) == 1 && !$this->session->data['is_owner']) {
+            $data['deleted'] = true;
 
             $this->document->setTitle('Deleted');
             $this->document->setDescription('Entry Deleted');
@@ -34,10 +38,12 @@ class ControllerBlogNote extends Controller {
 
 
         } else {
-
-            $author = $this->model_blog_author->getAuthor($note['author_id']);
-            $categories = $this->model_blog_category->getCategoriesForPost($note['note_id']);
-            $comment_count = $this->model_blog_comment->getCommentCountForPost($note['note_id']);
+            if(intval($post['deleted']) == 1) {
+                $data['deleted'] = true;
+            }
+            $author = $this->model_blog_author->getAuthor($post['author_id']);
+            $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
+            $comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
             $fetch_comments = $this->model_blog_comment->getCommentsForPost($note['note_id']);
             $comments = array();
             if(!isset($this->session->data['user_site'])){
@@ -53,13 +59,13 @@ class ControllerBlogNote extends Controller {
                 }
             }
 
-            $mentions = $this->model_blog_mention->getMentionsForPost($note['note_id']);
-            $like_count = $this->model_blog_post->getLikeCountForPost($note['note_id']);
-            $likes = $this->model_blog_post->getLikesForPost($note['note_id']);
-            $context = $this->model_blog_context->getAllContextForPost($note['note_id']);
+            $mentions = $this->model_blog_mention->getMentionsForPost($post['post_id']);
+            $like_count = $this->model_blog_post->getLikeCountForPost($post['post_id']);
+            $likes = $this->model_blog_post->getLikesForPost($post['post_id']);
+            $context = $this->model_blog_context->getAllContextForPost($post['post_id']);
 
-            $data['post'] = array_merge($note, array(
-                'body_html' => html_entity_decode($note['body']),
+            $data['post'] = array_merge($post, array(
+                'body_html' => html_entity_decode($post['body']),
                 'author' => $author,
                 'author_image' => '/image/static/icon_128.jpg',
                 'categories' => $categories,
@@ -70,6 +76,13 @@ class ControllerBlogNote extends Controller {
                 'likes' => $likes,
                 'context' => $context
                 ));
+
+            if($this->session->data['is_owner'] && !$data['deleted']){
+                $data['post']['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$data['post']['post_id'],'');
+                $data['post']['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$data['post']['post_id'],'');
+            } elseif ($this->session->data['is_owner'] && $data['deleted']){
+                $data['post']['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$data['post']['post_id'],'');
+            }
 
 
             $title = strip_tags($data['post']['title']);

@@ -18,7 +18,7 @@
     <?php } ?>
     </div>
 
-          <article id="note-<?php echo $post['post_id']?>" class="note-<?php echo $post['post_id']?> note type-note status-publish format-standard category-uncategorized">
+          <article id="note-<?php echo $post['post_id']?>" class="note-<?php echo $post['post_id']?> note type-note status-publish format-standard category-uncategorized <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
 
     <header class="entry-meta comment_header">
         <div class="entry-meta">      
@@ -30,7 +30,7 @@
         </span>
         <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="permalink u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($post['timestamp']))?>" ><?php echo date("F j, Y g:i A", strtotime($post['timestamp']))?></time></a>
 
-        <a href="<?php echo $post['shortlink']?>" title="Shortlink" rel="bookmark" class="shortlink u-shortlink u-url">Shortlink</a>
+        <a href="<?php echo $post['shortlink']?>" title="Shortlink" rel="shortlink" class="shortlink u-shortlink u-url">Shortlink</a>
 
         <span class='in_reply_url'>
         <?php if(!empty($post['replyto'])){ ?>
@@ -74,6 +74,17 @@
     <?php } //end foreach ?>
     </div>
   <?php } ?>
+    <div class="admin-controls">
+      <?php if(isset($post['editlink'])){ ?>
+        <a href="<?php echo $post['editlink'] ?>"><i class="fa fa-edit"></i></a>
+      <?php } ?>
+      <?php if(isset($post['deletelink'])){ ?>
+        <a href="<?php echo $post['deletelink'] ?>"><i class="fa fa-trash"></i></a>
+      <?php } ?>
+      <?php if(isset($post['undeletelink'])){ ?>
+        <a href="<?php echo $post['undeletelink'] ?>"><i class="fa fa-undo">Undo</i></a>
+      <?php } ?>
+    </div>
 
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
