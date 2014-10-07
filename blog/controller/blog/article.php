@@ -78,11 +78,14 @@ class ControllerBlogArticle extends Controller {
                 'context' => $context
                 ));
 
-            if($this->session->data['is_owner'] && !$data['deleted']){
-                $data['post']['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$data['post']['post_id'],'');
-                $data['post']['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$data['post']['post_id'],'');
-            } elseif ($this->session->data['is_owner'] && $data['deleted']){
-                $data['post']['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$data['post']['post_id'],'');
+            if($this->session->data['is_owner']){
+                $data['post']['repostlink'] = $this->url->link('micropub/client', 'id='.$data['post']['post_id'],'');
+                if(!$data['deleted']){
+                    $data['post']['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$data['post']['post_id'],'');
+                    $data['post']['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$data['post']['post_id'],'');
+                } elseif ($this->session->data['is_owner'] && $data['deleted']){
+                    $data['post']['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$data['post']['post_id'],'');
+                }
             }
 
 

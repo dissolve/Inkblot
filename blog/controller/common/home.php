@@ -48,6 +48,7 @@ class ControllerCommonHome extends Controller {
                 'like_count' => $like_count);
 
             if($this->session->data['is_owner']){
+                $extra_data_array['repostlink'] = $this->url->link('micropub/client', 'id='.$result['post_id'],'');
                 if($result['deleted'] == 1){
                     $extra_data_array['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$result['post_id'],'');
                 } else {
@@ -76,6 +77,7 @@ class ControllerCommonHome extends Controller {
 			    'like_count' => $like_count);
 
             if($this->session->data['is_owner']){
+                $extra_data_array['repostlink'] = $this->url->link('micropub/client', 'id='.$result['post_id'],'');
                 if($result['deleted'] == 1){
                     $extra_data_array['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$result['post_id'],'');
                 } else {
