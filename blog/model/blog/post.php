@@ -109,6 +109,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = ". (int)$post_id);
             $post = $query->row;
 	        $syndications = $this->getSyndications($post['post_id']);
+            $citation = '(' . trim(str_replace(array('http://','https://'),array('',''), HTTP_SHORT), '/'). ' '. $this->num_to_sxg($post['post_id'])  .')';
             $post = array_merge($post, array(
                 'syndications' => $syndications,
                 'permalink' => $this->url->link('blog/'.$post['post_type'], 'year='.$post['year']. '&' . 
@@ -116,7 +117,8 @@ class ModelBlogPost extends Model {
                                                 'day='.$post['day']. '&' . 
                                                 'daycount='.$post['daycount']. 
                                                 ($post['slug'] ? '&'.'slug='.$post['slug'] : ''), ''),
-                'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '')
+                'shortlink' => $this->short_url->link('blog/shortener', 'eid='.$this->num_to_sxg($post['post_id']), ''),
+                'permashortcitation' => $citation
             ));
             $this->cache->set('post.'. $post_id, $post);
         }

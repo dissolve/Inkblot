@@ -161,12 +161,6 @@ class ControllerMicropubReceive extends Controller {
             $data['place_name'] = $this->request->post['place_name'];
         }
 
-        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        }
         
         //$this->log->write(print_r($data,true));
         $note_id = $this->model_blog_note->newNote($data);
@@ -175,6 +169,18 @@ class ControllerMicropubReceive extends Controller {
         $this->cache->delete('notes');
 
         $note = $this->model_blog_note->getNote($note_id);
+
+        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+            $syn_extra = '';
+            foreach($this->request->post['syndicate-to'] as $synto){
+                if(strlen($node['body'].$node['permashortcitation']) < 140){
+                    $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                } else {
+                    $syn_extra .= '<a href="'.$synto.'"></a>';
+                }
+            }
+            $this->model_blog_note->setSyndicationExtra($syn_extra);
+        }
 
         if($note && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
             $this->load->model('blog/post');
@@ -316,7 +322,6 @@ class ControllerMicropubReceive extends Controller {
         }
     }
     private function createBookmark(){
-        //$this->log->write('called createNote()');
         $this->load->model('blog/note');
         $data = array();
         $data['bookmark'] = $this->request->post['bookmark'];
@@ -361,7 +366,6 @@ class ControllerMicropubReceive extends Controller {
         $this->response->setOutput($bookmark['permalink']);
     }
     private function createCheckin(){
-        //$this->log->write('called createNote()');
         $this->load->model('blog/note');
         $data = array();
         $data['body'] = $this->request->post['content'];
@@ -421,7 +425,6 @@ class ControllerMicropubReceive extends Controller {
         $this->response->setOutput($note['permalink']);
     }
     private function createLike(){
-        //$this->log->write('called createNote()');
         $this->load->model('blog/like');
         $data = array();
         $data['like'] = $this->request->post['like'];

@@ -3,11 +3,14 @@
   if (window.parent !== window) {
     window.parent.postMessage(JSON.stringify({
       // The endpoint you use to write replies
-      edit: 'https://ben.thatmustbe.me/edit?url={url}'
+      edit: 'https://ben.thatmustbe.me/edit?url={url}',
       new: 'https://ben.thatmustbe.me/new',
       reply: 'https://ben.thatmustbe.me/new?reply_to={url}',
+      bookmark: 'https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}',
+      favorite: 'https://ben.thatmustbe.me/new?type=like&like={url}',
+      like: 'https://ben.thatmustbe.me/new?type=like&like={url}',
       delete: 'https://ben.thatmustbe.me/delete?url={url}',
-      undelete: 'https://ben.thatmustbe.me/delete?url={url}'
+      undelete: 'https://ben.thatmustbe.me/undelete?url={url}'
 
     }), '*');
   }

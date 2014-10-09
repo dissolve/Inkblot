@@ -8,14 +8,11 @@
       Logged in as <?php echo $user_name?><br>
           <?php if(isset($micropubEndpoint)) { ?>
               Found Micropub Endpoint at <?php echo $micropubEndpoint?><br>
-<?php if($is_owner){ ?>
-<!--<script>
-window.navigator.registerProtocolHandler('web+action', 'https://ben.thatmustbe.me/blog/view/javascript/mention-config.html?handler=%s', 'OpenBlog');
-</script>-->
-<?php } ?>
                 
               <?php if($token){ ?>
-                Access Token Found 
+                Access Token Found <br>
+                <button onclick=" window.navigator.registerProtocolHandler('web+action', 'https://ben.thatmustbe.me/blog/view/javascript/mention-config.html?handler=%s', 'OpenBlog');" value="" >Use this site as your Editor</button>
+                <br>
               <?php } else { ?>
                 You must log in with Post access to use this page
                 <form action="<?php echo $login?>" method="get">
@@ -97,8 +94,19 @@ window.navigator.registerProtocolHandler('web+action', 'https://ben.thatmustbe.m
                 $('#radio-like').click(function(){showLike()});
                 $('#radio-bookmark').click(function(){showBookmark()});
 
-                showNote();
-                //todo this should be controlled by GET val
+                <?php if($type == 'article'){ ?>
+                    showArticle();
+                <?php } elseif($type == 'rsvp'){ ?>
+                    showRsvp();
+                <?php } elseif($type == 'checkin'){ ?>
+                    showCheckin();
+                <?php } elseif($type == 'like'){ ?>
+                    showLike();
+                <?php } elseif($type == 'bookmark'){ ?>
+                    showBookmark();
+                <?php } else { ?>
+                    showNote();
+                <?php } ?>
 
                 $('#get-location-button').click(function(e){
                     e.preventDefault();

@@ -76,7 +76,7 @@
       <?php } ?>
       <?php if(isset($post['repostlink'])){ ?>
       <indie-action do="repost" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-repeat"></i></a>
+        <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-share-square-o"></i></a>
       </indie-action>
       <?php } ?>
     </div>
@@ -160,7 +160,7 @@
       <?php } ?>
       <?php if(isset($post['repostlink'])){ ?>
       <indie-action do="repost" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-repeat"></i></a>
+        <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-share-square-o"></i></a>
       </indie-action>
       <?php } ?>
     </div>
