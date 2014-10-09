@@ -173,13 +173,13 @@ class ControllerMicropubReceive extends Controller {
         if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
             $syn_extra = '';
             foreach($this->request->post['syndicate-to'] as $synto){
-                if(strlen($node['body'].$node['permashortcitation']) < 140){
+                if(strlen($note['body'].$note['permashortcitation']) < 140){
                     $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
                 } else {
                     $syn_extra .= '<a href="'.$synto.'"></a>';
                 }
             }
-            $this->model_blog_note->setSyndicationExtra($syn_extra);
+            $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
         }
 
         if($note && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
@@ -467,6 +467,7 @@ class ControllerMicropubReceive extends Controller {
         $data = array();
         foreach($advanced_routes as $adv_route){
             $matches = array();
+            $real_url = trim(str_replace(array(HTTP_SERVER, HTTPS_SERVER),array('',''), $real_url),'/');
             preg_match($adv_route['expression'], $real_url, $matches);
             if(!empty($matches)){
                 $model = $adv_route['controller'];
