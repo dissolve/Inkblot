@@ -38,7 +38,16 @@ class ControllerMicropubClient extends Controller {
 		}
 
 		if(isset($this->request->get['type'])){
-		   $data['type'] = $this->request->get['type'];
+		   $data['type'] = strtolower($this->request->get['type']);
+		}
+		if(isset($this->request->get['reply_to'])){
+		   $data['post'] = array('replyto' => $this->request->get['reply_to']);
+		}
+		if(isset($this->request->get['bookmark'])){
+		   $data['post'] = array('bookmark' => $this->request->get['bookmark']);
+		}
+		if(isset($this->request->get['like'])){
+		   $data['post'] = array('like' => $this->request->get['like']);
 		}
 
 		$data['token'] = isset($this->session->data['token']);

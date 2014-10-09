@@ -79,6 +79,8 @@ class ControllerCommonSeoUrl extends Controller {
                 $values = array_values($data);
 
                 $url .= '/'. str_replace($keys, $values, $expression);
+                // in case there are any fields that were empty (usually happens with {slug} we remove them all)
+                $url = preg_replace( '/{[^}]*}/', '', $url);
 
                 $matches = array();
                 preg_match_all('/{([^}]+)}/', $expression, $matches);
