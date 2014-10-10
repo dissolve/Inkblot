@@ -20,6 +20,10 @@
       </header><!-- .entry-header -->
 
       <div class="entry-content e-content" itemprop="description articleBody">
+        <?php if(isset($post['like']) && !empty($post['like'])) { ?>
+            <i class="fa fa-heart"></i> <br>
+            I liked <a class="u-like-of" href="<?php echo $post['like']?>">This</a> page.
+        <?php } ?>
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>
