@@ -79,6 +79,11 @@ class ControllerBlogPhoto extends Controller {
                 'context' => $context
                 ));
 
+            if(strlen($data['post']['body']. $post['permashortcitation']) < 140 ){
+                $data['post']['body'] .= "\n\n".$data['post']['permashortcitation'];
+                $data['post']['body_html'] .= "<br><br>".$data['post']['permashortcitation'];
+            }
+
             if($this->session->data['is_owner']){
                 $data['post']['repostlink'] = $this->url->link('micropub/client', 'id='.$data['post']['post_id'],'');
                 if(!$data['deleted']){
