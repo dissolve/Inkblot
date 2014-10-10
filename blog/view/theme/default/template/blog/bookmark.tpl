@@ -18,7 +18,7 @@
     <?php } ?>
     </div>
 
-          <article id="like-<?php echo $post['post_id']?>" class="like-<?php echo $post['post_id']?> like type-like status-publish format-standard category-uncategorized <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
+          <article id="bookmark-<?php echo $post['post_id']?>" class="bookmark-<?php echo $post['post_id']?> bookmark type-bookmark status-publish format-standard category-uncategorized <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
 
     <header class="entry-meta comment_header">
         <div class="entry-meta">      
@@ -41,13 +41,10 @@
     </header>
   <div class='articlebody'>
 
-    <?php if(!empty($post['title'])){ ?>
-    <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" ><?php echo $post['title']?></a></h1>
-    <?php } ?>
-      <div class="entry-content e-content like <?php echo (empty($post['title']) ? 'p-name' : '')?>">
-            <i class="fa fa-heart-o"></i><br>
+      <div class="entry-content e-content bookmark <?php echo (empty($post['title']) ? 'p-name' : '')?>">
+            <i class="fa fa-bookmark-o"></i><br>
+            <a class="p-bookmark" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name'])?$post['name']:'Bookmark')?></a> 
       <?php 
-          echo 'I liked <a class="u-like-of" href="'.$post['like'].'">This</a> page.';
           echo $post['body_html'];
           echo $post['syndication_extra'];
       ?>

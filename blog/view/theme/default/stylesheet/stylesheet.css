@@ -1371,6 +1371,7 @@ ul.mp-type-list .mp-list-item.mp-selected { background-color:#471; color:white;}
 
 data.p-rsvp[value="no"] {color:red}
 data.p-rsvp[value="yes"] {color:green}
+.category-link {font-size:9pt}
 
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {

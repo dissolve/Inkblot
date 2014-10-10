@@ -323,8 +323,9 @@ class ControllerMicropubReceive extends Controller {
             $this->response->setOutput($photo['permalink']);
         }
     }
+
     private function createBookmark(){
-        $this->load->model('blog/note');
+        $this->load->model('blog/bookmark');
         $data = array();
         $data['bookmark'] = $this->request->post['bookmark'];
 
@@ -367,6 +368,7 @@ class ControllerMicropubReceive extends Controller {
         $this->response->addHeader('Location: '. $bookmark['permalink']);
         $this->response->setOutput($bookmark['permalink']);
     }
+
     private function createCheckin(){
         $this->load->model('blog/note');
         $data = array();
@@ -426,6 +428,7 @@ class ControllerMicropubReceive extends Controller {
         $this->response->addHeader('Location: '. $note['permalink']);
         $this->response->setOutput($note['permalink']);
     }
+
     private function createRsvp(){
         $this->load->model('blog/rsvp');
         $data = array();
@@ -479,11 +482,11 @@ class ControllerMicropubReceive extends Controller {
         $this->response->addHeader('Location: '. $rsvp['permalink']);
         $this->response->setOutput($rsvp['permalink']);
     }
+
     private function createLike(){
         $this->load->model('blog/like');
         $data = array();
         $data['like'] = $this->request->post['like'];
-
 
         if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
             $data['syndication_extra'] = '';

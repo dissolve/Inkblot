@@ -121,6 +121,13 @@ class ModelBlogPost extends Model {
                 'shortlink' => $shortlink,
                 'permashortcitation' => $citation
             ));
+            if($post['post_type'] == 'bookmark'){
+                $post['bookmark'] = $post['bookmark_like_url'];
+                $post['name'] = $post['title'];
+                $post['description'] = $post['body'];
+            } elseif($post['post_type'] == 'like'){
+                $post['like'] = $post['bookmark_like_url'];
+            }
             $this->cache->set('post.'. $post_id, $post);
         }
 		return $post;

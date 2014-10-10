@@ -5,7 +5,12 @@
 <?php foreach($side_posts as $post) { ?>
           <article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
   <header class="entry-header">
-    <h1 class="entry-title p-name" itemprop="name headline"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" itemprop="url"><?php echo $post['title']?></a></h1>
+
+    <h1 class="entry-title p-name" itemprop="name headline">
+    <?php if(!isset($post['bookmark'])){ ?>
+<a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" itemprop="url"><?php echo $post['title']?></a>
+    <?php } ?>
+    </h1>
 
         <div class="entry-meta">      
       <span class="sep">Posted on </span>
@@ -20,8 +25,12 @@
       </header><!-- .entry-header -->
 
       <div class="entry-content e-content" itemprop="description articleBody">
+        <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
+            <i class="fa fa-bookmark-o"></i> <br>
+            <a class="p-bookmark" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name'])?$post['name']:'Bookmark')?></a> 
+        <?php } ?>
         <?php if(isset($post['like']) && !empty($post['like'])) { ?>
-            <i class="fa fa-heart"></i> <br>
+            <i class="fa fa-heart-o"></i> <br>
             I liked <a class="u-like-of" href="<?php echo $post['like']?>">This</a> page.
         <?php } ?>
         <?php if($post['image_file']) { ?>
