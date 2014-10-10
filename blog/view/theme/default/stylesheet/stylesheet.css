@@ -523,10 +523,14 @@ footer.entry-meta {
 .note .entry-header .entry-title, .note .entry-header .entry-title a {
   font-size: 20px;
 }
+.article .entry-header .entry-title, .article .entry-header .entry-meta, .article .entry-content,
+.photo .entry-header .entry-title, .photo .entry-header .entry-meta, .photo .entry-content,
 .note .entry-header .entry-title, .note .entry-header .entry-meta, .note .entry-content {
   padding-left: 20px;
   padding-right: 20px;
 }
+.photo .entry-header .entry-meta,
+.article .entry-header .entry-meta,
 .note .entry-header .entry-meta {
   font-size: 12px;
   padding-bottom: 0;
@@ -679,7 +683,6 @@ body.single #content .article, body.single #content .page, body.page #content .a
   top: 25px;
 }
 .h-feed .avatar {display:none}
-.h-feed .article header .entry-meta {margin-left:35px}
 
 .format-aside:before {
   content: '\f101';
