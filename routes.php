@@ -45,6 +45,10 @@ $advanced_routes[] = array('controller' => 'blog/note',
     'expression' => '`^note/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/?.*`i',
     'reverse' => 'note/{year}/{month}/{day}/{daycount}/{slug}');
 
+$advanced_routes[] = array('controller' => 'blog/rsvp',
+    'expression' => '`^rsvp/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/?.*`i',
+    'reverse' => 'rsvp/{year}/{month}/{day}/{daycount}/{slug}');
+
 $advanced_routes[] = array('controller' => 'blog/photo',
     'expression' => '`^photo/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/?.*`i',
     'reverse' => 'photo/{year}/{month}/{day}/{daycount}');

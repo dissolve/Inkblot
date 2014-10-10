@@ -437,6 +437,7 @@ table {
 article.page,
 article.article,
 article.note,
+article.rsvp,
 article.photo,
 article.attachment {
   -webkit-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
@@ -523,6 +524,7 @@ footer.entry-meta {
 .note .entry-header .entry-title, .note .entry-header .entry-title a {
   font-size: 20px;
 }
+.rsvp .entry-header .entry-title, .rsvp .entry-header .entry-meta, .rsvp .entry-content,
 .article .entry-header .entry-title, .article .entry-header .entry-meta, .article .entry-content,
 .photo .entry-header .entry-title, .photo .entry-header .entry-meta, .photo .entry-content,
 .note .entry-header .entry-title, .note .entry-header .entry-meta, .note .entry-content {
@@ -531,10 +533,12 @@ footer.entry-meta {
 }
 .photo .entry-header .entry-meta,
 .article .entry-header .entry-meta,
+.rsvp .entry-header .entry-meta,
 .note .entry-header .entry-meta {
   font-size: 12px;
   padding-bottom: 0;
 }
+.rsvp .entry-content,
 .note .entry-content {
   font-size: 16px;
   margin-bottom: 14px;
@@ -581,6 +585,7 @@ body.single #content .article, body.single #content .page, body.page #content .a
 #content #posts-stream {
   width:100%;
 }
+#content .rsvp,
 #content .article, #content .page,
 #content .photo, #content .note {
   margin-bottom: 35px;
@@ -1354,6 +1359,9 @@ ul.mp-type-list .mp-list-item.mp-selected { background-color:#471; color:white;}
 .type-select{margin-right:3px}
 .type-select-label{margin-right:10px;margin-left:5px;font-size:12pt;}
 
+data.p-rsvp[value="no"] {color:red}
+data.p-rsvp[value="yes"] {color:green}
+
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
 }
@@ -1383,6 +1391,7 @@ ul.mp-type-list .mp-list-item.mp-selected { background-color:#471; color:white;}
   #site-description {
       font-size: 1.2em;
   }
+  #content #notes-stream .rsvp,
   #content #posts-stream .article,
   #content #notes-stream .note,
   #content #notes-stream .photo {

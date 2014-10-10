@@ -35,6 +35,8 @@ class ControllerMicropubReceive extends Controller {
                         $this->createArticle();
                     } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'checkin'){
                         $this->createCheckin();
+                    } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'rsvp'){
+                        $this->createRsvp();
                     } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
                         $this->createBookmark();
                     } elseif(isset($this->request->post['like']) && !empty($this->request->post['like'])){
@@ -423,6 +425,59 @@ class ControllerMicropubReceive extends Controller {
         $this->response->addHeader('HTTP/1.1 201 Created');
         $this->response->addHeader('Location: '. $note['permalink']);
         $this->response->setOutput($note['permalink']);
+    }
+    private function createRsvp(){
+        $this->load->model('blog/rsvp');
+        $data = array();
+        $data['body'] = $this->request->post['content'];
+
+        $data['slug'] = '';
+
+        if(isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
+            $inputval = strtolower($this->request->post['rsvp']);
+            if($inputval == 'yes'){
+                $data['rsvp'] = 'yes';
+            } else {
+                $data['rsvp'] = 'no';
+            }
+        }
+
+        //TODO
+        // $this->request->post['h'];
+        // $this->request->post['published'];
+        if(isset($this->request->post['in-reply-to'])){
+            $data['replyto'] = $this->request->post['in-reply-to'];
+        }
+
+        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+            $data['syndication_extra'] = '';
+            foreach($this->request->post['syndicate-to'] as $synto){
+                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
+            }
+        }
+        
+        //$this->log->write(print_r($data,true));
+        $rsvp_id = $this->model_blog_rsvp->newRsvp($data);
+        //$this->log->write($rsvp_id);
+        $this->cache->delete('posts');
+        $this->cache->delete('rsvps');
+
+        $rsvp = $this->model_blog_rsvp->getRsvp($rsvp_id);
+
+        if($rsvp && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+            $this->load->model('blog/post');
+            $this->model_blog_post->addSyndication($rsvp['post_id'], $this->request->post['syndication']);
+            $this->cache->delete('post.'.$rsvp['post_id']);
+        }
+
+        $this->cache->delete('post.'.$rsvp['post_id']);
+
+        $this->load->model('blog/wmqueue');
+        $this->model_blog_wmqueue->addEntry($rsvp_id);
+
+        $this->response->addHeader('HTTP/1.1 201 Created');
+        $this->response->addHeader('Location: '. $rsvp['permalink']);
+        $this->response->setOutput($rsvp['permalink']);
     }
     private function createLike(){
         $this->load->model('blog/like');

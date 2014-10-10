@@ -23,6 +23,16 @@
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>
+        <?php if(isset($post['rsvp']) && !empty($post['rsvp'])) { ?>
+            <i class="fa fa-calendar"></i>
+               <a class="eventlink" href="<?php echo $post['replyto']?>">Event</a>
+
+<br>
+            <i class="fa fa-envelope-o"></i>
+            <data class="p-rsvp" value="<?php echo $post['rsvp']?>">
+            <?php echo (strtolower($post['rsvp']) == 'yes' ? 'Attending' : 'Not Attending' );?>
+            </data><br>
+        <?php } ?>
       <?php echo $post['body_html']?>
       
       </div><!-- .entry-content -->

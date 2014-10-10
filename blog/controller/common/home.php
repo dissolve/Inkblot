@@ -62,7 +62,7 @@ class ControllerCommonHome extends Controller {
 
 		$data['side_posts'] = array();
 
-		foreach ($this->model_blog_post->getPostsByTypes(['photo','note'], 20, $skip) as $result) {
+		foreach ($this->model_blog_post->getPostsByTypes(['photo','note','rsvp'], 20, $skip) as $result) {
 			$author = $this->model_blog_author->getAuthor($result['author_id']);
 			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
 			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
