@@ -55,6 +55,7 @@ class ControllerMicropubClient extends Controller {
 		$data['new_entry_link'] = $this->url->link('micropub/client');
 		$data['edit_entry_link'] = $this->url->link('micropub/client/editPost');
 		$data['delete_entry_link'] = $this->url->link('micropub/client/deletePost');
+		$data['undelete_entry_link'] = $this->url->link('micropub/client/undeletePost');
 
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/new.tpl')) {
@@ -102,6 +103,7 @@ class ControllerMicropubClient extends Controller {
 		$data['new_entry_link'] = $this->url->link('micropub/client');
 		$data['edit_entry_link'] = $this->url->link('micropub/client/editPost');
 		$data['delete_entry_link'] = $this->url->link('micropub/client/deletePost');
+		$data['undelete_entry_link'] = $this->url->link('micropub/client/undeletePost');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/edit.tpl')) {
 			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/edit.tpl', $data));
@@ -145,6 +147,7 @@ class ControllerMicropubClient extends Controller {
 		$data['new_entry_link'] = $this->url->link('micropub/client');
 		$data['edit_entry_link'] = $this->url->link('micropub/client/editPost');
 		$data['delete_entry_link'] = $this->url->link('micropub/client/deletePost');
+		$data['undelete_entry_link'] = $this->url->link('micropub/client/undeletePost');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/delete.tpl')) {
 			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/delete.tpl', $data));
@@ -187,6 +190,7 @@ class ControllerMicropubClient extends Controller {
 		$data['new_entry_link'] = $this->url->link('micropub/client');
 		$data['edit_entry_link'] = $this->url->link('micropub/client/editPost');
 		$data['delete_entry_link'] = $this->url->link('micropub/client/deletePost');
+		$data['undelete_entry_link'] = $this->url->link('micropub/client/undeletePost');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/undelete.tpl')) {
 			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/undelete.tpl', $data));

@@ -103,6 +103,7 @@ window.navigator.registerProtocolHandler('web+action', 'https://ben.thatmustbe.m
                       <li><a class="mp-list-item" href="<?php echo $new_entry_link?>">New</a></li>
                       <li class="mp-list-item mp-selected">Edit</li>
                       <li><a class="mp-list-item" href="<?php echo $delete_entry_link?>">Delete</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $undelete_entry_link?>">Undelete</a></li>
                     </ul>
 		    <input type="hidden" name="operation" value="edit" />
 
