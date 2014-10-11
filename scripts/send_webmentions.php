@@ -28,7 +28,7 @@ while($post_id){
         $registry->get('model_blog_post')->addSyndication($post_id, $syn_url);
     }
 
-    $register->get('cache')->delete('post.'.$post_id);
+    $registry->get('cache')->delete('post.'.$post_id);
 
     $post_id = $registry->get('model_blog_wmqueue')->getNext();
 
