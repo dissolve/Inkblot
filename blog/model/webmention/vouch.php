@@ -10,25 +10,197 @@ class ModelWebmentionVouch extends Model {
         if(empty($referer) || $referer == '-'){
             return;
         }
+        $short_self  =  trim(str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER), '/');
+        $short_ref  =  trim(str_replace(array('http://', 'https://'),array('',''), $referer), '/');
+
+        if(strpos($short_ref, $short_self) === 0){
+            return;
+        }
 
         $this->db->query("INSERT INTO " . DATABASE . ".referer_receive_queue SET url='".$this->db->escape($referer)."'");
     }
 
     public function processReferers(){
-        $this->db->query("SELECT * FROM " . DATABASE . ".referer_receive_queue limit 1;";
-        //parse out the domain to store this under
-        $site_no_protocol = str_replace(array('http://', 'https://'),array('',''), $referer);
-        $domain = preg_replace('/[#\?\/].*/','',$site_no_protocol);
+        $query = $this->db->query("SELECT * FROM " . DATABASE . ".referer_receive_queue limit 1;");
 
-        //look for existing record in DB for this domain
+        $entry = $query->row;
 
-        //do i have 2 possible vouches
-        
-        //if not, curl site, find url, check if set no-follow
-        
-        //if valid store to DB
+        while($entry && !empty($entry)){
+
+            $referer = $entry['url'];
+            //curl site, find url, check if set no-follow
+            $c = curl_init();
+            curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($c, CURLOPT_URL, $referer);
+            curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+            $referer = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
+            $page_content = curl_exec($c);
+
+            $reg_ex_match = '/(href=[\'"](?<href>[^\'"]+)[\'"][^>]*(rel=[\'"](?<rel>[^\'"]+)[\'"])?)/';
+            $matches = array();
+            preg_match_all($reg_ex_match, $page_content ,$matches);
+
+            $short_self  =  trim(str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER), '/');
+
+            $valid_link_found = false;
+            for($i = 0; $i < count($matches['href']); $i++){
+                $href = strtolower($matches['href'][$i]);
+                $rel = strtolower($matches['rel'][$i]);
+
+                if(strpos($rel, "nofollow") === FALSE){
+
+
+                    if(strpos($href, $short_self) !== FALSE){
+                        $valid_link_found = true;
+                    }
+                }
+            }
+            if(!$valid_link_found){
+                //repeat all that for rel before href (because preg_match_all doesn't like reused names)
+                $reg_ex_match = '/(rel=[\'"](?<rel>[^\'"]+)[\'"][^>]*href=[\'"](?<href>[^\'"]+)[\'"])/';
+                $matches = array();
+                preg_match_all($reg_ex_match, $page_content ,$matches);
+
+                for($i = 0; $i < count($matches['href']); $i++){
+                $href = strtolower($matches['href'][$i]);
+                $rel = strtolower($matches['rel'][$i]);
+
+                    if(strpos($rel,"nofollow") === FALSE){
+                        if(strpos($href, $short_self) !== FALSE){
+                            $valid_link_found = true;
+                        }
+                    }
+                }
+
+            }
+
+            if($valid_link_found){ 
+                //parse out the domain to store this under
+                $site_no_protocol = str_replace(array('http://', 'https://'),array('',''), $referer);
+                $domain = preg_replace('/[#\?\/].*/','',$site_no_protocol);
+
+                //look for existing record in DB for this domain
+                $query = $this->db->query("SELECT * FROM ".DATABASE.".vouches WHERE domain = '".$this->db->escape($domain)."'");
+                $existing_vouch_entry = $query->row;
+
+                $fill_alt = false;
+                $already_filled = false;
+
+                $already_existing = false;
+
+                //do i have 2 possible vouches
+                if(isset($existing_vouch_entry) && !empty($existing_vouch_entry)){
+                    $already_existing = true;
+                    
+                    if(isset($existing_vouch_entry['vouch_url_alt']) &&  !empty($existing_vouch_entry['vouch_url_alt'])){
+                        $alread_filled = true;
+                    } elseif(isset($existing_vouch_entry['vouch_url']) &&  !empty($existing_vouch_entry['vouch_url'])){
+                        $fill_alt = true;
+                        if($existing_vouch_entry['vouch_url'] == $referer){ // we don't want vouch_url and vouch_url_alt to just be the same
+                            $already_filled = true;
+                        }
+                    } 
+                }
+                
+                if(!$already_filled){
+                    $this->db->query(($already_existing? "UPDATE " : "INSERT INTO ") . DATABASE.".vouches SET ".(!$already_existing? "domain='".$this->db->escape($domain)."',": "")." vouch_url".($fill_alt? "_alt":"") ." = '".$this->db->escape($referer)."'");
+                }
+
+            }
+            //remove old entry from queue
+            $this->db->query("DELETE FROM " . DATABASE . ".referer_receive_queue where queue_id = ".(int)$entry['queue_id']);
+
+            //get the next queued item
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".referer_receive_queue limit 1");
+            $entry = $query->row;
+        }
     }
 
+    // this function does a best-effort attempt to find a site that might provide a valid vouch for this site to the webmention_target_url
+    public function getPossibleVouchFor($webmention_target_url){
+
+        //first we download the URL os we can parse that page for clues as well as learn the real url if there are any redirects
+        $c = curl_init();
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($c, CURLOPT_URL, $webmention_target_url);
+        curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+        $real_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
+        $page_content = curl_exec($c);
+
+
+        //we will start with this page and see if we find some valid vouch value there.
+
+        // rel is option on this section
+        $reg_ex_match = '/(href=[\'"](?<href>[^\'"]+)[\'"][^>]*(rel=[\'"](?<rel>[^\'"]+)[\'"])?)/';
+        $matches = array();
+        preg_match_all($reg_ex_match, $page_content ,$matches);
+
+
+        $valid_link_found = false;
+        for($i = 0; $i < count($matches['href']); $i++){
+            $href = strtolower($matches['href'][$i]);
+            $rel = strtolower($matches['rel'][$i]);
+
+            if(strpos($rel, "nofollow") === FALSE){ // this will work if rel is blank too!
+                $vouch = $this->vouchSearch($href);
+                if($vouch){
+                    return $vouch;
+                }
+            }
+        }
+        if(!$valid_link_found){
+            //repeat all that for rel before href (because preg_match_all doesn't like reused names)
+            $reg_ex_match = '/(rel=[\'"](?<rel>[^\'"]+)[\'"][^>]*href=[\'"](?<href>[^\'"]+)[\'"])/';
+            $matches = array();
+            preg_match_all($reg_ex_match, $page_content ,$matches);
+
+            for($i = 0; $i < count($matches['href']); $i++){
+                $href = strtolower($matches['href'][$i]);
+                $rel = strtolower($matches['rel'][$i]);
+
+                if(strpos($rel,"nofollow") === FALSE){
+                    $vouch = $this->vouchSearch($href);
+                    if($vouch){
+                        return $vouch;
+                    }
+                }
+
+            }
+        }
+        
+        //we strip down the true url, to get the homepage URL
+        $real_url_no_protocol  =  str_replace(array('http://', 'https://'),array('',''), $real_url);
+        $real_homepage_url = preg_replace('/[#\?\/].*/','',$real_url_no_protocol);
+
+        if(strpos($real_url, 'https://') === 0 ){
+            $real_homepage_url = 'https://'.$real_homepage_url;
+        } else {
+            $real_homepage_url = 'http://'.$real_homepage_url;
+        }
+
+        //our recursion base case captured here
+        if($real_homepage_url != $webmention_target_url){
+            return $this->getPossibleVouchFor($real_homepage_url, false);
+        }
+    }
+
+
+    //check the database if we have a link back to this site for this URL
+    //return the URL we can use as a vouch if found
+    //return false if not found
+    public function vouchSearch($url){
+        $url_no_protocol  =  str_replace(array('http://', 'https://'),array('',''), $url);
+        $url_domain = preg_replace('/[#\?\/].*/','',$url_no_protocol);
+        $query = $this->db->query("SELECT * FROM ".DATABASE.".vouches WHERE domain = '".$this->db->escape($url_domain)."'");
+        $entry = $query->row;
+
+        if($entry && !empty($entry)){
+            return $entry['vouch_url'];
+        } else {
+            return false;
+        }
+
+    }
 
 
 }

@@ -1,6 +1,10 @@
 <?php   
 class ControllerCommonHeader extends Controller {
 	public function index() {
+        //store our referrer
+        $this->load->model('webmention/vouch');
+        $this->model_webmention_vouch->recordReferer($_SERVER['HTTP_REFERER']);
+
         $headers = apache_request_headers();
         if(isset($this->request->post['access_token']) || isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || isset($headers['Authorization'])){
             $token = $this->request->post['access_token'];
