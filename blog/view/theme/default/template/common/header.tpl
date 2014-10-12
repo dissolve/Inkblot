@@ -32,6 +32,8 @@
         <?php } ?>
         <?php if ($icon) { ?>
         <link href="<?php echo $icon; ?>" rel="icon" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="apple-touch-icon-precomposed" href="<?php echo $icon?>" />
         <?php } ?>
 
         <script src="/blog/view/javascript/vendor/modernizr-2.6.2.min.js"></script>

@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<!doctype html>
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title><?php echo $title; ?></title>
+        <title>Ben Roberts</title>
         <meta name="description" content="">
         <?php foreach ($metas as $meta) { ?>
         <meta name="<?php echo $meta['name']; ?>" content="<?php echo $meta['content']; ?>" />
@@ -29,7 +24,10 @@
         <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
         <?php } ?>
         <?php if ($icon) { ?>
-        <link href="<?php echo $icon; ?>" rel="icon" />
+        <link href="<?php echo $icon; ?>" rel="icon shortcut" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="apple-touch-icon-precomposed" href="<?php echo $icon?>" />
+
         <?php } ?>
 
     <style>
