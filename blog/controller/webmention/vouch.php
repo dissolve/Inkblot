@@ -2,11 +2,17 @@
 class ControllerWebmentionVouch extends Controller {
 	public function get() {
         $json = array();
-        if(!isset($this->request->get['url'])){
+        if(!$this->session->data['is_owner']) {
+            //header('HTTP/1.1 400 Bad Request');
+            $json['success'] = 'no';
+            $this->response->setOutput(json_encode($json));
+
+        } elseif(!isset($this->request->get['url'])){
             //header('HTTP/1.1 400 Bad Request');
             //exit();
             $json['success'] = 'no';
             $this->response->setOutput(json_encode($json));
+
         } else {
             $this->load->model('webmention/vouch');
             $vouch = $this->model_webmention_vouch->getPossibleVouchFor($this->request->get['url']);

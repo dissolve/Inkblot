@@ -123,6 +123,21 @@
                     }
                     return false;
                 });
+
+                <?php if($is_owner){ ?>
+                $('#input-replyto').focusout(function(){
+                    $.getJSON(
+                        '/vouchsearch',
+                        {url: $('#input-replyto').val()},
+                        function(data){
+                            if(data.success == 'yes'){
+                            $('#input-vouch').val(data.vouch)
+                            }
+                        });
+                    
+                });
+                <?php } //end if owner ?>
+
             });
         </script>
 
@@ -171,6 +186,13 @@
                   <label class="col-sm-2 control-label" for="input-replyto">Reply To</label>
                   <div class="col-sm-10">
                     <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
+                  </div>
+                </div>
+
+                <div class="form-group group-note vouch">
+                  <label class="col-sm-2 control-label" for="input-vouch">Vouch URL</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="vouch" value="<?php echo isset($post) ? $post['vouch'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-vouch" class="form-control" />
                   </div>
                 </div>
 
