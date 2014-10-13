@@ -31,7 +31,7 @@ RewriteEngine On
 
 RewriteCond %{HTTPS} off
 RewriteCond %{QUERY_STRING} !_route_=s/.*
-RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L]
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 RewriteBase /
 RewriteRule ^sitemap.xml$ index.php?route=feed/google_sitemap [L]
