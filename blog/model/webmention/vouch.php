@@ -17,13 +17,24 @@ class ModelWebmentionVouch extends Model {
             return;
         }
 
+        //make sure the link isn't just the main page as this is usually going to change quickly
+        $ref_domain = parse_url('http://'.$trimmed_ref, PHP_URL_HOST);
+        if($trimmed_ref == $ref_domain){
+            return;
+        }
+
         //make sure we don't already have this vouch
         $query = $this->db->query("SELECT * FROM " . DATABASE . ".vouches WHERE vouch_url = '".$this->db->escape($referer)."' OR vouch_url_alt = '".$this->db->escape($referer)."'");
         if(!empty($query->rows)){
             return;
         }
 
-        $ref_domain = parse_url('http://'.$trimmed_ref, PHP_URL_HOST);
+        //now we want to loop through all parts of our domain and make sure it isn't blacklisted.
+        // so if we have abc.def.ghi.com well check for
+        //      abc.def.ghi.com
+        // then def.ghi.com
+        // then ghi.com
+        //  if any of these are found, the referer is ignored
 
         $domain_parts = explode('.',$ref_domain);
 
@@ -35,10 +46,12 @@ class ModelWebmentionVouch extends Model {
                 }
         }
 
-
+        // referer makes it in to the aysnc queue
         $this->db->query("INSERT INTO " . DATABASE . ".referer_receive_queue SET url='".$this->db->escape($referer)."'");
     }
 
+    //async processor
+    // this will loop through all entries in the queue and validate that they have valid links back to my site
     public function processReferers(){
         $query = $this->db->query("SELECT * FROM " . DATABASE . ".referer_receive_queue limit 1;");
 
