@@ -1,12 +1,13 @@
 <?php echo $header; ?><?php echo $column_left; ?><?php echo $column_right; ?>
 <div id="content"><?php echo $content_top; ?>
-  <div class="breadcrumb">
-    <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-    <?php echo $breadcrumb['separator']; ?><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a>
-    <?php } ?>
-  </div>
-  <h1><?php echo $heading_title; ?></h1>
-  <div class="content"><?php echo $text_error; ?></div>
+  <h1>404</h1>
+  <div class="content"><?php echo $text_error; ?>
+<div style="text-align:center">
+     If you could kick the person in the pants responsible for most of your trouble, you wouldn't sit for a month.<br>
+<span style="font-weight:bold">Theodore Roosevelt</span>
+</div>
+
+</div>
   <div class="buttons">
     <div class="right"><a href="<?php echo $continue; ?>" class="button"><?php echo $button_continue; ?></a></div>
   </div>
