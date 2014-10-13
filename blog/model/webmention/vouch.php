@@ -10,10 +10,16 @@ class ModelWebmentionVouch extends Model {
         if(empty($referer) || $referer == '-'){
             return;
         }
+        // make sure this isn't an internal link
         $short_self  =  trim(str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER), '/');
         $trimmed_ref  =  trim(str_replace(array('http://', 'https://'),array('',''), $referer), '/');
-
         if(strpos($trimmed_ref, $short_self) === 0){
+            return;
+        }
+
+        //make sure we don't already have this vouch
+        $query = $this->db->query("SELECT * FROM " . DATABASE . ".vouches WHERE vouch_url = '".$this->db->escape($referer)."' OR vouch_url_alt = '".$this->db->escape($referer)."'");
+        if(!empty($query->rows)){
             return;
         }
 
@@ -21,7 +27,7 @@ class ModelWebmentionVouch extends Model {
 
         $domain_parts = explode('.',$ref_domain);
 
-        for($i = count($domain_parts); $i > 2; $i--){
+        for($i = count($domain_parts); $i >= 2; $i--){
                 $search_val =  implode('.', array_slice($domain_parts, -$i));
                 $query = $this->db->query("SELECT * FROM " . DATABASE . ".untrusted_vouchers WHERE domain = '".$this->db->escape($search_val)."'");
                 if(!empty($query->rows)){
