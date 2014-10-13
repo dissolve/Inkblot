@@ -11,11 +11,24 @@ class ModelWebmentionVouch extends Model {
             return;
         }
         $short_self  =  trim(str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER), '/');
-        $short_ref  =  trim(str_replace(array('http://', 'https://'),array('',''), $referer), '/');
+        $trimmed_ref  =  trim(str_replace(array('http://', 'https://'),array('',''), $referer), '/');
 
-        if(strpos($short_ref, $short_self) === 0){
+        if(strpos($trimmed_ref, $short_self) === 0){
             return;
         }
+
+        $ref_domain = parse_url('http://'.$trimmed_ref, PHP_URL_HOST);
+
+        $domain_parts = explode('.',$ref_domain);
+
+        for($i = count($domain_parts); $i > 2; $i--){
+                $search_val =  implode('.', array_slice($domain_parts, -$i));
+                $query = $this->db->query("SELECT * FROM " . DATABASE . ".untrusted_vouchers WHERE domain = '".$this->db->escape($search_val)."'");
+                if(!empty($query->rows)){
+                    return;
+                }
+        }
+
 
         $this->db->query("INSERT INTO " . DATABASE . ".referer_receive_queue SET url='".$this->db->escape($referer)."'");
     }
@@ -76,8 +89,13 @@ class ModelWebmentionVouch extends Model {
 
             if($valid_link_found){ 
                 //parse out the domain to store this under
-                $site_no_protocol = str_replace(array('http://', 'https://'),array('',''), $referer);
-                $domain = preg_replace('/[#\?\/].*/','',$site_no_protocol);
+
+                // parse url requires http at the beginning
+                if(strpos($referer, 'http://') === 0  || strpos($referer, 'https://') === 0 ) {
+                    $domain = parse_url($referer,PHP_URL_HOST);
+                } else {
+                    $domain = parse_url( 'http://'.$referer,PHP_URL_HOST);
+                }
 
                 //look for existing record in DB for this domain
                 $query = $this->db->query("SELECT * FROM ".DATABASE.".vouches WHERE domain = '".$this->db->escape($domain)."'");
@@ -169,13 +187,14 @@ class ModelWebmentionVouch extends Model {
         }
         
         //we strip down the true url, to get the homepage URL
-        $real_url_no_protocol  =  str_replace(array('http://', 'https://'),array('',''), $real_url);
-        $real_homepage_url = preg_replace('/[#\?\/].*/','',$real_url_no_protocol);
 
-        if(strpos($real_url, 'https://') === 0 ){
-            $real_homepage_url = 'https://'.$real_homepage_url;
+        // parse url requires http at the beginning
+        if(strpos($real_url, 'http://') === 0){
+            $real_homepage_url = 'http://' . parse_url($real_url,PHP_URL_HOST);
+        } elseif(strpos($real_url, 'https://') === 0 ) {
+            $real_homepage_url = 'https://' . parse_url($real_url,PHP_URL_HOST);
         } else {
-            $real_homepage_url = 'http://'.$real_homepage_url;
+            $real_homepage_url = 'http://' . parse_url( 'http://'.$real_url,PHP_URL_HOST);
         }
 
         //our recursion base case captured here
@@ -189,8 +208,14 @@ class ModelWebmentionVouch extends Model {
     //return the URL we can use as a vouch if found
     //return false if not found
     public function vouchSearch($url){
-        $url_no_protocol  =  str_replace(array('http://', 'https://'),array('',''), $url);
-        $url_domain = preg_replace('/[#\?\/].*/','',$url_no_protocol);
+
+        // parse url requires http at the beginning
+        if(strpos($url, 'http://') === 0  || strpos($url, 'https://') === 0 ) {
+            $url_domain = parse_url($url,PHP_URL_HOST);
+        } else {
+            $url_domain = parse_url( 'http://'.$url,PHP_URL_HOST);
+        }
+
         $query = $this->db->query("SELECT * FROM ".DATABASE.".vouches WHERE domain = '".$this->db->escape($url_domain)."'");
         $entry = $query->row;
 
