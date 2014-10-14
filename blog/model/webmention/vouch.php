@@ -246,6 +246,16 @@ class ModelWebmentionVouch extends Model {
 
     }
 
+    public function isWhiteListed($url){
+        if(strpos($url, 'http://') === 0  || strpos($url, 'https://') === 0 ) {
+            $url_domain = parse_url($url,PHP_URL_HOST);
+        } else {
+            $url_domain = parse_url( 'http://'.$url,PHP_URL_HOST);
+        }
+        $query = $this->db->query("SELECT * FROM ".DATABASE.".vouch_whitelist WHERE domain = '".$this->db->escape($url_domain)."'");
+        return (!empty($query->row));
+    }
+
 
 }
 ?>

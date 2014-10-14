@@ -27,14 +27,25 @@ class ControllerWebmentionReceive extends Controller {
                     exit();
 
                 } else {
+                    //todo  review this
+                    $this->response->addHeader('HTTP/1.1 202 Accepted');
 
-                //todo vouch workflow
+                    $this->load->model('webmention/queue');
+                    $queue_id = $this->model_webmention_queue->addEntry($source, $target, $vouch);
+
+                    if(isset($this->request->post['callback'])){
+                        $this->model_webmention_queue->setCallback($queue_id, $this->request->post['callback']);
+                    }
+
+                    $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
+
+                    $this->response->addHeader('Link: <'.$link.'>; rel="status"');
+
+                    $this->response->setOutput($link);
                 }
-
             }
-            
-        } else {
 
+        } else {
             $this->response->addHeader('HTTP/1.1 202 Accepted');
 
             $this->load->model('webmention/queue');
@@ -53,8 +64,11 @@ class ControllerWebmentionReceive extends Controller {
     }
 
     private function is_approved_source($url){
-        //todo
-        return true;
+        if(!USE_VOUCH){
+            return true;
+        }
+        $this->load->model('webmention/vouch');
+        return $this->model_webmention_vouch->isWhiteListed($url);
     }
 
     //very basic function to determine if URL is valid, this is certainly a great place for improvement
