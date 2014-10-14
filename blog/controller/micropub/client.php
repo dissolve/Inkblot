@@ -68,12 +68,12 @@ class ControllerMicropubClient extends Controller {
 	public function note() {
 
 		$this->document->setTitle('Post A Note');
-		$this->document->setIcon('/image/static/note.png');
+		$this->document->setIcon('/image/static/note.jpg');
         $this->document->addMeta("mobile-web-app-capable","yes");
 		$data['title'] = 'Post A Note';
 
-		$data['header'] = $this->load->controller('common/header');
-		$data['footer'] = $this->load->controller('common/footer');
+		$data['header'] = $this->load->controller('common/header/clean');
+		$data['footer'] = $this->load->controller('common/footer/clean');
 		$data['login'] = $this->url->link('auth/login');
 
         if($this->session->data['is_owner']){
@@ -110,11 +110,11 @@ class ControllerMicropubClient extends Controller {
 
 		$this->document->setTitle('Check-in');
 		$data['title'] = 'Check-in';
-		$this->document->setIcon('/image/static/checkin.png');
+		$this->document->setIcon('/image/static/checkin.jpg');
         $this->document->addMeta("mobile-web-app-capable","yes");
 
-		$data['header'] = $this->load->controller('common/header');
-		$data['footer'] = $this->load->controller('common/footer');
+		$data['header'] = $this->load->controller('common/header/clean');
+		$data['footer'] = $this->load->controller('common/footer/clean');
 		$data['login'] = $this->url->link('auth/login');
 
         if($this->session->data['is_owner']){

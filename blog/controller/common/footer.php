@@ -79,5 +79,35 @@ class ControllerCommonFooter extends Controller {
 			return $this->load->view('default/template/common/footer.tpl', $data);
 		}
 	}
+	public function clean() {
+		
+		$this->load->model('blog/mycard');
+		
+        $data['client_id'] = $this->url->link('');
+        $data['auth_page'] = $this->url->link('auth/login');
+        $data['auth_endpoint'] = AUTH_ENDPOINT;
+
+        if(isset($this->session->data['user_site'])){
+            $data['user_name'] = $this->session->data['user_site'];
+        }
+        $data['logout'] = $this->url->link('auth/logout');
+        $data['login'] = $this->url->link('auth/login');
+
+        $data['google_analytics_id'] = GOOGLE_ANALYTICS_ID;
+        $data['sitesearch'] = trim(str_replace(array('http://','https://'),array('',''), HTTP_SERVER), '/');
+
+        if($this->session->data['is_owner']){
+            $data['newlink'] = $this->url->link('micropub/client', '', '');
+        }
+
+		
+		
+		
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/footer_clean.tpl')) {
+			return $this->load->view($this->config->get('config_template') . '/template/common/footer_clean.tpl', $data);
+		} else {
+			return $this->load->view('default/template/common/footer_clean.tpl', $data);
+		}
+	}
 }
 ?>
