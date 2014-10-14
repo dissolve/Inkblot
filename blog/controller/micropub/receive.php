@@ -475,6 +475,7 @@ class ControllerMicropubReceive extends Controller {
 
         $this->cache->delete('post.'.$rsvp['post_id']);
 
+        //todo add vouch url in here
         $this->load->model('blog/wmqueue');
         $this->model_blog_wmqueue->addEntry($rsvp_id);
 

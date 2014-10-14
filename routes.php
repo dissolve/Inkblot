@@ -19,8 +19,12 @@ $routes['micropub-send']      = 'micropub/client/send';
 $routes['new']                = 'micropub/client';
 $routes['edit']               = 'micropub/client/editPost';
 $routes['delete']             = 'micropub/client/deletePost';
+
+$routes['new/note']           = 'micropub/client/note';
+$routes['new/checkin']        = 'micropub/client/checkin';
+
 $routes['undelete']           = 'micropub/client/undeletePost';
-$routes['vouchsearch']           = 'webmention/vouch/get';
+$routes['vouchsearch']        = 'webmention/vouch/get';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`^page/(?P<id>\w+)`i',

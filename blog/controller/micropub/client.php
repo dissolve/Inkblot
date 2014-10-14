@@ -65,6 +65,83 @@ class ControllerMicropubClient extends Controller {
 		}
 	}
 
+	public function note() {
+
+		$this->document->setTitle('Post A Note');
+		$data['title'] = 'Post A Note';
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['login'] = $this->url->link('auth/login');
+
+        if($this->session->data['is_owner']){
+            $data['is_owner'] = true;
+        }
+
+		$this->document->setDescription($this->config->get('config_meta_description'));
+
+		if(isset($this->session->data['user_site'])){
+		    $data['user_name'] = $this->session->data['user_site'];
+		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
+		    if($endpoint){
+                $data['micropubEndpoint'] = $endpoint;
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
+		}
+
+		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    $this->load->model('blog/post');
+		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
+
+		$data['token'] = isset($this->session->data['token']);
+
+
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/note.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/note.tpl', $data));
+		} else {
+			$this->response->setOutput($this->load->view('default/template/micropub/note.tpl', $data));
+		}
+	}
+
+	public function checkin() {
+
+		$this->document->setTitle('Check-in');
+		$data['title'] = 'Check-in';
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['login'] = $this->url->link('auth/login');
+
+        if($this->session->data['is_owner']){
+            $data['is_owner'] = true;
+        }
+
+		$this->document->setDescription($this->config->get('config_meta_description'));
+
+		if(isset($this->session->data['user_site'])){
+		    $data['user_name'] = $this->session->data['user_site'];
+		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
+		    if($endpoint){
+                $data['micropubEndpoint'] = $endpoint;
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
+		}
+
+		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    $this->load->model('blog/post');
+		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
+
+		$data['token'] = isset($this->session->data['token']);
+
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/checkin.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/checkin.tpl', $data));
+		} else {
+			$this->response->setOutput($this->load->view('default/template/micropub/checkin.tpl', $data));
+		}
+	}
+
 	public function editPost() {
 
 		$this->document->setTitle('Edit a Post');
