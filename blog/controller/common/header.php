@@ -69,7 +69,10 @@ class ControllerCommonHeader extends Controller {
 		$data['google_analytics'] = html_entity_decode($this->config->get('config_google_analytics'), ENT_QUOTES, 'UTF-8');
 		$data['name'] = $this->config->get('config_name');
 		
-			$data['icon'] = '/image/static/icon_144.jpg';
+		$data['icon'] = $this->document->getIcon();
+        if(!$data['icon']){
+            $data['icon'] = '/image/static/icon_144.jpg';
+        }
 		
 		if (is_file(DIR_IMAGE . $this->config->get('config_logo'))) {
 			$data['logo'] = $server . 'image/' . $this->config->get('config_logo');

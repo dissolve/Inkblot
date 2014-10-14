@@ -68,6 +68,8 @@ class ControllerMicropubClient extends Controller {
 	public function note() {
 
 		$this->document->setTitle('Post A Note');
+		$this->document->setIcon('/image/static/note.png');
+        $this->document->addMeta("mobile-web-app-capable","yes");
 		$data['title'] = 'Post A Note';
 
 		$data['header'] = $this->load->controller('common/header');
@@ -108,6 +110,8 @@ class ControllerMicropubClient extends Controller {
 
 		$this->document->setTitle('Check-in');
 		$data['title'] = 'Check-in';
+		$this->document->setIcon('/image/static/checkin.png');
+        $this->document->addMeta("mobile-web-app-capable","yes");
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');

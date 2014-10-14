@@ -3,6 +3,7 @@ class Document {
 	private $title;
 	private $description;
 	private $keywords;
+	private $icon;
 	private $links = array();
 	private $metas = array();
 	private $styles = array();
@@ -30,6 +31,14 @@ class Document {
 
 	public function getKeywords() {
 		return $this->keywords;
+	}
+
+	public function setIcon($icon) {
+		$this->icon = $icon;
+	}
+
+	public function getIcon() {
+		return $this->icon;
 	}
 
 	public function addLink($href, $rel) {
