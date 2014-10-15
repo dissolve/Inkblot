@@ -26,6 +26,9 @@ $routes['new/checkin']        = 'micropub/client/checkin';
 $routes['undelete']           = 'micropub/client/undeletePost';
 $routes['vouchsearch']        = 'webmention/vouch/get';
 $routes['whitelist']          = 'information/whitelist';
+$routes['whitelist/delete']   = 'information/whitelist/delete';
+$routes['whitelist/private']  = 'information/whitelist/private';
+$routes['whitelist/public']   = 'information/whitelist/public';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`^page/(?P<id>\w+)`i',

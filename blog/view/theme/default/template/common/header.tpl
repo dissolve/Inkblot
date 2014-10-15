@@ -22,11 +22,12 @@
         <link rel="authorization_endpoint" href="<?php echo $authorization_endpoint ?>">
         <link rel="token_endpoint" href="<?php echo $token_endpoint ?>">
         <link rel="micropub" href="<?php echo $micropub_endpoint ?>">
+        <link rel="me" href="<?php echo $public_whitelist ?>">
         <link rel="profile" href="http://microformats.org/profile/specs" />
         <link rel="profile" href="http://microformats.org/profile/hatom" />
 
         <link rel='stylesheet' id='sempress-style-css'  href='/blog/view/theme/default/stylesheet/stylesheet.css' type='text/css' media='all' />
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+        <link href="/blog/view/shared/font-awesome-4.2.0/css/font-awesome.css" rel="stylesheet">
         <?php foreach ($links as $link) { ?>
         <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
         <?php } ?>
@@ -37,7 +38,7 @@
 
         <script src="/blog/view/javascript/vendor/modernizr-2.6.2.min.js"></script>
         <script src="/blog/view/javascript/fragmention.js"></script>
-        <script>
+<?php /*        <script>
 // Lazy-create and return an indie-config load promise
 // The promise will be resolved with a config once the indie-config has been loaded
 var loadIndieConfig = function () {
@@ -86,7 +87,7 @@ var loadIndieConfig = function () {
 
   return loadPromise;
 };
-</script>
+</script> */ ?>
     </head>
 
 

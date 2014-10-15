@@ -3,14 +3,9 @@
           <article id="" class="article">
 
       <div class="entry-content e-content">
-
-      </div><!-- .entry-content -->
-  
-  <footer class="entry-meta">
-        <div class="entry-meta">      
             <?php foreach($whitelist as $entry){ ?>
             <div class="<?php echo ($entry['public'] ? '' : 'private') ?>">
-                <a href="<?php echo $entry['domain']?>" rel=""><?php echo $entry['domain']?></a>
+                <a href="http://<?php echo $entry['domain']?>" rel="contact"><?php echo $entry['domain']?></a>
                 <?php if($is_owner){ ?>
                     <a href="<?php echo $entry['delete']?>">Delete</a>
 
@@ -22,6 +17,11 @@
                 <?php } // end is_owner ?>
             </div>
             <?php } //end foreach whitelist as entry ?>
+
+      </div><!-- .entry-content -->
+  
+  <footer class="entry-meta">
+        <div class="entry-meta">      
         </div><!-- .entry-meta -->
   
 

@@ -26,7 +26,7 @@
         <link rel="profile" href="http://microformats.org/profile/hatom" />
 
         <link rel='stylesheet' id='sempress-style-css'  href='/blog/view/theme/default/stylesheet/stylesheet.css' type='text/css' media='all' />
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+        <link href="/blog/view/shared/font-awesome-4.2.0/css/font-awesome.css" rel="stylesheet">
         <?php foreach ($links as $link) { ?>
         <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
         <?php } ?>

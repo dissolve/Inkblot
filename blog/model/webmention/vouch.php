@@ -257,10 +257,13 @@ class ModelWebmentionVouch extends Model {
     }
 
     public function getWhitelist($getAll = false){
-        //todo set this up in the DB
-        //$query = $this->db->query("SELECT * FROM ".DATABASE.".vouch_whitelist " .($getAll ? "" : "WHERE public=1"));
-        $query = $this->db->query("SELECT * FROM ".DATABASE.".vouch_whitelist");
-        return ($query->rows);
+        $data = $this->cache->get('whitelist.'. ($getAll? '1':'0'));
+        if(!$data){
+            $query = $this->db->query("SELECT * FROM ".DATABASE.".vouch_whitelist " .($getAll ? "" : "WHERE public=1"));
+            $data = $query->rows;
+            $this->cache->set('whitelist.'. ($getAll? '1':'0'), $data);
+        }
+        return $data;
     }
 
 

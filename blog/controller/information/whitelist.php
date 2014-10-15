@@ -23,11 +23,11 @@ class ControllerInformationWhitelist extends Controller {
 
         foreach($whitelist as $entry){
             $data['whitelist'][]  = array(
-                'domain' => $whitelist['domain'],
-                'public' => true,
-                'delete' => $this->url->link('information/whitelist/delete'),
-                'make_public' => $this->url->link('information/whitelist/public'),
-                'make_private' => $this->url->link('information/whitelist/private')
+                'domain' => $entry['domain'],
+                'public' => $entry['public'] == 1,
+                'delete' => $this->url->link('information/whitelist/delete', 'wid='.$entry['whitelist_id'],''),
+                'make_public' => $this->url->link('information/whitelist/public', 'wid='.$entry['whitelist_id'],''),
+                'make_private' => $this->url->link('information/whitelist/private', 'wid='.$entry['whitelist_id'],'')
             );
         }
 

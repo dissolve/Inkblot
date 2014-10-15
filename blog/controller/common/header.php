@@ -39,6 +39,7 @@ class ControllerCommonHeader extends Controller {
         $auth_endpoint = AUTH_ENDPOINT;
         $token_endpoint = $this->url->link('auth/token');
         $micropub_endpoint = $this->url->link('micropub/receive');
+        $public_whitelist = $this->url->link('information/whitelist');
 
         $this->response->addHeader('Link: <'. $webmention_handler.'>; rel="webmention"', false);
         $this->response->addHeader('Link: <'. $auth_endpoint.'>; rel="authorization_endpoint"', false);
@@ -49,6 +50,7 @@ class ControllerCommonHeader extends Controller {
 		$data['authorization_endpoint'] = $auth_endpoint;
 		$data['token_endpoint'] = $token_endpoint;
 		$data['micropub_endpoint'] = $micropub_endpoint;
+		$data['public_whitelist'] = $public_whitelist;
 
         if(isset($this->session->data['success'])){
             $data['success'] = $this->session->data['success'];
