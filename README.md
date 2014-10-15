@@ -1,8 +1,8 @@
-# Openblog
+# Postly
 
 ## Overview
 
-OpenBlog is free open source platform for bloggers.  OpenBlog is intended to be highly hackable for easy creation of new features.
+Postly (formerly OpenBlog) is free open source platform for bloggers formerly.  Postly is intended to be highly hackable for easy creation of new features.
 
 This is a derived work based on opencart. https://github.com/opencart/opencart.git
 

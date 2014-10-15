@@ -110,7 +110,7 @@
 
 <footer id="colophon" role="contentinfo">
   <div id="site-generator">
-    This site is powered by <a href="https://github.com/dissolve/openblog">OpenBlog</a>
+    This site is powered by <a href="https://github.com/dissolve/postly">Postly</a>
   </div>
 </footer><!-- #colophon -->
 
