@@ -17,6 +17,7 @@ class ControllerAdminCache extends Controller {
     	$this->cache->delete('note');
     	$this->cache->delete('notes');
     	$this->cache->delete('likes');
+    	$this->cache->delete('listens');
     	$this->cache->delete('comments');
     	$this->cache->delete('mydata');
 

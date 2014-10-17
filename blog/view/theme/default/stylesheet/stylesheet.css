@@ -434,14 +434,7 @@ table {
     width:83.33%;
 }
 
-article.page,
-article.article,
-article.note,
-article.rsvp,
-article.like,
-article.bookmark,
-article.photo,
-article.attachment {
+article {
   -webkit-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
@@ -526,28 +519,15 @@ footer.entry-meta {
 .note .entry-header .entry-title, .note .entry-header .entry-title a {
   font-size: 20px;
 }
-.rsvp .entry-header .entry-title, .rsvp .entry-header .entry-meta, .rsvp .entry-content,
-.like .entry-header .entry-title, .like .entry-header .entry-meta, .like .entry-content,
-.bookmark .entry-header .entry-title, .bookmark .entry-header .entry-meta, .bookmark .entry-content,
-.article .entry-header .entry-title, .article .entry-header .entry-meta, .article .entry-content,
-.photo .entry-header .entry-title, .photo .entry-header .entry-meta, .photo .entry-content,
-.note .entry-header .entry-title, .note .entry-header .entry-meta, .note .entry-content {
+article .entry-header .entry-title, article .entry-header .entry-meta, article .entry-content{
   padding-left: 20px;
   padding-right: 20px;
 }
-.photo .entry-header .entry-meta,
-.article .entry-header .entry-meta,
-.rsvp .entry-header .entry-meta,
-.like .entry-header .entry-meta,
-.bookmark .entry-header .entry-meta,
-.note .entry-header .entry-meta {
+article .entry-header .entry-meta {
   font-size: 12px;
   padding-bottom: 0;
 }
-.rsvp .entry-content,
-.like .entry-content,
-.bookmark .entry-content,
-.note .entry-content {
+article .entry-content {
   font-size: 16px;
   margin-bottom: 14px;
 }
@@ -593,11 +573,7 @@ body.single #content .article, body.single #content .page, body.page #content .a
 #content #posts-stream {
   width:100%;
 }
-#content .rsvp,
-#content .like,
-#content .bookmark,
-#content .article, #content .page,
-#content .photo, #content .note {
+#content article {
   margin-bottom: 35px;
 }
 #content #posts-stream .article {
@@ -1373,6 +1349,8 @@ data.p-rsvp[value="no"] {color:red}
 data.p-rsvp[value="yes"] {color:green}
 .category-link {font-size:9pt}
 
+.song-title{font-weight:bold}
+.song-artist{font-weight:bold}
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
 }
@@ -1402,12 +1380,7 @@ data.p-rsvp[value="yes"] {color:green}
   #site-description {
       font-size: 1.2em;
   }
-  #content #notes-stream .rsvp,
-  #content #notes-stream .like,
-  #content #notes-stream .bookmark,
-  #content #posts-stream .article,
-  #content #notes-stream .note,
-  #content #notes-stream .photo {
+  #content #notes-stream article {
     width:100%;
     float:left;
   }

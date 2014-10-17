@@ -3,7 +3,9 @@
 <?php foreach($posts as $post) { ?>
 <article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
   <header class="entry-header">
+    <?php if($post['post_type'] != 'listen'){ ?>
     <h1 class="entry-title p-name" itemprop="name headline"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" itemprop="url"><?php echo $post['title']?></a></h1>
+    <?php } ?>
 
         <div class="entry-meta">      
       <span class="sep">Posted on </span>
@@ -21,7 +23,11 @@
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>
+    <?php if($post['post_type'] != 'listen'){ ?>
       <?php echo $post['body_html']?>
+      <?php  } else {
+          echo 'I listend To <span class="song-title">'.$post['title'].'</span> by <span class="song-artist">'.$post['artist'].'</span>.';
+      } ?>
       
       </div><!-- .entry-content -->
   
