@@ -170,7 +170,7 @@ class ModelWebmentionVouch extends Model {
 
         // parse url requires http at the beginning
         $domain = parse_url($real_url,PHP_URL_HOST);
-        if(!$domain){ {
+        if(!$domain){ 
             $domain = parse_url( 'http://'.$real_url,PHP_URL_HOST);
         }
 
@@ -198,7 +198,7 @@ class ModelWebmentionVouch extends Model {
             //if we are supposed to recurse on this page and it has a rel="me" then we will 
             //  check to see if the page is in this domain,  if so we check that page as well.
             //  this is in hopes of finding a whitelist or contacts page of some sort
-            if($recurse && strpos($rel, "me") !== FALSE)){
+            if($recurse && strpos($rel, "me") !== FALSE){
                 if(strpos($href, "//") === 0 && strpos($href, $domain) == 2){
                     $result = $this->getPossibleVouchFor('http:'.$href, false);
                 } elseif(strpos($href, "/") === 0){
@@ -239,7 +239,7 @@ class ModelWebmentionVouch extends Model {
                 //if we are supposed to recurse on this page and it has a rel="me" then we will 
                 //  check to see if the page is in this domain,  if so we check that page as well.
                 //  this is in hopes of finding a whitelist or contacts page of some sort
-                if($recurse && strpos($rel, "me") !== FALSE)){
+                if($recurse && strpos($rel, "me") !== FALSE){
                     if(strpos($href, "//") === 0 && strpos($href, $domain) == 2){
                         $result = $this->getPossibleVouchFor('http:'.$href, false);
                     } elseif(strpos($href, "/") === 0){

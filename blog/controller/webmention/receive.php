@@ -4,6 +4,7 @@ class ControllerWebmentionReceive extends Controller {
         $source = $this->request->post['source'];
         $target = $this->request->post['target'];
         $vouch = $this->request->post['vouch'];
+        //$this->log->write('v1: ='.$vouch);
 
         // are URLs Valid?
         if(!$this->is_valid_url($source) || !$this->is_valid_url($target)){
@@ -32,6 +33,7 @@ class ControllerWebmentionReceive extends Controller {
 
                     $this->load->model('webmention/queue');
                     $queue_id = $this->model_webmention_queue->addEntry($source, $target, $vouch);
+                    //$this->log->write('v2: ='.$vouch);
 
                     if(isset($this->request->post['callback'])){
                         $this->model_webmention_queue->setCallback($queue_id, $this->request->post['callback']);
@@ -49,7 +51,9 @@ class ControllerWebmentionReceive extends Controller {
             $this->response->addHeader('HTTP/1.1 202 Accepted');
 
             $this->load->model('webmention/queue');
-            $queue_id = $this->model_webmention_queue->addEntry($source, $target);
+            //$queue_id = $this->model_webmention_queue->addEntry($source, $target);
+            //$this->log->write('v3: ='.$vouch);
+            $queue_id = $this->model_webmention_queue->addEntry($source, $target, $vouch);
 
             if(isset($this->request->post['callback'])){
                 $this->model_webmention_queue->setCallback($queue_id, $this->request->post['callback']);
