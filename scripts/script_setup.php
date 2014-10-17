@@ -23,6 +23,7 @@ $site_down = false;
 
 // Log
 $log = new Log('scripted-error.txt');
+$registry->set('log', $log);
 
 // Database 
 try {

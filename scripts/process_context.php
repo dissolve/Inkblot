@@ -5,12 +5,12 @@ require_once('script_setup.php'); //this is to set up interactions to the MVC
 //$loader->model('blog/context');
 //$registry->get('model_blog_context')->processContexts();
 
-include '../libraries/php-mf2/Mf2/Parser.php';
-include '../libraries/php-comments/src/indieweb/comments.php';
-include '../libraries/cassis/cassis-loader.php';
-include '../libraries/php-mf2-shim/Mf2/functions.php';
-include '../libraries/php-mf2-shim/Mf2/Shim/Twitter.php';
-//include '../libraries/php-mf2-shim/Mf2/Shim/Facebook.php';
+require_once '../libraries/php-mf2/Mf2/Parser.php';
+require_once '../libraries/php-comments/src/indieweb/comments.php';
+require_once '../libraries/cassis/cassis-loader.php';
+require_once '../libraries/php-mf2-shim/Mf2/functions.php';
+require_once '../libraries/php-mf2-shim/Mf2/Shim/Twitter.php';
+//require_once '../libraries/php-mf2-shim/Mf2/Shim/Facebook.php';
 
 function get_context_id($db, $source_url){
     $c = curl_init();

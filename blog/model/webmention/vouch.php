@@ -140,7 +140,7 @@ class ModelWebmentionVouch extends Model {
                 }
                 
                 if(!$already_filled){
-                    $this->db->query(($already_existing? "UPDATE " : "INSERT INTO ") . DATABASE.".vouches SET ".(!$already_existing? "domain='".$this->db->escape($domain)."',": "")." vouch_url".($fill_alt? "_alt":"") ." = '".$this->db->escape($referer)."'");
+                    $this->db->query(($already_existing? "UPDATE " : "INSERT INTO ") . DATABASE.".vouches SET  vouch_url".($fill_alt? "_alt":"") ." = '".$this->db->escape($referer)."' ".(!$already_existing? ", ": " WHERE ") . " domain='".$this->db->escape($domain)."'");
                 }
 
             }
@@ -155,6 +155,7 @@ class ModelWebmentionVouch extends Model {
 
     // this function does a best-effort attempt to find a site that might provide a valid vouch for this site to the webmention_target_url
     public function getPossibleVouchFor($webmention_target_url){
+        //$this->log->write('call getPossibleVouchFor with '.$webmention_target_url);
 
         //first we download the URL os we can parse that page for clues as well as learn the real url if there are any redirects
         $c = curl_init();
@@ -181,6 +182,7 @@ class ModelWebmentionVouch extends Model {
             if(strpos($rel, "nofollow") === FALSE){ // this will work if rel is blank too!
                 $vouch = $this->vouchSearch($href);
                 if($vouch){
+                    //$this->log->write('found '.$vouch);
                     return $vouch;
                 }
             }
@@ -198,6 +200,7 @@ class ModelWebmentionVouch extends Model {
                 if(strpos($rel,"nofollow") === FALSE){
                     $vouch = $this->vouchSearch($href);
                     if($vouch){
+                        //$this->log->write('found '.$url);
                         return $vouch;
                     }
                 }
@@ -228,6 +231,7 @@ class ModelWebmentionVouch extends Model {
     //return the URL we can use as a vouch if found
     //return false if not found
     public function vouchSearch($url){
+        //$this->log->write('call vouchSearch with '.$url);
 
         // parse url requires http at the beginning
         if(strpos($url, 'http://') === 0  || strpos($url, 'https://') === 0 ) {
