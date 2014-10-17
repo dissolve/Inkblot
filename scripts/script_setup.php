@@ -21,9 +21,6 @@ $registry->set('config', $config);
 //flag for site being broken/administratively down
 $site_down = false;
 
-// Log
-$log = new Log('scripted-error.txt');
-
 // Database 
 try {
 	$db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, '');
@@ -46,6 +43,10 @@ $registry->set('url', $url);
 // Short_Url
 $short_url = new Url($config->get('config_short_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_short_url'));	
 $registry->set('short_url', $short_url);
+
+// Log
+$log = new Log('scripted-error.txt');
+$registry->set('log', $log);
 
 function error_handler($errno, $errstr, $errfile, $errline) {
 	global $log, $config;

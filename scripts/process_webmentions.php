@@ -2,9 +2,9 @@
 
 require_once('script_setup.php'); //this is to set up interactions to the MVC
 
-include '../libraries/php-mf2/Mf2/Parser.php';
-include '../libraries/php-comments/src/indieweb/comments.php';
-include '../libraries/cassis/cassis-loader.php';
+require_once '../libraries/php-mf2/Mf2/Parser.php';
+require_once '../libraries/php-comments/src/indieweb/comments.php';
+require_once '../libraries/cassis/cassis-loader.php';
 
 
 //check if target is at this site
@@ -152,7 +152,7 @@ while($webmention){
         $comment_data = IndieWeb\comments\parse($mf2_parsed['items'][0], $target_url);
         $log->write('target = ' . $target_url . ' real_source_url = '. $real_source_url);
 
-        include DIR_BASE . '/routes.php';
+        require_once DIR_BASE . '/routes.php';
 
         $data = array();
         foreach($advanced_routes as $adv_route){

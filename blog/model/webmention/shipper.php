@@ -1,6 +1,6 @@
 <?php
 
-include DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
+require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
 
 class ModelWebmentionShipper extends Model {
 

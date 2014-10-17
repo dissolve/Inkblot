@@ -140,7 +140,7 @@ class ModelWebmentionVouch extends Model {
                 }
                 
                 if(!$already_filled){
-                    $this->db->query(($already_existing? "UPDATE " : "INSERT INTO ") . DATABASE.".vouches SET ".(!$already_existing? "domain='".$this->db->escape($domain)."',": "")." vouch_url".($fill_alt? "_alt":"") ." = '".$this->db->escape($referer)."'");
+                    $this->db->query(($already_existing? "UPDATE " : "INSERT INTO ") . DATABASE.".vouches SET  vouch_url".($fill_alt? "_alt":"") ." = '".$this->db->escape($referer)."' ".(!$already_existing? ", ": " WHERE ") . " domain='".$this->db->escape($domain)."'");
                 }
 
             }
@@ -154,7 +154,8 @@ class ModelWebmentionVouch extends Model {
     }
 
     // this function does a best-effort attempt to find a site that might provide a valid vouch for this site to the webmention_target_url
-    public function getPossibleVouchFor($webmention_target_url){
+    public function getPossibleVouchFor($webmention_target_url, $recurse = true){
+        //$this->log->write('call getPossibleVouchFor with '.$webmention_target_url);
 
         //first we download the URL os we can parse that page for clues as well as learn the real url if there are any redirects
         $c = curl_init();
@@ -164,6 +165,14 @@ class ModelWebmentionVouch extends Model {
         $real_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
         $page_content = curl_exec($c);
 
+
+        //we strip down the true url, to get the domain
+
+        // parse url requires http at the beginning
+        $domain = parse_url($real_url,PHP_URL_HOST);
+        if(!$domain){ {
+            $domain = parse_url( 'http://'.$real_url,PHP_URL_HOST);
+        }
 
         //we will start with this page and see if we find some valid vouch value there.
 
@@ -181,7 +190,31 @@ class ModelWebmentionVouch extends Model {
             if(strpos($rel, "nofollow") === FALSE){ // this will work if rel is blank too!
                 $vouch = $this->vouchSearch($href);
                 if($vouch){
+                    //$this->log->write('found '.$vouch);
                     return $vouch;
+                }
+            }
+
+            //if we are supposed to recurse on this page and it has a rel="me" then we will 
+            //  check to see if the page is in this domain,  if so we check that page as well.
+            //  this is in hopes of finding a whitelist or contacts page of some sort
+            if($recurse && strpos($rel, "me") !== FALSE)){
+                if(strpos($href, "//") === 0 && strpos($href, $domain) == 2){
+                    $result = $this->getPossibleVouchFor('http:'.$href, false);
+                } elseif(strpos($href, "/") === 0){
+                    $result = $this->getPossibleVouchFor('http://'.$domain.$href, false);
+                } elseif(strpos($href, $domain) !== FALSE){
+                    $href_domain = parse_url($href,PHP_URL_HOST);
+                    if(!$href_domain){ 
+                        $href_domain = parse_url( 'http://'.$href,PHP_URL_HOST);
+                    }
+                    if($domain == $href_domain){
+                        $result = $this->getPossibleVouchFor($href, false);
+                    }
+                }
+                //if we found a result, we can stop there
+                if($result){
+                    return $result;
                 }
             }
         }
@@ -198,27 +231,46 @@ class ModelWebmentionVouch extends Model {
                 if(strpos($rel,"nofollow") === FALSE){
                     $vouch = $this->vouchSearch($href);
                     if($vouch){
+                        //$this->log->write('found '.$url);
                         return $vouch;
+                    }
+                }
+
+                //if we are supposed to recurse on this page and it has a rel="me" then we will 
+                //  check to see if the page is in this domain,  if so we check that page as well.
+                //  this is in hopes of finding a whitelist or contacts page of some sort
+                if($recurse && strpos($rel, "me") !== FALSE)){
+                    if(strpos($href, "//") === 0 && strpos($href, $domain) == 2){
+                        $result = $this->getPossibleVouchFor('http:'.$href, false);
+                    } elseif(strpos($href, "/") === 0){
+                        $result = $this->getPossibleVouchFor('http://'.$domain.$href, false);
+                    } elseif(strpos($href, $domain) !== FALSE){
+                        $href_domain = parse_url($href,PHP_URL_HOST);
+                        if(!$href_domain){ 
+                            $href_domain = parse_url( 'http://'.$href,PHP_URL_HOST);
+                        }
+                        if($domain == $href_domain){
+                            $result = $this->getPossibleVouchFor($href, false);
+                        }
+                    }
+                    //if we found a result, we can stop there
+                    if($result){
+                        return $result;
                     }
                 }
 
             }
         }
         
-        //we strip down the true url, to get the homepage URL
 
-        // parse url requires http at the beginning
-        if(strpos($real_url, 'http://') === 0){
-            $real_homepage_url = 'http://' . parse_url($real_url,PHP_URL_HOST);
-        } elseif(strpos($real_url, 'https://') === 0 ) {
-            $real_homepage_url = 'https://' . parse_url($real_url,PHP_URL_HOST);
-        } else {
-            $real_homepage_url = 'http://' . parse_url( 'http://'.$real_url,PHP_URL_HOST);
-        }
-
-        //our recursion base case captured here
-        if($real_homepage_url != $webmention_target_url){
-            return $this->getPossibleVouchFor($real_homepage_url, false);
+        if($recurse){
+            //try the homepage
+            if($real_homepage_url == $webmention_target_url){
+                $result = $this->getPossibleVouchFor($real_homepage_url, false);
+            }
+            if(!$result){
+            }
+            return $result;
         }
         return false;
     }
@@ -228,6 +280,7 @@ class ModelWebmentionVouch extends Model {
     //return the URL we can use as a vouch if found
     //return false if not found
     public function vouchSearch($url){
+        //$this->log->write('call vouchSearch with '.$url);
 
         // parse url requires http at the beginning
         if(strpos($url, 'http://') === 0  || strpos($url, 'https://') === 0 ) {

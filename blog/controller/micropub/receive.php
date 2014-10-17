@@ -189,10 +189,10 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
             $this->cache->delete('post.'.$note['post_id']);
         }
-        if($note['draft'] != 1){
+        //if($note['draft'] != 1){
             $this->load->model('webmention/send_queue');
-            $this->model_webmention_send_queue->addEntry($note_id, $this->request->post['vouch']);
-        }
+            $this->model_webmention_send_queue->addEntry($note['post_id'], $this->request->post['vouch']);
+        //}
 
         $this->cache->delete('post.'.$note['post_id']);
 
