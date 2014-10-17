@@ -33,7 +33,7 @@ while($webmention){
     if($vouch_url){
         $valid_link_found = false;
         $c = curl_init();
-        curl_setopt($c, CURLOPT_NOBODY, 1);
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_URL, $vouch_url);
         curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
         $vouch_content = curl_exec($c);
@@ -46,6 +46,7 @@ while($webmention){
         $matches = array();
         preg_match_all($reg_ex_match, $vouch_content ,$matches);
         for($i = 0; $i < count($matches['href']); $i++){
+            //$this->log->write('checking '.$href . '   rel '.$rel);
             $href = strtolower($matches['href'][$i]);
             $rel = strtolower($matches['rel'][$i]);
 
@@ -62,8 +63,9 @@ while($webmention){
             preg_match_all($reg_ex_match, $vouch_content ,$matches);
 
             for($i = 0; $i < count($matches['href']); $i++){
-            $href = strtolower($matches['href'][$i]);
-            $rel = strtolower($matches['rel'][$i]);
+                //$this->log->write('checking '.$href . '   rel '.$rel);
+                $href = strtolower($matches['href'][$i]);
+                $rel = strtolower($matches['rel'][$i]);
 
                 if(strpos($rel,"nofollow") === FALSE){
                     if(strpos($href, $short_vouch) !== FALSE){
@@ -74,12 +76,12 @@ while($webmention){
         }
 
 
-        if(!$valid_link_found)
+        if(!$valid_link_found){
             $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Vouch Invalid' WHERE webmention_id = ". (int)$webmention_id);
             $result = $db->query("SELECT * FROM ". DATABASE.".webmentions WHERE webmention_status_code = '202' LIMIT 1");
             $webmention = $result->row;
             continue;
-        )
+        }
     }
      //TODO shortcut this if it matches our HTTP_SERVER OR HTTPS_SERVER
 
@@ -148,6 +150,7 @@ while($webmention){
     } else {
         $mf2_parsed = Mf2\parse($page_content, $real_source_url);
         $comment_data = IndieWeb\comments\parse($mf2_parsed['items'][0], $target_url);
+        $log->write('target = ' . $target_url . ' real_source_url = '. $real_source_url);
 
         include DIR_BASE . '/routes.php';
 
@@ -169,7 +172,9 @@ while($webmention){
             if($editing){
                 $registry->get('model_'. str_replace('/', '_', $model))->editWebmention($data, $webmention_id, $comment_data);
             } else {
+                $log->write(' calling model_'. str_replace('/', '_', $model) . ' addWebmention with '. print_r($data, true). ' ' .  $webmention_id . " " . print_r( $comment_data, true));
                 $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_data);
+                $log->write(' DONE');
             }
         } catch (Exception $e) {
             if(isset($comment_data['type']) && $comment_data['type'] == 'like'){
