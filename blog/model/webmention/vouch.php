@@ -220,6 +220,7 @@ class ModelWebmentionVouch extends Model {
         if($real_homepage_url != $webmention_target_url){
             return $this->getPossibleVouchFor($real_homepage_url, false);
         }
+        return false;
     }
 
 

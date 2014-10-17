@@ -1,6 +1,9 @@
 <?php
 
 require_once('script_setup.php'); //this is to set up interactions to the MVC
+//TODO  i should be able to just do this, and get rid of the rest of the file
+//$loader->model('blog/context');
+//$registry->get('model_blog_context')->processContexts();
 
 include '../libraries/php-mf2/Mf2/Parser.php';
 include '../libraries/php-comments/src/indieweb/comments.php';
@@ -107,7 +110,6 @@ function get_context_id($db, $source_url){
     }
 }
 
-//check if target is at this site
 $result = $db->query("SELECT * FROM ". DATABASE.".posts WHERE NOT replyto is NULL AND context_parsed=0 LIMIT 1");
 $post = $result->row;
 

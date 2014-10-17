@@ -1,8 +1,8 @@
 <?php
-class ModelBlogWmqueue extends Model {
+class ModelBlogSendQueue extends Model {
 
-	public function addEntry($post_id) {
-        $this->db->query("INSERT INTO " . DATABASE . ".mention_send_queue SET post_id=". (int)$post_id);
+	public function addEntry($post_id, $vouch_url = null) {
+        $this->db->query("INSERT INTO " . DATABASE . ".mention_send_queue SET post_id=". (int)$post_id . ($vouch_url ? " AND vouch_url='".$this->db->escape($vouch_url)."'": ""));
 	}
 
     public function getNext() {

@@ -15,6 +15,10 @@ while($webmention){
 
     $source_url = trim($webmention['source_url']);
     $target_url = trim($webmention['target_url']);
+    $vouch_url = null;
+    if($webmention['vouch_url']){
+        $vouch_url = trim($webmention['vouch_url']);
+    }
 
     $webmention_id = $webmention['webmention_id'];
 
@@ -25,6 +29,59 @@ while($webmention){
     if($resulting_comment_id > 0 || $resulting_mention_id > 0 || $resulting_like_id > 0){
         $editing = TRUE;
     }
+
+    if($vouch_url){
+        $valid_link_found = false;
+        $c = curl_init();
+        curl_setopt($c, CURLOPT_NOBODY, 1);
+        curl_setopt($c, CURLOPT_URL, $vouch_url);
+        curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+        $vouch_content = curl_exec($c);
+        curl_close($c);
+        unset($c);
+
+        $short_vouch  =  trim(str_replace(array('http://', 'https://'),array('',''), $vouch_url), '/');
+
+        $reg_ex_match = '/(href=[\'"](?<href>[^\'"]+)[\'"][^>]*(rel=[\'"](?<rel>[^\'"]+)[\'"])?)/';
+        $matches = array();
+        preg_match_all($reg_ex_match, $vouch_content ,$matches);
+        for($i = 0; $i < count($matches['href']); $i++){
+            $href = strtolower($matches['href'][$i]);
+            $rel = strtolower($matches['rel'][$i]);
+
+            if(strpos($rel, "nofollow") === FALSE){
+                if(strpos($href, $short_vouch) !== FALSE){
+                    $valid_link_found = true;
+                }
+            }
+        }
+        if(!$valid_link_found){
+            //repeat all that for rel before href (because preg_match_all doesn't like reused names)
+            $reg_ex_match = '/(rel=[\'"](?<rel>[^\'"]+)[\'"][^>]*href=[\'"](?<href>[^\'"]+)[\'"])/';
+            $matches = array();
+            preg_match_all($reg_ex_match, $vouch_content ,$matches);
+
+            for($i = 0; $i < count($matches['href']); $i++){
+            $href = strtolower($matches['href'][$i]);
+            $rel = strtolower($matches['rel'][$i]);
+
+                if(strpos($rel,"nofollow") === FALSE){
+                    if(strpos($href, $short_vouch) !== FALSE){
+                        $valid_link_found = true;
+                    }
+                }
+            }
+        }
+
+
+        if(!$valid_link_found)
+            $db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Vouch Invalid' WHERE webmention_id = ". (int)$webmention_id);
+            $result = $db->query("SELECT * FROM ". DATABASE.".webmentions WHERE webmention_status_code = '202' LIMIT 1");
+            $webmention = $result->row;
+            continue;
+        )
+    }
+     //TODO shortcut this if it matches our HTTP_SERVER OR HTTPS_SERVER
 
     //to verify that target is on my site
     $c = curl_init();
@@ -45,6 +102,9 @@ while($webmention){
     $page_content = curl_exec($c);
 
     $return_code = curl_getinfo($c, CURLINFO_HTTP_CODE);
+
+
+    //TODO test if vouch points to source_url
 
     curl_close($c);
     unset($c);

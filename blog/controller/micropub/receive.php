@@ -87,8 +87,8 @@ class ControllerMicropubReceive extends Controller {
 
             $this->cache->delete('post.'.$post['post_id']);
 
-            $this->load->model('blog/wmqueue');
-            $this->model_blog_wmqueue->addEntry($post['post_id']);
+            $this->load->model('webmention/send_queue');
+            $this->model_webmention_send_queue->addEntry($post['post_id']);
 
             $this->response->addHeader('HTTP/1.1 200 OK');
             //$this->response->addHeader('Location: '. $post['permalink']);
@@ -190,8 +190,8 @@ class ControllerMicropubReceive extends Controller {
             $this->cache->delete('post.'.$note['post_id']);
         }
         if($note['draft'] != 1){
-            $this->load->model('blog/wmqueue');
-            $this->model_blog_wmqueue->addEntry($note_id);
+            $this->load->model('webmention/send_queue');
+            $this->model_webmention_send_queue->addEntry($note_id, $this->request->post['vouch']);
         }
 
         $this->cache->delete('post.'.$note['post_id']);
@@ -250,8 +250,8 @@ class ControllerMicropubReceive extends Controller {
         }
 
         if($article['draft'] != 1){
-            $this->load->model('blog/wmqueue');
-            $this->model_blog_wmqueue->addEntry($article_id);
+            $this->load->model('webmention/send_queue');
+            $this->model_webmention_send_queue->addEntry($article_id, $this->request->post['vouch']);
         }
 
         $this->cache->delete('post.'.$article['post_id']);
@@ -313,8 +313,8 @@ class ControllerMicropubReceive extends Controller {
                 $this->model_blog_post->addSyndication($photo['post_id'], $this->request->post['syndication']);
             }
 
-            $this->load->model('blog/wmqueue');
-            $this->model_blog_wmqueue->addEntry($photo_id);
+            $this->load->model('webmention/send_queue');
+            $this->model_webmention_send_queue->addEntry($photo_id, $this->request->post['vouch']);
 
             $this->cache->delete('post.'.$photo['post_id']);
 
@@ -359,8 +359,8 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_post->addSyndication($bookmark['post_id'], $this->request->post['syndication']);
             $this->cache->delete('post.'.$bookmark['post_id']);
         }
-        $this->load->model('blog/wmqueue');
-        $this->model_blog_wmqueue->addEntry($bookmark_id);
+        $this->load->model('webmention/send_queue');
+        $this->model_webmention_send_queue->addEntry($bookmark_id);
 
         $this->cache->delete('post.'.$bookmark['post_id']);
 
@@ -418,8 +418,8 @@ class ControllerMicropubReceive extends Controller {
             $this->cache->delete('post.'.$note['post_id']);
         }
         if($note['draft'] != 1){
-            $this->load->model('blog/wmqueue');
-            $this->model_blog_wmqueue->addEntry($note_id);
+            $this->load->model('webmention/send_queue');
+            $this->model_webmention_send_queue->addEntry($note_id);
         }
 
         $this->cache->delete('post.'.$note['post_id']);
@@ -476,8 +476,8 @@ class ControllerMicropubReceive extends Controller {
         $this->cache->delete('post.'.$rsvp['post_id']);
 
         //todo add vouch url in here
-        $this->load->model('blog/wmqueue');
-        $this->model_blog_wmqueue->addEntry($rsvp_id);
+        $this->load->model('webmention/send_queue');
+        $this->model_webmention_send_queue->addEntry($rsvp_id, $this->request->post['vouch']);
 
         $this->response->addHeader('HTTP/1.1 201 Created');
         $this->response->addHeader('Location: '. $rsvp['permalink']);
@@ -510,8 +510,8 @@ class ControllerMicropubReceive extends Controller {
             $this->cache->delete('post.'.$like['post_id']);
         }
 
-        $this->load->model('blog/wmqueue');
-        $this->model_blog_wmqueue->addEntry($bookmark_id);
+        $this->load->model('webmention/send_queue');
+        $this->model_webmention_send_queue->addEntry($bookmark_id, $this->request->post['vouch']);
 
 	$this->cache->delete('post.'.$like['post_id']);
 

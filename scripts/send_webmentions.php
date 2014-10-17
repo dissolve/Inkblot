@@ -6,8 +6,8 @@ include '../libraries/php-mf2/Mf2/Parser.php';
 include '../libraries/php-comments/src/indieweb/comments.php';
 include '../libraries/cassis/cassis-loader.php';
 
-$loader->model('blog/wmqueue');
-$post_id = $registry->get('model_blog_wmqueue')->getNext();
+$loader->model('webmention/send_queue');
+$post_id = $registry->get('model_webmention_send_queue')->getNext();
 
 while($post_id){
     $loader->model('blog/post');
@@ -21,6 +21,10 @@ while($post_id){
     } else {
         $client = new IndieWeb\MentionClient($post['shortlink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body'].$post['syndication_extra']) );
     }
+    //TODO
+    // $searcher = $registry->get('model_webmention_vouch')
+    //  $sent = $client->sendSupportedMentions($searcher);
+    //
     $client->debug(false);
     $sent = $client->sendSupportedMentions();
     $urls = $client->getReturnedUrls();
@@ -30,6 +34,6 @@ while($post_id){
 
     $registry->get('cache')->delete('post.'.$post_id);
 
-    $post_id = $registry->get('model_blog_wmqueue')->getNext();
+    $post_id = $registry->get('model_webmention_send_queue')->getNext();
 
 } //end while
