@@ -16,10 +16,10 @@ while($post_id){
     // send webmention
     require_once DIR_BASE . '/libraries/mention-client-php/src/IndieWeb/MentionClient.php';
     if(isset($post['image_file'])){
-        $client = new IndieWeb\MentionClient($post['shortlink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' .
-        '<img src="'.$post['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($post['body'].$post['syndication_extra']) );
+        $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' .
+        '<img src="'.$post['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($post['body'].$post['syndication_extra']),false, $post['shortlink'] );
     } else {
-        $client = new IndieWeb\MentionClient($post['shortlink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body'].$post['syndication_extra']) );
+        $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body'].$post['syndication_extra']), false, $post['shortlink'] );
     }
     $client->debug(false);
     //TODO
