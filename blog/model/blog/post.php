@@ -301,6 +301,8 @@ class ModelBlogPost extends Model {
 	}
 
     public function addWebmention($data, $webmention_id, $comment_data, $post_id = null){
+        $this->load->model('webmention/vouch');
+
         if(isset($comment_data['published']) && !empty($comment_data['published'])){
             // do our best to conver to local time
             date_default_timezone_set(LOCALTIMEZONE);
@@ -328,6 +330,7 @@ class ModelBlogPost extends Model {
                     ", post_id = ".(int)$post['post_id']);
                 $like_id = $this->db->getLastId();
                 $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_like_id = '".(int)$like_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
+                $this->model_webmention_vouch->addWhitelistEntry($comment_data['url']);
                 $this->cache->delete('likes');
                 break;
 
@@ -342,6 +345,7 @@ class ModelBlogPost extends Model {
                     ", post_id = ".(int)$post['post_id'] .", approved=1");
                 $comment_id = $this->db->getLastId();
                 $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_comment_id = '".(int)$comment_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
+                $this->model_webmention_vouch->addWhitelistEntry($comment_data['url']);
                 $this->cache->delete('comments');
                 break;
 
@@ -356,6 +360,7 @@ class ModelBlogPost extends Model {
                     ", post_id = ".(int)$post['post_id'] .", parse_timestamp = NOW(), approved=1");
                 $mention_id = $this->db->getLastId();
                 $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
+                $this->model_webmention_vouch->addWhitelistEntry($comment_data['url']);
                 $this->cache->delete('mentions');
                 break;
             }

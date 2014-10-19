@@ -116,6 +116,8 @@ class ControllerMicropubReceive extends Controller {
             }
             if(isset($this->request->post['content'])){
                 $post['body'] = $this->request->post['content'];
+
+
             } else {
                 $post['body'] = '';
             }
@@ -155,6 +157,8 @@ class ControllerMicropubReceive extends Controller {
         }
         if(isset($this->request->post['in-reply-to'])){
             $data['replyto'] = $this->request->post['in-reply-to'];
+            $this->load->model('webmention/vouch');
+            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
         if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
             $data['location'] = $this->request->post['location'];
@@ -222,6 +226,8 @@ class ControllerMicropubReceive extends Controller {
         }
         if(isset($this->request->post['in-reply-to'])){
             $data['replyto'] = $this->request->post['in-reply-to'];
+            $this->load->model('webmention/vouch');
+            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
         if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
             $data['location'] = $this->request->post['location'];
@@ -283,6 +289,8 @@ class ControllerMicropubReceive extends Controller {
             }
             if(isset($this->request->post['in-reply-to'])){
                 $data['replyto'] = $this->request->post['in-reply-to'];
+                $this->load->model('webmention/vouch');
+                $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
             }
             if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
                 $data['location'] = $this->request->post['location'];
@@ -389,6 +397,8 @@ class ControllerMicropubReceive extends Controller {
         // $this->request->post['published'];
         if(isset($this->request->post['in-reply-to'])){
             $data['replyto'] = $this->request->post['in-reply-to'];
+            $this->load->model('webmention/vouch');
+            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
         if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
             $data['location'] = $this->request->post['location'];
@@ -450,6 +460,8 @@ class ControllerMicropubReceive extends Controller {
         // $this->request->post['published'];
         if(isset($this->request->post['in-reply-to'])){
             $data['replyto'] = $this->request->post['in-reply-to'];
+            $this->load->model('webmention/vouch');
+            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
 
         if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
@@ -545,6 +557,34 @@ class ControllerMicropubReceive extends Controller {
         }
 
 
+    }
+    private function whiteListUrls($content){
+        $this->load->model('webmention/vouch');
+        $reg_ex_match = '/(href=[\'"](?<href>[^\'"]+)[\'"][^>]*(rel=[\'"](?<rel>[^\'"]+)[\'"])?)/';
+        $matches = array();
+        preg_match_all($reg_ex_match, $content ,$matches);
+
+        for($i = 0; $i < count($matches['href']); $i++){
+            $href = strtolower($matches['href'][$i]);
+            $rel = strtolower($matches['rel'][$i]);
+
+            if(strpos($rel,"nofollow") === FALSE){
+                $this->model_webmention_vouch->addWhitelistEntry($href);
+            }
+        }
+
+        $reg_ex_match = '/(rel=[\'"](?<rel>[^\'"]+)[\'"][^>]*href=[\'"](?<href>[^\'"]+)[\'"])/';
+        $matches = array();
+        preg_match_all($reg_ex_match, $vouch_content ,$matches);
+        for($i = 0; $i < count($matches['href']); $i++){
+            //$this->log->write('checking '.$href . '   rel '.$rel);
+            $href = strtolower($matches['href'][$i]);
+            $rel = strtolower($matches['rel'][$i]);
+
+            if(strpos($rel,"nofollow") === FALSE){
+                $this->model_webmention_vouch->addWhitelistEntry($href);
+            }
+        }
     }
 
 }

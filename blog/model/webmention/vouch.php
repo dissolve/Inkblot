@@ -320,6 +320,28 @@ class ModelWebmentionVouch extends Model {
         return $data;
     }
 
+    public function addWhitelistEntry($url){
+        $domain = parse_url($url, PHP_URL_HOST);
+        $short_self = trim(str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER), '/');
+        $mini_short_self = trim(str_replace(array('http://', 'https://'),array('',''), HTTP_SHORT), '/');
+
+        // so that we don't add our own site to the list, though technically it doesn't matter, its still confusing
+        if($domain == $short_self || $domain == $mini_short_self){
+            return;
+        }
+
+        if(!$domain || empty($domain)){
+            $domain = parse_url('http://'.$url, PHP_URL_HOST);
+        }
+        if($domain && !empty($domain)){
+            $query = $this->db->query("SELECT * FROM ".DATABASE.".vouch_whitelist WHERE domain='".$this->db->escape($domain)."'");
+            $found = $query->row;
+            if(!$found || empty($found)){
+                $this->db->query("INSERT INTO ".DATABASE.".vouch_whitelist(domain, public) VALUES ('".$this->db->escape($domain)."', 0)");
+            }
+        }
+    }
+
 
 }
 ?>
