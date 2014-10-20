@@ -164,12 +164,23 @@ class ControllerAuthLogin extends Controller {
 
             //lets try and see if they have an MP endpoint and if so, so they offer up the actions they have
             $mp_endpoint = IndieAuth\Client::discoverMicropubEndpoint($me);
+            // we successfullly confirmed auth
+            $this->session->data['user_site'] = $this->request->get['me'];
+            $this->log->write($this->request->get['me'] . ' has logged in.');
+
+            //TODO token stuff
+            $token_results = $this->get_token($me, $code, $redir_url, $state);
+
+            $this->session->data['token'] = $token_results['access_token'];
             if($mp_endpoint){
                 $ch = curl_init($mp_endpoint.'?q=actions');
 
                 if(!$ch){$this->log->write('error with curl_init');}
 
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
+                if(isset($token_results['access_token'])){
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', 'Authorization: Bearer '. $token_results['access_token']));
+                }
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
@@ -179,14 +190,6 @@ class ControllerAuthLogin extends Controller {
                     $this->session->data['mp-config'] = $response;
                 }
             }
-            // we successfullly confirmed auth
-            $this->session->data['user_site'] = $this->request->get['me'];
-            $this->log->write($this->request->get['me'] . ' has logged in.');
-
-            //TODO token stuff
-            $token_results = $this->get_token($me, $code, $redir_url, $state);
-
-            $this->session->data['token'] = $token_results['access_token'];
 
             $token_user = str_replace(array('http://', 'https://'),array('',''), $me);
 
