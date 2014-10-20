@@ -36,66 +36,72 @@ class ControllerCommonHome extends Controller {
             $mpconfig = json_decode($this->session->data['mp-config'], true);
         }
 
-		foreach ($this->model_blog_post->getPostsByTypes(['article'], 20, $skip) as $result) {
-			$author = $this->model_blog_author->getAuthor($result['author_id']);
-			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
-			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
-			$like_count = $this->model_blog_post->getLikeCountForPost($result['post_id']);
+		foreach ($this->model_blog_post->getPostsByTypes(['article'], 20, $skip) as $post) {
+			$author = $this->model_blog_author->getAuthor($post['author_id']);
+			$categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
+			$comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
+			$like_count = $this->model_blog_post->getLikeCountForPost($post['post_id']);
 
             $extra_data_array = array(
-			    'body_html' => html_entity_decode($result['body']),
+			    'body_html' => html_entity_decode($post['body']),
 			    'author' => $author,
                 'author_image' => '/image/static/icon_200.jpg',
 			    'categories' => $categories,
 			    'comment_count' => $comment_count,
-                'like_count' => $like_count);
+                'like_count' => $like_count,
+                'actions' => array());
 
             if($this->session->data['is_owner']){
-                $extra_data_array['repostlink'] = $this->url->link('micropub/client', 'id='.$result['post_id'],'');
-                if($result['deleted'] == 1){
-                    $extra_data_array['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$result['post_id'],'');
+                if($post['deleted'] == 1){
+                    $extra_data_array['actions']['undelete'] = array('title' => 'Undelete', 'icon' => "<i class='fa fa-undo'></i>", 'link' => $this->url->link('micropub/client/undeletePost', 'id='.$post['post_id'],''));
                 } else {
-                    $extra_data_array['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$result['post_id'],'');
-                    $extra_data_array['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$result['post_id'],'');
+                    $extra_data_array['actions']['edit'] = array('title' => 'Edit', 'icon' => "<i class='fa fa-edit'></i>", 'link' => $this->url->link('micropub/client/editPost', 'id='.$post['post_id'],''));
+                    $extra_data_array['actions']['delete'] = array('title' => 'Delete', 'icon' => "<i class='fa fa-trash'></i>", 'link' => $this->url->link('micropub/client/deletePost', 'id='.$post['post_id'],''));
                 }
             }
+            if($mpconfig['repost']){
+                $extra_data_array['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-share-square-o'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']));
+            }
             if($mpconfig['reply']){
-                $extra_data_array['reply'] = str_replace('{url}', urlencode($result['permalink']), $mpconfig['reply']);
+                $extra_data_array['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
             }
 
-            $data['posts'][] = array_merge($result, $extra_data_array);
+            $data['posts'][] = array_merge($post, $extra_data_array);
 		}
 
 		$data['side_posts'] = array();
 
-		foreach ($this->model_blog_post->getPostsByTypes(['photo','note','rsvp','like','bookmark'], 20, $skip) as $result) {
-			$author = $this->model_blog_author->getAuthor($result['author_id']);
-			$categories = $this->model_blog_category->getCategoriesForPost($result['post_id']);
-			$comment_count = $this->model_blog_comment->getCommentCountForPost($result['post_id']);
-			$like_count = $this->model_blog_post->getLikeCountForPost($result['post_id']);
+		foreach ($this->model_blog_post->getPostsByTypes(['photo','note','rsvp','like','bookmark'], 20, $skip) as $post) {
+			$author = $this->model_blog_author->getAuthor($post['author_id']);
+			$categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
+			$comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
+			$like_count = $this->model_blog_post->getLikeCountForPost($post['post_id']);
 
 			$extra_data_array = array(
-			    'body_html' => html_entity_decode(isset($result['excerpt']) ? $result['excerpt']. '...' : $result['body']),
+			    'body_html' => html_entity_decode(isset($post['excerpt']) ? $post['excerpt']. '...' : $post['body']),
 			    'author' => $author,
                 'author_image' => '/image/static/icon_200.jpg',
 			    'categories' => $categories,
 			    'comment_count' => $comment_count,
-			    'like_count' => $like_count);
+                'like_count' => $like_count
+                'actions' => array());
 
             if($this->session->data['is_owner']){
-                $extra_data_array['repostlink'] = $this->url->link('micropub/client', 'id='.$result['post_id'],'');
-                if($result['deleted'] == 1){
-                    $extra_data_array['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$result['post_id'],'');
+                if($post['deleted'] == 1){
+                    $extra_data_array['actions']['undelete'] = $this->url->link('micropub/client/undeletePost', 'id='.$post['post_id'],'');
                 } else {
-                    $extra_data_array['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$result['post_id'],'');
-                    $extra_data_array['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$result['post_id'],'');
+                    $extra_data_array['actions']['edit'] = $this->url->link('micropub/client/editPost', 'id='.$post['post_id'],'');
+                    $extra_data_array['actions']['delete'] = $this->url->link('micropub/client/deletePost', 'id='.$post['post_id'],'');
                 }
             }
+            if($mpconfig['repost']){
+                $extra_data_array['actions']['repost'] = str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']);
+            }
             if($mpconfig['reply']){
-                $extra_data_array['reply'] = str_replace('{url}', urlencode($result['permalink']), $mpconfig['reply']);
+                $extra_data_array['actions']['reply'] = str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']);
             }
 
-            $data['side_posts'][] = array_merge($result, $extra_data_array);
+            $data['side_posts'][] = array_merge($post, $extra_data_array);
 		}
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/home.tpl')) {

@@ -1,6 +1,9 @@
 <?php  
 class ControllerBlogRsvp extends Controller {
 	public function index() {
+        if($this->session->data['mp-config']){
+            $mpconfig = json_decode($this->session->data['mp-config'], true);
+        }
 
         $year = $this->request->get['year'];
         $month = $this->request->get['month'];
@@ -52,9 +55,24 @@ class ControllerBlogRsvp extends Controller {
                 foreach($fetch_comments as $comm){
                     $clean_comm = trim(str_replace(array('http://','https://'),array('',''), $comm['source_url']), '/');
                     $clean_user = trim(str_replace(array('http://','https://'),array('',''), $this->session->data['user_site']), '/');
+                    $comm['actions'] = array();
                     if(strpos($clean_comm,$clean_user) === 0){
-                        $comm['editlink'] = $this->url->link('micropub/client/editPost', 'url='.$comm['source_url']);
-                        $comm['deletelink'] = $this->url->link('micropub/client/deletePost', 'url='.$comm['source_url']);
+                        if($mpconfig['edit']){
+                            $comm['actions']['edit'] = str_replace('{url}', urlencode($comm['source_url']), $mpconfig['edit']);
+                        } else {
+                            $comm['actions']['delete'] = $this->url->link('micropub/client/editPost', 'url='.$comm['source_url']);
+                        }
+                        if($mpconfig['delete']){
+                            $comm['actions']['delete'] = str_replace('{url}', urlencode($comm['source_url']), $mpconfig['delete']);
+                        } else {
+                            $comm['actions']['delete'] = $this->url->link('micropub/client/deletePost', 'url='.$comm['source_url']);
+                        }
+                    }
+                    if($mpconfig['reply']){
+                        $comm['actions']['reply'] = str_replace('{url}', urlencode($comm['source_url']), $mpconfig['reply']);
+                    }
+                    if($mpconfig['repost']){
+                        $comm['actions']['repost'] = str_replace('{url}', urlencode($comm['source_url']), $mpconfig['repost']);
                     }
                     $comments[] = $comm;
                 }
@@ -82,14 +100,21 @@ class ControllerBlogRsvp extends Controller {
                 //$data['post']['body'] .= "\n\n".$data['post']['permashortcitation'];
                 //$data['post']['body_html'] .= "<br><br>".$data['post']['permashortcitation'];
             //}
+            $data['post']['actions'] = array();
+
+            if($mpconfig['repost']){
+                $data['post']['actions']['repost'] = str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']);
+            }
+            if($mpconfig['reply']){
+                $data['post']['actions']['reply'] = str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']);
+            }
 
             if($this->session->data['is_owner']){
-                $data['post']['repostlink'] = $this->url->link('micropub/client', 'id='.$data['post']['post_id'],'');
                 if(!$data['deleted']){
-                    $data['post']['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$data['post']['post_id'],'');
-                    $data['post']['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$data['post']['post_id'],'');
-                } elseif ($this->session->data['is_owner'] && $data['deleted']){
-                    $data['post']['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$data['post']['post_id'],'');
+                    $data['post']['actions']['edit'] = $this->url->link('micropub/client/editPost', 'id='.$post['post_id'],'');
+                    $data['post']['actions']['delete'] = $this->url->link('micropub/client/deletePost', 'id='.$post['post_id'],'');
+                } else {
+                    $data['post']['actions']['undelete'] = $this->url->link('micropub/client/undeletePost', 'id='.$post['post_id'],'');
                 }
             }
 

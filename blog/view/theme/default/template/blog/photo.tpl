@@ -72,14 +72,14 @@
         <a href="<?php echo $post['editlink'] ?>" title="Edit"><i class="fa fa-edit"></i></a>
       </indie-action>
       <?php } ?>
-      <?php if(isset($post['deletelink'])){ ?>
-      <indie-action do="delete" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['deletelink'] ?>" title="Delete"><i class="fa fa-trash"></i></a>
-      </indie-action>
-      <?php } ?>
       <?php if(isset($post['undeletelink'])){ ?>
       <indie-action do="undelete" with="<?php echo $post['permalink']?>">
         <a href="<?php echo $post['undeletelink'] ?>" title="Undelete"><i class="fa fa-undo"></i></a>
+      </indie-action>
+      <?php } ?>
+      <?php if(isset($post['deletelink'])){ ?>
+      <indie-action do="delete" with="<?php echo $post['permalink']?>">
+        <a href="<?php echo $post['deletelink'] ?>" title="Delete"><i class="fa fa-trash"></i></a>
       </indie-action>
       <?php } ?>
       <?php if(isset($post['repostlink'])){ ?>
@@ -125,6 +125,9 @@
                     </a>
 
                     <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($comment['timestamp']))?></time></a>
+                    <?php if($comment['vouch_url']) { ?>
+                        <a href="<?php echo $comment['vouch_url']?>" class="u-url vouch">Vouched</a>
+                    <?php } ?>
                    <span class="other-controls">
                   <?php if(isset($comment['editlink'])){ ?>
                   <indie-action do="edit" with="<?php echo $comment['source_name']?>">

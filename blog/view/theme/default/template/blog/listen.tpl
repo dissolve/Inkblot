@@ -124,6 +124,9 @@
                     </a>
 
                     <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($comment['timestamp']))?></time></a>
+                    <?php if($comment['vouch_url']) { ?>
+                        <a href="<?php echo $comment['vouch_url']?>" class="u-url vouch">Vouched</a>
+                    <?php } ?>
                    <span class="other-controls">
                   <?php if(isset($comment['editlink'])){ ?>
                   <indie-action do="edit" with="<?php echo $comment['source_name']?>">

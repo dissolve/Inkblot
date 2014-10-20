@@ -1,6 +1,9 @@
 <?php  
 class ControllerBlogArchive extends Controller {
 	public function index() {
+        if($this->session->data['mp-config']){
+            $mpconfig = json_decode($this->session->data['mp-config'], true);
+        }
 
         $month_names = array('', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 
@@ -35,16 +38,22 @@ class ControllerBlogArchive extends Controller {
                 'author_image' => '/image/static/icon_128.jpg',
                 'categories' => $categories,
                 'comment_count' => $comment_count,
-                'like_count' => $like_count);
+                'like_count' => $like_count,
+                'actions' => array());
 
             if($this->session->data['is_owner']){
-                $extra_data_array['repostlink'] = $this->url->link('micropub/client', 'id='.$result['post_id'],'');
-                if($result['deleted'] == 1){
-                    $extra_data_array['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$result['post_id'],'');
+                if($post['deleted'] == 1){
+                    $extra_data_array['actions']['undelete'] = $this->url->link('micropub/client/undeletePost', 'id='.$post['post_id'],'');
                 } else {
-                    $extra_data_array['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$result['post_id'],'');
-                    $extra_data_array['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$result['post_id'],'');
+                    $extra_data_array['actions']['edit'] = $this->url->link('micropub/client/editPost', 'id='.$post['post_id'],'');
+                    $extra_data_array['actions']['delete'] = $this->url->link('micropub/client/deletePost', 'id='.$post['post_id'],'');
                 }
+            }
+            if($mpconfig['repost']){
+                $extra_data_array['actions']['repost'] = str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']);
+            }
+            if($mpconfig['reply']){
+                $extra_data_array['actions']['reply'] = str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']);
             }
 
             $data['posts'][] = array_merge($post, $extra_data_array);
@@ -93,16 +102,23 @@ class ControllerBlogArchive extends Controller {
                     'author_image' => '/image/static/icon_128.jpg',
                     'categories' => $categories,
                     'comment_count' => $comment_count,
-                    'like_count' => $like_count);
+                    'like_count' => $like_count,
+                    'actions' => array());
+
 
                 if($this->session->data['is_owner']){
-                    $extra_data_array['repostlink'] = $this->url->link('micropub/client', 'id='.$result['post_id'],'');
-                    if($result['deleted'] == 1){
-                        $extra_data_array['undeletelink'] = $this->url->link('micropub/client/undeletePost', 'id='.$result['post_id'],'');
+                    if($post['deleted'] == 1){
+                        $extra_data_array['actions']['undelete'] = $this->url->link('micropub/client/undeletePost', 'id='.$post['post_id'],'');
                     } else {
-                        $extra_data_array['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$result['post_id'],'');
-                        $extra_data_array['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$result['post_id'],'');
+                        $extra_data_array['actions']['edit'] = $this->url->link('micropub/client/editPost', 'id='.$post['post_id'],'');
+                        $extra_data_array['actions']['delete'] = $this->url->link('micropub/client/deletePost', 'id='.$post['post_id'],'');
                     }
+                }
+                if($mpconfig['repost']){
+                    $extra_data_array['actions']['repost'] = str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']);
+                }
+                if($mpconfig['reply']){
+                    $extra_data_array['actions']['reply'] = str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']);
                 }
 
                 $data['posts'][] = array_merge($post, $extra_data_array);
