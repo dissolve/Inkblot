@@ -160,6 +160,23 @@ class ControllerAuthLogin extends Controller {
         $result = $this->confirm_auth($me, $code, $redir_url, $state);
 
         if($result){
+
+            //lets try and see if they have an MP endpoint and if so, so they offer up the actions they have
+            $mp_endpoint = IndieAuth\Client::discoverMicropubEndpoint($me);
+            if($mp_endpoint){
+                $ch = curl_init($mp_endpoint.'?q=json_actions');
+
+                if(!$ch){$this->log->write('error with curl_init');}
+
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+
+                $response = curl_exec($ch);
+                $result = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                if($result == 200){
+                    $this->session->data['mp-config'] = $response;
+                }
+            }
             // we successfullly confirmed auth
             $this->session->data['user_site'] = $this->request->get['me'];
             $this->log->write($this->request->get['me'] . ' has logged in.');

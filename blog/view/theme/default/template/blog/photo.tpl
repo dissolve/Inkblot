@@ -67,24 +67,9 @@
     </div>
   <?php } ?>
     <div class="admin-controls">
-      <?php if(isset($post['editlink'])){ ?>
-      <indie-action do="edit" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['editlink'] ?>" title="Edit"><i class="fa fa-edit"></i></a>
-      </indie-action>
-      <?php } ?>
-      <?php if(isset($post['undeletelink'])){ ?>
-      <indie-action do="undelete" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['undeletelink'] ?>" title="Undelete"><i class="fa fa-undo"></i></a>
-      </indie-action>
-      <?php } ?>
-      <?php if(isset($post['deletelink'])){ ?>
-      <indie-action do="delete" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['deletelink'] ?>" title="Delete"><i class="fa fa-trash"></i></a>
-      </indie-action>
-      <?php } ?>
-      <?php if(isset($post['repostlink'])){ ?>
-      <indie-action do="repost" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-share-square-o"></i></a>
+      <?php foreach($post['actions'] as $actiontype => $action){ ?>
+      <indie-action do="<?php echo $actiontype?>" with="<?php echo $post['permalink']?>">
+      <a href="<?php echo $action['link'] ?>" title="<?php echo $action['title']?>"><?php echo $action['icon']?></a>
       </indie-action>
       <?php } ?>
     </div>
@@ -129,16 +114,11 @@
                         <a href="<?php echo $comment['vouch_url']?>" class="u-url vouch">Vouched</a>
                     <?php } ?>
                    <span class="other-controls">
-                  <?php if(isset($comment['editlink'])){ ?>
-                  <indie-action do="edit" with="<?php echo $comment['source_name']?>">
-                    <a href="<?php echo $comment['editlink'] ?>"><i class="fa fa-edit">Edit</i></a>
-                  </indie-action>
-                  <?php } ?>
-                  <?php if(isset($comment['deletelink'])){ ?>
-                  <indie-action do="delete" with="<?php echo $comment['source_name']?>">
-                    <a href="<?php echo $comment['deletelink'] ?>"><i class="fa fa-trash">Delete</i></a>
-                  </indie-action>
-                  <?php } ?>
+                      <?php foreach($comment['actions'] as $actiontype => $action){ ?>
+                      <indie-action do="<?php echo $actiontype?>" with="<?php echo $comment['permalink']?>">
+                      <a href="<?php echo $action['link'] ?>" title="<?php echo $action['title']?>"><?php echo $action['icon']?></a>
+                      </indie-action>
+                      <?php } ?>
                   </span>
                 </div>
                 <div class='comment_body'>

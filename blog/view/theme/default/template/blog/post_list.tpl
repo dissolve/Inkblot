@@ -64,28 +64,9 @@
   <?php } ?>
     <div class="admin-controls">
       <?php if(isset($post['editlink'])){ ?>
-      <indie-action do="edit" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['editlink'] ?>" title="Edit"><i class="fa fa-edit"></i></a>
-      </indie-action>
-      <?php } ?>
-      <?php if(isset($post['deletelink'])){ ?>
-      <indie-action do="delete" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['deletelink'] ?>" title="Delete"><i class="fa fa-trash"></i></a>
-      </indie-action>
-      <?php } ?>
-      <?php if(isset($post['undeletelink'])){ ?>
-      <indie-action do="undelete" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['undeletelink'] ?>" title="Undelete"><i class="fa fa-undo"></i></a>
-      </indie-action>
-      <?php } ?>
-      <?php if(isset($post['repostlink'])){ ?>
-      <indie-action do="repost" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-share-square-o"></i></a>
-      </indie-action>
-      <?php } ?>
-      <?php if(isset($post['reply'])) { ?>
-      <indie-action do="reply" with="<?php echo $post['permalink']?>">
-        <a href="<?php echo $post['reply'] ?>" title="Reply"><i class="fa fa-reply"></i></a>
+      <?php foreach($post['actions'] as $actiontype => $action){ ?>
+      <indie-action do="<?php echo $actiontype?>" with="<?php echo $post['permalink']?>">
+      <a href="<?php echo $action['link'] ?>" title="<?php echo $action['title']?>"><?php echo $action['icon']?></a>
       </indie-action>
       <?php } ?>
     </div>

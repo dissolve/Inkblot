@@ -8,6 +8,7 @@ class ControllerMicropubReceive extends Controller {
             "edit=".urlencode("https://ben.thatmustbe.me/edit?url={url}").'&'.
             "new=".urlencode("https://ben.thatmustbe.me/new").'&'.
             "reply=".urlencode("https://ben.thatmustbe.me/new?reply_to={url}").'&'.
+            "repost=".urlencode("https://ben.thatmustbe.me/new?repost={url}").'&'.
             "bookmark=".urlencode("https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}").'&'.
             "favorite=".urlencode("https://ben.thatmustbe.me/new?type=like&like={url}").'&'.
             "like=".urlencode("https://ben.thatmustbe.me/new?type=like&like={url}").'&'.
@@ -20,6 +21,7 @@ class ControllerMicropubReceive extends Controller {
             $json["edit"] = "https://ben.thatmustbe.me/edit?url={url}";
             $json["new"] = "https://ben.thatmustbe.me/new";
             $json["reply"] = "https://ben.thatmustbe.me/new?reply_to={url}";
+            $json["repost"] = "https://ben.thatmustbe.me/new?url={url}";
             $json["bookmark"] = "https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}";
             $json["favorite"] = "https://ben.thatmustbe.me/new?type=like&like={url}";
             $json["like"] = "https://ben.thatmustbe.me/new?type=like&like={url}";

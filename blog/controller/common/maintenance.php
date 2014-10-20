@@ -27,7 +27,7 @@ class ControllerCommonMaintenance extends Controller {
         
         $this->document->setTitle(PAGE_TITLE.'|Maintenance');
         
-        $this->data['heading_title'] = PAGE_TITLE.'|Maintenance');
+        $this->data['heading_title'] = PAGE_TITLE.'|Maintenance';
 
 $text_message  = '<h1 style="text-align:center;">We are currently performing some scheduled maintenance. <br/>We will be back as soon as possible. Please check back soon.</h1>';
         
