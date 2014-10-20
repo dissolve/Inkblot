@@ -1,54 +1,85 @@
 <?php  
 class ControllerMicropubReceive extends Controller {
 	public function index() {
-        $this->log->write(print_r($this->request->post, true));
-        $this->log->write(file_get_contents("php://input"));
-        $headers = apache_request_headers();
-        if(isset($this->request->post['access_token']) || isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || isset($headers['Authorization'])){
-            $token = $this->request->post['access_token'];
-            if(!$token){
-                $parts = explode(' ', $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
-                $token = $parts[1];
-            }
-            if(!$token){
-                $parts = explode(' ', $headers['Authorization']);
-                $token = $parts[1];
-            }
+        //$this->log->write(print_r($this->request->post, true));
+        //$this->log->write(file_get_contents("php://input"));
+        if(isset($this->request->get['q']) && $this->request->get['q'] == 'actions'){
+            $supported = 
+            "edit=".urlencode("https://ben.thatmustbe.me/edit?url={url}").'&'.
+            "new=".urlencode("https://ben.thatmustbe.me/new").'&'.
+            "reply=".urlencode("https://ben.thatmustbe.me/new?reply_to={url}").'&'.
+            "bookmark=".urlencode("https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}").'&'.
+            "favorite=".urlencode("https://ben.thatmustbe.me/new?type=like&like={url}").'&'.
+            "like=".urlencode("https://ben.thatmustbe.me/new?type=like&like={url}").'&'.
+            "delete=".urlencode("https://ben.thatmustbe.me/delete?url={url}").'&'.
+            "undelete=".urlencode("https://ben.thatmustbe.me/undelete?url={url}");
 
-            $this->load->model('auth/token');
-            $auth_info = $this->model_auth_token->getAuthFromToken($token);
+			$this->response->setOutput($supported);
+        } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'json_actions'){
+            $json = array();
+            $json["edit"] = "https://ben.thatmustbe.me/edit?url={url}";
+            $json["new"] = "https://ben.thatmustbe.me/new";
+            $json["reply"] = "https://ben.thatmustbe.me/new?reply_to={url}";
+            $json["bookmark"] = "https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}";
+            $json["favorite"] = "https://ben.thatmustbe.me/new?type=like&like={url}";
+            $json["like"] = "https://ben.thatmustbe.me/new?type=like&like={url}";
+            $json["delete"] = "https://ben.thatmustbe.me/delete?url={url}";
+            $json["undelete"] = "https://ben.thatmustbe.me/undelete?url={url}";
+
+			$this->response->setOutput(json_encode($json));
 
 
-            if(!empty($auth_info) && in_array('post', explode(' ', $auth_info['scope']))) {
+        } else {
+            $headers = apache_request_headers();
+            if(isset($this->request->post['access_token']) || isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || isset($headers['Authorization'])){
+                $token = $this->request->post['access_token'];
+                if(!$token){
+                    $parts = explode(' ', $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
+                    $token = $parts[1];
+                }
+                if(!$token){
+                    $parts = explode(' ', $headers['Authorization']);
+                    $token = $parts[1];
+                }
 
-                $token_user = str_replace(array('http://', 'https://'),array('',''), $auth_info['user']);
-                $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
+                $this->load->model('auth/token');
+                $auth_info = $this->model_auth_token->getAuthFromToken($token);
 
-                if($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) {
 
-                    //$this->log->write(print_r($this->request->post, true));
-                    if(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'delete'){
-                        $this->deletePost();
-                    } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'undelete'){
-                        $this->undeletePost();
-                    } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
-                        $this->createArticle();
-                    } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'checkin'){
-                        $this->createCheckin();
-                    } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'rsvp'){
-                        $this->createRsvp();
-                    } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
-                        $this->createBookmark();
-                    } elseif(isset($this->request->post['like']) && !empty($this->request->post['like'])){
-                        $this->createLike();
-                    } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
-                        $this->createPhoto();
-                    } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'edit'){
-                        $this->editPost();
+                if(!empty($auth_info) && in_array('post', explode(' ', $auth_info['scope']))) {
+
+                    $token_user = str_replace(array('http://', 'https://'),array('',''), $auth_info['user']);
+                    $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
+
+                    if($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) {
+
+                        //$this->log->write(print_r($this->request->post, true));
+                        if(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'delete'){
+                            $this->deletePost();
+                        } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'undelete'){
+                            $this->undeletePost();
+                        } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
+                            $this->createArticle();
+                        } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'checkin'){
+                            $this->createCheckin();
+                        } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'rsvp'){
+                            $this->createRsvp();
+                        } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
+                            $this->createBookmark();
+                        } elseif(isset($this->request->post['like']) && !empty($this->request->post['like'])){
+                            $this->createLike();
+                        } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
+                            $this->createPhoto();
+                        } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'edit'){
+                            $this->editPost();
+                        } else {
+                            $this->createNote();
+                        }
+                        
                     } else {
-                        $this->createNote();
+                        header('HTTP/1.1 401 Unauthorized');
+                        exit();
                     }
-                    
                 } else {
                     header('HTTP/1.1 401 Unauthorized');
                     exit();
@@ -57,9 +88,6 @@ class ControllerMicropubReceive extends Controller {
                 header('HTTP/1.1 401 Unauthorized');
                 exit();
             }
-        } else {
-            header('HTTP/1.1 401 Unauthorized');
-            exit();
         }
     }
 

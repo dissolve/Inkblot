@@ -97,6 +97,7 @@
           <label for="indie_auth_url">Web Address:</label>
           <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
           <p><button type="submit">Log In</button></p>
+          <input type="hidden" name="scope" value="config" />
         </form>
     </li></ul>
     <?php } ?>

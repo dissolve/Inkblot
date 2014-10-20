@@ -102,6 +102,11 @@
         <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-share-square-o"></i></a>
       </indie-action>
       <?php } ?>
+      <?php if(isset($post['reply'])) { ?>
+      <indie-action do="reply" with="<?php echo $post['permalink']?>">
+        <a href="<?php echo $post['reply'] ?>" title="Reply"><i class="fa fa-reply"></i></a>
+      </indie-action>
+      <?php } ?>
     </div>
 
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
@@ -184,6 +189,11 @@
       <?php if(isset($post['repostlink'])){ ?>
       <indie-action do="repost" with="<?php echo $post['permalink']?>">
         <a href="<?php echo $post['repostlink'] ?>" title="Repost"><i class="fa fa-share-square-o"></i></a>
+      </indie-action>
+      <?php } ?>
+      <?php if(isset($post['reply'])) { ?>
+      <indie-action do="reply" with="<?php echo $post['permalink']?>">
+        <a href="<?php echo $post['reply'] ?>" title="Reply"><i class="fa fa-reply"></i></a>
       </indie-action>
       <?php } ?>
     </div>

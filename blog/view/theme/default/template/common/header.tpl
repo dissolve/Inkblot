@@ -38,6 +38,7 @@
 
         <script src="/blog/view/javascript/vendor/modernizr-2.6.2.min.js"></script>
         <script src="/blog/view/javascript/fragmention.js"></script>
+        <script src="/blog/view/javascript/intents.js"></script>
 <?php /*        <script>
 // Lazy-create and return an indie-config load promise
 // The promise will be resolved with a config once the indie-config has been loaded

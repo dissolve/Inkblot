@@ -32,6 +32,9 @@ class ControllerCommonHome extends Controller {
         if(isset($this->request->get['skip'])){
             $skip = $this->request->get['skip'];
         }
+        if($this->session->data['mp-config']){
+            $mpconfig = json_decode($this->session->data['mp-config'], true);
+        }
 
 		foreach ($this->model_blog_post->getPostsByTypes(['article'], 20, $skip) as $result) {
 			$author = $this->model_blog_author->getAuthor($result['author_id']);
@@ -55,6 +58,9 @@ class ControllerCommonHome extends Controller {
                     $extra_data_array['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$result['post_id'],'');
                     $extra_data_array['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$result['post_id'],'');
                 }
+            }
+            if($mpconfig['reply']){
+                $extra_data_array['reply'] = str_replace('{url}', urlencode($result['permalink']), $mpconfig['reply']);
             }
 
             $data['posts'][] = array_merge($result, $extra_data_array);
@@ -84,6 +90,9 @@ class ControllerCommonHome extends Controller {
                     $extra_data_array['editlink'] = $this->url->link('micropub/client/editPost', 'id='.$result['post_id'],'');
                     $extra_data_array['deletelink'] = $this->url->link('micropub/client/deletePost', 'id='.$result['post_id'],'');
                 }
+            }
+            if($mpconfig['reply']){
+                $extra_data_array['reply'] = str_replace('{url}', urlencode($result['permalink']), $mpconfig['reply']);
             }
 
             $data['side_posts'][] = array_merge($result, $extra_data_array);
