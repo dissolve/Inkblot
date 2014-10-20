@@ -11,7 +11,6 @@
                 
               <?php if($token){ ?>
                 Access Token Found <br>
-                <button onclick=" window.navigator.registerProtocolHandler('web+action', 'https://ben.thatmustbe.me/blog/view/javascript/mention-config.html?handler=%s', 'OpenBlog');" value="" >Use this site as your Editor</button>
                 <br>
               <?php } else { ?>
                 You must log in with Post access to use this page

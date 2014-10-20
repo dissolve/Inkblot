@@ -8,11 +8,6 @@
       Logged in as <?php echo $user_name?><br>
           <?php if(isset($micropubEndpoint)) { ?>
               Found Micropub Endpoint at <?php echo $micropubEndpoint?><br>
-<?php if($is_owner){ ?>
-<!--<script>
-window.navigator.registerProtocolHandler('web+action', 'https://ben.thatmustbe.me/blog/view/javascript/mention-config.html?handler=%s', 'OpenBlog');
-</script>-->
-<?php } ?>
                 
               <?php if($token){ ?>
                 Access Token Found 
