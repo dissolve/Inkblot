@@ -101,10 +101,11 @@ class ControllerAuthLogin extends Controller {
             //lets try and see if they have an MP endpoint and if so, so they offer up the actions they have
             $mp_endpoint = IndieAuth\Client::discoverMicropubEndpoint($me);
             if($mp_endpoint){
-                $ch = curl_init($mp_endpoint.'?q=json_actions');
+                $ch = curl_init($mp_endpoint.'?q=actions');
 
                 if(!$ch){$this->log->write('error with curl_init');}
 
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
@@ -164,10 +165,11 @@ class ControllerAuthLogin extends Controller {
             //lets try and see if they have an MP endpoint and if so, so they offer up the actions they have
             $mp_endpoint = IndieAuth\Client::discoverMicropubEndpoint($me);
             if($mp_endpoint){
-                $ch = curl_init($mp_endpoint.'?q=json_actions');
+                $ch = curl_init($mp_endpoint.'?q=actions');
 
                 if(!$ch){$this->log->write('error with curl_init');}
 
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 

@@ -19,7 +19,7 @@
         <link rel="profile" href="http://microformats.org/profile/specs" />
         <link rel="profile" href="http://microformats.org/profile/hatom" />
 
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+        <link href="/blog/view/shared/font-awesome-4.2.0/css/font-awesome.css" rel="stylesheet">
         <?php foreach ($links as $link) { ?>
         <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
         <?php } ?>
@@ -29,6 +29,7 @@
         <link rel="apple-touch-icon-precomposed" href="<?php echo $icon?>" />
 
         <?php } ?>
+        <script src="/blog/view/javascript/cubiq-add-to-homescreen-a94cf94/src/addtohomescreen.min.js"></script>
 
     <style>
       body{background:black url('/image/static/android-bubbles.jpg') no-repeat center center fixed; 
@@ -143,6 +144,12 @@
   ga('create', '<?php echo $google_analytics_id?>', 'auto');
   ga('require', 'displayfeatures');
   ga('send', 'pageview');
+
+</script>
+        <script> 
+addToHomescreen({
+        detectHomescreen: true;
+});
 
 </script>
 </body>
