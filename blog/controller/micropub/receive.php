@@ -3,47 +3,50 @@ class ControllerMicropubReceive extends Controller {
 	public function index() {
         //$this->log->write(print_r($this->request->post, true));
         //$this->log->write(file_get_contents("php://input"));
+        $supported_array = array(
+                "edit" => "https://ben.thatmustbe.me/edit?url={url}",
+                "new" => "https://ben.thatmustbe.me/new",
+                "reply" => "https://ben.thatmustbe.me/new?reply_to={url}",
+                "repost" => "https://ben.thatmustbe.me/new?url={url}",
+                "bookmark" => "https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}",
+                "favorite" => "https://ben.thatmustbe.me/new?type=like&like={url}",
+                "like" => "https://ben.thatmustbe.me/new?type=like&like={url}",
+                "delete" => "https://ben.thatmustbe.me/delete?url={url}",
+                "undelete" => "https://ben.thatmustbe.me/undelete?url={url}");
+        
         if(isset($this->request->get['q']) && $this->request->get['q'] == 'actions'){
-            if($this->request->server['CONTENT_TYPE'] == 'application/json'){
-                $json = array();
-                $json["edit"] = "https://ben.thatmustbe.me/edit?url={url}";
-                $json["new"] = "https://ben.thatmustbe.me/new";
-                $json["reply"] = "https://ben.thatmustbe.me/new?reply_to={url}";
-                $json["repost"] = "https://ben.thatmustbe.me/new?url={url}";
-                $json["bookmark"] = "https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}";
-                $json["favorite"] = "https://ben.thatmustbe.me/new?type=like&like={url}";
-                $json["like"] = "https://ben.thatmustbe.me/new?type=like&like={url}";
-                $json["delete"] = "https://ben.thatmustbe.me/delete?url={url}";
-                $json["undelete"] = "https://ben.thatmustbe.me/undelete?url={url}";
-
+            if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
+                $json = $supported_array;
                 $this->response->setOutput(json_encode($json));
             } else {
-                $supported = 
-                "edit=".urlencode("https://ben.thatmustbe.me/edit?url={url}").'&'.
-                "new=".urlencode("https://ben.thatmustbe.me/new").'&'.
-                "reply=".urlencode("https://ben.thatmustbe.me/new?reply_to={url}").'&'.
-                "repost=".urlencode("https://ben.thatmustbe.me/new?repost={url}").'&'.
-                "bookmark=".urlencode("https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}").'&'.
-                "favorite=".urlencode("https://ben.thatmustbe.me/new?type=like&like={url}").'&'.
-                "like=".urlencode("https://ben.thatmustbe.me/new?type=like&like={url}").'&'.
-                "delete=".urlencode("https://ben.thatmustbe.me/delete?url={url}").'&'.
-                "undelete=".urlencode("https://ben.thatmustbe.me/undelete?url={url}");
+                $build_array = array();
+                foreach($supported_array as $type => $value){
+                    $build_array[] = $type . '='. urlencode($value);
+                }
+                $supported = implode('&', $build_array);
 
                 $this->response->setOutput($supported);
             }
         } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'json_actions'){
-            $json = array();
-            $json["edit"] = "https://ben.thatmustbe.me/edit?url={url}";
-            $json["new"] = "https://ben.thatmustbe.me/new";
-            $json["reply"] = "https://ben.thatmustbe.me/new?reply_to={url}";
-            $json["repost"] = "https://ben.thatmustbe.me/new?url={url}";
-            $json["bookmark"] = "https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}";
-            $json["favorite"] = "https://ben.thatmustbe.me/new?type=like&like={url}";
-            $json["like"] = "https://ben.thatmustbe.me/new?type=like&like={url}";
-            $json["delete"] = "https://ben.thatmustbe.me/delete?url={url}";
-            $json["undelete"] = "https://ben.thatmustbe.me/undelete?url={url}";
-
+            $json = $supported_array;
 			$this->response->setOutput(json_encode($json));
+        } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'indie-config'){
+            $build_array = array();
+            foreach($supported_array as $type => $value){
+                $build_array[] = $type . ": '". $value. "'";
+            }
+            $indieconfig ="
+<script>
+(function() {
+  if (window.parent !== window) {
+    window.parent.postMessage(JSON.stringify({
+      // The endpoint you use to write replies
+".implode(",\n", $build_array) ."
+    }), '*');
+  }
+}());
+</script>";
+			$this->response->setOutput($indieconfig);
 
 
         } else {

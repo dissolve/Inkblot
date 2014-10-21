@@ -19,7 +19,7 @@ class ControllerCommonFooter extends Controller {
 
         if($this->session->data['is_owner']){
             $data['newlink'] = $this->url->link('micropub/client', '', '');
-            $data['webaction'] = $this->url->link('micropub/receive', 'q=actions', '');
+            $data['webaction'] = $this->url->link('micropub/receive', 'q=indie-config&handler=%s', '');
         }
 
 		$data['mylinks'] = array();

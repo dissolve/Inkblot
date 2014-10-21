@@ -168,15 +168,22 @@ while($webmention){
         }
 
         try {
-            $loader->model($model);
-            if($editing){
-                $registry->get('model_'. str_replace('/', '_', $model))->editWebmention($data, $webmention_id, $comment_data);
+            if(!$model){
+                throw new Exception('No Model Set.');
             } else {
-                $log->write(' calling model_'. str_replace('/', '_', $model) . ' addWebmention with '. print_r($data, true). ' ' .  $webmention_id . " " . print_r( $comment_data, true));
-                $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_data);
-                $log->write(' DONE');
+                $loader->model($model);
+                if($editing){
+                    $registry->get('model_'. str_replace('/', '_', $model))->editWebmention($data, $webmention_id, $comment_data);
+                } else {
+                    $log->write(' calling model_'. str_replace('/', '_', $model) . ' addWebmention with '. print_r($data, true). ' ' .  $webmention_id . " " . print_r( $comment_data, true));
+                    $registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_data);
+                    $log->write(' DONE');
+                }
             }
         } catch (Exception $e) {
+            if(empty($comment_data['url'])){
+                $comment_data['url'] = $real_source_url;
+            }
             if(isset($comment_data['type']) && $comment_data['type'] == 'like'){
                 $db->query("INSERT INTO ". DATABASE.".likes SET source_url = '".$comment_data['url']."'".
                     ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$comment_data['author']['name']."'" : "") .

@@ -102,10 +102,11 @@ class ControllerAuthLogin extends Controller {
             $mp_endpoint = IndieAuth\Client::discoverMicropubEndpoint($me);
             if($mp_endpoint){
                 $ch = curl_init($mp_endpoint.'?q=actions');
+                //$ch = curl_init($mp_endpoint.'?q=actions');
 
                 if(!$ch){$this->log->write('error with curl_init');}
 
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
+                //curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
@@ -173,14 +174,15 @@ class ControllerAuthLogin extends Controller {
 
             $this->session->data['token'] = $token_results['access_token'];
             if($mp_endpoint){
+                //$ch = curl_init($mp_endpoint.'?q=actions');
                 $ch = curl_init($mp_endpoint.'?q=actions');
 
                 if(!$ch){$this->log->write('error with curl_init');}
 
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
-                if(isset($token_results['access_token'])){
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', 'Authorization: Bearer '. $token_results['access_token']));
-                }
+                //curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
+                //if(isset($token_results['access_token'])){
+                    //curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', 'Authorization: Bearer '. $token_results['access_token']));
+                //}
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 

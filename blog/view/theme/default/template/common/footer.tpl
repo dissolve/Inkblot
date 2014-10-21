@@ -90,11 +90,6 @@
     <ul><li>
         <a href="<?php echo $logout?>">Log Out</a>
     </li></ul>
-        <?php if(isset($webaction)){ ?>
-            <ul><li>
-            <button onclick=" window.navigator.registerProtocolHandler('web+action', '<?php echo $webaction;?>' , 'Postly');" value="" >Use this site as your Editor</button>
-            </li></ul>
-        <?php } ?>
     <?php } else { ?>
     <h3 class="widget-title">Log In with IndieAuth</h3>
     <ul><li>
@@ -106,6 +101,11 @@
     </li></ul>
     <?php } ?>
 </section>
+        <?php if(isset($webaction)){ ?>
+        <section class="widget">
+            <button onclick=" window.navigator.registerProtocolHandler('web+action', '<?php echo $webaction;?>' , 'Postly');" value="" >Register Your Handler</button>
+        </section>
+        <?php } ?>
 
 </div><!-- #secondary .widget-area -->
 

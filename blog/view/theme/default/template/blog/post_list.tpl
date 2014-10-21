@@ -63,7 +63,6 @@
     </div>
   <?php } ?>
     <div class="admin-controls">
-      <?php if(isset($post['editlink'])){ ?>
       <?php foreach($post['actions'] as $actiontype => $action){ ?>
       <indie-action do="<?php echo $actiontype?>" with="<?php echo $post['permalink']?>">
       <a href="<?php echo $action['link'] ?>" title="<?php echo $action['title']?>"><?php echo $action['icon']?></a>

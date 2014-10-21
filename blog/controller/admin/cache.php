@@ -3,7 +3,7 @@ class ControllerAdminCache extends Controller {
 	private $error = array(); 
 	    
   	public function index() {
-        //print_r(json_decode($this->session->data['mp-config'])); die();
+        //print_r(json_decode($this->session->data['mp-config'],true)); die();
         $json = array();
         if($this->session->data['is_owner']){
 

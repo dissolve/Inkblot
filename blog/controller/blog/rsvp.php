@@ -2,7 +2,8 @@
 class ControllerBlogRsvp extends Controller {
 	public function index() {
         if($this->session->data['mp-config']){
-            $mpconfig = json_decode($this->session->data['mp-config'], true);
+            $mpconfig = array();
+            parse_str($this->session->data['mp-config'], $mpconfig);
         }
 
         $year = $this->request->get['year'];
@@ -68,11 +69,17 @@ class ControllerBlogRsvp extends Controller {
                             $comm['actions']['delete'] = array('title' => 'Delete', 'icon' => "<i class='fa fa-trash'></i>", 'link' => $this->url->link('micropub/client/deletePost', 'url='.$comm['source_url']));
                         }
                     }
+                    if($mpconfig['repost']){
+                        $comm['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-share-square-o'></i>", 'link'=> str_replace('{url}', urlencode($comm['source_url']), $mpconfig['repost']));
+                    }
                     if($mpconfig['reply']){
                         $comm['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link'=> str_replace('{url}', urlencode($comm['source_url']), $mpconfig['reply']));
                     }
-                    if($mpconfig['repost']){
-                        $comm['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-share-square-o'></i>", 'link'=> str_replace('{url}', urlencode($comm['source_url']), $mpconfig['repost']));
+                    if($mpconfig['like']){
+                        $comm['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link'=> str_replace('{url}', urlencode($comm['source_url']), $mpconfig['like']));
+                    }
+                    if($mpconfig['bookmark']){
+                        $comm['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link'=> str_replace('{url}', urlencode($comm['source_url']), $mpconfig['bookmark']));
                     }
                     $comments[] = $comm;
                 }
@@ -118,11 +125,16 @@ class ControllerBlogRsvp extends Controller {
             if($mpconfig['reply']){
                 $data['post']['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
             }
+            if($mpconfig['like']){
+                $data['post']['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
+            }
+            if($mpconfig['bookmark']){
+                $data['post']['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
+            }
 
 
             $title = strip_tags($data['post']['title']);
-                    $data['post']['actions']['edit'] = array('title' => 'Edit', 'icon' => "<i class='fa fa-edit'></i>", 'link' => $this->url->link('micropub/client/editPost', 'id='.$post['post_id'],''));
-                    $data['post']['actions']['delete'] = array('title' => 'Delete', 'icon' => "<i class='fa fa-trash'></i>", 'link' => $this->url->link('micropub/client/deletePost', 'id='.$post['post_id'],''));
+            $body = strip_tags($data['post']['body_html']);
             $short_title = (strlen(html_entity_decode($title)) > 60 ? htmlentities(substr(html_entity_decode($title), 0, 57). '...') : $title);
             $description = (strlen(html_entity_decode($body)) > 200 ? htmlentities(substr(html_entity_decode($body), 0, 197). '...') : $body);
 

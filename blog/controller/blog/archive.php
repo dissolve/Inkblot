@@ -2,7 +2,8 @@
 class ControllerBlogArchive extends Controller {
 	public function index() {
         if($this->session->data['mp-config']){
-            $mpconfig = json_decode($this->session->data['mp-config'], true);
+            $mpconfig = array();
+            parse_str($this->session->data['mp-config'], $mpconfig);
         }
 
         $month_names = array('', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
@@ -54,6 +55,12 @@ class ControllerBlogArchive extends Controller {
             }
             if($mpconfig['reply']){
                 $extra_data_array['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
+            }
+            if($mpconfig['like']){
+                $extra_data_array['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
+            }
+            if($mpconfig['bookmark']){
+                $extra_data_array['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
             }
 
             $data['posts'][] = array_merge($post, $extra_data_array);
@@ -119,6 +126,12 @@ class ControllerBlogArchive extends Controller {
                 }
                 if($mpconfig['reply']){
                     $extra_data_array['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
+                }
+                if($mpconfig['like']){
+                    $extra_data_array['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
+                }
+                if($mpconfig['bookmark']){
+                    $extra_data_array['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
                 }
 
                 $data['posts'][] = array_merge($post, $extra_data_array);
