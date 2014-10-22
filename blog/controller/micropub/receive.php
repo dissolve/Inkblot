@@ -354,8 +354,19 @@ class ControllerMicropubReceive extends Controller {
                     $data['rsvp'] = 'no';
                 }
             }
-            $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter"></a>';
+            $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
             //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
+            /*if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+                $syn_extra = '';
+                foreach($this->request->post['syndicate-to'] as $synto){
+                    if(strlen($note['body'].$note['permashortcitation']) < 140){
+                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                    } else {
+                        $syn_extra .= '<a href="'.$synto.'"></a>';
+                    }
+                }
+                $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
+            }*/
 
 
             $photo_id = $this->model_blog_photo->newPhoto($data);
