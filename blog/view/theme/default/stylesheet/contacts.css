@@ -22,3 +22,5 @@ ul {margin:0;}
 #main, .main  a:visited {color:white;}
 .u-photo {float:left;border-radius:45px;padding:0;margin:7px;}
 
+a[href^="fb-messenger:"] img {content:url('/image/static/fb-messenger.png');}
+a[href^="https://mobile.twitter.com/"] img {content:url('/image/static/twitter.png');}
