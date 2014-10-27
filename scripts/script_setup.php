@@ -87,6 +87,10 @@ set_error_handler('error_handler');
 $cache = new Cache('file');
 $registry->set('cache', $cache); 
 
+// Front Controller
+$controller = new Front($registry);
+$controller->addPreAction(new Action('common/seo_url'));
+
 //** END BASIC SET UP **//
  ?>
 
