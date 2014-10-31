@@ -1,4 +1,9 @@
 <?php  
+//TODO do i need these anymore?  should probably be in the model instead
+require_once DIR_BASE . '/libraries/php-mf2/Mf2/Parser.php';
+require_once DIR_BASE . '/libraries/php-comments/src/indieweb/comments.php';
+require_once DIR_BASE . '/libraries/cassis/cassis-loader.php';
+
 class ControllerWebmentionVouch extends Controller {
 	public function get() {
         $json = array();
@@ -32,6 +37,11 @@ class ControllerWebmentionVouch extends Controller {
 
         }
 	}
+
+    public function processreferers() {
+        $this->load('webmention/vouch');
+        $this->model_webmention_vouch->processReferers();
+    }
 
 }
 ?>
