@@ -371,7 +371,7 @@ class ModelBlogPost extends Model {
     }
 
     public function editWebmention($data, $webmention_id, $comment_data, $post_id = null){
-        $query = $db->query("SELECT * FROM ". DATABASE.".webmentions WHERE webmention_id = ".(int)$webmention_id." LIMIT 1");
+        $query = $this->db->query("SELECT * FROM ". DATABASE.".webmentions WHERE webmention_id = ".(int)$webmention_id." LIMIT 1");
         $webmention = $query->row;
         $resulting_comment_id = (int)$webmention['resulting_comment_id'];
         $resulting_mention_id = (int)$webmention['resulting_mention_id'];
