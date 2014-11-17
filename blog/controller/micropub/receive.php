@@ -27,6 +27,7 @@ class ControllerMicropubReceive extends Controller {
 
                 $this->response->setOutput($supported);
             }
+
         } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'json_actions'){
             $json = $supported_array;
 			$this->response->setOutput(json_encode($json));
@@ -73,8 +74,10 @@ class ControllerMicropubReceive extends Controller {
 
                     if($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) {
 
+                        if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
+                            $this->getPost();
                         //$this->log->write(print_r($this->request->post, true));
-                        if(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'delete'){
+                        } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'delete'){
                             $this->deletePost();
                         } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'undelete'){
                             $this->undeletePost();
@@ -109,6 +112,15 @@ class ControllerMicropubReceive extends Controller {
                 exit();
             }
         }
+    }
+
+    private function getPost(){
+        $post = $this->getPostByURL($this->request->get['url']);
+        if($post) {
+            $this->response->addHeader('HTTP/1.1 200 OK');
+            $this->response->setOutput(http_build_query($post));
+        }
+
     }
 
     private function undeletePost(){
@@ -156,30 +168,47 @@ class ControllerMicropubReceive extends Controller {
             if(isset($this->request->post['syndication'])){
                 $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
             }
-            
-            if(isset($this->request->post['title'])){
-                $post['title'] = $this->request->post['title'];
-            } else {
-                $post['title'] = '';
+
+            $simple_editable_fields = array(
+                'title' => 'title',
+                'content' => 'body',
+                'location' => 'location',
+                'place_name' => 'place_name',
+                'like' => 'like',
+                'bookmark' => 'bookmark',
+                'slug' => 'slug');
+
+            if(isset($this->request->post['delete-fields']) && !empty($this->request->post['delete-fields'])){
+                foreach($simple_editable_fields as $field_name => $db_name){
+                    if(in_array($field_name, $this->request->post['delete-fields'])){
+                        $post[$db_name] = '';
+                    }
+                }
+                if(in_array('category', $this->request->post['delete-fields'])){
+                    $this->model_blog_post->removeFromAllCategories($post['post_id']);
+                }
             }
-            if(isset($this->request->post['content'])){
-                $post['body'] = $this->request->post['content'];
 
-
-            } else {
-                $post['body'] = '';
+            foreach($simple_editable_fields as $field_name => $db_name){
+                if(isset($this->request->post[$field_name]) && !empty($this->request->post[$field_name])){
+                    $post[$db_name] = $this->request->post[$field_name];
+                }
+            }
+            if(isset($this->request->post['category']) && empty($this->request->post['category'])){
+                foreach($this->request->post['category'] as $category){
+                    $this->model_blog_post->addToCategory($post['post_id'], $category);
+                }
             }
 
             //$this->log->write(print_r($post,true));
             $this->model_blog_post->editPost($post);
-            
-
 
             $this->response->addHeader('HTTP/1.1 200 OK');
             //$this->response->addHeader('Location: '. $post['permalink']);
             $this->response->setOutput($post['permalink']);
         }
     }
+
 
     private function createNote(){
         //$this->log->write('called createNote()');

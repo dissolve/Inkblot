@@ -172,7 +172,10 @@ class ControllerMicropubClient extends Controller {
 		}
 
 		if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
-		    $data['post'] = $this->download_entry($this->request->get['url']);
+            //TaODOME
+            //mpDownloadPost
+		    $data['post'] = $this->mpDownloadPost($this->request->get['url']);
+		    //$data['post'] = $this->download_entry($this->request->get['url']);
 		}
 
 		if(isset($this->request->get['op'])){
@@ -370,5 +373,28 @@ class ControllerMicropubClient extends Controller {
         //$post['body'] = print_r($mf2_parsed['items'][0],true);
         return $post;
     }
+    private function mpDownloadPost() {
+
+        $user = $this->session->data['user_site'];
+        $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+
+        $ch = curl_init($micropub_endpoint. '?url='.$this->request->get['url']);
+
+        if(!$ch){$this->log->write('error with curl_init');}
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '. $this->session->data['token']));
+
+        /////////////////////////////////////////////////
+        //TODO: once my hosting provider fixes its issue i can remove this
+        //curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        /////////////////////////////////////////////////
+
+        $response = curl_exec($ch);
+        parse_str($response,$post);
+        return $post;
+
+    }
+
 }
 ?>

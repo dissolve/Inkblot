@@ -209,6 +209,25 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
+    public function addToCategory($post_id, $category_name){
+        $trimmed_cat = trim($category_name);
+        $query = $this->db->query("SELECT category_id FROM ".DATABASE.".categories where name='".$this->db->escape($trimmed_cat)."'");
+        $find_cat = $query->row;
+        $cid = 0;
+        if(empty($find_cat)){
+            $this->db->query("INSERT INTO ".DATABASE.".categories SET name='".$this->db->escape($trimmed_cat)."'");
+            $cid = $this->db->getLastId();
+        } else {
+            $cid = $find_cat['category_id'];
+        }
+        $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$id);
+    }
+
+    public function removeFromAllCategories($post_id){
+        $this->db->query("DELETE FROM ".DATABASE.".categories_posts WHERE post_id = ".(int)$post_id);
+        //todo find and remove empty categories
+    }
+
 	public function getPostsByCategory($category_id, $limit=20, $skip=0) {
 		$post_id_array = $this->cache->get('posts.category.'. $category_id . '.'. $skip . '.'.  $limit);
 		if(!$post_id_array){
