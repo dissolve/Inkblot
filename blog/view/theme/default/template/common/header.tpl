@@ -13,8 +13,6 @@
         <meta name="<?php echo $meta['name']; ?>" content="<?php echo $meta['content']; ?>" />
         <?php } ?>
 
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
         <link rel="stylesheet" href="/blog/view/theme/default/stylesheet/normalize.css">
         <link rel="stylesheet" href="/blog/view/theme/default/stylesheet/main.css">
 
@@ -94,11 +92,13 @@ var loadIndieConfig = function () {
 
 <body class="home blog custom-background multi-column single-author custom-header" itemscope="" itemtype="http://schema.org/Blog">
 <div id="page">
-  <header id="branding" role="banner">
+  <header class="h-card" id="branding" role="banner">
     <h1 id="site-title" itemprop="name" class="p-name"><a href="<?php echo $home?>" title="<?php echo $site_title?>" rel="home" itemprop="url" class="u-url url"><?php echo $site_title?></a></h1>
-    <h2 id="site-description" itemprop="description" class="p-summary e-content"><?php echo $site_subtitle?></h2>
-    
+    <h2 id="site-description" itemprop="description" class="p-role p-summary e-content"><?php echo $site_subtitle?></h2>
         
+        <?php if ($icon) { ?>
+        <img src="<?php echo $icon; ?>" class="photo u-photo" style="display:none" />
+        <?php } ?>
   </header><!-- #branding -->
 
   <div id="main">

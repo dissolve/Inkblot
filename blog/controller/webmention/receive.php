@@ -239,7 +239,7 @@ class ControllerWebmentionReceive extends Controller {
                 $comment_data = IndieWeb\comments\parse($mf2_parsed['items'][0], $target_url);
                 $this->log->write('target = ' . $target_url . ' real_source_url = '. $real_source_url);
 
-                require_once DIR_BASE . '/routes.php';
+                require DIR_BASE . '/routes.php';
 
                 $data = array();
                 foreach($advanced_routes as $adv_route){
