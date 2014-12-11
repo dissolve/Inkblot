@@ -10,7 +10,8 @@
               Found Micropub Endpoint at <?php echo $micropubEndpoint?><br>
                 
               <?php if($token){ ?>
-                Access Token Found 
+                Access Token Found <br>
+                <br>
               <?php } else { ?>
                 You must log in with Post access to use this page
                 <form action="<?php echo $login?>" method="get">
@@ -39,7 +40,6 @@
                   <div class="col-sm-10">
         <script>
             $(function(){ 
-                
                 var ed = null;
                 function showNote(){
                     $('.form-group').hide();
@@ -47,7 +47,9 @@
                     $('.group-note').show();
                     $('.form-group.content').addClass('required');
                     $('.control-label[for="input-replyto"]').html('Reply To');
-                    ed.destroy('input-body');
+                    if(ed){
+                        ed.destroy('input-body');
+                    }
                 }
                 function showArticle(){
                     $('.form-group').hide();
@@ -82,52 +84,81 @@
                     $('.group-bookmark').show();
                     $('.form-group.bookmark').addClass('required');
                 }
+
+
                 $('#radio-note').click(function(){showNote()});
                 $('#radio-article').click(function(){showArticle()});
                 $('#radio-rsvp').click(function(){showRsvp()});
                 $('#radio-checkin').click(function(){showCheckin()});
                 $('#radio-like').click(function(){showLike()});
                 $('#radio-bookmark').click(function(){showBookmark()});
-                showNote();
-                
+
+                <?php if($type == 'article'){ ?>
+                    showArticle();
+                <?php } elseif($type == 'rsvp'){ ?>
+                    showRsvp();
+                <?php } elseif($type == 'checkin'){ ?>
+                    showCheckin();
+                <?php } elseif($type == 'like'){ ?>
+                    showLike();
+                <?php } elseif($type == 'bookmark'){ ?>
+                    showBookmark();
+                <?php } else { ?>
+                    showNote();
+                <?php } ?>
+
+                $('#get-location-button').click(function(e){
+                    e.preventDefault();
+                    
+                    function showPosition(position) {
+                        $('input[name="location"]').val(
+                        "geo:" + position.coords.latitude +
+                        "," + position.coords.longitude);
+                    }
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(showPosition);
+                    } else {
+                        alert("Geolocation is not supported by this browser.");
+                    }
+                    return false;
+                });
+
+                <?php if($is_owner){ ?>
+                $('#input-replyto').focusout(function(){
+                    $.getJSON(
+                        '/vouchsearch',
+                        {url: $('#input-replyto').val()},
+                        function(data){
+                            if(data.success == 'yes'){
+                            $('#input-vouch').val(data.vouch)
+                            }
+                        });
+                    
+                });
+                <?php } //end if owner ?>
+
             });
         </script>
 
-        <!--<script type="text/javascript" src="/blog/view/javascript/ckeditor/ckeditor.js"></script> -->
                     <ul class="mp-type-list">
-                      <li><a class="mp-list-item" href="<?php echo $new_entry_link?>">New</a></li>
-                      <li class="mp-list-item mp-selected">Edit</li>
+                      <li class="mp-list-item mp-selected">New</li>
+                      <li><a class="mp-list-item" href="<?php echo $edit_entry_link?>">Edit</a></li>
                       <li><a class="mp-list-item" href="<?php echo $delete_entry_link?>">Delete</a></li>
                       <li><a class="mp-list-item" href="<?php echo $undelete_entry_link?>">Undelete</a></li>
                     </ul>
-		    <input type="hidden" name="operation" value="edit" />
+		    <input type="hidden" name="operation" value="create" />
+                <div class="type-select-wrap">
 
-                <!--
                     <input type="radio" name="type" class="type-select" value="note"     id="radio-note"     <?php echo($type == 'note' ? '' :'checked')?> class="form-control" /><label class="type-select-label" for="radio-note">Note</label>
                     <input type="radio" name="type" class="type-select" value="article"  id="radio-article"  <?php echo($type == 'article'?'checked':'')?> class="form-control" /><label class="type-select-label" for="radio-article">Article</label>
                     <input type="radio" name="type" class="type-select" value="rsvp"     id="radio-rsvp"     <?php echo($type == 'rsvp' ? 'checked': '')?> class="form-control" /><label class="type-select-label" for="radio-rsvp">RSVP</label>
                     <input type="radio" name="type" class="type-select" value="checkin"  id="radio-checkin"  <?php echo($type == 'checkin'?'checked':'')?> class="form-control" /><label class="type-select-label" for="radio-checkin">Checkin</label>
                     <input type="radio" name="type" class="type-select" value="like"     id="radio-like"     <?php echo($type == 'like' ? 'checked': '')?> class="form-control" /><label class="type-select-label" for="radio-like">Like</label>
                     <input type="radio" name="type" class="type-select" value="bookmark" id="radio-bookmark" <?php echo($type =='bookmark'?'checked':'')?> class="form-control" /><label class="type-select-label" for="radio-bookmark">Bookmark</label>
-                    -->
                   </div>
-                </div>
+              </div>
+            </div>
             <div class="content">
-                <div class="form-group group-note group-article group-rsvp group-checkin group-like group-bookmark">
-                  <label class="col-sm-2 control-label" for="input-url">URL</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="url" value="<?php echo isset($post) ? $post['permalink'] : ''; ?>" placeholder="Permalink to Entry" id="input-url" class="form-control" />
-                  </div>
-                </div>
-
-
-                <div class="form-group group-note group-article group-rsvp group-checkin group-like group-bookmark">
-                  <label class="col-sm-2 control-label" for="input-syndication">Syndication URL to Add</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="syndication" value="" placeholder="Permalink to Syndicated Copy" id="input-syndication" class="form-control" />
-                  </div>
-                </div>
-
 
                 <div class="form-group group-note group-article title">
                   <label class="col-sm-2 control-label" for="input-title">Title</label>
@@ -154,6 +185,13 @@
                   <label class="col-sm-2 control-label" for="input-replyto">Reply To</label>
                   <div class="col-sm-10">
                     <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
+                  </div>
+                </div>
+
+                <div class="form-group group-note vouch">
+                  <label class="col-sm-2 control-label" for="input-vouch">Vouch URL</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="vouch" value="<?php echo isset($post) ? $post['vouch'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-vouch" class="form-control" />
                   </div>
                 </div>
 
@@ -212,6 +250,7 @@
                   <label class="col-sm-2 control-label" for="input-location">Location</label>
                   <div class="col-sm-10">
                     <input type="text" name="location" value="<?php echo isset($post) ? $post['location'] : ''; ?>" placeholder="<?php echo $entry_location; ?>" id="input-location" class="form-control" />
+                    <button id="get-location-button">Get Location</button>
                   </div>
                 </div>
 
@@ -252,5 +291,7 @@
 
 
   </footer><!-- #entry-meta --></article>
+        <!--<script type="text/javascript" src="/view/javascript/ckeditor/ckeditor.js"></script> -->
+<script src="//cdn.ckeditor.com/4.4.5/standard/ckeditor.js"></script>
 
 <?php echo $footer; ?>

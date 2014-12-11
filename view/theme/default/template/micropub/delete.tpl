@@ -1,5 +1,4 @@
 <?php echo $header; ?>
- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
           <article id="" class="article">
 
@@ -8,10 +7,8 @@
       Logged in as <?php echo $user_name?><br>
           <?php if(isset($micropubEndpoint)) { ?>
               Found Micropub Endpoint at <?php echo $micropubEndpoint?><br>
-                
               <?php if($token){ ?>
-                Access Token Found <br>
-                <br>
+                Access Token Found 
               <?php } else { ?>
                 You must log in with Post access to use this page
                 <form action="<?php echo $login?>" method="get">
@@ -24,7 +21,6 @@
           <?php } else { ?>
               No Micropub Endpoint Found! 
           <?php } ?>
-
       <?php } else { ?>
         You must log in with Post access to use this page
         <form action="<?php echo $login?>" method="get">
@@ -34,37 +30,37 @@
           <input type="hidden" name="scope" value="post edit delete" />
         </form>
       <?php } ?>
-      <form action="<?php echo ($token?$action:''); ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
-
-		    <input type="hidden" name="operation" value="create" />
-            <input type="hidden" name="type" class="type-select" value="note" />
+      <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
             <div class="content">
-
-                <div class="form-group required group-note group-checkin group-article group-bookmark group-rsvp content">
-                  <label class="col-sm-2 control-label" for="input-body">Body</label>
+                <div class="form-group">
                   <div class="col-sm-10">
-                    <textarea name="content" placeholder="Body of Post" id="input-body" class="form-control"><?php echo isset($post['body']) ? $post['body'] : ''; ?></textarea>
+                    <ul class="mp-type-list">
+                      <li><a class="mp-list-item" href="<?php echo $new_entry_link?>">New</a></li>
+                      <li><a class="mp-list-item" href="<?php echo $edit_entry_link?>">Edit</a></li>
+                      <li class="mp-list-item mp-selected">Delete</li>
+                      <li><a class="mp-list-item" href="<?php echo $undelete_entry_link?>">Undelete</a></li>
+                    </ul>
+                    <input type="hidden" name="operation" value="delete" />
+                  </div>
+                </div>
+            <div class="content">
+                <div class="form-group group-edit group-delete" >
+                  <label class="col-sm-2 control-label" for="input-url">URL</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="url" value="<?php echo isset($post) ? $post['permalink'] : ''; ?>" placeholder="Permalink to Entry" id="input-url" class="form-control" />
                   </div>
                 </div>
 
-
-                <div class="form-group group-note group-article group-rsvp group-checkin group-like group-bookmark">
-                  <label class="col-sm-2 control-label" for="input-syndicateto">Syndicate To</label>
-                  <div class="col-sm-10">
-                    <select name="syndicate-to[]" id="input-syndicateto" multiple="multiple">
-                        <option value="https://www.brid.gy/publish/twitter">Brid.gy Twitter</option>
-                        <option value="https://www.brid.gy/publish/facebook">Brid.gy Facebook</option>
-                    </select>
-                  </div>
-                </div>
 
 
                 <?php if(isset($micropubEndpoint) && $token) { ?>
-                <div class="form-group group-note group-article group-rsvp group-checkin group-like group-bookmark">
+
+                <div class="form-group group-delete">
                   <div class="col-sm-12">
-                    <input type="submit" value="Submit" class="form-control"/>
+                    <input type="submit" value="Delete" name="" class="form-control"/>
                   </div>
                 </div>
+
 
                 <?php } ?>
             </div>
@@ -79,7 +75,9 @@
 
 
   </footer><!-- #entry-meta --></article>
-        <!--<script type="text/javascript" src="/blog/view/javascript/ckeditor/ckeditor.js"></script> -->
-<script src="//cdn.ckeditor.com/4.4.5/standard/ckeditor.js"></script>
 
+<!-- <script type="text/javascript" src="/view/javascript/ckeditor/ckeditor.js"></script> 
+<script type="text/javascript">
+CKEDITOR.replace('input-body');
+</script>  -->
 <?php echo $footer; ?>

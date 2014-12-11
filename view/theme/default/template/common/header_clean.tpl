@@ -15,8 +15,8 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <link rel="stylesheet" href="/blog/view/theme/default/stylesheet/normalize.css">
-        <link rel="stylesheet" href="/blog/view/theme/default/stylesheet/main.css">
+        <link rel="stylesheet" href="/view/theme/default/stylesheet/normalize.css">
+        <link rel="stylesheet" href="/view/theme/default/stylesheet/main.css">
 
         <link rel="webmention" href="<?php echo $webmention_handler?>" />
         <link rel="authorization_endpoint" href="<?php echo $authorization_endpoint ?>">
@@ -25,8 +25,8 @@
         <link rel="profile" href="http://microformats.org/profile/specs" />
         <link rel="profile" href="http://microformats.org/profile/hatom" />
 
-        <link rel='stylesheet' id='sempress-style-css'  href='/blog/view/theme/default/stylesheet/stylesheet.css' type='text/css' media='all' />
-        <link href="/blog/view/shared/font-awesome-4.2.0/css/font-awesome.css" rel="stylesheet">
+        <link rel='stylesheet' id='sempress-style-css'  href='/view/theme/default/stylesheet/stylesheet.css' type='text/css' media='all' />
+        <link href="/view/shared/font-awesome-4.2.0/css/font-awesome.css" rel="stylesheet">
         <?php foreach ($links as $link) { ?>
         <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
         <?php } ?>
@@ -35,8 +35,8 @@
         <link rel="apple-touch-icon-precomposed" href="<?php echo $icon?>" />
         <?php } ?>
 
-        <script src="/blog/view/javascript/vendor/modernizr-2.6.2.min.js"></script>
-        <script src="/blog/view/javascript/fragmention.js"></script>
+        <script src="/view/javascript/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="/view/javascript/fragmention.js"></script>
         <script>
 // Lazy-create and return an indie-config load promise
 // The promise will be resolved with a config once the indie-config has been loaded

@@ -102,7 +102,7 @@
 
 
   </footer><!-- #entry-meta --></article>
-        <!--<script type="text/javascript" src="/blog/view/javascript/ckeditor/ckeditor.js"></script> -->
+        <!--<script type="text/javascript" src="/view/javascript/ckeditor/ckeditor.js"></script> -->
 <script src="//cdn.ckeditor.com/4.4.5/standard/ckeditor.js"></script>
 
 <?php echo $footer; ?>

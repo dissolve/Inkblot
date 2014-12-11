@@ -76,7 +76,7 @@
 
   </footer><!-- #entry-meta --></article>
 
-<!-- <script type="text/javascript" src="/blog/view/javascript/ckeditor/ckeditor.js"></script> 
+<!-- <script type="text/javascript" src="/view/javascript/ckeditor/ckeditor.js"></script> 
 <script type="text/javascript">
 CKEDITOR.replace('input-body');
 </script>  -->

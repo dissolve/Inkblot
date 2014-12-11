@@ -59,7 +59,7 @@ define('DIR_DOWNLOAD', DIR_BASE . 'download/');
 define('DIR_LOGS', DIR_BASE . 'system/logs/');
 define('DIR_MODIFICATION', DIR_BASE . 'system/modification/');
 
-define('DIR_APPLICATION', DIR_BASE . 'blog/');
-define('DIR_TEMPLATE', DIR_BASE . 'blog/view/theme/');
+define('DIR_APPLICATION', DIR_BASE . '/');
+define('DIR_TEMPLATE', DIR_BASE . '/view/theme/');
 
 define('AUTH_ENDPOINT', 'https://indieauth.com/auth');
