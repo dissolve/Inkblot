@@ -12,7 +12,7 @@
 	url = https://github.com/indieweb/link-rel-parser-php
 [submodule "libraries/php-mf2"]
 	path = libraries/php-mf2
-	url = https://github.com/dissolve/php-mf2.git
+	url = https://github.com/dissolve/php-mf2
 [submodule "libraries/php-mf2-shim"]
 	path = libraries/php-mf2-shim
 	url = https://github.com/indieweb/php-mf2-shim
