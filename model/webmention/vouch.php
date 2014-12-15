@@ -342,6 +342,19 @@ class ModelWebmentionVouch extends Model {
         }
     }
 
+    public function setWhitelistEntryPublic($whitelist_id){
+        $this->db->query("UPDATE ".DATABASE.".vouch_whitelist SET public = 1 WHERE whitelist_id = ". (int)$whitelist_id." LIMIT 1");
+        $this->cache->delete('whitelist');
+    }
+    public function setWhitelistEntryPrivate($whitelist_id){
+        $this->db->query("UPDATE ".DATABASE.".vouch_whitelist SET public = 0 WHERE whitelist_id = ". (int)$whitelist_id." LIMIT 1");
+        $this->cache->delete('whitelist');
+    }
+    public function removeWhitelistEntry($whitelist_id){
+        $this->db->query("DELETE FROM ".DATABASE.".vouch_whitelist WHERE whitelist_id = ". (int)$whitelist_id." LIMIT 1");
+        $this->cache->delete('whitelist');
+    }
+
 
 }
 ?>
