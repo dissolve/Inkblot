@@ -1,6 +1,7 @@
 <?php
 class ModelWebmentionQueue extends Model {
 	public function addEntry($source, $target, $vouch=null) {
+        $target = rtrim($target, '/') . '/';  // ALWAYS USER A TRAILING / 
         //find it this is an update
         $query = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE source_url='".$this->db->escape($source)."' AND target_url='".$this->db->escape($target)."'");
         $results = $query->row;
