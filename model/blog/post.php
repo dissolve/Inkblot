@@ -276,11 +276,14 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
-	public function getPostsByArchive($year, $month, $limit=20, $skip=0) {
+	public function getPostsByArchive($year, $month, $limit=NULL, $skip=0) {
         $post_id_array = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
         if(!$post_id_array){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC ". ($limit ? " LIMIT " . (int)$skip .  ", " . (int)$limit : ''));
             $post_id_array = $query->rows;
+            if(!$limit){
+                $limit = 'all';
+            }
             $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $post_id_array);
         }
 	
