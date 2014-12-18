@@ -11,9 +11,9 @@ class ControllerCommonSeoUrl extends Controller {
 		if (isset($this->request->get['_route_'])) {
             $route_get =  $this->request->get['_route_'];
             //remove a trailing /
-            if(substr($route_get, -1) == '/'){
-                $route_get = substr($route_get, 0, -1);
-            }
+            //if(substr($route_get, -1) == '/'){
+                //$route_get = substr($route_get, 0, -1);
+            //}
             include DIR_BASE . '/routes.php';
 
             if(isset($routes[$route_get])){

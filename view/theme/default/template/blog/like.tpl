@@ -24,7 +24,7 @@
         <div class="entry-meta">      
         <span class="author p-author vcard hcard h-card">
             <img alt='' src='<?php echo $post['author_image']?>' class='u-photo ' height='40' width='40' /> 
-            <span class="p-name"><a class="url uid u-url u-uid fn" href="<?php echo $post['author']['link']?>" title="View all posts by <?php echo $post['author']['display_name']?>" rel="author">
+            <span class="p-name"><a class="url uid u-url u-uid fn" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author">
                 <?php echo $post['author']['display_name']?>
             </a></span>
         </span>

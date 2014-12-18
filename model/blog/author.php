@@ -5,7 +5,8 @@ class ModelBlogAuthor extends Model {
         if(!$data){
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".authors WHERE author_id='".(int)$id."' LIMIT 1");
             $data = $query->row;
-            $data['link'] = $this->url->link('blog/author', 'id='.(int)$data['author_id'], '');
+            //$data['link'] = $this->url->link('blog/author', 'id='.(int)$data['author_id'], '');
+            $data['link'] = $this->url->link('');
             $this->cache->set('author.'.$id, $data);
         }
 		return $data;

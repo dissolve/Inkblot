@@ -12,14 +12,21 @@ class ControllerBlogArticle extends Controller {
         $daycount = $this->request->get['daycount'];
 
 		$this->load->model('blog/article');
+		
+		$post = $this->model_blog_article->getArticleByDayCount($year, $month, $day, $daycount);
+
+        // redirect if we don't have the correct URL
+        if($this->request->get['slug'] != $post['slug'] ) {
+            $this->response->redirect($post['permalink']);
+        }
+
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
 		$this->load->model('blog/post');
 		$this->load->model('blog/mention');
 		$this->load->model('blog/context');
-		
-		$post = $this->model_blog_article->getArticleByDayCount($year, $month, $day, $daycount);
+
         if($this->session->data['is_owner']){
             $data['is_owner'] = true;
         }

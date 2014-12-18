@@ -12,6 +12,14 @@ class ControllerBlogRsvp extends Controller {
         $daycount = $this->request->get['daycount'];
 
 		$this->load->model('blog/rsvp');
+
+		$post = $this->model_blog_rsvp->getRsvpByDayCount($year, $month, $day, $daycount);
+
+        // redirect if we don't have the correct URL
+        if($this->request->get['slug'] != $post['slug'] ) {
+            $this->response->redirect($post['permalink']);
+        }
+
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/comment');
@@ -19,7 +27,6 @@ class ControllerBlogRsvp extends Controller {
 		$this->load->model('blog/mention');
 		$this->load->model('blog/context');
 		
-		$post = $this->model_blog_rsvp->getRsvpByDayCount($year, $month, $day, $daycount);
         if($this->session->data['is_owner']){
             $data['is_owner'] = true;
         }

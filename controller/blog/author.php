@@ -1,6 +1,8 @@
 <?php  
 class ControllerBlogAuthor extends Controller {
 	public function index() {
+        $this->response->redirect($this->url->link(''));
+        /*
         if($this->session->data['mp-config']){
             $mpconfig = array();
             parse_str($this->session->data['mp-config'], $mpconfig);
@@ -68,6 +70,7 @@ class ControllerBlogAuthor extends Controller {
 		} else {
 			$this->response->setOutput($this->load->view('default/template/blog/post_list.tpl', $data));
 		}
+         */
 	}
 }
 ?>
