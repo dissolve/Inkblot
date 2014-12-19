@@ -139,9 +139,10 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function deletePost(){
-        $this->log->write('called deletePost()');
+        $this->log->write('called deletePost() '.$this->request->post['url'] );
         $post = $this->getPostByURL($this->request->post['url']);
         if($post) {
+            $this->log->write('found post');
             $this->load->model('blog/post');
             $this->model_blog_post->deletePost($post['post_id']);
 
@@ -466,28 +467,15 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function createCheckin(){
-        $this->load->model('blog/note');
+        $this->load->model('blog/checkin');
         $data = array();
         $data['body'] = $this->request->post['content'];
-        $data['slug'] = $this->request->post['slug'];
 
         $data['slug'] = '';
-        if(isset($this->request->post['slug'])) {
-            $data['slug'] = $this->request->post['slug'];
-        }
-
-        if(isset($this->request->post['draft'])){
-            $data['draft'] = $this->request->post['draft'];
-        }
 
         //TODO
         // $this->request->post['h'];
         // $this->request->post['published'];
-        if(isset($this->request->post['in-reply-to'])){
-            $data['replyto'] = $this->request->post['in-reply-to'];
-            $this->load->model('webmention/vouch');
-            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
-        }
         if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
             $data['location'] = $this->request->post['location'];
         }
@@ -503,28 +491,24 @@ class ControllerMicropubReceive extends Controller {
         }
         
         //$this->log->write(print_r($data,true));
-        $note_id = $this->model_blog_note->newNote($data);
-        //$this->log->write($note_id);
+        $checkin_id = $this->model_blog_checkin->newCheckin($data);
+        //$this->log->write($checkin_id);
         $this->cache->delete('posts');
-        $this->cache->delete('notes');
+        $this->cache->delete('checkins');
 
-        $note = $this->model_blog_note->getNote($note_id);
+        $checkin = $this->model_blog_checkin->getCheckin($checkin_id);
 
-        if($note && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+        if($checkin && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
             $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
-            $this->cache->delete('post.'.$note['post_id']);
-        }
-        if($note['draft'] != 1){
-            $this->load->model('webmention/send_queue');
-            $this->model_webmention_send_queue->addEntry($note_id);
+            $this->model_blog_post->addSyndication($checkin['post_id'], $this->request->post['syndication']);
+            $this->cache->delete('post.'.$checkin['post_id']);
         }
 
-        $this->cache->delete('post.'.$note['post_id']);
+        $this->cache->delete('post.'.$checkin['post_id']);
 
         $this->response->addHeader('HTTP/1.1 201 Created');
-        $this->response->addHeader('Location: '. $note['permalink']);
-        $this->response->setOutput($note['permalink']);
+        $this->response->addHeader('Location: '. $checkin['permalink']);
+        $this->response->setOutput($checkin['permalink']);
     }
 
     private function createRsvp(){
@@ -626,7 +610,7 @@ class ControllerMicropubReceive extends Controller {
         $data = array();
         foreach($advanced_routes as $adv_route){
             $matches = array();
-            $real_url = trim(str_replace(array(HTTP_SERVER, HTTPS_SERVER),array('',''), $real_url),'/');
+            $real_url = ltrim(str_replace(array(HTTP_SERVER, HTTPS_SERVER),array('',''), $real_url),'/');
             preg_match($adv_route['expression'], $real_url, $matches);
             if(!empty($matches)){
                 $model = $adv_route['controller'];

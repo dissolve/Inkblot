@@ -244,7 +244,7 @@ class ControllerWebmentionReceive extends Controller {
                 $data = array();
                 foreach($advanced_routes as $adv_route){
                     $matches = array();
-                    $real_url = trim(str_replace(array(HTTP_SERVER, HTTPS_SERVER),array('',''), $real_url),'/');
+                    $real_url = ltrim(str_replace(array(HTTP_SERVER, HTTPS_SERVER),array('',''), $real_url),'/');
                     preg_match($adv_route['expression'], $real_url, $matches);
                     if(!empty($matches)){
                         $model = $adv_route['controller'];

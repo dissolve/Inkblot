@@ -36,23 +36,6 @@
       <?php } ?>
       <form action="<?php echo ($token?$action:''); ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
 
-        <script>
-                $('#get-location-button').click(function(e){
-                    e.preventDefault();
-                    
-                    function showPosition(position) {
-                        $('input[name="location"]').val(
-                        "geo:" + position.coords.latitude +
-                        "," + position.coords.longitude);
-                    }
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(showPosition);
-                    } else {
-                        alert("Geolocation is not supported by this browser.");
-                    }
-                    return false;
-                });
-        </script>
 		    <input type="hidden" name="operation" value="create" />
             <input type="hidden" name="type" class="type-select" value="checkin" />
             <div class="content">
@@ -99,10 +82,27 @@
         <div class="entry-meta">      
         </div><!-- .entry-meta -->
   
+        <script type="text/javascript">
+                $('#get-location-button').click(function(e){
+                    e.preventDefault();
+                    
+                    function showPosition(position) {
+                        $('input[name="location"]').val(
+                        "geo:" + position.coords.latitude +
+                        "," + position.coords.longitude);
+                    }
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(showPosition);
+                    } else {
+                        alert("Geolocation is not supported by this browser.");
+                    }
+                    return false;
+                });
+        </script>
 
 
   </footer><!-- #entry-meta --></article>
         <!--<script type="text/javascript" src="/view/javascript/ckeditor/ckeditor.js"></script> -->
-<script src="//cdn.ckeditor.com/4.4.5/standard/ckeditor.js"></script>
+<!--<script src="//cdn.ckeditor.com/4.4.5/standard/ckeditor.js"></script> -->
 
 <?php echo $footer; ?>
