@@ -65,6 +65,10 @@ $advanced_routes[] = array('controller' => 'blog/rsvp',
     'expression' => '`^rsvp/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
     'reverse' => 'rsvp/{year}/{month}/{day}/{daycount}/{slug}');
 
+$advanced_routes[] = array('controller' => 'blog/checkin',
+    'expression' => '`^checkin/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
+    'reverse' => 'checkin/{year}/{month}/{day}/{daycount}/{slug}');
+
 $advanced_routes[] = array('controller' => 'blog/bookmark',
     'expression' => '`^bookmark/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
     'reverse' => 'bookmark/{year}/{month}/{day}/{daycount}/{slug}');
