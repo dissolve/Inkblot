@@ -111,6 +111,9 @@ class ControllerBlogCheckin extends Controller {
                 'context' => $context
                 ));
 
+            $data['post']['body'] .= "\n\nChecked In At ".$data['post']['place_name']. "\n".$data['post']['location'];
+            $data['post']['body_html'] .= "<br><br>Checked In At ".$data['post']['place_name']."<br><i class='fa fa-compass'></i> ".$data['post']['location'];
+
             if(strlen($data['post']['body']. $post['permashortcitation']) < 140 ){
                 $data['post']['body'] .= "\n\n".$data['post']['permashortcitation'];
                 $data['post']['body_html'] .= "<br><br>".$data['post']['permashortcitation'];

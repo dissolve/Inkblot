@@ -47,8 +47,6 @@
       <div class="entry-content e-content p-note <?php echo (empty($post['title']) ? 'p-name' : '')?>">
       <?php 
           echo $post['body_html'];
-          echo $post['location'];
-          echo $post['place_name'];
           echo $post['syndication_extra'];
       ?>
       

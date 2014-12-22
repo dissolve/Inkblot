@@ -47,6 +47,12 @@
             </data><br>
         <?php } ?>
       <?php echo $post['body_html']?>
+      <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
+          echo "<br>Checked In At ".$post['place_name'];
+      } ?>
+      <?php if(isset($post['location']) && !empty($post['location'])){ 
+          echo "<br><i class='fa fa-compass'></i>" .$post['location'];
+      } ?>
       
       </div><!-- .entry-content -->
   
@@ -117,6 +123,12 @@
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>
       <?php echo $post['body_html']?>
+      <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
+          echo "<br>Checked In At ".$post['place_name'];
+      } ?>
+      <?php if(isset($post['location']) && !empty($post['location'])){ 
+          echo "<br><i class='fa fa-compass'></i>" .$post['location'];
+      } ?>
       
       </div><!-- .entry-content -->
   
