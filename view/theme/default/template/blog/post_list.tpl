@@ -31,10 +31,13 @@
             <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
             echo "<br>Checked In At ".$post['place_name'];
             } ?>
-            <?php if(isset($post['location']) && !empty($post['location'])){ 
-            echo "<br><i class='fa fa-compass'></i>" .$post['location'];
-            } ?>
-        <? } ?>
+            <?php if(isset($post['location']) && !empty($post['location'])){
+              $joined_loc = str_replace('geo:', '', $post['location']);
+              $latlng = explode($joined_loc, ',');
+              echo '<br>';
+              echo '<img id="map" style="width: 400px; height: 300px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=400x300&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'. $joined_loc.'"/>';
+            }
+        } ?>
       
       </div><!-- .entry-content -->
   

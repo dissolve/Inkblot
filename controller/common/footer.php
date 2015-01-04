@@ -51,7 +51,13 @@ class ControllerCommonFooter extends Controller {
 		foreach ($this->model_blog_post->getRecentPosts(10) as $result) {
             if(empty($result['title'])){
                 if($result['post_type'] == 'photo'){
-                    $result['title']='photo';
+                    $result['title']='Photo';
+                } elseif($result['post_type'] == 'checkin'){
+                    if(isset($result['place_name'])){
+                        $result['title'] = substr('Checkin At '. $result['place_name'], 0, 30). '...';
+                    } else {
+                        $result['title']='Checkin';
+                    }
                 } else {
                     $result['title'] = substr(strip_tags(html_entity_decode($result['body'])), 0, 30). '...';
                 }

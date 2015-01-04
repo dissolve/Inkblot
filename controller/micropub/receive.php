@@ -64,7 +64,7 @@ class ControllerMicropubReceive extends Controller {
                 }
 
                 $this->load->model('auth/token');
-                $auth_info = $this->model_auth_token->getAuthFromToken($token);
+                $auth_info = $this->model_auth_token->getAuthFromToken(urldecode($token));
 
 
                 if(!empty($auth_info) && in_array('post', explode(' ', $auth_info['scope']))) {
