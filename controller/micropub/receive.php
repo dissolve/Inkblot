@@ -13,6 +13,11 @@ class ControllerMicropubReceive extends Controller {
                 "like" => "https://ben.thatmustbe.me/new?type=like&like={url}",
                 "delete" => "https://ben.thatmustbe.me/delete?url={url}",
                 "undelete" => "https://ben.thatmustbe.me/undelete?url={url}");
+
+        $supported_syndication_array = array(
+            "syndicate-to[]=https://www.brid.gy/publish/twitter",
+            "syndicate-to[]=https://www.brid.gy/publish/facebook"
+        );
         
         if(isset($this->request->get['q']) && $this->request->get['q'] == 'actions'){
             if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
@@ -27,6 +32,10 @@ class ControllerMicropubReceive extends Controller {
 
                 $this->response->setOutput($supported);
             }
+
+        } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'syndicate-to'){
+            $supported = implode('&', $supported_syndication_array);
+            $this->response->setOutput($supported);
 
         } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'json_actions'){
             $json = $supported_array;
