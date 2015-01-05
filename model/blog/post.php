@@ -244,6 +244,22 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
+	public function getRecentPostsByType($type, $limit=20, $skip=0) {
+		$post_id_array = $this->cache->get('posts.'.$type.'.'. $skip . '.'.  $limit);
+		if(!$post_id_array){
+		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type = '".$this->db->escape($type)."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+		    $post_id_array = $query->rows;
+		    $this->cache->set('posts.'.$type . '.'. $skip . '.'.  $limit, $post_id_array);
+		}
+	
+        $data_array = array();
+        foreach($post_id_array as $post){
+            $data_array[] = $this->getPost($post['post_id']);
+        }
+	
+		return $data_array;
+	}
+
 	public function getPostsByDay($year, $month, $day) {
 		$post_id_array = $this->cache->get('posts.day.'. $year . '.'. $month . '.'.  $day);
 		if(!$post_id_array){

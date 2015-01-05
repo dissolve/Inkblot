@@ -20,12 +20,19 @@ class ControllerMicropubClient extends Controller {
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-                $data['micropubEndpoint'] = $endpoint;
+		    $user = $this->session->data['user_site'];
+		    $data['user_name'] = $user;
+
+            $micropub_endpoint = $this->session->data['micropub_'.$user];
+            if(!$micropub_endpoint){
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+                $this->session->data['micropub_'.$user] = $micropub_endpoint;
+            }
+		    if($micropub_endpoint){
+                $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
 		    }
+            $data['syn_arr'] = $this->get_syndication_array();
 		}
 
 		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
@@ -49,6 +56,7 @@ class ControllerMicropubClient extends Controller {
 		if(isset($this->request->get['like'])){
 		   $data['post'] = array('like' => $this->request->get['like']);
 		}
+
 
 		$data['token'] = isset($this->session->data['token']);
 
@@ -83,12 +91,19 @@ class ControllerMicropubClient extends Controller {
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-                $data['micropubEndpoint'] = $endpoint;
+		    $user = $this->session->data['user_site'];
+		    $data['user_name'] = $user;
+
+            $micropub_endpoint = $this->session->data['micropub_'.$user];
+            if(!$micropub_endpoint){
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+                $this->session->data['micropub_'.$user] = $micropub_endpoint;
+            }
+		    if($micropub_endpoint){
+                $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
 		    }
+            $data['syn_arr'] = $this->get_syndication_array();
 		}
 
 		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
@@ -124,12 +139,19 @@ class ControllerMicropubClient extends Controller {
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-                $data['micropubEndpoint'] = $endpoint;
+		    $user = $this->session->data['user_site'];
+		    $data['user_name'] = $user;
+
+            $micropub_endpoint = $this->session->data['micropub_'.$user];
+            if(!$micropub_endpoint){
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+                $this->session->data['micropub_'.$user] = $micropub_endpoint;
+            }
+		    if($micropub_endpoint){
+                $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
 		    }
+            $data['syn_arr'] = $this->get_syndication_array();
 		}
 
 		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
@@ -158,12 +180,19 @@ class ControllerMicropubClient extends Controller {
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-                $data['micropubEndpoint'] = $endpoint;
+		    $user = $this->session->data['user_site'];
+		    $data['user_name'] = $user;
+
+            $micropub_endpoint = $this->session->data['micropub_'.$user];
+            if(!$micropub_endpoint){
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+                $this->session->data['micropub_'.$user] = $micropub_endpoint;
+            }
+		    if($micropub_endpoint){
+                $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
 		    }
+            $data['syn_arr'] = $this->get_syndication_array();
 		}
 
 		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
@@ -207,12 +236,19 @@ class ControllerMicropubClient extends Controller {
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-			$data['micropubEndpoint'] = $endpoint;
-			$data['action'] = $this->url->link('micropub/client/send', '', '');
+		    $user = $this->session->data['user_site'];
+		    $data['user_name'] = $user;
+
+            $micropub_endpoint = $this->session->data['micropub_'.$user];
+            if(!$micropub_endpoint){
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+                $this->session->data['micropub_'.$user] = $micropub_endpoint;
+            }
+		    if($micropub_endpoint){
+                $data['micropubEndpoint'] = $micropub_endpoint;
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
 		    }
+            $data['syn_arr'] = $this->get_syndication_array();
 		}
 		
 		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
@@ -250,12 +286,19 @@ class ControllerMicropubClient extends Controller {
 		$this->document->setDescription($this->config->get('config_meta_description'));
 
 		if(isset($this->session->data['user_site'])){
-		    $data['user_name'] = $this->session->data['user_site'];
-		    $endpoint = IndieAuth\Client::discoverMicropubEndpoint($data['user_name']);
-		    if($endpoint){
-			$data['micropubEndpoint'] = $endpoint;
-			$data['action'] = $this->url->link('micropub/client/send', '', '');
+		    $user = $this->session->data['user_site'];
+		    $data['user_name'] = $user;
+
+            $micropub_endpoint = $this->session->data['micropub_'.$user];
+            if(!$micropub_endpoint){
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+                $this->session->data['micropub_'.$user] = $micropub_endpoint;
+            }
+		    if($micropub_endpoint){
+                $data['micropubEndpoint'] = $micropub_endpoint;
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
 		    }
+            $data['syn_arr'] = $this->get_syndication_array();
 		}
 		
 		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
@@ -283,6 +326,43 @@ class ControllerMicropubClient extends Controller {
 		}
 	}
 
+    private function get_syndication_array(){
+        
+        $user = $this->session->data['user_site'];
+        $syn_arr = $this->session->data['syndication_'.$user];
+        if(!$syn_arr){
+            $micropub_endpoint = $this->session->data['micropub_'.$user];
+            if(!$micropub_endpoint){
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+                $this->session->data['micropub_'.$user] = $micropub_endpoint;
+            }
+            $ch = curl_init($micropub_endpoint.'?q=syndicate-to');
+
+            if(!$ch){$this->log->write('error with curl_init');}
+
+
+            if(!$ch){$this->log->write('error with curl_init');}
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '. $this->session->data['token']));
+
+            /////////////////////////////////////////////////
+            //TODO: once my hosting provider fixes its issue i can remove this
+            //curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            /////////////////////////////////////////////////
+
+            $response = curl_exec($ch);
+            parse_str($response,$syn_arr);
+            $this->session->data['syndication_'.$user] = $syn_arr;
+        }
+        if(isset($syn_arr['syndicate-to'])){
+            return $syn_arr['syndicate-to'];
+        } else {
+            return null;
+        }
+
+    }
+
     public function send() {
 
         $post_data_array = $this->request->post;
@@ -301,7 +381,12 @@ class ControllerMicropubClient extends Controller {
         $post_data = $syn_to_hack . http_build_query($post_data_array);
 
         $user = $this->session->data['user_site'];
-        $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+
+        $micropub_endpoint = $this->session->data['micropub_'.$user];
+        if(!$micropub_endpoint){
+            $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+            $this->session->data['micropub_'.$user] = $micropub_endpoint;
+        }
 
         $ch = curl_init($micropub_endpoint);
 
@@ -376,7 +461,11 @@ class ControllerMicropubClient extends Controller {
     private function mpDownloadPost() {
 
         $user = $this->session->data['user_site'];
-        $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+        $micropub_endpoint = $this->session->data['micropub_'.$user];
+        if(!$micropub_endpoint){
+            $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+            $this->session->data['micropub_'.$user] = $micropub_endpoint;
+        }
 
         $ch = curl_init($micropub_endpoint. '?url='.$this->request->get['url']);
 

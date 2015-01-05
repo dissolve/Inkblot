@@ -1,6 +1,10 @@
 <?php  
 class ControllerAuthLogout extends Controller {
 	public function index() {
+        $user = $this->session->data['user_site'];
+        unset($this->session->data['syndication_'.$user]);
+        unset($this->session->data['micropub_'.$user]);
+
         unset($this->session->data['user_site']);
         unset($this->session->data['token']);
         unset($this->session->data['is_owner']);

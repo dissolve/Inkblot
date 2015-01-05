@@ -30,6 +30,23 @@ $routes['whitelist/delete']   = 'information/whitelist/remove';
 $routes['whitelist/private']  = 'information/whitelist/makeprivate';
 $routes['whitelist/public']   = 'information/whitelist/makepublic';
 
+$routes['article']            = 'blog/article/latest';
+$routes['article/']           = 'blog/article/latest';
+$routes['note']               = 'blog/note/latest';
+$routes['note/']              = 'blog/note/latest';
+$routes['rsvp']               = 'blog/rsvp/latest';
+$routes['rsvp/']              = 'blog/rsvp/latest';
+$routes['checkin']            = 'blog/checkin/latest';
+$routes['checkin/']           = 'blog/checkin/latest';
+$routes['bookmark']           = 'blog/bookmark/latest';
+$routes['bookmark/']          = 'blog/bookmark/latest';
+$routes['like']               = 'blog/like/latest';
+$routes['like/']              = 'blog/like/latest';
+$routes['listen']             = 'blog/listen/latest';
+$routes['listen/']            = 'blog/listen/latest';
+$routes['photo']              = 'blog/photo/latest';
+$routes['photo/']             = 'blog/photo/latest';
+
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`^page/(?P<id>\w+)`i',
     'reverse' => 'page/{slug}');

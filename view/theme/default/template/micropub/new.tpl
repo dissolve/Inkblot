@@ -254,15 +254,18 @@
                   </div>
                 </div>
 
+                <?php if(isset($syn_arr)){ ?>
                 <div class="form-group group-note group-article group-rsvp group-checkin group-like group-bookmark">
                   <label class="col-sm-2 control-label" for="input-syndicateto">Syndicate To</label>
                   <div class="col-sm-10">
                     <select name="syndicate-to[]" id="input-syndicateto" multiple="multiple">
-                        <option value="https://www.brid.gy/publish/twitter">Brid.gy Twitter</option>
-                        <option value="https://www.brid.gy/publish/facebook">Brid.gy Facebook</option>
+                        <?php foreach($syn_arr as $syndication_target) { ?>
+                        <option value="<?php echo $syndication_target?>"><?php echo $syndication_target?></option>
+                        <?php } ?>
                     </select>
                   </div>
                 </div>
+                <?php } ?>
 
                 <div class="form-group group-article">
                   <div class="col-sm-10">
