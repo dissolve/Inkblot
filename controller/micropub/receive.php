@@ -356,7 +356,18 @@ class ControllerMicropubReceive extends Controller {
 
     private function createPhoto(){
         //$this->log->write('called createPhoto()');
-        $upload_shot = $_FILES['photo'];
+        
+        if(isset($_FILES['photo'])){
+            $upload_shot = $_FILES['photo'];
+        } elseif(isset($_FILES['file'])){
+            $upload_shot = $_FILES['file'];
+        } else {
+            $this->log->write('cannot find file in $_FILES');
+            $this->log->write(print_r($_FILES, true));
+            header('HTTP/1.1 449 Retry With file');
+            exit();
+        }
+
 
         if( $upload_shot['error'] == 0) {
 
