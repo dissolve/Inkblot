@@ -21,6 +21,17 @@ class ControllerWebmentionReceive extends Controller {
                 exit();
             } else {
                 if(!isset($this->request->post['vouch'])){
+
+                    $this->load->model('webmention/queue');
+                    $queue_id = $this->model_webmention_queue->addUnvouchedEntry($source, $target, $vouch);
+
+                    if(isset($this->request->post['callback'])){
+                        $this->model_webmention_queue->setCallback($queue_id, $this->request->post['callback']);
+                    }
+
+                    $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
+
+                    $this->response->addHeader('Link: <'.$link.'>; rel="status"');
                     header('HTTP/1.1 449 Retry With vouch');
                     exit();
 
@@ -236,7 +247,12 @@ class ControllerWebmentionReceive extends Controller {
 
             } else {
                 $mf2_parsed = Mf2\parse($page_content, $real_source_url);
-                $comment_data = IndieWeb\comments\parse($mf2_parsed['items'][0], $target_url);
+                foreach($mf2_parsed['items'] as $item){
+                    $comment_data = IndieWeb\comments\parse($item, $target_url);
+                    if(!empty($comment_data['url'])){ //if one failed to parse we try the next
+                        break;
+                    }
+                }
                 $this->log->write('target = ' . $target_url . ' real_source_url = '. $real_source_url);
 
                 require DIR_BASE . '/routes.php';
