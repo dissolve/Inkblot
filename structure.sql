@@ -396,7 +396,7 @@ CREATE TABLE `posts` (
   `day` tinyint(2) unsigned DEFAULT NULL COMMENT 'daycount is the post number for that specific day',
   `daycount` tinyint(3) unsigned DEFAULT NULL,
   `slug` varchar(100) DEFAULT NULL,
-  `post_type` enum('article','note','photo','checkin','event','rsvp','like','bookmark','listen') DEFAULT 'note',
+  `post_type` enum('article','note','photo','checkin','event','rsvp','like','bookmark','listen','video','audio') DEFAULT 'note',
   `excerpt` varchar(255) DEFAULT NULL,
   `replyto` varchar(300) DEFAULT NULL,
   `image_file` varchar(100) DEFAULT NULL,
@@ -412,6 +412,8 @@ CREATE TABLE `posts` (
   `rsvp` varchar(5) DEFAULT NULL,
   `bookmark_like_url` varchar(255) DEFAULT NULL,
   `artist` varchar(100) DEFAULT NULL,
+  `audio_file` varchar(100) DEFAULT NULL,
+  `video_file` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=368 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -554,61 +556,6 @@ CREATE TABLE `webmentions` (
   PRIMARY KEY (`webmention_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=195 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
---
--- Dumping data for table `syndication_site`
---
-
-LOCK TABLES `syndication_site` WRITE;
-/*!40000 ALTER TABLE `syndication_site` DISABLE KEYS */;
-INSERT INTO `syndication_site` VALUES (1,'Facebook','/image/static/facebook-app.png','https://facebook.com/'),(2,'Twitter','/image/static/twitter.png','https://twitter.com/'),(3,'Google+','/image/static/googleplus.png','https://plus.google.com/'),(4,'Instagram','/image/static/instagram.png','http://instagram.com/');
-/*!40000 ALTER TABLE `syndication_site` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
---
--- Dumping data for table `authors`
---
-
-LOCK TABLES `authors` WRITE;
-/*!40000 ALTER TABLE `authors` DISABLE KEYS */;
-INSERT INTO `authors` VALUES (1,'Benjamin','Roberts','Ben Roberts','ben@thatmustbe.me');
-/*!40000 ALTER TABLE `authors` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
---
--- Dumping data for table `categories`
---
-
-LOCK TABLES `categories` WRITE;
-/*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (0,'Uncategorized'),(2,'IndieWeb');
-/*!40000 ALTER TABLE `categories` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
---
--- Dumping data for table `field_types`
---
-
-LOCK TABLES `field_types` WRITE;
-/*!40000 ALTER TABLE `field_types` DISABLE KEYS */;
-INSERT INTO `field_types` VALUES (1,'Facebook','/image/static/facebook-app.png','Facebook','https://www.facebook.com/{}',1,NULL,'elsewhere'),(2,'Github','/image/static/github.png','Github','https://github.com/{}',1,NULL,'elsewhere'),(3,'Google+','/image/static/googleplus.png','Google+','https://plus.google.com/{}',1,NULL,'elsewhere'),(4,'Twitter','/image/static/twitter.png','Twitter','https://twitter.com/{}',1,NULL,'elsewhere'),(5,'Tumblr','/image/static/tumblr.png','Tumblr','http://{}.tumblr.com/',1,NULL,'elsewhere'),(6,'Instagram','/image/static/instagram.png','Instagram','http://instagram.com/{}',1,NULL,'elsewhere'),(7,'Kickstarter','/image/static/kickstarter.png','Kickstarte','https://www.kickstarter.com/profile/{}',1,NULL,'elsewhere'),(8,'PGP Key','/image/static/pgp.png','PGP Key','{}',1,NULL,'other'),(9,'AIM: {}','/image/static/aim.png','AIM','aim:goim?screenname={}',1,'u-impp','contact'),(10,'Email: {}','/image/static/gmail.png','Email','mailto:{}',1,NULL,'contact'),(11,'SMS: {}','/image/static/hangouts.png','SMS','sms:{}',1,NULL,'contact'),(12,'Twitter DM','/image/static/twitter.png','Twitter DM','https://mobile.twitter.com/{}/messages',1,NULL,'contact'),(13,'Facebook Message','/image/static/fb-messenger.png','<abbr title=\"Facebook\">FB<abbr> message','fb-messenger://user-thread/{}',1,NULL,'contact'),(14,'Tel: {}','/image/static/dialer.png','Call','tel:{}',1,NULL,'contact');
-/*!40000 ALTER TABLE `field_types` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
---
--- Dumping data for table `groups`
---
-
-LOCK TABLES `groups` WRITE;
-/*!40000 ALTER TABLE `groups` DISABLE KEYS */;
-INSERT INTO `groups` VALUES (0,'Public'),(2,'Friends');
-/*!40000 ALTER TABLE `groups` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
