@@ -46,6 +46,10 @@ $routes['listen']             = 'blog/listen/latest';
 $routes['listen/']            = 'blog/listen/latest';
 $routes['photo']              = 'blog/photo/latest';
 $routes['photo/']             = 'blog/photo/latest';
+$routes['video']              = 'blog/video/latest';
+$routes['video/']             = 'blog/video/latest';
+$routes['audio']              = 'blog/audio/latest';
+$routes['audio/']             = 'blog/audio/latest';
 
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`^page/(?P<id>\w+)`i',
@@ -101,6 +105,14 @@ $advanced_routes[] = array('controller' => 'blog/listen',
 $advanced_routes[] = array('controller' => 'blog/photo',
     'expression' => '`^photo/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
     'reverse' => 'photo/{year}/{month}/{day}/{daycount}/');
+
+$advanced_routes[] = array('controller' => 'blog/video',
+    'expression' => '`^video/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
+    'reverse' => 'video/{year}/{month}/{day}/{daycount}/');
+
+$advanced_routes[] = array('controller' => 'blog/audio',
+    'expression' => '`^audio/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
+    'reverse' => 'audio/{year}/{month}/{day}/{daycount}/');
 
 
 $advanced_routes[] = array('controller' => 'blog/author',

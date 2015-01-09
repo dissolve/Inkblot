@@ -100,6 +100,10 @@ class ControllerMicropubReceive extends Controller {
                             $this->createBookmark();
                         } elseif(isset($this->request->post['like']) && !empty($this->request->post['like'])){
                             $this->createLike();
+                        } elseif(isset($_FILES['video']) && !empty($_FILES['video'])){
+                            $this->createVideo();
+                        } elseif(isset($_FILES['audio']) && !empty($_FILES['audio'])){
+                            $this->createAudio();
                         } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
                             $this->createPhoto();
                         } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'edit'){
@@ -359,8 +363,6 @@ class ControllerMicropubReceive extends Controller {
         
         if(isset($_FILES['photo'])){
             $upload_shot = $_FILES['photo'];
-        } elseif(isset($_FILES['file'])){
-            $upload_shot = $_FILES['file'];
         } else {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
@@ -438,6 +440,174 @@ class ControllerMicropubReceive extends Controller {
             $this->response->addHeader('HTTP/1.1 201 Created');
             $this->response->addHeader('Location: '. $photo['permalink']);
             $this->response->setOutput($photo['permalink']);
+        }
+    }
+    private function createVideo(){
+        //$this->log->write('called createVideo()');
+        
+        if(isset($_FILES['video'])){
+            $upload_shot = $_FILES['video'];
+        } else {
+            $this->log->write('cannot find file in $_FILES');
+            $this->log->write(print_r($_FILES, true));
+            header('HTTP/1.1 449 Retry With file');
+            exit();
+        }
+
+
+        if( $upload_shot['error'] == 0) {
+
+            move_uploaded_file($upload_shot["tmp_name"], DIR_IMAGE .'/uploaded/'. $upload_shot["name"]);
+
+            $this->load->model('blog/video');
+            $data = array();
+            $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
+            $data['body'] = $this->request->post['content'];
+
+            //TODO
+            // $this->request->post['h'];
+            // $this->request->post['published'];
+            // $this->request->post['video'];
+            if(isset($this->request->post['category'])){
+                $data['category'] = $this->request->post['category'];
+            }
+            if(isset($this->request->post['in-reply-to'])){
+                $data['replyto'] = $this->request->post['in-reply-to'];
+                $this->load->model('webmention/vouch');
+                $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
+            }
+            if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
+                $data['location'] = $this->request->post['location'];
+            }
+            if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
+                $data['place_name'] = $this->request->post['place_name'];
+            }
+            if(isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
+                $inputval = strtolower($this->request->post['rsvp']);
+                if($inputval == 'yes'){
+                    $data['rsvp'] = 'yes';
+                } else {
+                    $data['rsvp'] = 'no';
+                }
+            }
+            $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
+            //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
+            /*if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+                $syn_extra = '';
+                foreach($this->request->post['syndicate-to'] as $synto){
+                    if(strlen($note['body'].$note['permashortcitation']) < 140){
+                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                    } else {
+                        $syn_extra .= '<a href="'.$synto.'"></a>';
+                    }
+                }
+                $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
+            }*/
+
+
+            $video_id = $this->model_blog_video->newVideo($data);
+            $this->cache->delete('posts');
+            $this->cache->delete('videos');
+
+            $video = $this->model_blog_video->getVideo($video_id);
+
+            $this->load->model('blog/post');
+            if($video && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+                $this->model_blog_post->addSyndication($video['post_id'], $this->request->post['syndication']);
+            }
+
+            $this->load->model('webmention/send_queue');
+            $this->model_webmention_send_queue->addEntry($video_id, $this->request->post['vouch']);
+
+            $this->cache->delete('post.'.$video['post_id']);
+
+            $this->response->addHeader('HTTP/1.1 201 Created');
+            $this->response->addHeader('Location: '. $video['permalink']);
+            $this->response->setOutput($video['permalink']);
+        }
+    }
+    private function createAudio(){
+        //$this->log->write('called createAudio()');
+        
+        if(isset($_FILES['audio'])){
+            $upload_shot = $_FILES['audio'];
+        } else {
+            $this->log->write('cannot find file in $_FILES');
+            $this->log->write(print_r($_FILES, true));
+            header('HTTP/1.1 449 Retry With file');
+            exit();
+        }
+
+
+        if( $upload_shot['error'] == 0) {
+
+            move_uploaded_file($upload_shot["tmp_name"], DIR_IMAGE .'/uploaded/'. $upload_shot["name"]);
+
+            $this->load->model('blog/audio');
+            $data = array();
+            $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
+            $data['body'] = $this->request->post['content'];
+
+            //TODO
+            // $this->request->post['h'];
+            // $this->request->post['published'];
+            // $this->request->post['audio'];
+            if(isset($this->request->post['category'])){
+                $data['category'] = $this->request->post['category'];
+            }
+            if(isset($this->request->post['in-reply-to'])){
+                $data['replyto'] = $this->request->post['in-reply-to'];
+                $this->load->model('webmention/vouch');
+                $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
+            }
+            if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
+                $data['location'] = $this->request->post['location'];
+            }
+            if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
+                $data['place_name'] = $this->request->post['place_name'];
+            }
+            if(isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
+                $inputval = strtolower($this->request->post['rsvp']);
+                if($inputval == 'yes'){
+                    $data['rsvp'] = 'yes';
+                } else {
+                    $data['rsvp'] = 'no';
+                }
+            }
+            $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
+            //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
+            /*if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+                $syn_extra = '';
+                foreach($this->request->post['syndicate-to'] as $synto){
+                    if(strlen($note['body'].$note['permashortcitation']) < 140){
+                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                    } else {
+                        $syn_extra .= '<a href="'.$synto.'"></a>';
+                    }
+                }
+                $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
+            }*/
+
+
+            $audio_id = $this->model_blog_audio->newAudio($data);
+            $this->cache->delete('posts');
+            $this->cache->delete('audios');
+
+            $audio = $this->model_blog_audio->getAudio($audio_id);
+
+            $this->load->model('blog/post');
+            if($audio && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+                $this->model_blog_post->addSyndication($audio['post_id'], $this->request->post['syndication']);
+            }
+
+            $this->load->model('webmention/send_queue');
+            $this->model_webmention_send_queue->addEntry($audio_id, $this->request->post['vouch']);
+
+            $this->cache->delete('post.'.$audio['post_id']);
+
+            $this->response->addHeader('HTTP/1.1 201 Created');
+            $this->response->addHeader('Location: '. $audio['permalink']);
+            $this->response->setOutput($audio['permalink']);
         }
     }
 

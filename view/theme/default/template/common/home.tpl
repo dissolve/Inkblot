@@ -125,6 +125,12 @@
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>
+        <?php if($post['audio_file']) { ?>
+            <a href="<?php echo $post['audio_file']?>" class="u-audio audio-post" >Audio</a><br>
+        <?php } ?>
+        <?php if($post['video_file']) { ?>
+            <a href="<?php echo $post['video_file']?>" class="u-video video-post" >Video</a><br>
+        <?php } ?>
       <?php echo $post['body_html']?>
       <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
           echo "<br>Checked In At ".$post['place_name'];
