@@ -9,3 +9,4 @@ curr.sql
 parsed.sql
 static/
 *.swp
+upload/*

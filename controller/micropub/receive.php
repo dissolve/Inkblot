@@ -373,11 +373,11 @@ class ControllerMicropubReceive extends Controller {
 
         if( $upload_shot['error'] == 0) {
 
-            move_uploaded_file($upload_shot["tmp_name"], DIR_IMAGE .'/uploaded/'. $upload_shot["name"]);
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/image/'. $upload_shot["name"]);
 
             $this->load->model('blog/photo');
             $data = array();
-            $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
+            $data['image_file'] = DIR_UPLOAD_REL .'/image/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
 
             //TODO
@@ -457,11 +457,11 @@ class ControllerMicropubReceive extends Controller {
 
         if( $upload_shot['error'] == 0) {
 
-            move_uploaded_file($upload_shot["tmp_name"], DIR_IMAGE .'/uploaded/'. $upload_shot["name"]);
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/video/'. $upload_shot["name"]);
 
             $this->load->model('blog/video');
             $data = array();
-            $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
+            $data['video_file'] = DIR_UPLOAD_REL . '/video/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
 
             //TODO
@@ -490,6 +490,7 @@ class ControllerMicropubReceive extends Controller {
                     $data['rsvp'] = 'no';
                 }
             }
+            //TODO need to do this if it is from ownyourgram only
             $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
             //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
             /*if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
@@ -541,11 +542,11 @@ class ControllerMicropubReceive extends Controller {
 
         if( $upload_shot['error'] == 0) {
 
-            move_uploaded_file($upload_shot["tmp_name"], DIR_IMAGE .'/uploaded/'. $upload_shot["name"]);
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/audio/'. $upload_shot["name"]);
 
             $this->load->model('blog/audio');
             $data = array();
-            $data['image_file'] = '/image/uploaded/'. $upload_shot["name"];
+            $data['audio_file'] = DIR_UPLOAD_REL . '/audio/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
 
             //TODO
@@ -574,9 +575,7 @@ class ControllerMicropubReceive extends Controller {
                     $data['rsvp'] = 'no';
                 }
             }
-            $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
-            //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
-            /*if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
                 $syn_extra = '';
                 foreach($this->request->post['syndicate-to'] as $synto){
                     if(strlen($note['body'].$note['permashortcitation']) < 140){
@@ -586,7 +585,7 @@ class ControllerMicropubReceive extends Controller {
                     }
                 }
                 $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
-            }*/
+            }
 
 
             $audio_id = $this->model_blog_audio->newAudio($data);
