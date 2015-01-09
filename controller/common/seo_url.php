@@ -10,6 +10,7 @@ class ControllerCommonSeoUrl extends Controller {
 		// Decode URL
 		if (isset($this->request->get['_route_'])) {
             $route_get =  $this->request->get['_route_'];
+            $route_get_no_tail =  trim($this->request->get['_route_'], '/');
             //remove a trailing /
             //if(substr($route_get, -1) == '/'){
                 //$route_get = substr($route_get, 0, -1);
@@ -18,6 +19,8 @@ class ControllerCommonSeoUrl extends Controller {
 
             if(isset($routes[$route_get])){
                 $this->request->get['route'] = $routes[$route_get];
+            } else if(isset($routes[$route_get_no_tail])){
+                $this->request->get['route'] = $routes[$route_get_no_tail];
             } else{
                 foreach($advanced_routes as $adv_route){
                     $matches = array();
