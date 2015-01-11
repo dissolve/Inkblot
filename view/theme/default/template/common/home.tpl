@@ -36,6 +36,12 @@
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>
+        <?php if($post['audio_file']) { ?>
+                <a href="<?php echo $post['audio_file']?>">Audio</a>
+        <?php } ?>
+        <?php if($post['video_file']) { ?>
+                <a href="<?php echo $post['video_file']?>">Video</a>
+        <?php } ?>
         <?php if(isset($post['rsvp']) && !empty($post['rsvp'])) { ?>
             <i class="fa fa-calendar"></i>
                <a class="eventlink" href="<?php echo $post['replyto']?>">Event</a>
@@ -126,10 +132,16 @@
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>
         <?php if($post['audio_file']) { ?>
-            <a href="<?php echo $post['audio_file']?>" class="u-audio audio-post" >Audio</a><br>
+            <audio controls class="u-audio">
+                <source src="<?php echo $post['audio_file']?>" type="audio/mp4">
+                <a href="<?php echo $post['audio_file']?>">Audio</a>
+            </audio>
         <?php } ?>
         <?php if($post['video_file']) { ?>
-            <a href="<?php echo $post['video_file']?>" class="u-video video-post" >Video</a><br>
+            <video controls class="u-video">
+                <source src="<?php echo $post['video_file']?>" type="video/mp4">
+                <a href="<?php echo $post['video_file']?>">Video</a>
+            </video>
         <?php } ?>
       <?php echo $post['body_html']?>
       <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 

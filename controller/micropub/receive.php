@@ -373,11 +373,11 @@ class ControllerMicropubReceive extends Controller {
 
         if( $upload_shot['error'] == 0) {
 
-            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/image/'. $upload_shot["name"]);
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/photo/'. urldecode($upload_shot["name"]));
 
             $this->load->model('blog/photo');
             $data = array();
-            $data['image_file'] = DIR_UPLOAD_REL .'/image/'. $upload_shot["name"];
+            $data['image_file'] = DIR_UPLOAD_REL .'/photo/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
 
             //TODO
@@ -457,7 +457,7 @@ class ControllerMicropubReceive extends Controller {
 
         if( $upload_shot['error'] == 0) {
 
-            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/video/'. $upload_shot["name"]);
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/video/'. urldecode($upload_shot["name"]));
 
             $this->load->model('blog/video');
             $data = array();
@@ -542,7 +542,7 @@ class ControllerMicropubReceive extends Controller {
 
         if( $upload_shot['error'] == 0) {
 
-            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/audio/'. $upload_shot["name"]);
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/audio/'. urldecode($upload_shot["name"]));
 
             $this->load->model('blog/audio');
             $data = array();

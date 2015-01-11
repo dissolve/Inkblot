@@ -121,6 +121,8 @@ class ModelBlogPost extends Model {
                 'shortlink' => $shortlink,
                 'permashortcitation' => $citation
             ));
+            date_default_timezone_set(LOCALTIMEZONE);
+            $post['timezone'] =  date("c", strtotime( $post['timezone']));
             if($post['post_type'] == 'bookmark'){
                 $post['bookmark'] = $post['bookmark_like_url'];
                 $post['name'] = $post['title'];
