@@ -16,6 +16,7 @@
         <span class="screen-reader-text">Search for:</span>
         <input type="search" class="search-field" placeholder="Search &hellip;" value="" name="q" title="Search for:" />
         <input type="hidden" name='as_sitesearch' value='<?php echo $sitesearch ?>' />
+        <input type="hidden" name="tbs" value="sbd:1,cdr:1,cd_min:1/1/1970"/>
     </label>
     <input type="submit" class="search-submit" value="Search" />
   </form>
