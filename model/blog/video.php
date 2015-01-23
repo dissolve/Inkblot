@@ -26,11 +26,17 @@ class ModelBlogVideo extends Model {
             $syndication_extra = $this->db->escape($data['syndication_extra']);
         }
 
+        $slug = '';
+        if(isset($data['slug']) && !empty($data['slug'])){
+            $slug = $this->db->escape($data['slug']);
+        }
+
         $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='video',
             `body` = '".$this->db->escape($data['body'])."',
             `title` = '".$this->db->escape($data['title'])."',
             `syndication_extra` = '".$syndication_extra."',
             `video_file` = '".$this->db->escape($data['video_file'])."',
+            `slug` = '".$slug."',
             `author_id` = 1,
             `timestamp` = NOW(),
             `year` = ".(int)$year.",

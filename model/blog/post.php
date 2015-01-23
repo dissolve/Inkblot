@@ -122,7 +122,7 @@ class ModelBlogPost extends Model {
                 'permashortcitation' => $citation
             ));
             date_default_timezone_set(LOCALTIMEZONE);
-            $post['timezone'] =  date("c", strtotime( $post['timezone']));
+            $post['timestamp'] =  date("c", strtotime( $post['timestamp']));
             if($post['post_type'] == 'bookmark'){
                 $post['bookmark'] = $post['bookmark_like_url'];
                 $post['name'] = $post['title'];

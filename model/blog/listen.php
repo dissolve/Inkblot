@@ -22,13 +22,16 @@ class ModelBlogListen extends Model {
             $syndication_extra = $this->db->escape($data['syndication_extra']);
         }
 
-        //$slug = 'listen';
-            //`slug` = '".$slug."',
+        $slug = '';
+        if(isset($data['slug']) && !empty($data['slug'])){
+            $slug = $this->db->escape($data['slug']);
+        }
 
         $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='listen',
             `body` = '',
             `title` = '',
             `syndication_extra` = '".$syndication_extra."',
+            `slug` = '".$slug."',
             `author_id` = 1,
             `timestamp` = NOW(),
             `year` = ".(int)$year.",

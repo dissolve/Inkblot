@@ -28,7 +28,7 @@
                 <?php echo $post['author']['display_name']?>
             </a></span>
         </span>
-        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="permalink u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($post['timestamp']))?>" ><?php echo date("F j, Y g:i A", strtotime($post['timestamp']))?></time></a>
+        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="permalink u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo $post['timestamp']?>" ><?php echo date("F j, Y g:i A", strtotime($post['timestamp']))?></time></a>
 
         <a href="<?php echo $post['shortlink']?>" title="Shortlink" rel="shortlink" class="shortlink u-shortlink u-url">Shortlink</a>
 

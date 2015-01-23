@@ -22,7 +22,10 @@ class ModelBlogBookmark extends Model {
             $syndication_extra = $this->db->escape($data['syndication_extra']);
         }
 
-        $slug = 'bookmark';
+        $slug = '';
+        if(isset($data['slug']) && !empty($data['slug'])){
+            $slug = $this->db->escape($data['slug']);
+        }
 
         $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='bookmark',
             `body` = '".$this->db->escape($data['description'])."',
