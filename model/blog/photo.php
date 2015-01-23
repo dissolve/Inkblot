@@ -3,9 +3,17 @@ class ModelBlogPhoto extends Model {
 
     public function newPhoto($data){
 
-        $year = date('Y');
-        $month = date('n');
-        $day = date('j');
+        if(isset($data['published'])) {
+            $year = date('Y', strtotime($data['published']);
+            $month = date('n', strtotime($data['published']);
+            $day = date('j', strtotime($data['published']);
+            $timestamp = "'" . $this->db->escape($data['published']) ."'";
+        } else { 
+            $year = date('Y');
+            $month = date('n');
+            $day = date('j');
+            $timestamp = "NOW()";
+        }
 
         $draft= 0;
         if(isset($data['draft']) && ($data['draft'] == 1 || $data['draft'] == '1')){
@@ -38,7 +46,7 @@ class ModelBlogPhoto extends Model {
             `image_file` = '".$this->db->escape($data['image_file'])."',
             `slug` = '".$slug."',
             `author_id` = 1,
-            `timestamp` = NOW(),
+            `timestamp` = ".$timestamp.",
             `year` = ".(int)$year.",
             `month` = ".(int)$month.",
             `day` = ".(int)$day.",

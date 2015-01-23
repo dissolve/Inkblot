@@ -242,7 +242,9 @@ class ControllerMicropubReceive extends Controller {
 
         //TODO
         // $this->request->post['h'];
-        // $this->request->post['published'];
+        if(isset($this->request->post['published'])){
+            $data['published'] = $this->request->post['published'];
+        }
         if(isset($this->request->post['category'])){
             $data['category'] = $this->request->post['category'];
         }
@@ -311,7 +313,9 @@ class ControllerMicropubReceive extends Controller {
 
         //TODO
         // $this->request->post['h'];
-        // $this->request->post['published'];
+        if(isset($this->request->post['published'])){
+            $data['published'] = $this->request->post['published'];
+        }
         if(isset($this->request->post['category'])){
             $data['category'] = $this->request->post['category'];
         }
@@ -382,8 +386,10 @@ class ControllerMicropubReceive extends Controller {
 
             //TODO
             // $this->request->post['h'];
-            // $this->request->post['published'];
             // $this->request->post['photo'];
+            if(isset($this->request->post['published'])){
+                $data['published'] = $this->request->post['published'];
+            }
             if(isset($this->request->post['category'])){
                 $data['category'] = $this->request->post['category'];
             }
@@ -406,9 +412,9 @@ class ControllerMicropubReceive extends Controller {
                     $data['rsvp'] = 'no';
                 }
             }
-            $data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
+            //$data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
             //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
-            /*if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
                 $syn_extra = '';
                 foreach($this->request->post['syndicate-to'] as $synto){
                     if(strlen($note['body'].$note['permashortcitation']) < 140){
@@ -418,7 +424,7 @@ class ControllerMicropubReceive extends Controller {
                     }
                 }
                 $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
-            }*/
+            }
 
 
             $photo_id = $this->model_blog_photo->newPhoto($data);
@@ -466,8 +472,10 @@ class ControllerMicropubReceive extends Controller {
 
             //TODO
             // $this->request->post['h'];
-            // $this->request->post['published'];
             // $this->request->post['video'];
+            if(isset($this->request->post['published'])){
+                $data['published'] = $this->request->post['published'];
+            }
             if(isset($this->request->post['category'])){
                 $data['category'] = $this->request->post['category'];
             }
@@ -551,8 +559,10 @@ class ControllerMicropubReceive extends Controller {
 
             //TODO
             // $this->request->post['h'];
-            // $this->request->post['published'];
             // $this->request->post['audio'];
+            if(isset($this->request->post['published'])){
+                $data['published'] = $this->request->post['published'];
+            }
             if(isset($this->request->post['category'])){
                 $data['category'] = $this->request->post['category'];
             }
@@ -664,7 +674,9 @@ class ControllerMicropubReceive extends Controller {
 
         //TODO
         // $this->request->post['h'];
-        // $this->request->post['published'];
+        if(isset($this->request->post['published'])){
+            $data['published'] = $this->request->post['published'];
+        }
         if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
             $data['location'] = $this->request->post['location'];
         }
@@ -718,7 +730,9 @@ class ControllerMicropubReceive extends Controller {
 
         //TODO
         // $this->request->post['h'];
-        // $this->request->post['published'];
+        if(isset($this->request->post['published'])){
+            $data['published'] = $this->request->post['published'];
+        }
         if(isset($this->request->post['in-reply-to'])){
             $data['replyto'] = $this->request->post['in-reply-to'];
             $this->load->model('webmention/vouch');

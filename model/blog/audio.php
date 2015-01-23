@@ -38,7 +38,7 @@ class ModelBlogAudio extends Model {
             `audio_file` = '".$this->db->escape($data['audio_file'])."',
             `slug` = '".$slug."',
             `author_id` = 1,
-            `timestamp` = NOW(),
+            `timestamp` = ".$timestamp.",
             `year` = ".(int)$year.",
             `month` = ".(int)$month.",
             `day` = ".(int)$day.",

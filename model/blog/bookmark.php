@@ -2,9 +2,17 @@
 class ModelBlogBookmark extends Model {
 
     public function newBookmark($data){
-        $year = date('Y');
-        $month = date('n');
-        $day = date('j');
+        if(isset($data['published'])) {
+            $year = date('Y', strtotime($data['published']);
+            $month = date('n', strtotime($data['published']);
+            $day = date('j', strtotime($data['published']);
+            $timestamp = "'" . $this->db->escape($data['published']) ."'";
+        } else { 
+            $year = date('Y');
+            $month = date('n');
+            $day = date('j');
+            $timestamp = "NOW()";
+        }
 
         $draft= 0;
 
@@ -33,7 +41,7 @@ class ModelBlogBookmark extends Model {
             `slug` = '".$slug."',
             `syndication_extra` = '".$syndication_extra."',
             `author_id` = 1,
-            `timestamp` = NOW(),
+            `timestamp` = ".$timestamp.",
             `year` = ".(int)$year.",
             `month` = ".(int)$month.",
             `day` = ".(int)$day.",
