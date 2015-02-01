@@ -78,26 +78,26 @@ class ControllerWebmentionQueue extends Controller {
     }
 
     public function processcontexts(){
-        $result = $db->query("SELECT * FROM ". DATABASE.".posts WHERE NOT replyto is NULL AND context_parsed=0 LIMIT 1");
+        $result = $this->db->query("SELECT * FROM ". DATABASE.".posts WHERE NOT replyto is NULL AND context_parsed=0 LIMIT 1");
         $post = $result->row;
 
         while($post){
             //immediately update this to say that it is parsed.. this way we don't end up trying to run it multiple times on the same post
-            $db->query("UPDATE ". DATABASE.".posts SET context_parsed = 1 WHERE post_id = ". (int)$post_id);
+            $this->db->query("UPDATE ". DATABASE.".posts SET context_parsed = 1 WHERE post_id = ". (int)$post_id);
 
             $source_url = trim($post['replyto']); //todo want to support multiples
 
             $post_id = $post['post_id'];
-            $context_id = get_context_id($db, $source_url);
+            $context_id = $this->get_context_id( $source_url);
 
             if($context_id){
-                $db->query("INSERT INTO ". DATABASE.".post_context SET 
+                $this->db->query("INSERT INTO ". DATABASE.".post_context SET 
                     post_id = ".(int)$post_id.",
                     context_id = ".(int)$context_id);
             }
                             
 
-            $result = $db->query("SELECT * FROM ". DATABASE.".posts WHERE NOT replyto is NULL AND context_parsed=0 LIMIT 1");
+            $result = $this->db->query("SELECT * FROM ". DATABASE.".posts WHERE NOT replyto is NULL AND context_parsed=0 LIMIT 1");
             $post = $result->row;
 
         } //end while($post) loop
@@ -175,7 +175,7 @@ class ControllerWebmentionQueue extends Controller {
                 foreach($mf2_parsed['items'][0]['properties']['in-reply-to'] as $citation) {
                     if(isset($citation['properties'])){
                         foreach($citation['properties']['url'] as $reply_to_url){
-                            $ctx_id = get_context_id($reply_to_url);
+                            $ctx_id = $this->get_context_id($reply_to_url);
                             if($ctx_id){
                                 $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
                                 context_id = ".(int)$context_id.",
@@ -186,7 +186,7 @@ class ControllerWebmentionQueue extends Controller {
                     } else  {
                         $reply_to_url = $citation;
 
-                        $ctx_id = get_context_id($reply_to_url);
+                        $ctx_id = $this->get_context_id($reply_to_url);
                         if($ctx_id){
                             $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
                             context_id = ".(int)$context_id.",

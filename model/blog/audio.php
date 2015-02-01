@@ -3,9 +3,18 @@ class ModelBlogAudio extends Model {
 
     public function newAudio($data){
 
-        $year = date('Y');
-        $month = date('n');
-        $day = date('j');
+        if(isset($data['published'])) {
+            $year = date('Y', strtotime($data['published']));
+            $month = date('n', strtotime($data['published']));
+            $day = date('j', strtotime($data['published']));
+            $timestamp = "'" . $this->db->escape($data['published']) ."'";
+        } else { 
+            $year = date('Y');
+            $month = date('n');
+            $day = date('j');
+            $timestamp = "NOW()";
+        }
+
 
         $draft= 0;
         if(isset($data['draft']) && ($data['draft'] == 1 || $data['draft'] == '1')){

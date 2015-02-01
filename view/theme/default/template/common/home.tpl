@@ -1,4 +1,5 @@
 <?php echo $header; ?>
+<?php date_default_timezone_set(LOCALTIMEZONE); ?> 
 <div class="hfeed h-feed feed">
 <div id="notes-stream">
 <div id="notes_pad"></div>

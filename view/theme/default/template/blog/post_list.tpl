@@ -1,4 +1,5 @@
 <?php echo $header; ?>
+<?php date_default_timezone_set(LOCALTIMEZONE); ?> 
 <h1><?php echo $title ?></h1>
 <?php foreach($posts as $post) { ?>
 <article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">

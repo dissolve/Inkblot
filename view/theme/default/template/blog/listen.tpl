@@ -1,4 +1,5 @@
 <?php echo $header; ?>
+<?php date_default_timezone_set(LOCALTIMEZONE); ?> 
 <div class="h-entry hentry">
   <div class="context_history">
   <?php foreach($post['context'] as $ctx){ ?>

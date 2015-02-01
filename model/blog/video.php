@@ -4,9 +4,9 @@ class ModelBlogVideo extends Model {
     public function newVideo($data){
 
         if(isset($data['published'])) {
-            $year = date('Y', strtotime($data['published']);
-            $month = date('n', strtotime($data['published']);
-            $day = date('j', strtotime($data['published']);
+            $year = date('Y', strtotime($data['published']));
+            $month = date('n', strtotime($data['published']));
+            $day = date('j', strtotime($data['published']));
             $timestamp = "'" . $this->db->escape($data['published']) ."'";
         } else { 
             $year = date('Y');
