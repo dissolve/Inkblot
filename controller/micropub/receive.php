@@ -100,6 +100,8 @@ class ControllerMicropubReceive extends Controller {
                             $this->createBookmark();
                         } elseif(isset($this->request->post['like']) && !empty($this->request->post['like'])){
                             $this->createLike();
+                        } elseif(isset($this->request->post['like-of']) && !empty($this->request->post['like-of'])){
+                            $this->createLike();
                         } elseif(isset($_FILES['video']) && !empty($_FILES['video'])){
                             $this->createVideo();
                         } elseif(isset($_FILES['audio']) && !empty($_FILES['audio'])){
@@ -775,6 +777,9 @@ class ControllerMicropubReceive extends Controller {
         $this->load->model('blog/like');
         $data = array();
         $data['like'] = $this->request->post['like'];
+        if(isset($this->request->post['like-of'])){
+            $data['like'] = $this->request->post['like-of'];
+        }
 
         if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
             $data['syndication_extra'] = '';
