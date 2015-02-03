@@ -30,9 +30,9 @@
             <i class="fa fa-bookmark-o"></i> <br>
             <a class="p-bookmark" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name'])?$post['name']:'Bookmark')?></a> 
         <?php } ?>
-        <?php if(isset($post['like']) && !empty($post['like'])) { ?>
+        <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
             <i class="fa fa-heart-o"></i> <br>
-            I liked <a class="u-like-of" href="<?php echo $post['like']?>">This</a> page.
+            I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
         <?php } ?>
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>

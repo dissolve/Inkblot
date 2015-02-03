@@ -48,7 +48,7 @@
       <div class="entry-content e-content like <?php echo (empty($post['title']) ? 'p-name' : '')?>">
             <i class="fa fa-heart-o"></i><br>
       <?php 
-          echo 'I liked <a class="u-like-of" href="'.$post['like'].'">This</a> page.';
+          echo 'I liked <a class="u-like-of" href="'.$post['like-of'].'">This</a> page.';
           echo $post['body_html'];
           echo $post['syndication_extra'];
       ?>
