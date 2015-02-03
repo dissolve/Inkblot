@@ -53,8 +53,8 @@ class ControllerMicropubClient extends Controller {
 		if(isset($this->request->get['bookmark'])){
 		   $data['post'] = array('bookmark' => $this->request->get['bookmark']);
 		}
-		if(isset($this->request->get['like'])){
-		   $data['post'] = array('like' => $this->request->get['like']);
+		if(isset($this->request->get['like-of'])){
+		   $data['post'] = array('like-of' => $this->request->get['like-of']);
 		}
 
 

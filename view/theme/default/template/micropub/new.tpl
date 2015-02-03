@@ -198,7 +198,7 @@
                 <div class="form-group group-like like">
                   <label class="col-sm-2 control-label" for="input-like">Like Of</label>
                   <div class="col-sm-10">
-                    <input type="text" name="like" value="<?php echo isset($post) ? $post['like'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
+                    <input type="text" name="like-of" value="<?php echo isset($post) ? $post['like-of'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
                   </div>
                 </div>
 

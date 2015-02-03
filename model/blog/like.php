@@ -46,7 +46,7 @@ class ModelBlogLike extends Model {
             `month` = ".(int)$month.",
             `day` = ".(int)$day.",
             `draft` = ".(int)$draft.",
-            `bookmark_like_url` = '".$this->db->escape($data['like'])."',
+            `bookmark_like_url` = '".$this->db->escape($data['like-of'])."',
             `deleted` = 0,
             `daycount` = ".(int)$newcount;
 

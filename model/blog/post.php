@@ -67,8 +67,8 @@ class ModelBlogPost extends Model {
                 $set_data[] = "place_name =''";
             }
 
-            if(isset($data['like']) && !empty($data['like'])){
-                $set_data[] = "bookmark_like_url ='".$this->db->escape($data['like'])."'";
+            if(isset($data['like-of']) && !empty($data['like-of'])){
+                $set_data[] = "bookmark_like_url ='".$this->db->escape($data['like-of'])."'";
             } else {
                 $set_data[] = "bookmark_like_url =''";
             }
@@ -128,7 +128,7 @@ class ModelBlogPost extends Model {
                 $post['name'] = $post['title'];
                 $post['description'] = $post['body'];
             } elseif($post['post_type'] == 'like'){
-                $post['like'] = $post['bookmark_like_url'];
+                $post['like-of'] = $post['bookmark_like_url'];
             }
             $this->cache->set('post.'. $post_id, $post);
         }

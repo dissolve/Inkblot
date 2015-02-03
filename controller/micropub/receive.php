@@ -9,7 +9,7 @@ class ControllerMicropubReceive extends Controller {
                 "reply" => "https://ben.thatmustbe.me/new?reply_to={url}",
                 "repost" => "https://ben.thatmustbe.me/new?url={url}",
                 "bookmark" => "https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}",
-                "favorite" => "https://ben.thatmustbe.me/new?type=like&like={url}",
+                "favorite" => "https://ben.thatmustbe.me/new?type=like&like-of={url}",
                 "like" => "https://ben.thatmustbe.me/new?type=like&like={url}",
                 "delete" => "https://ben.thatmustbe.me/delete?url={url}",
                 "undelete" => "https://ben.thatmustbe.me/undelete?url={url}");
@@ -98,8 +98,6 @@ class ControllerMicropubReceive extends Controller {
                             $this->createRsvp();
                         } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
                             $this->createBookmark();
-                        } elseif(isset($this->request->post['like']) && !empty($this->request->post['like'])){
-                            $this->createLike();
                         } elseif(isset($this->request->post['like-of']) && !empty($this->request->post['like-of'])){
                             $this->createLike();
                         } elseif(isset($_FILES['video']) && !empty($_FILES['video'])){
@@ -190,7 +188,7 @@ class ControllerMicropubReceive extends Controller {
                 'content' => 'body',
                 'location' => 'location',
                 'place_name' => 'place_name',
-                'like' => 'like',
+                'like-of' => 'like-of',
                 'bookmark' => 'bookmark',
                 'slug' => 'slug');
 
@@ -776,10 +774,7 @@ class ControllerMicropubReceive extends Controller {
     private function createLike(){
         $this->load->model('blog/like');
         $data = array();
-        $data['like'] = $this->request->post['like'];
-        if(isset($this->request->post['like-of'])){
-            $data['like'] = $this->request->post['like-of'];
-        }
+        $data['like-of'] = $this->request->post['like-of'];
 
         if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
             $data['syndication_extra'] = '';
