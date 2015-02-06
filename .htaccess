@@ -38,6 +38,7 @@ RewriteRule ^sitemap.xml$ index.php?route=feed/google_sitemap [L]
 RewriteRule ^googlebase.xml$ index.php?route=feed/google_base [L]
 #notice these routes are intentionally wrong to ensure that a 404 is returned
 RewriteRule ^scripts/(.*) /index.php?_route_=error [L]
+RewriteRule ^libraries/cassis/cassis.js - [L]
 RewriteRule ^libraries/(.*) /index.php?_route_=error [L]
 RewriteRule ^system/(.*) /index.php?_route_=error [L]
 RewriteRule ^config/(.*) /index.php?_route_=error [L]

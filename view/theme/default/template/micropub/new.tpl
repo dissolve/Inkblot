@@ -1,5 +1,6 @@
 <?php echo $header; ?>
  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+ <script src="/libraries/cassis/cassis.js"></script>
 
           <article id="" class="article">
 
@@ -123,19 +124,13 @@
                     return false;
                 });
 
-                <?php if($is_owner){ ?>
-                $('#input-replyto').focusout(function(){
-                    $.getJSON(
-                        '/vouchsearch',
-                        {url: $('#input-replyto').val()},
-                        function(data){
-                            if(data.success == 'yes'){
-                            $('#input-vouch').val(data.vouch)
-                            }
-                        });
-                    
-                });
-                <?php } //end if owner ?>
+                    $('#input-body').keyup(function(){
+                        if(note_length_check(tw_text_proxy($('#input-body').val()), 140) == 413){
+                            $('#input-body-ct').html('Too Long For Tweet');
+                        } else {
+                            $('#input-body-ct').html(' ');
+                        }
+                    });
 
             });
         </script>
@@ -178,6 +173,7 @@
                   <label class="col-sm-2 control-label" for="input-body">Body</label>
                   <div class="col-sm-10">
                     <textarea name="content" placeholder="Body of Post" id="input-body" class="form-control"><?php echo isset($post['body']) ? $post['body'] : ''; ?></textarea>
+                    <span id="input-body-ct"></span>
                   </div>
                 </div>
 
@@ -188,12 +184,6 @@
                   </div>
                 </div>
 
-                <div class="form-group group-note vouch">
-                  <label class="col-sm-2 control-label" for="input-vouch">Vouch URL</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="vouch" value="<?php echo isset($post) ? $post['vouch'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-vouch" class="form-control" />
-                  </div>
-                </div>
 
                 <div class="form-group group-like like">
                   <label class="col-sm-2 control-label" for="input-like">Like Of</label>
