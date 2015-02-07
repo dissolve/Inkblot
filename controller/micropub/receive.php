@@ -623,6 +623,7 @@ class ControllerMicropubReceive extends Controller {
     private function createBookmark(){
         $this->load->model('blog/bookmark');
         $data = array();
+        $data['body'] = $this->request->post['content'];
         $data['bookmark'] = $this->request->post['bookmark'];
 
         if(isset($this->request->post['category'])){

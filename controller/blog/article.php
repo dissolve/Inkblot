@@ -112,7 +112,7 @@ class ControllerBlogArticle extends Controller {
 
             if(strlen($data['post']['body']. $post['permashortcitation']) < 140 ){
                 $data['post']['body'] .= "\n\n".$data['post']['permashortcitation'];
-                $data['post']['body_html'] .= "<br><br>".$data['post']['permashortcitation'];
+                $data['post']['body_html'] .= "<br> <br>".$data['post']['permashortcitation'];
             }
             $data['post']['actions'] = array();
 
