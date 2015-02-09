@@ -37,7 +37,8 @@ class ControllerCommonHome extends Controller {
             parse_str($this->session->data['mp-config'], $mpconfig);
         }
 
-		foreach ($this->model_blog_post->getPostsByTypes(['article'], 20, $skip) as $post) {
+		//foreach ($this->model_blog_post->getPostsByTypes(['article'], 20, $skip) as $post) {
+		foreach ($this->model_blog_post->getRecentPosts(20, $skip) as $post) {
 			$author = $this->model_blog_author->getAuthor($post['author_id']);
 			$categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
 			$comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);

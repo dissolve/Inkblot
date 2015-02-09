@@ -429,10 +429,6 @@ table {
     float:left;
     width:33%;
 }
-#articles-stream {
-    float:right;
-    width:83.33%;
-}
 
 article {
   -webkit-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
@@ -576,16 +572,8 @@ body.single #content .article, body.single #content .page, body.page #content .a
 #content article {
   margin-bottom: 35px;
 }
-#content #posts-stream .article {
-  float:right;
-  width:64%;
-}
 #content #posts-stream .photo {
-  background-color:slategrey;
   margin-bottom: 30px;
-  margin-right:2.5%;
-  width:31%;
-  float:left;
 }
 #content #notes-stream .photo img{
   width:80%;
@@ -593,11 +581,7 @@ body.single #content .article, body.single #content .page, body.page #content .a
   border-bottom-width:35px;
 }
 #content #posts-stream .note {
-  background-color:lightyellow;
   margin-bottom: 30px;
-  width:31%;
-  float:left;
-  margin-right:2.5%;
 }
 #content .article:after, #content .page:after {
   content: ".";

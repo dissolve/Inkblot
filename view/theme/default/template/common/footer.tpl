@@ -36,17 +36,6 @@
     </section>
 <?php } ?>
 
-<section id="recent-posts-2" class="widget widget_recent_entries">
-<h3 class="widget-title">Recent Posts</h3>
-<ul>
-<?php foreach($recent_posts as $post){ ?>
-    <li>
-        <a href="<?php echo $post['permalink']?>"><?php echo $post['title']?></a>
-    </li>
-<?php } // end foreach recent_post ?>
-</ul>
-</section>
-
 <section id="archives-2" class="widget widget_archive">
 <h3 class="widget-title">Archives</h3>
 <ul>

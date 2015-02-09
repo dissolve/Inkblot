@@ -3,7 +3,7 @@
 <div class="hfeed h-feed feed">
 <div id="notes-stream">
 <div id="notes_pad"></div>
-<?php foreach($side_posts as $post) { ?>
+<?php /* foreach($side_posts as $post) { ?>
           <article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
   <header class="entry-header">
 
@@ -43,6 +43,10 @@
         <?php if($post['video_file']) { ?>
                 <a href="<?php echo $post['video_file']?>">Video</a>
         <?php } ?>
+        <?php if($post['post_type'] == 'listen'){ ?>
+            <?php echo 'I listend To <span class="song-title">'.$post['title'].'</span> by <span class="song-artist">'.$post['artist'].'</span>.'; ?>
+      
+        <?php  } ?>
         <?php if(isset($post['rsvp']) && !empty($post['rsvp'])) { ?>
             <i class="fa fa-calendar"></i>
                <a class="eventlink" href="<?php echo $post['replyto']?>">Event</a>
@@ -53,16 +57,16 @@
             <?php echo (strtolower($post['rsvp']) == 'yes' ? 'Attending' : 'Not Attending' );?>
             </data><br>
         <?php } ?>
-      <?php echo $post['body_html']?>
-      <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
-          echo "<br>Checked In At ".$post['place_name'];
-      } ?>
-        <?php if(isset($post['location']) && !empty($post['location'])){
-          $joined_loc = str_replace('geo:', '', $post['location']);
-          $latlng = explode($joined_loc, ',');
-          echo '<br>';
-          echo '<img id="map" style="width: 200px; height: 200px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'. $joined_loc.'"/>';
-      }?>
+            <?php echo $post['body_html']?>
+            <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
+            echo "<br>Checked In At ".$post['place_name'];
+            } ?>
+            <?php if(isset($post['location']) && !empty($post['location'])){
+              $joined_loc = str_replace('geo:', '', $post['location']);
+              $latlng = explode($joined_loc, ',');
+              echo '<br>';
+              echo '<img id="map" style="width: 200px; height: 200px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'. $joined_loc.'"/>';
+            } ?>
       
       </div><!-- .entry-content -->
   
@@ -104,10 +108,9 @@
       </indie-action>
       <?php } ?>
     </div>
-
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
-<?php } //end foreach posts ?>
+<?php } //end foreach side_posts */ ?>
 </div>
 <div id="posts-stream">
 <div id="stream_pad"></div>
@@ -129,28 +132,47 @@
       </header><!-- .entry-header -->
 
       <div class="entry-content e-content" itemprop="description articleBody">
+        <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
+            <i class="fa fa-bookmark-o"></i> 
+            <a class="p-bookmark" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
+        <?php } ?>
+        <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
+            <i class="fa fa-heart-o"></i> <br>
+            I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
+        <?php } ?>
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>
         <?php if($post['audio_file']) { ?>
-            <audio controls class="u-audio">
-                <source src="<?php echo $post['audio_file']?>" type="audio/mp4">
                 <a href="<?php echo $post['audio_file']?>">Audio</a>
-            </audio>
         <?php } ?>
         <?php if($post['video_file']) { ?>
-            <video controls class="u-video">
-                <source src="<?php echo $post['video_file']?>" type="video/mp4">
                 <a href="<?php echo $post['video_file']?>">Video</a>
-            </video>
         <?php } ?>
-      <?php echo $post['body_html']?>
-      <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
-          echo "<br>Checked In At ".$post['place_name'];
-      } ?>
-      <?php if(isset($post['location']) && !empty($post['location'])){ 
-          echo "<br><i class='fa fa-compass'></i>" .$post['location'];
-      } ?>
+        <?php if($post['post_type'] == 'listen'){ ?>
+            <?php echo 'I listend To <span class="song-title">'.$post['title'].'</span> by <span class="song-artist">'.$post['artist'].'</span>.'; ?>
+      
+        <?php  } ?>
+        <?php if(isset($post['rsvp']) && !empty($post['rsvp'])) { ?>
+            <i class="fa fa-calendar"></i>
+               <a class="eventlink" href="<?php echo $post['replyto']?>">Event</a>
+
+<br>
+            <i class="fa fa-envelope-o"></i>
+            <data class="p-rsvp" value="<?php echo $post['rsvp']?>">
+            <?php echo (strtolower($post['rsvp']) == 'yes' ? 'Attending' : 'Not Attending' );?>
+            </data><br>
+        <?php } ?>
+            <?php echo $post['body_html']?>
+            <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
+            echo "<br>Checked In At ".$post['place_name'];
+            } ?>
+            <?php if(isset($post['location']) && !empty($post['location'])){
+              $joined_loc = str_replace('geo:', '', $post['location']);
+              $latlng = explode($joined_loc, ',');
+              echo '<br>';
+              echo '<img id="map" style="width: 200px; height: 200px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'. $joined_loc.'"/>';
+            } ?>
       
       </div><!-- .entry-content -->
   

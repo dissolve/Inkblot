@@ -21,13 +21,37 @@
       </header><!-- .entry-header -->
 
       <div class="entry-content e-content" itemprop="description articleBody">
+        <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
+            <i class="fa fa-bookmark-o"></i> 
+            <a class="p-bookmark" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
+        <?php } ?>
+        <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
+            <i class="fa fa-heart-o"></i> <br>
+            I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
+        <?php } ?>
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
+        <?php } ?>
+        <?php if($post['audio_file']) { ?>
+                <a href="<?php echo $post['audio_file']?>">Audio</a>
+        <?php } ?>
+        <?php if($post['video_file']) { ?>
+                <a href="<?php echo $post['video_file']?>">Video</a>
         <?php } ?>
         <?php if($post['post_type'] == 'listen'){ ?>
             <?php echo 'I listend To <span class="song-title">'.$post['title'].'</span> by <span class="song-artist">'.$post['artist'].'</span>.'; ?>
       
-        <?php  } else { ?>
+        <?php  } ?>
+        <?php if(isset($post['rsvp']) && !empty($post['rsvp'])) { ?>
+            <i class="fa fa-calendar"></i>
+               <a class="eventlink" href="<?php echo $post['replyto']?>">Event</a>
+
+<br>
+            <i class="fa fa-envelope-o"></i>
+            <data class="p-rsvp" value="<?php echo $post['rsvp']?>">
+            <?php echo (strtolower($post['rsvp']) == 'yes' ? 'Attending' : 'Not Attending' );?>
+            </data><br>
+        <?php } ?>
             <?php echo $post['body_html']?>
             <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
             echo "<br>Checked In At ".$post['place_name'];
@@ -37,8 +61,7 @@
               $latlng = explode($joined_loc, ',');
               echo '<br>';
               echo '<img id="map" style="width: 400px; height: 300px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=400x300&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'. $joined_loc.'"/>';
-            }
-        } ?>
+            } ?>
       
       </div><!-- .entry-content -->
   
