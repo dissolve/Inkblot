@@ -86,15 +86,15 @@ class ControllerMicropubReceive extends Controller {
                         if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
                             $this->getPost();
                         //$this->log->write(print_r($this->request->post, true));
-                        } elseif(isset($this->request->post['action']) && strtolower($this->request->post['action']) == 'delete'){
+                        } elseif(isset($this->request->post['mp-action']) && strtolower($this->request->post['mp-action']) == 'delete'){
                             $this->deletePost();
-                        } elseif(isset($this->request->post['action']) && strtolower($this->request->post['action']) == 'undelete'){
+                        } elseif(isset($this->request->post['mp-action']) && strtolower($this->request->post['mp-action']) == 'undelete'){
                             $this->undeletePost();
-                        } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
+                        } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'article'){
                             $this->createArticle();
-                        } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'checkin'){
+                        } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'checkin'){
                             $this->createCheckin();
-                        } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'rsvp'){
+                        } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'rsvp'){
                             $this->createRsvp();
                         } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
                             $this->createBookmark();
@@ -106,7 +106,7 @@ class ControllerMicropubReceive extends Controller {
                             $this->createAudio();
                         } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
                             $this->createPhoto();
-                        } elseif(isset($this->request->post['action']) && strtolower($this->request->post['action']) == 'edit'){
+                        } elseif(isset($this->request->post['mp-action']) && strtolower($this->request->post['mp-action']) == 'edit'){
                             $this->editPost();
                         } else {
                             $this->createNote();

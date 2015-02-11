@@ -36,8 +36,8 @@
       <?php } ?>
       <form action="<?php echo ($token?$action:''); ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
 
-		    <input type="hidden" name="action" value="create" />
-            <input type="hidden" name="type" class="type-select" value="checkin" />
+		    <input type="hidden" name="mp-action" value="create" />
+            <input type="hidden" name="mp-type" class="type-select" value="checkin" />
             <div class="content">
 
                 <div class="form-group group-note group-checkin">

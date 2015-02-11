@@ -36,8 +36,8 @@
       <?php } ?>
       <form action="<?php echo ($token?$action:''); ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
 
-		    <input type="hidden" name="action" value="create" />
-            <input type="hidden" name="type" class="type-select" value="note" />
+		    <input type="hidden" name="mp-action" value="create" />
+            <input type="hidden" name="mp-type" class="type-select" value="note" />
             <div class="content">
 
                 <div class="form-group required group-note group-checkin group-article group-bookmark group-rsvp content">

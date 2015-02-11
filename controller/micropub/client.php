@@ -368,7 +368,7 @@ class ControllerMicropubClient extends Controller {
         $post_data_array = $this->request->post;
         $post_data_array['h'] = 'entry';
 
-        if(isset($post_data_array['type']) && $post_data_array['type'] == 'article'){
+        if(isset($post_data_array['mp-type']) && $post_data_array['mp-type'] == 'article'){
             $post_data_array['content']  = html_entity_decode($post_data_array['content']);
         }
 
@@ -414,7 +414,7 @@ class ControllerMicropubClient extends Controller {
         } else {
             $this->session->data['error'] = 'Error:  Return code '.$result.'.';
         }
-        if(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
+        if(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'article'){
             $this->response->redirect($this->url->link('micropub/client/article'));
         } else {
             $this->response->redirect($this->url->link('micropub/client'));
