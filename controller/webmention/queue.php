@@ -55,6 +55,8 @@ class ControllerWebmentionQueue extends Controller {
             if(isset($post['image_file'])){
                 $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' .
                 '<img src="'.$post['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($post['body'].$post['syndication_extra']),false, $post['shortlink'] );
+            } elseif($post['bookmark_like_url']){
+                $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['bookmark_like_url'].'"></a>' . html_entity_decode($post['body'].$post['syndication_extra']), false, $post['shortlink'] );
             } else {
                 $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body'].$post['syndication_extra']), false, $post['shortlink'] );
             }

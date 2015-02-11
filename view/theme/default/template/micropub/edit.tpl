@@ -100,7 +100,7 @@
                       <li><a class="mp-list-item" href="<?php echo $delete_entry_link?>">Delete</a></li>
                       <li><a class="mp-list-item" href="<?php echo $undelete_entry_link?>">Undelete</a></li>
                     </ul>
-		    <input type="hidden" name="operation" value="edit" />
+		    <input type="hidden" name="action" value="edit" />
 
                 <!--
                     <input type="radio" name="type" class="type-select" value="note"     id="radio-note"     <?php echo($type == 'note' ? '' :'checked')?> class="form-control" /><label class="type-select-label" for="radio-note">Note</label>

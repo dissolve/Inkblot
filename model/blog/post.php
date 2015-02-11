@@ -121,6 +121,10 @@ class ModelBlogPost extends Model {
                 'shortlink' => $shortlink,
                 'permashortcitation' => $citation
             ));
+            if($post['post_type'] == 'article' && preg_match('/<hr \/>/', $post['body'])){
+                $post['excerpt'] = preg_replace('/<hr \/>.*/s','',$post['body']);
+                $post['body'] = preg_replace('/<hr \/>/','',$post['body']);
+            }
             date_default_timezone_set(LOCALTIMEZONE);
             $post['timestamp'] =  date("c", strtotime( $post['timestamp']));
             if($post['post_type'] == 'bookmark'){

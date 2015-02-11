@@ -68,23 +68,35 @@
                     $('.control-label[for="input-replyto"]').html('Event URL');
                     $('.form-group.rsvp').addClass('required');
                     $('.form-group.reply').addClass('required');
+                    if(ed){
+                        ed.destroy('input-body');
+                    }
                 }
                 function showCheckin(){
                     $('.form-group').hide();
                     $('.required').removeClass('required');
                     $('.group-checkin').show();
+                    if(ed){
+                        ed.destroy('input-body');
+                    }
                 }
                 function showLike(){
                     $('.form-group').hide();
                     $('.required').removeClass('required');
                     $('.group-like').show();
                     $('.form-group.like').addClass('required');
+                    if(ed){
+                        ed.destroy('input-body');
+                    }
                 }
                 function showBookmark(){
                     $('.form-group').hide();
                     $('.required').removeClass('required');
                     $('.group-bookmark').show();
                     $('.form-group.bookmark').addClass('required');
+                    if(ed){
+                        ed.destroy('input-body');
+                    }
                 }
 
 
@@ -142,7 +154,7 @@
                       <li><a class="mp-list-item" href="<?php echo $delete_entry_link?>">Delete</a></li>
                       <li><a class="mp-list-item" href="<?php echo $undelete_entry_link?>">Undelete</a></li>
                     </ul>
-		    <input type="hidden" name="operation" value="create" />
+		    <input type="hidden" name="action" value="create" />
                 <div class="type-select-wrap">
 
                     <input type="radio" name="type" class="type-select" value="note"     id="radio-note"     <?php echo($type == 'note' ? '' :'checked')?> class="form-control" /><label class="type-select-label" for="radio-note">Note</label>
@@ -286,6 +298,6 @@
 
   </footer><!-- #entry-meta --></article>
         <!--<script type="text/javascript" src="/view/javascript/ckeditor/ckeditor.js"></script> -->
-<script src="//cdn.ckeditor.com/4.4.5/standard/ckeditor.js"></script>
+<script src="//cdn.ckeditor.com/4.4.7/standard/ckeditor.js"></script>
 
 <?php echo $footer; ?>

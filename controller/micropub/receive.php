@@ -86,9 +86,9 @@ class ControllerMicropubReceive extends Controller {
                         if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
                             $this->getPost();
                         //$this->log->write(print_r($this->request->post, true));
-                        } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'delete'){
+                        } elseif(isset($this->request->post['action']) && strtolower($this->request->post['action']) == 'delete'){
                             $this->deletePost();
-                        } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'undelete'){
+                        } elseif(isset($this->request->post['action']) && strtolower($this->request->post['action']) == 'undelete'){
                             $this->undeletePost();
                         } elseif(isset($this->request->post['type']) && $this->request->post['type'] == 'article'){
                             $this->createArticle();
@@ -106,7 +106,7 @@ class ControllerMicropubReceive extends Controller {
                             $this->createAudio();
                         } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
                             $this->createPhoto();
-                        } elseif(isset($this->request->post['operation']) && strtolower($this->request->post['operation']) == 'edit'){
+                        } elseif(isset($this->request->post['action']) && strtolower($this->request->post['action']) == 'edit'){
                             $this->editPost();
                         } else {
                             $this->createNote();

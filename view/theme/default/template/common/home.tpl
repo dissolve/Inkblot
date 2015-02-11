@@ -131,7 +131,11 @@
         </div><!-- .entry-meta -->
       </header><!-- .entry-header -->
 
+     <?php if(isset($post['excerpt_html'])) { ?>
+      <div class="p-summary" itemprop="description articleBody">
+     <?php } else { ?>
       <div class="entry-content e-content" itemprop="description articleBody">
+     <?php } ?>
         <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
             <i class="fa fa-bookmark-o"></i> 
             <a class="p-bookmark" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
@@ -163,7 +167,11 @@
             <?php echo (strtolower($post['rsvp']) == 'yes' ? 'Attending' : 'Not Attending' );?>
             </data><br>
         <?php } ?>
-            <?php echo $post['body_html']?>
+             <?php if(isset($post['excerpt_html'])) {?>
+                <?php echo $post['excerpt_html']?>
+             <?php } else { ?>
+                <?php echo $post['body_html']?>
+             <?php } ?>
             <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
             echo "<br>Checked In At ".$post['place_name'];
             } ?>
@@ -177,6 +185,9 @@
       </div><!-- .entry-content -->
   
   <footer class="entry-meta">
+             <?php if(isset($post['excerpt_html'])) {?>
+                <a href="<?php echo $post['permalink']?>" class="u-url">More...</a>
+             <?php } ?>
     <?php if($post['comment_count'] > 0) { ?>
     <span class="comments-link"><a href="<?php echo $post['permalink']?>#comments" title="Comments for <?php echo $post['title']?>"><i class="fa fa-comment-o"></i> <?php echo $post['comment_count'] ?></a></span>
     <span class="sep"> | </span>

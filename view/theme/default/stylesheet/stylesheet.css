@@ -515,7 +515,7 @@ footer.entry-meta {
 .note .entry-header .entry-title, .note .entry-header .entry-title a {
   font-size: 20px;
 }
-article .entry-header .entry-title, article .entry-header .entry-meta, article .entry-content{
+article .entry-header .entry-title, article .entry-header .entry-meta, article .entry-content, article .p-summary {
   padding-left: 20px;
   padding-right: 20px;
 }

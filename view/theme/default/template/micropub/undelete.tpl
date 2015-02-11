@@ -40,7 +40,7 @@
                       <li><a class="mp-list-item" href="<?php echo $delete_entry_link?>">Delete</a></li>
                       <li class="mp-list-item mp-selected">Undelete</li>
                     </ul>
-                    <input type="hidden" name="operation" value="undelete" />
+                    <input type="hidden" name="action" value="undelete" />
                   </div>
                 </div>
             <div class="content">
