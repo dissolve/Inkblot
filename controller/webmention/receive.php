@@ -249,10 +249,26 @@ class ControllerWebmentionReceive extends Controller {
                 $mf2_parsed = Mf2\parse($page_content, $real_source_url);
                 foreach($mf2_parsed['items'] as $item){
                     $comment_data = IndieWeb\comments\parse($item, $target_url);
-                    if(!empty($comment_data['url'])){ //if one failed to parse we try the next
+                    if(!empty($comment_data['url'])){ //break out of loop if we found one
                         break;
                     }
                 }
+
+    $psc_matches = array();
+    $psc_pattern = '/\(([^ ]+ [^ ]+)\)$/';
+    preg_match($psc_pattern, $comment_data['text'], $psc_matches);
+
+    if(isset($matches[1]) && !empty($matches[1])){
+        $src = 'http://' .str_replace(' ','/', $matches[1]);
+        //TODO, find real source
+        //$comment_data['text'] = str_replace(' '.$matches[0], '', $comment_data['text']);
+        $c = curl_init();
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($c, CURLOPT_URL, $src);
+        curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+        $real_source_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
+    }
+
                 $this->log->write('target = ' . $target_url . ' real_source_url = '. $real_source_url);
 
                 require DIR_BASE . '/routes.php';
