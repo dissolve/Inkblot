@@ -434,29 +434,6 @@ class ControllerMicropubReceive extends Controller {
                     $data['rsvp'] = 'no';
                 }
             }
-            //$data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
-            //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
-            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['syndicate-to'] as $synto){
-                    if(strlen($note['body'].$note['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
-            } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['mp-syndicate-to'] as $synto){
-                    if(strlen($note['body'].$note['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
-            }
 
 
             $photo_id = $this->model_blog_photo->newPhoto($data);
@@ -464,6 +441,30 @@ class ControllerMicropubReceive extends Controller {
             $this->cache->delete('photos');
 
             $photo = $this->model_blog_photo->getPhoto($photo_id);
+
+            //$data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
+            //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
+            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+                $syn_extra = '';
+                foreach($this->request->post['syndicate-to'] as $synto){
+                    if(strlen($photo['body'].$photo['permashortcitation']) < 140){
+                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                    } else {
+                        $syn_extra .= '<a href="'.$synto.'"></a>';
+                    }
+                }
+                $this->model_blog_photo->setSyndicationExtra($photo['post_id'], $syn_extra);
+            } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
+                $syn_extra = '';
+                foreach($this->request->post['mp-syndicate-to'] as $synto){
+                    if(strlen($photo['body'].$photo['permashortcitation']) < 140){
+                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                    } else {
+                        $syn_extra .= '<a href="'.$synto.'"></a>';
+                    }
+                }
+                $this->model_blog_photo->setSyndicationExtra($photo['post_id'], $syn_extra);
+            }
 
             $this->load->model('blog/post');
             if($photo && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
@@ -530,30 +531,6 @@ class ControllerMicropubReceive extends Controller {
                     $data['rsvp'] = 'no';
                 }
             }
-            //TODO need to do this if it is from ownyourgram only
-            //$data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
-            //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
-            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['syndicate-to'] as $synto){
-                    if(strlen($note['body'].$note['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
-            } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['mp-syndicate-to'] as $synto){
-                    if(strlen($note['body'].$note['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
-            }
 
 
             $video_id = $this->model_blog_video->newVideo($data);
@@ -561,6 +538,28 @@ class ControllerMicropubReceive extends Controller {
             $this->cache->delete('videos');
 
             $video = $this->model_blog_video->getVideo($video_id);
+
+            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+                $syn_extra = '';
+                foreach($this->request->post['syndicate-to'] as $synto){
+                    if(strlen($video['body'].$video['permashortcitation']) < 140){
+                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                    } else {
+                        $syn_extra .= '<a href="'.$synto.'"></a>';
+                    }
+                }
+                $this->model_blog_video->setSyndicationExtra($video['post_id'], $syn_extra);
+            } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
+                $syn_extra = '';
+                foreach($this->request->post['mp-syndicate-to'] as $synto){
+                    if(strlen($video['body'].$video['permashortcitation']) < 140){
+                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                    } else {
+                        $syn_extra .= '<a href="'.$synto.'"></a>';
+                    }
+                }
+                $this->model_blog_video->setSyndicationExtra($video['post_id'], $syn_extra);
+            }
 
             $this->load->model('blog/post');
             if($video && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
@@ -627,27 +626,6 @@ class ControllerMicropubReceive extends Controller {
                     $data['rsvp'] = 'no';
                 }
             }
-            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['syndicate-to'] as $synto){
-                    if(strlen($note['body'].$note['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
-            } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['mp-syndicate-to'] as $synto){
-                    if(strlen($note['body'].$note['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
-            }
 
 
             $audio_id = $this->model_blog_audio->newAudio($data);
@@ -655,6 +633,29 @@ class ControllerMicropubReceive extends Controller {
             $this->cache->delete('audios');
 
             $audio = $this->model_blog_audio->getAudio($audio_id);
+
+
+            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+                $syn_extra = '';
+                foreach($this->request->post['syndicate-to'] as $synto){
+                    if(strlen($audio['body'].$audio['permashortcitation']) < 140){
+                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                    } else {
+                        $syn_extra .= '<a href="'.$synto.'"></a>';
+                    }
+                }
+                $this->model_blog_audio->setSyndicationExtra($audio['post_id'], $syn_extra);
+            } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
+                $syn_extra = '';
+                foreach($this->request->post['mp-syndicate-to'] as $synto){
+                    if(strlen($audio['body'].$audio['permashortcitation']) < 140){
+                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
+                    } else {
+                        $syn_extra .= '<a href="'.$synto.'"></a>';
+                    }
+                }
+                $this->model_blog_audio->setSyndicationExtra($audio['post_id'], $syn_extra);
+            }
 
             $this->load->model('blog/post');
             if($audio && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){

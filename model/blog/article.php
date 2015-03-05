@@ -80,6 +80,10 @@ class ModelBlogArticle extends Model {
         return $id;
     }
 
+    public function setSyndicationExtra($post_id, $syn_extra_val){
+        $this->db->query("UPDATE ".DATABASE.".posts SET syndication_extra='".$this->db->escape($syn_extra_val) . "' WHERE post_id = ".(int)$post_id);
+    }
+
     public function deleteArticle($article_id){
         $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = ".(int)$article_id;
         $this->db->query($sql);

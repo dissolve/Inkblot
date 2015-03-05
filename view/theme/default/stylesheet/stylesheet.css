@@ -1338,6 +1338,8 @@ data.p-rsvp[value="yes"] {color:green}
 
 .vouch { float:right; margin-right:10px; color: #555;}
 
+.u-photo.photo-post { max-width:600px;}
+
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
 }

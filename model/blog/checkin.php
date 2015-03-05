@@ -86,6 +86,10 @@ class ModelBlogCheckin extends Model {
         $this->db->query("UPDATE ".DATABASE.".posts SET syndication_extra='".$this->db->escape($syn_extra_val) . "' WHERE post_id = ".(int)$checkin_id);
     }
 
+    public function setSyndicationExtra($post_id, $syn_extra_val){
+        $this->db->query("UPDATE ".DATABASE.".posts SET syndication_extra='".$this->db->escape($syn_extra_val) . "' WHERE post_id = ".(int)$post_id);
+    }
+
     public function deleteCheckin($checkin_id){
         $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = ".(int)$checkin_id;
         $this->db->query($sql);
