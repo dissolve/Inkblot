@@ -10,6 +10,7 @@ $routes['clearrevision']      = 'admin/cache/revision';
 $routes['webmention']         = 'webmention/receive';
 $routes['token']              = 'auth/token';
 $routes['micropub']           = 'micropub/receive';
+$routes['logstore']           = 'logs/endpoint';
 $routes['login']              = 'auth/login';
 $routes['login_callback']     = 'auth/login/callback';
 $routes['login_token']        = 'auth/login/tokencallback';

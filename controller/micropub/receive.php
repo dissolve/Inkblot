@@ -67,7 +67,7 @@ class ControllerMicropubReceive extends Controller {
 
         } else {
             $headers = apache_request_headers();
-            if(isset($this->request->post['access_token']) || isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || isset($headers['Authorization'])){
+            if(isset($this->request->post['access_token']) || (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) && !empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) || isset($headers['Authorization'])){
                 $token = $this->request->post['access_token'];
                 if(!$token){
                     $parts = explode(' ', $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
