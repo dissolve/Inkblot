@@ -81,7 +81,7 @@ class ControllerCommonHeader extends Controller {
         $this->response->addHeader('Link: <'. $auth_endpoint.'>; rel="authorization_endpoint"', false);
         $this->response->addHeader('Link: <'. $token_endpoint.'>; rel="token_endpoint"', false);
         $this->response->addHeader('Link: <'. $micropub_endpoint.'>; rel="micropub"', false);
-        $this->response->addHeader('Link: <'. $logger_endpoint.'>; rel="micropub"', false);
+        $this->response->addHeader('Link: <'. $logger_endpoint.'>; rel="logstore"', false);
 
 		$data['webmention_handler'] = $webmention_handler;
 		$data['authorization_endpoint'] = $auth_endpoint;
