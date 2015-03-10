@@ -61,7 +61,14 @@ class ControllerLogsEndpoint extends Controller {
     }
     function saveLogEntry(){
             $this->load->model('storage/logs');
-            $this->model_storage_logs->addLogEntry();
+            $this->model_storage_logs->addLogEntry(
+                $this->request->post['in-reply-to'],
+                $this->request->post['content'],
+                $this->request->post['published'],
+                $this->request->post['author_name'],
+                $this->request->post['author_name'],
+                (isset($this->request->post['author_id']) ? $this->request->post['author_id']:null));
+
     }
     function feedList(){
             $this->load->model('storage/logs');

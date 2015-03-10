@@ -15,6 +15,9 @@ class ModelStorageLogs extends Model {
     }
     public function addLogEntry($feed_url, $message, $published, $author_name = '', $author_url = ''){
         $author_id = NULL;
+        if($author_id == NULL){
+            $author_id = 'NULL';
+        }
         //todo if author_url set, look up and possibly create author record
         //
         $query = $this->db->query("INSERT INTO " . DATABASE . ".logs SET 
