@@ -15,7 +15,7 @@
         <span class="e-content p-name">
             <?php echo $entry['message']?>
         </span>
-    <div>
+    </div>
 <?php } ?>
 </div>
 </body></html>
