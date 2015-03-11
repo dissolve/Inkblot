@@ -18,6 +18,13 @@ define('EMAIL', 'dev@null.me');
 
 define('GOOGLE_ANALYTICS_ID', 'UA-XXXXXXXX-1');
 
+//prouns, because why not
+define('PRONOUN_NOMINATIVE', 'e');
+define('PRONOUN_OBLIQUE', 'em');
+define('PRONOUN_POSESSIVE', 'eirs');
+//http://en.wikipedia.org/wiki/Spivak_pronoun 
+
+
 // DIR
 define('DIR_BASE', (ENVIRONMENT == 'LIVE' ? '/var/www/openbloglocal/': '/var/www/openblog/'));
 

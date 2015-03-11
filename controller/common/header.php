@@ -109,6 +109,10 @@ class ControllerCommonHeader extends Controller {
 		$data['google_analytics'] = html_entity_decode($this->config->get('config_google_analytics'), ENT_QUOTES, 'UTF-8');
 		$data['name'] = $this->config->get('config_name');
 
+        $data['pro_nominative'] = PRONOUN_NOMINATIVE;
+        $data['pro_oblique'] = PRONOUN_OBLIQUE;
+        $data['pro_posessive'] = PRONOUN_POSESSIVE;
+
 
 		$data['icon'] = $this->document->getIcon();
         if(!$data['icon']){

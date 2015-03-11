@@ -100,6 +100,10 @@ var loadIndieConfig = function () {
         <?php if ($icon) { ?>
         <img src="<?php echo $icon; ?>" class="photo u-photo" style="display:none" />
         <?php } ?>
+        <span class="p-x-pronoun-nominative" style="display:none"><?php echo $pro_nominative?></span>
+        <span class="p-x-pronoun-oblique" style="display:none"><?php echo $pro_oblique ?></span>
+        <span class="p-x-pronoun-posessive" style="display:none"><?php echo $pro_posessive ?></span>
+
   </header><!-- #branding -->
 
   <div id="main">

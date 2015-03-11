@@ -11,7 +11,7 @@ class ModelStorageLogs extends Model {
 
         $query = $this->db->query("SELECT * FROM " . DATABASE . ".logs WHERE feed_url = '". $this->db->escape($feed_url) ."' ORDER BY published DESC  LIMIT ". (int)$skip .",".(int)$limit);
 
-        return $query->rows;
+        return array_reverse($query->rows);
     }
     public function addLogEntry($feed_url, $message, $published, $author_name = '', $author_url = ''){
         $author_id = NULL;
