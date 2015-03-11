@@ -4,8 +4,8 @@
 
       <div class="entry-content e-content">
             <?php foreach($whitelist as $entry){ ?>
-            <div class="<?php echo ($entry['public'] ? '' : 'private') ?>">
-                <a href="http://<?php echo $entry['domain']?>" rel="contact"><?php echo $entry['domain']?></a>
+            <div class="h-card <?php echo ($entry['public'] ? '' : 'private') ?>">
+                <a class="u-url" href="http://<?php echo $entry['domain']?>" rel="contact"><?php echo $entry['domain']?></a>
                 <?php if($is_owner){ ?>
                     <a href="<?php echo $entry['delete']?>">Delete</a>
 
