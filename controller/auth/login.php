@@ -173,6 +173,7 @@ class ControllerAuthLogin extends Controller {
             $token_results = $this->get_token($me, $code, $redir_url, $state);
 
             $this->session->data['token'] = $token_results['access_token'];
+            $this->session->data['scope'] = $token_results['scope'];
             if($mp_endpoint){
                 //$ch = curl_init($mp_endpoint.'?q=actions');
                 $ch = curl_init($mp_endpoint.'?q=actions');
