@@ -7,9 +7,15 @@ class ModelStorageLogs extends Model {
         return $query->rows;
     }
 
-    public function getFeed($feed_url, $limit = 100, $skip=0){
+    public function getFeed($feed_url, $limit = 100, $before=null){
 
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".logs WHERE feed_url = '". $this->db->escape($feed_url) ."' ORDER BY published DESC  LIMIT ". (int)$skip .",".(int)$limit);
+        $query = $this->db->query("
+            SELECT *
+             FROM " . DATABASE . ".logs
+             WHERE feed_url = '". $this->db->escape($feed_url) ."'
+            ".($before != null ? "AND published < '".$this->db->escape($before)."'" : "")."
+             ORDER BY published DESC
+             LIMIT ". (int)$limit);
 
         return array_reverse($query->rows);
     }

@@ -51,7 +51,13 @@ class ControllerLogsEndpoint extends Controller {
 
     function getFeed(){
             $this->load->model('storage/logs');
-            $data['feed'] = $this->model_storage_logs->getFeed($this->request->get['url']);
+            $data['feed'] = $this->model_storage_logs->getFeed($this->request->get['url'],
+                    (isset($this->request->get['ls-limit']) ? $this->request->get['ls-limit'] : 100),
+                    (isset($this->request->get['ls-before']) ? $this->request->get['ls-before'] : null));
+
+            //TODO, this is not coming up correct still, not actually escaping the #
+             $data['prev'] = $this->url->link('logs/endpoint', 'h=feed&url='.urlencode($this->request->get['url']).'&ls-before='.urlencode($data['feed'][0]['published']), '');
+
 
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/logs/feed.tpl')) {
                 $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/logs/feed.tpl', $data));

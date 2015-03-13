@@ -19,5 +19,6 @@
         </span>
     </div>
 <?php } ?>
+    <a href="<?php echo $prev?>" class="u-prev">Prev</a>
 </div>
 </body></html>
