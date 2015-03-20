@@ -314,6 +314,17 @@ class ControllerWebmentionReceive extends Controller {
                         $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_like_id = '".(int)$like_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
                         $this->cache->delete('likes');
                         break;
+                    } elseif(isset($comment_data['type']) && $comment_data['type'] == 'tagged'){
+                        $this->db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$comment_data['url']."', is_tag=1".
+                            ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$comment_data['author']['name']."'" : "") .
+                            ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$comment_data['author']['url']."'" : "") .
+                            ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$comment_data['author']['photo']."'" : "") .
+                            ((isset($comment_data['in-reply-to']) && !empty($comment_data['in-reply-to']))? ", in_reply_to='".$comment_data['in-reply-to']."'" : "") .
+                            "");
+                        $mention_id = $this->db->getLastId();
+                        $this->db->query("UPDATE ". DATABASE.".webmentions SET resulting_mention_id = '".(int)$mention_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
+                        $this->cache->delete('mentions');
+                        break;
                     } else {
                         $this->db->query("INSERT INTO ". DATABASE.".mentions SET source_url = '".$comment_data['url']."'".
                             ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))? ", author_name='".$comment_data['author']['name']."'" : "") .

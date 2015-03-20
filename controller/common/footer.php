@@ -41,6 +41,7 @@ class ControllerCommonFooter extends Controller {
 		
 		$this->load->model('blog/mention');
 		$data['recent_mentions'] = $this->model_blog_mention->getRecentMentions(10);
+		$data['recent_tags'] = $this->model_blog_mention->getRecentTags(10);
 
 		$this->load->model('blog/post');
 		$data['likes'] = $this->model_blog_post->getGenericLikes();
