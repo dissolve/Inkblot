@@ -230,7 +230,7 @@ class ModelBlogPost extends Model {
         } else {
             $cid = $find_cat['category_id'];
         }
-        $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$id);
+        $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$post_id);
     }
 
     public function removeFromAllCategories($post_id){
