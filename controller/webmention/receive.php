@@ -319,7 +319,7 @@ class ControllerWebmentionReceive extends Controller {
                         ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))? ", author_url='".$comment_data['author']['url']."'" : "") .
                         ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))? ", author_image='".$comment_data['author']['photo']."'" : "") .
                         ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of']))? ", tag_of='".$comment_data['tag-of']."'" : "") .
-			", interaction_type="'.$interaction_type.'"'
+			", interaction_type='".$interaction_type."'".
                         "");
                     $interaction_id = $this->db->getLastId();
                     $this->db->query("UPDATE ". DATABASE.".webmentions SET interaction_id = '".(int)$interaction_id."', webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);

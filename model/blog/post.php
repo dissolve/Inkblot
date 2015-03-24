@@ -398,9 +398,9 @@ class ModelBlogPost extends Model {
                 ((isset($comment_data['text'])  && !empty($comment_data['text']))? ", body='".$this->db->escape($comment_data['text'])."'" : "") .
                 ((isset($comment_data['name'])  && !empty($comment_data['name']))? ", source_name='".$this->db->escape($comment_data['name'])."'" : "") .
                 ((isset($comment_data['published'])  && !empty($comment_data['published']))? ", `timestamp`='".$this->db->escape($comment_data['published'])."'" : ", `timestamp`=NOW()") .
-		", webmention_id="'.$webmention_id.'"'
-		", interaction_type="'.$interaction_type.'"'
-                ", post_id = ".(int)$post['post_id']);
+		", webmention_id='".$webmention_id."'".
+		", interaction_type='".$interaction_type."'".
+                ", post_id = ".(int)$post['post_id'].
 		", parse_timestamp = NOW()".
 		", approved=1".
 		"");
