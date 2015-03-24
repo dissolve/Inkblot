@@ -1,6 +1,6 @@
 CREATE TABLE `interactions` (
   `interaction_id` int(11) NOT NULL AUTO_INCREMENT,
-  `webmention_id` int(11) NOT NULL AUTO_INCREMENT,
+  `webmention_id` int(11) NOT NULL,
   `post_id` int(11) DEFAULT NULL,
   `page_id` int(11) DEFAULT NULL,
   `interaction_type` ENUM('reply','like','repost', 'mention', 'tag', 'tagged', 'rsvp') DEFAULT 'mention',
@@ -19,7 +19,7 @@ CREATE TABLE `interactions` (
   `tag_shape` varchar(45) DEFAULT NULL,
   `tag_coords` varchar(100) DEFAULT NULL,
   `tag_of` varchar(150) DEFAULT NULL,
-  `rsvp_response` = ENUM('attending', 'not attending', 'maybe attending', 'remote attending') DEFAULT 'maybe attending',
+  `rsvp_response` ENUM('attending', 'not attending', 'maybe attending', 'remote attending') DEFAULT 'maybe attending',
   `deleted` tinyint(1) DEFAULT 0,
-  PRIMARY KEY (`comment_id`)
+  PRIMARY KEY (`interaction_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
