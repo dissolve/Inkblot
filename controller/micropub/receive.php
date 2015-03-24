@@ -214,8 +214,9 @@ class ControllerMicropubReceive extends Controller {
                     $post[$db_name] = $this->request->post[$field_name];
                 }
             }
-            if(isset($this->request->post['category']) && empty($this->request->post['category'])){
-                foreach($this->request->post['category'] as $category){
+            if(isset($this->request->post['category']) && !empty($this->request->post['category'])){
+                $categories = explode(',', $this->request->post['category']);
+                foreach($categories as $category){
                     $this->model_blog_post->addToCategory($post['post_id'], $category);
                 }
             }
