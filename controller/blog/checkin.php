@@ -6,15 +6,14 @@ class ControllerBlogCheckin extends Controller {
             parse_str($this->session->data['mp-config'], $mpconfig);
         }
 
-
         $year = $this->request->get['year'];
         $month = $this->request->get['month'];
         $day = $this->request->get['day'];
         $daycount = $this->request->get['daycount'];
 
-		$this->load->model('blog/checkin');
+		$this->load->model('blog/post');
 		
-		$post = $this->model_blog_checkin->getCheckinByDayCount($year, $month, $day, $daycount);
+		$post = $this->model_blog_post->getPostByDayCount($year, $month, $day, $daycount);
 
         // redirect if we don't have the correct URL
         if($this->request->get['slug'] != $post['slug'] ) {
@@ -24,6 +23,7 @@ class ControllerBlogCheckin extends Controller {
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/post');
+		$this->load->model('blog/interaction');
 		$this->load->model('blog/context');
 
         if($this->session->data['is_owner']){
@@ -53,8 +53,12 @@ class ControllerBlogCheckin extends Controller {
             }
             $author = $this->model_blog_author->getAuthor($post['author_id']);
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
-            $comment_count = $this->model_blog_post->getCommentCountForPost($post['post_id']);
-            $fetch_comments = $this->model_blog_post->getCommentsForPost($post['post_id']);
+	    $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
+	    $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
+	    $fetch_comments = $this->model_blog_interaction->getInteractionsForPost('reply', $post['post_id']);
+	    $likes = $this->model_blog_interaction->getInteractionsForPost('like', $post['post_id']);
+	    $mentions = $this->model_blog_interaction->getInteractionsForPost('mention', $post['post_id']);
+
             $comments = array();
             if(!isset($this->session->data['user_site'])){
                 $comments = $fetch_comments;
@@ -91,9 +95,6 @@ class ControllerBlogCheckin extends Controller {
                 }
             }
 
-            $mentions = $this->model_blog_post->getMentionsForPost($post['post_id']);
-            $like_count = $this->model_blog_post->getLikeCountForPost($post['post_id']);
-            $likes = $this->model_blog_post->getLikesForPost($post['post_id']);
             $context = $this->model_blog_context->getAllContextForPost($post['post_id']);
 
             $data['post'] = array_merge($post, array(
@@ -185,16 +186,16 @@ class ControllerBlogCheckin extends Controller {
 
 		$this->load->model('blog/author');
 		$this->load->model('blog/post');
+		$this->load->model('blog/interaction');
 		$this->load->model('blog/category');
-		$this->load->model('blog/checkin');
 
 		$data['posts'] = array();
 		
 		foreach ($this->model_blog_post->getRecentPostsByType('checkin') as $post) {
                 $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
                 $author = $this->model_blog_author->getAuthor($post['author_id']);
-                $comment_count = $this->model_blog_post->getCommentCountForPost($post['post_id']);
-                $like_count = $this->model_blog_post->getLikeCountForPost($post['post_id']);
+	        $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
+	        $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
 
                 $extra_data_array = array(
                     'body_html' => html_entity_decode($post['body']),

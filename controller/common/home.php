@@ -23,7 +23,7 @@ class ControllerCommonHome extends Controller {
 		$this->load->model('blog/post');
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
-		$this->load->model('blog/comment');
+		$this->load->model('blog/interaction');
 
 		
 		$data['posts'] = array();
@@ -41,8 +41,8 @@ class ControllerCommonHome extends Controller {
 		foreach ($this->model_blog_post->getRecentPosts(30, $skip) as $post) {
 			$author = $this->model_blog_author->getAuthor($post['author_id']);
 			$categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
-			$comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
-			$like_count = $this->model_blog_post->getLikeCountForPost($post['post_id']);
+			$comment_count = $this->model_blog_interactions->getInteractionCountForPost('reply', $post['post_id']);
+			$like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
 
             $extra_data_array = array(
 			    'body_html' => html_entity_decode(isset($post['excerpt']) ? $post['excerpt'] : $post['body']),

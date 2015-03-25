@@ -88,6 +88,91 @@ class ModelBlogPost extends Model {
             $this->cache->delete('post.'.$data['post_id']);
         }
     }
+    public function newPost($data){
+
+        if(isset($data['published'])) {
+            $year = date('Y', strtotime($data['published']));
+            $month = date('n', strtotime($data['published']));
+            $day = date('j', strtotime($data['published']));
+            $timestamp = "'" . $this->db->escape($data['published']) ."'";
+        } else { 
+            $year = date('Y');
+            $month = date('n');
+            $day = date('j');
+            $timestamp = "NOW()";
+        }
+
+        $draft= 0;
+        if(isset($data['draft']) && ($data['draft'] == 1 || $data['draft'] == '1')){
+            $draft= 1;
+        }
+
+        $query = $this->db->query("
+            SELECT COALESCE(MAX(daycount), 0) + 1 AS newval
+                FROM ".DATABASE.".posts 
+                WHERE `year` = '".$year."'
+                    AND `month` = '".$month."' 
+                    AND `day` = '".$day."';");
+
+        $newcount = $query->row['newval'];
+
+        $syndication_extra = '';
+        if(isset($data['syndication_extra']) && !empty($data['syndication_extra'])){
+            $syndication_extra = $this->db->escape($data['syndication_extra']);
+        }
+
+        $slug = '';
+        if(isset($data['slug']) && !empty($data['slug'])){
+            $slug = $this->db->escape($data['slug']);
+        }
+
+        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='".$this->db->escape($type)."',
+            `body` = '".$this->db->escape($data['body'])."',
+            `title` = '".$this->db->escape($data['title'])."',
+            `syndication_extra` = '".$syndication_extra."',
+            `slug` = '".$slug."',
+            `author_id` = 1,
+            `timestamp` = ".$timestamp.",
+            `year` = ".(int)$year.",
+            `month` = ".(int)$month.",
+            `day` = ".(int)$day.",
+            `draft` = ".(int)$draft.",
+            `deleted` = 0,
+            `daycount` = ".(int)$newcount .
+            (isset($data['image_file']) && !empty($data['image_file']) ? ", image_file='".$this->db->escape($data['image_file'])."'" : "").
+            (isset($data['video_file']) && !empty($data['video_file']) ? ", video_file='".$this->db->escape($data['video_file'])."'" : "").
+            (isset($data['audio_file']) && !empty($data['audio_file']) ? ", audio_file='".$this->db->escape($data['audio_file'])."'" : "").
+            (isset($data['rsvp']) && !empty($data['rsvp']) ? ", rsvp='".$this->db->escape($data['rsvp'])."'" : "").
+            (isset($data['location']) && !empty($data['location']) ? ", location='".$this->db->escape($data['location'])."'" : "").
+            (isset($data['place_name']) && !empty($data['place_name']) ? ", place_name='".$this->db->escape($data['place_name'])."'" : "").
+            (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='".$this->db->escape($data['replyto'])."'" : "");
+
+        $query = $this->db->query($sql);
+
+        $id = $this->db->getLastId();
+        
+        if(isset($data['category']) && !empty($data['category'])){
+            $categories = explode(',',$data['category']);
+            foreach ($categories as $cat) {
+                $trimmed_cat = trim($cat);
+                $query = $this->db->query("SELECT category_id FROM ".DATABASE.".categories where name='".$this->db->escape($trimmed_cat)."'");
+                $find_cat = $query->row;
+                $cid = 0;
+                if(empty($find_cat)){
+                    $this->db->query("INSERT INTO ".DATABASE.".categories SET name='".$this->db->escape($trimmed_cat)."'");
+                    $cid = $this->db->getLastId();
+
+                } else {
+                    $cid = $find_cat['category_id'];
+
+                }
+                $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$id);
+
+            }
+        }
+        
+        return $id;
+    }
 
     public function setSyndicationExtra($post_id, $syn_extra_val){
         $this->db->query("UPDATE ".DATABASE.".posts SET syndication_extra='".$this->db->escape($syn_extra_val) . "' WHERE post_id = ".(int)$post_id);
@@ -143,9 +228,14 @@ class ModelBlogPost extends Model {
 		return $post;
 	}
 
-	public function getByDayCount($year, $month, $day, $daycount) {
-	    return $this->getPostByDayCount($year, $month, $day, $daycount);
+    public function getPostByData($data){
+        if(isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount'])) {
+            return $this->getPostByDayCount($data['year'],$data['month'], $data['day'], $data['daycount']);
+        } else {
+            return null;
+        }
     }
+
 	public function getPostByDayCount($year,$month, $day, $daycount) {
         $post_id = $this->cache->get('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
         if(!$post_id){
@@ -168,10 +258,10 @@ class ModelBlogPost extends Model {
 		    $this->cache->set('posts.recent.'. $skip . '.' .$limit, $post_id_array);
 		}
 	
-        $data_array = array();
-        foreach($post_id_array as $post){
-            $data_array[] = $this->getPost($post['post_id']);
-        }
+        	$data_array = array();
+        	foreach($post_id_array as $post){
+            		$data_array[] = $this->getPost($post['post_id']);
+        	}
 	
 		return $data_array;
 	}
@@ -302,51 +392,71 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
-	public function getPostsByArchive($year, $month, $limit=NULL, $skip=0) {
-        $post_id_array = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
-        if(!$post_id_array){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC ". ($limit ? " LIMIT " . (int)$skip .  ", " . (int)$limit : ''));
-            $post_id_array = $query->rows;
-            if(!$limit){
-                $limit = 'all';
-            }
-            $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $post_id_array);
-        }
+	public function getPostsByArchive($type, $year, $month, $limit=20, $skip=0) {
+		$data = $this->cache->get($type. '.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
+		if(!$data){
+		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='".$this->db->escape($type)."' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+		    $data = $query->rows;
+		    $data_array = array();
+		    foreach($data as $audio){
+			$data_array[] = $this->getPost($audio['post_id']);
+		    }
+		    $this->cache->set($type.'.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
+		} else {
+		    $data_array = $data;
+		}
 	
-        $data_array = array();
-        foreach($post_id_array as $post){
-            $data_array[] = $this->getPost($post['post_id']);
-        }
+		return $data_array;
+	}
+	public function getAnyPostsByArchive($year, $month, $limit=NULL, $skip=0) {
+		$post_id_array = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
+		if(!$post_id_array){
+		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC ". ($limit ? " LIMIT " . (int)$skip .  ", " . (int)$limit : ''));
+		    $post_id_array = $query->rows;
+		    if(!$limit){
+			$limit = 'all';
+		    }
+		    $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $post_id_array);
+		}
+		
+		$data_array = array();
+		foreach($post_id_array as $post){
+		    $data_array[] = $this->getPost($post['post_id']);
+		}
 		return $data_array;
 	}
 
 	public function getSyndications($post_id) {
-        $query = $this->db->query("SELECT * FROM ".DATABASE.".post_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE post_id = ".(int)$post_id);
+		$query = $this->db->query("SELECT * FROM ".DATABASE.".post_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE post_id = ".(int)$post_id);
 
-        return $query->rows;
+		return $query->rows;
 	}
 
 	public function addSyndication($post_id, $syndication_url) {
-        if(!empty($syndication_url)){
-            $syndication_url = trim($syndication_url);
-            //figure out what site this is.
-            $sites_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site ");
-            $sites = $sites_query->rows;
+		if(!empty($syndication_url)){
+		    $syndication_url = trim($syndication_url);
+		    //figure out what site this is.
+		    $sites_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site ");
+		    $sites = $sites_query->rows;
 
-            $syn_site_id = 0;
-            foreach($sites as $site){
-                if(strpos($syndication_url, $site['site_url_match']) === 0){
-                    $syn_site_id = $site['syndication_site_id'];
-                    break;
-                }
-            }
+		    $syn_site_id = 0;
+		    foreach($sites as $site){
+			if(strpos($syndication_url, $site['site_url_match']) === 0){
+			    $syn_site_id = $site['syndication_site_id'];
+			    break;
+			}
+		    }
 
-            // add site to DB
-            $query = $this->db->query("INSERT INTO ".DATABASE.".post_syndication SET post_id = ".(int)$post_id.", syndication_site_id=".(int)$syn_site_id.", syndication_url = '".$this->db->escape($syndication_url)."'");
+		    // add site to DB
+		    $query = $this->db->query("INSERT INTO ".DATABASE.".post_syndication SET post_id = ".(int)$post_id.", syndication_site_id=".(int)$syn_site_id.", syndication_url = '".$this->db->escape($syndication_url)."'");
 
-            $this->cache->delete('post.'. $post_id);
-        }
+		    $this->cache->delete('post.'. $post_id);
+		}
 	}
+
+//below this has been upgraded to Interactions methods
+
+
 
     public function addWebmention($data, $webmention_id, $comment_data, $post_id = null){
         if(isset($comment_data['published']) && !empty($comment_data['published'])){
@@ -440,7 +550,6 @@ class ModelBlogPost extends Model {
     }
 
 
-//below this has been upgraded to Interactions methods
 
 
     public function getGenericLikes($limit=100, $skip=0) {

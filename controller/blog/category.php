@@ -19,6 +19,7 @@ class ControllerBlogCategory extends Controller {
 
 		$this->load->model('blog/author');
 		$this->load->model('blog/post');
+		$this->load->model('blog/interaction');
 
 		$data['posts'] = array();
 

@@ -291,12 +291,12 @@ class ControllerWebmentionReceive extends Controller {
                     if(!$model){
                         throw new Exception('No Model Set.');
                     } else {
-                        $this->load->model($model);
+                        $this->load->model('blog/interaction');
                         if($editing){
-                            $this->registry->get('model_'. str_replace('/', '_', $model))->editWebmention($data, $webmention_id, $comment_data);
+                            $this->model_blog_interaction->editWebmention($data, $webmention_id, $comment_data);
                         } else {
-                            //$this->log->write(' calling model_'. str_replace('/', '_', $model) . ' addWebmention with '. print_r($data, true). ' ' .  $webmention_id . " " . print_r( $comment_data, true));
-                            $this->registry->get('model_'. str_replace('/', '_', $model))->addWebmention($data, $webmention_id, $comment_data);
+                            //$this->log->write(' calling model_blog_interaction->addWebmention with '. print_r($data, true). ' ' .  $webmention_id . " " . print_r( $comment_data, true));
+                            $this->model_blog_interaction->addWebmention($data, $webmention_id, $comment_data);
                             //$this->log->write(' DONE');
                         }
                     }
