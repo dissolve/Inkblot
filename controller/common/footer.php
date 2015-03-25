@@ -39,13 +39,11 @@ class ControllerCommonFooter extends Controller {
             $data['recent_drafts'] = $this->model_blog_post->getRecentDrafts(10);
         }
 		
-		$this->load->model('blog/post');
-		$data['recent_mentions'] = $this->model_blog_post->getGenericMentions(10);
+		$this->load->model('blog/interaction');
+		$data['recent_mentions'] = $this->model_blog_interaction->getGenericInteractions('mention',10);
 		$data['recent_tags'] = null; //TODO // $this->model_blog_post->getRecentTags(10);
-
-		$this->load->model('blog/post');
-		$data['likes'] = $this->model_blog_post->getGenericLikes();
-		$data['like_count'] = $this->model_blog_post->getGenericLikeCount();
+		$data['likes'] = $this->model_blog_interaction->getGenericInteractions('like');
+		$data['like_count'] = $this->model_blog_interaction->getGenericInteractionCount('like');
 		
 		$this->load->model('blog/post');
 		$data['recent_posts'] = array();

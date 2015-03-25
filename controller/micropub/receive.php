@@ -234,6 +234,7 @@ class ControllerMicropubReceive extends Controller {
     private function createNote(){
         //$this->log->write('called createNote()');
         $this->load->model('blog/note');
+        $this->load->model('blog/post');
         $data = array();
         $data['body'] = $this->request->post['content'];
         $data['slug'] = $this->request->post['slug'];
@@ -274,7 +275,7 @@ class ControllerMicropubReceive extends Controller {
         $this->cache->delete('posts');
         $this->cache->delete('notes');
 
-        $note = $this->model_blog_note->getNote($note_id);
+        $note = $this->model_blog_post->getPost($note_id);
 
         if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
             $syn_extra = '';
@@ -285,7 +286,7 @@ class ControllerMicropubReceive extends Controller {
                     $syn_extra .= '<a href="'.$synto.'"></a>';
                 }
             }
-            $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
+            $this->model_blog_post->setSyndicationExtra($note['post_id'], $syn_extra);
         } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
             $syn_extra = '';
             foreach($this->request->post['mp-syndicate-to'] as $synto){
@@ -295,7 +296,7 @@ class ControllerMicropubReceive extends Controller {
                     $syn_extra .= '<a href="'.$synto.'"></a>';
                 }
             }
-            $this->model_blog_note->setSyndicationExtra($note['post_id'], $syn_extra);
+            $this->model_blog_post->setSyndicationExtra($note['post_id'], $syn_extra);
         }
 
         if($note && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
@@ -319,6 +320,7 @@ class ControllerMicropubReceive extends Controller {
         //$this->log->write('called createArticle()');
         //$this->log->write($this->request->post['content']);
         $this->load->model('blog/article');
+        $this->load->model('blog/post');
         $data = array();
         $data['body'] = $this->request->post['content'];
         $data['title'] = $this->request->post['title'];
@@ -365,7 +367,7 @@ class ControllerMicropubReceive extends Controller {
         $this->cache->delete('posts');
         $this->cache->delete('articles');
 
-        $article = $this->model_blog_article->getArticle($article_id);
+        $article = $this->model_blog_post->getPost($article_id);
 
         if($article && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
             $this->load->model('blog/post');
@@ -403,6 +405,7 @@ class ControllerMicropubReceive extends Controller {
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/photo/'. urldecode($upload_shot["name"]));
 
             $this->load->model('blog/photo');
+	    $this->load->model('blog/post');
             $data = array();
             $data['image_file'] = DIR_UPLOAD_REL .'/photo/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
@@ -441,7 +444,7 @@ class ControllerMicropubReceive extends Controller {
             $this->cache->delete('posts');
             $this->cache->delete('photos');
 
-            $photo = $this->model_blog_photo->getPhoto($photo_id);
+            $photo = $this->model_blog_post->getPost($photo_id);
 
             //$data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
             //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
@@ -454,7 +457,7 @@ class ControllerMicropubReceive extends Controller {
                         $syn_extra .= '<a href="'.$synto.'"></a>';
                     }
                 }
-                $this->model_blog_photo->setSyndicationExtra($photo['post_id'], $syn_extra);
+                $this->model_blog_post->setSyndicationExtra($photo['post_id'], $syn_extra);
             } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
                 $syn_extra = '';
                 foreach($this->request->post['mp-syndicate-to'] as $synto){
@@ -464,7 +467,7 @@ class ControllerMicropubReceive extends Controller {
                         $syn_extra .= '<a href="'.$synto.'"></a>';
                     }
                 }
-                $this->model_blog_photo->setSyndicationExtra($photo['post_id'], $syn_extra);
+                $this->model_blog_post->setSyndicationExtra($photo['post_id'], $syn_extra);
             }
 
             $this->load->model('blog/post');
@@ -500,6 +503,7 @@ class ControllerMicropubReceive extends Controller {
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/video/'. urldecode($upload_shot["name"]));
 
             $this->load->model('blog/video');
+	    $this->load->model('blog/post');
             $data = array();
             $data['video_file'] = DIR_UPLOAD_REL . '/video/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
@@ -538,7 +542,7 @@ class ControllerMicropubReceive extends Controller {
             $this->cache->delete('posts');
             $this->cache->delete('videos');
 
-            $video = $this->model_blog_video->getVideo($video_id);
+            $video = $this->model_blog_post->getPost($video_id);
 
             if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
                 $syn_extra = '';
@@ -549,7 +553,7 @@ class ControllerMicropubReceive extends Controller {
                         $syn_extra .= '<a href="'.$synto.'"></a>';
                     }
                 }
-                $this->model_blog_video->setSyndicationExtra($video['post_id'], $syn_extra);
+                $this->model_blog_post->setSyndicationExtra($video['post_id'], $syn_extra);
             } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
                 $syn_extra = '';
                 foreach($this->request->post['mp-syndicate-to'] as $synto){
@@ -559,7 +563,7 @@ class ControllerMicropubReceive extends Controller {
                         $syn_extra .= '<a href="'.$synto.'"></a>';
                     }
                 }
-                $this->model_blog_video->setSyndicationExtra($video['post_id'], $syn_extra);
+                $this->model_blog_post->setSyndicationExtra($video['post_id'], $syn_extra);
             }
 
             $this->load->model('blog/post');
@@ -595,6 +599,7 @@ class ControllerMicropubReceive extends Controller {
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/audio/'. urldecode($upload_shot["name"]));
 
             $this->load->model('blog/audio');
+	    $this->load->model('blog/post');
             $data = array();
             $data['audio_file'] = DIR_UPLOAD_REL . '/audio/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
@@ -633,7 +638,7 @@ class ControllerMicropubReceive extends Controller {
             $this->cache->delete('posts');
             $this->cache->delete('audios');
 
-            $audio = $this->model_blog_audio->getAudio($audio_id);
+            $audio = $this->model_blog_post->getPost($audio_id);
 
 
             if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
@@ -645,7 +650,7 @@ class ControllerMicropubReceive extends Controller {
                         $syn_extra .= '<a href="'.$synto.'"></a>';
                     }
                 }
-                $this->model_blog_audio->setSyndicationExtra($audio['post_id'], $syn_extra);
+                $this->model_blog_post->setSyndicationExtra($audio['post_id'], $syn_extra);
             } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
                 $syn_extra = '';
                 foreach($this->request->post['mp-syndicate-to'] as $synto){
@@ -655,7 +660,7 @@ class ControllerMicropubReceive extends Controller {
                         $syn_extra .= '<a href="'.$synto.'"></a>';
                     }
                 }
-                $this->model_blog_audio->setSyndicationExtra($audio['post_id'], $syn_extra);
+                $this->model_blog_post->setSyndicationExtra($audio['post_id'], $syn_extra);
             }
 
             $this->load->model('blog/post');
@@ -676,6 +681,7 @@ class ControllerMicropubReceive extends Controller {
 
     private function createBookmark(){
         $this->load->model('blog/bookmark');
+        $this->load->model('blog/post');
         $data = array();
         $data['body'] = $this->request->post['content'];
         $data['bookmark'] = $this->request->post['bookmark'];
@@ -708,7 +714,7 @@ class ControllerMicropubReceive extends Controller {
         $this->cache->delete('posts');
         $this->cache->delete('bookmarks');
 
-        $bookmark = $this->model_blog_bookmark->getBookmark($bookmark_id);
+        $bookmark = $this->model_blog_post->getPost($bookmark_id);
 
         if($bookmark && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
             $this->load->model('blog/post');
@@ -727,6 +733,7 @@ class ControllerMicropubReceive extends Controller {
 
     private function createCheckin(){
         $this->load->model('blog/checkin');
+        $this->load->model('blog/post');
         $data = array();
         $data['body'] = $this->request->post['content'];
 
@@ -762,7 +769,7 @@ class ControllerMicropubReceive extends Controller {
         $this->cache->delete('posts');
         $this->cache->delete('checkins');
 
-        $checkin = $this->model_blog_checkin->getCheckin($checkin_id);
+        $checkin = $this->model_blog_post->getPost($checkin_id);
 
         if($checkin && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
             $this->load->model('blog/post');
@@ -779,6 +786,7 @@ class ControllerMicropubReceive extends Controller {
 
     private function createRsvp(){
         $this->load->model('blog/rsvp');
+        $this->load->model('blog/post');
         $data = array();
         $data['body'] = $this->request->post['content'];
 
@@ -822,7 +830,7 @@ class ControllerMicropubReceive extends Controller {
         $this->cache->delete('posts');
         $this->cache->delete('rsvps');
 
-        $rsvp = $this->model_blog_rsvp->getRsvp($rsvp_id);
+        $rsvp = $this->model_blog_post->getPost($rsvp_id);
 
         if($rsvp && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
             $this->load->model('blog/post');
@@ -843,6 +851,7 @@ class ControllerMicropubReceive extends Controller {
 
     private function createLike(){
         $this->load->model('blog/like');
+        $this->load->model('blog/post');
         $data = array();
         $data['like-of'] = $this->request->post['like-of'];
 
@@ -864,7 +873,7 @@ class ControllerMicropubReceive extends Controller {
         $this->cache->delete('posts');
         $this->cache->delete('likes');
 
-        $like = $this->model_blog_like->getLike($like_id);
+        $like = $this->model_blog_post->getPost($like_id);
 
         if($like && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
             $this->load->model('blog/post');
@@ -899,7 +908,7 @@ class ControllerMicropubReceive extends Controller {
         }
      try {
             $this->load->model($model);
-            $post = $this->registry->get('model_'. str_replace('/', '_', $model))->getByData($data);
+            $post = $this->model_blog_post->getPostByData($data);
             return $post;
         } catch (Exception $e) {
             $this->log->write('failed to parse ' . $real_url . ' as a url for the site');

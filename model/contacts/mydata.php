@@ -7,13 +7,13 @@ class ModelContactsMydata extends Model {
     }
 
     public function addData($type_id, $data) {
-        $this->db->query("INSERT INTO " . DATABASE . ".mydata
-            SET field_type_id=".(int)$type_id.",
-            ".(isset($data['sorting']) ? "sorting=".(int)$data['sorting'])."," : "")."
-            ".(isset($data['title']) ? "title='".$this->db->escape($data['title'])."'," : "")."
-            ".(isset($data['rel']) ? "rel='".$this->db->escape($data['rel'])."'," : "")."
-            ".(isset($data['target']) ? "target='".$this->db->escape($data['target'])."'," : "")."
-	    value='".$this->db->escape($data['value'])."'");
+        $this->db->query("INSERT INTO " . DATABASE . ".mydata ".
+            "SET field_type_id=".(int)$type_id."," .
+            (isset($data['sorting']) ? "sorting=".(int)$data['sorting']."," : "").
+            (isset($data['title']) ? "title='".$this->db->escape($data['title'])."'," : "").
+            (isset($data['rel']) ? "rel='".$this->db->escape($data['rel'])."'," : "").
+            (isset($data['target']) ? "target='".$this->db->escape($data['target'])."'," : "").
+	    "value='".$this->db->escape($data['value'])."'");
 
         return $this->db->getLastId();
     }

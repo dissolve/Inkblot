@@ -83,128 +83,16 @@ class ModelBlogInteraction extends Model {
     }
 
 
-    public function getTagsForPost($post_id, $limit=100, $skip=0) {
-        $data = $this->cache->get('tags.post.'.$post_id.'.'. $skip . '.'.  $limit);
-        if(!$data){
-		//TODO
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".tags WHERE post_id = ".(int)$post_id." ORDER BY like_id DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-            $data = $query->rows;
-            $this->cache->set('tags.post.'.$post_id.'.'. $skip . '.' .$limit, $data);
-        }
-	return $data;
-    }
-
 
 //below this has been upgraded to Interactions methods
 
 
-    public function getGenericLikes($limit=100, $skip=0) {
-        $data = $this->cache->get('interactions.like.generic.'. $skip . '.'.  $limit);
-        if(!$data){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".interactions WHERE interaction_type='like' AND post_id IS NULL AND deleted=0 ORDER BY timestamp ASC LIMIT ". (int)$skip . ", " . (int)$limit);
-            $data = $query->rows;
-            $this->cache->set('interactions.like.generic.'. $skip . '.' .$limit, $data);
-        }
-	return $data;
-    }
-
-    public function getGenericLikeCount() {
-        $data = $this->cache->get('interactions.like.generic.count');
-        if(!$data){
-            $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DATABASE . ".interactions WHERE interaction_type='like' AND post_id IS NULL AND deleted=0");
-            $data = $query->row['total'];
-            $this->cache->set('interactions.like.generic.count', $data);
-        }
-	return $data;
-    }
-
-    public function getLikesForPost($post_id, $limit=100, $skip=0) {
-        $data = $this->cache->get('interactions.like.post.'.$post_id.'.'. $skip . '.'.  $limit);
-        if(!$data){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".interactions WHERE interaction_type='like' AND post_id = ".(int)$post_id." AND deleted=0 ORDER BY timestamp ASC LIMIT ". (int)$skip . ", " . (int)$limit);
-            $data = $query->rows;
-            $this->cache->set('interactions.like.post.'.$post_id.'.'. $skip . '.' .$limit, $data);
-        }
-	return $data;
-    }
-
-    public function getLikeCountForPost($post_id) {
-        $data = $this->cache->get('interatcions.like.post.count.'.$post_id);
-        if(!$data){
-            $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DATABASE . ".interactions WHERE interaction_type='like' AND post_id = ".(int)$post_id." AND deleted=0");
-            $data = $query->row['total'];
-            $this->cache->set('interactions.like.post.count.'.$post_id, $data);
-        }
-	return $data;
-    }
-
-    public function getGenericMentions($limit=100, $skip=0) {
-        $data = $this->cache->get('interactions.mentions.generic.'. $skip . '.'.  $limit);
-        if(!$data){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".interactions WHERE interaction_type='mention' AND post_id IS NULL AND deleted=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-            $data = $query->rows;
-            $this->cache->set('interactions.mentions.generic.'. $skip . '.' .$limit, $data);
-        }
-	return $data;
-    }
-
-    public function getGenericMentionCount() {
-        $data = $this->cache->get('interactions.mentions.generic.count');
-        if(!$data){
-            $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DATABASE . ".interactions WHERE interaction_type='mention' AND post_id IS NULL AND deleted=0");
-            $data = $query->row['total'];
-            $this->cache->set('interactions.mentions.generic.count', $data);
-        }
-	return $data;
-    }
-
-    public function getMentionsForPost($post_id, $limit=100, $skip=0) {
-        $data = $this->cache->get('interactions.mentions.post.'.$post_id.'.'. $skip . '.'.  $limit);
-        if(!$data){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".interactions WHERE interaction_type='mention' AND post_id = ".(int)$post_id." AND deleted=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-            $data = $query->rows;
-            $this->cache->set('interactions.mentions.post.'.$post_id.'.'. $skip . '.' .$limit, $data);
-        }
-	return $data;
-    }
-
-    public function getMentionCountForPost($post_id) {
-        $data = $this->cache->get('interatcions.mentions.post.count.'.$post_id);
-        if(!$data){
-            $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DATABASE . ".interactions WHERE interaction_type='mention' AND post_id = ".(int)$post_id." AND deleted=0");
-            $data = $query->row['total'];
-            $this->cache->set('interactions.mentions.post.count.'.$post_id, $data);
-        }
-	return $data;
-    }
-
-
-    public function getCommentsForPost($post_id, $limit=100, $skip=0) {
-        $data = $this->cache->get('interactions.comment.post.'.$post_id.'.'. $skip . '.'.  $limit);
-        if(!$data){
-            $query = $this->db->query("SELECT interactions.*, webmentions.vouch_url FROM " . DATABASE . ".interactions JOIN " . DATABASE . ".webmentions USING(webmention_id) WHERE interaction_type='reply' AND post_id = ".(int)$post_id." AND deleted=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-            $data = $query->rows;
-            $this->cache->set('interactions.comment.post.'.$post_id.'.'. $skip . '.' .$limit, $data);
-        }
-	return $data;
-    }
-
-    public function getCommentCountForPost($post_id) {
-        $data = $this->cache->get('interatcions.reply.post.count.'.$post_id);
-        if(!$data){
-            $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DATABASE . ".interactions WHERE interaction_type='reply' AND post_id = ".(int)$post_id." AND deleted=0");
-            $data = $query->row['total'];
-            $this->cache->set('interactions.reply.post.count.'.$post_id, $data);
-        }
-	return $data;
-    }
 
 
 
 
 
-
-    public function getGenericLikes($type, $limit=100, $skip=0) {
+    public function getGenericInteractions($type, $limit=100, $skip=0) {
         $data = $this->cache->get('interactions.'.$type.'.generic.'. $skip . '.'.  $limit);
         if(!$data){
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".interactions WHERE interaction_type='".$type."' AND post_id IS NULL AND deleted=0 ORDER BY timestamp ASC LIMIT ". (int)$skip . ", " . (int)$limit);
@@ -214,7 +102,7 @@ class ModelBlogInteraction extends Model {
 	return $data;
     }
 
-    public function getGenericLikeCount($type) {
+    public function getGenericInteractionCount($type) {
         $data = $this->cache->get('interactions.'.$type.'.generic.count');
         if(!$data){
             $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DATABASE . ".interactions WHERE interaction_type='".$type."' AND post_id IS NULL AND deleted=0");
