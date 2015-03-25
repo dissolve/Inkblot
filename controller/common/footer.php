@@ -39,9 +39,9 @@ class ControllerCommonFooter extends Controller {
             $data['recent_drafts'] = $this->model_blog_post->getRecentDrafts(10);
         }
 		
-		$this->load->model('blog/mention');
-		$data['recent_mentions'] = $this->model_blog_mention->getRecentMentions(10);
-		$data['recent_tags'] = $this->model_blog_mention->getRecentTags(10);
+		$this->load->model('blog/post');
+		$data['recent_mentions'] = $this->model_blog_post->getGenericMentions(10);
+		$data['recent_tags'] = null; //TODO // $this->model_blog_post->getRecentTags(10);
 
 		$this->load->model('blog/post');
 		$data['likes'] = $this->model_blog_post->getGenericLikes();

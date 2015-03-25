@@ -22,9 +22,7 @@ class ControllerBlogPhoto extends Controller {
 
 		$this->load->model('blog/author');
 		$this->load->model('blog/category');
-		$this->load->model('blog/comment');
 		$this->load->model('blog/post');
-		$this->load->model('blog/mention');
 		$this->load->model('blog/context');
 
         if($this->session->data['is_owner']){
@@ -54,8 +52,8 @@ class ControllerBlogPhoto extends Controller {
             }
             $author = $this->model_blog_author->getAuthor($post['author_id']);
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
-            $comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
-            $fetch_comments = $this->model_blog_comment->getCommentsForPost($post['post_id']);
+            $comment_count = $this->model_blog_post->getCommentCountForPost($post['post_id']);
+            $fetch_comments = $this->model_blog_post->getCommentsForPost($post['post_id']);
             $comments = array();
             if(!isset($this->session->data['user_site'])){
                 $comments = $fetch_comments;
@@ -92,7 +90,7 @@ class ControllerBlogPhoto extends Controller {
                 }
             }
 
-            $mentions = $this->model_blog_mention->getMentionsForPost($post['post_id']);
+            $mentions = $this->model_blog_post->getMentionsForPost($post['post_id']);
             $like_count = $this->model_blog_post->getLikeCountForPost($post['post_id']);
             $likes = $this->model_blog_post->getLikesForPost($post['post_id']);
             $context = $this->model_blog_context->getAllContextForPost($post['post_id']);
@@ -183,8 +181,6 @@ class ControllerBlogPhoto extends Controller {
 		$this->load->model('blog/author');
 		$this->load->model('blog/post');
 		$this->load->model('blog/category');
-		$this->load->model('blog/comment');
-		$this->load->model('blog/post');
 		$this->load->model('blog/photo');
 
 		$data['posts'] = array();
@@ -192,7 +188,7 @@ class ControllerBlogPhoto extends Controller {
 		foreach ($this->model_blog_post->getRecentPostsByType('photo') as $post) {
                 $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
                 $author = $this->model_blog_author->getAuthor($post['author_id']);
-                $comment_count = $this->model_blog_comment->getCommentCountForPost($post['post_id']);
+                $comment_count = $this->model_blog_post->getCommentCountForPost($post['post_id']);
                 $like_count = $this->model_blog_post->getLikeCountForPost($post['post_id']);
 
                 $extra_data_array = array(
