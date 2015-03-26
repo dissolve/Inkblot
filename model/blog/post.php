@@ -88,7 +88,7 @@ class ModelBlogPost extends Model {
             $this->cache->delete('post.'.$data['post_id']);
         }
     }
-    public function newPost($data){
+    public function newPost($type, $data){
 
         if(isset($data['published'])) {
             $year = date('Y', strtotime($data['published']));
@@ -127,8 +127,6 @@ class ModelBlogPost extends Model {
         }
 
         $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='".$this->db->escape($type)."',
-            `body` = '".$this->db->escape($data['body'])."',
-            `title` = '".$this->db->escape($data['title'])."',
             `syndication_extra` = '".$syndication_extra."',
             `slug` = '".$slug."',
             `author_id` = 1,
@@ -138,10 +136,14 @@ class ModelBlogPost extends Model {
             `day` = ".(int)$day.",
             `draft` = ".(int)$draft.",
             `deleted` = 0,
+            `body` = '". (isset($data['body']) && !empty($data['body']) ? $this->db->escape($data['body']) : ""). "',
             `daycount` = ".(int)$newcount .
+            (isset($data['artist']) && !empty($data['artist']) ? ", artist='".$this->db->escape($data['artist'])."'" : "").
+            (isset($data['bookmark_like_url']) && !empty($data['bookmark_like_url']) ? ", bookmark_like_url='".$this->db->escape($data['bookmark_like_url'])."'" : "").
+            (isset($data['title']) && !empty($data['title']) ? ", title='".$this->db->escape($data['title'])."'" : "").
+            (isset($data['audio_file']) && !empty($data['audio_file']) ? ", audio_file='".$this->db->escape($data['audio_file'])."'" : "").
             (isset($data['image_file']) && !empty($data['image_file']) ? ", image_file='".$this->db->escape($data['image_file'])."'" : "").
             (isset($data['video_file']) && !empty($data['video_file']) ? ", video_file='".$this->db->escape($data['video_file'])."'" : "").
-            (isset($data['audio_file']) && !empty($data['audio_file']) ? ", audio_file='".$this->db->escape($data['audio_file'])."'" : "").
             (isset($data['rsvp']) && !empty($data['rsvp']) ? ", rsvp='".$this->db->escape($data['rsvp'])."'" : "").
             (isset($data['location']) && !empty($data['location']) ? ", location='".$this->db->escape($data['location'])."'" : "").
             (isset($data['place_name']) && !empty($data['place_name']) ? ", place_name='".$this->db->escape($data['place_name'])."'" : "").

@@ -233,8 +233,9 @@ class ControllerMicropubReceive extends Controller {
 
     private function createNote(){
         //$this->log->write('called createNote()');
-        $this->load->model('blog/note');
+        //
         $this->load->model('blog/post');
+
         $data = array();
         $data['body'] = $this->request->post['content'];
         $data['slug'] = $this->request->post['slug'];
@@ -270,7 +271,7 @@ class ControllerMicropubReceive extends Controller {
 
         
         //$this->log->write(print_r($data,true));
-        $note_id = $this->model_blog_note->newNote($data);
+        $note_id = $this->model_blog_post->newPost('note', $data);
         //$this->log->write($note_id);
         $this->cache->delete('posts');
         $this->cache->delete('notes');
@@ -319,8 +320,9 @@ class ControllerMicropubReceive extends Controller {
     private function createArticle(){
         //$this->log->write('called createArticle()');
         //$this->log->write($this->request->post['content']);
-        $this->load->model('blog/article');
+        //
         $this->load->model('blog/post');
+
         $data = array();
         $data['body'] = $this->request->post['content'];
         $data['title'] = $this->request->post['title'];
@@ -363,7 +365,7 @@ class ControllerMicropubReceive extends Controller {
         }
         
         
-        $article_id = $this->model_blog_article->newArticle($data);
+        $article_id = $this->model_blog_post->newPost('article', $data);
         $this->cache->delete('posts');
         $this->cache->delete('articles');
 
@@ -404,8 +406,8 @@ class ControllerMicropubReceive extends Controller {
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/photo/'. urldecode($upload_shot["name"]));
 
-            $this->load->model('blog/photo');
-	    $this->load->model('blog/post');
+            $this->load->model('blog/post');
+
             $data = array();
             $data['image_file'] = DIR_UPLOAD_REL .'/photo/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
@@ -440,7 +442,8 @@ class ControllerMicropubReceive extends Controller {
             }
 
 
-            $photo_id = $this->model_blog_photo->newPhoto($data);
+            $photo_id = $this->model_blog_post->newPost('photo', $data);
+
             $this->cache->delete('posts');
             $this->cache->delete('photos');
 
@@ -502,8 +505,8 @@ class ControllerMicropubReceive extends Controller {
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/video/'. urldecode($upload_shot["name"]));
 
-            $this->load->model('blog/video');
-	    $this->load->model('blog/post');
+	        $this->load->model('blog/post');
+
             $data = array();
             $data['video_file'] = DIR_UPLOAD_REL . '/video/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
@@ -538,7 +541,7 @@ class ControllerMicropubReceive extends Controller {
             }
 
 
-            $video_id = $this->model_blog_video->newVideo($data);
+            $video_id = $this->model_blog_post->newPost('video', $data);
             $this->cache->delete('posts');
             $this->cache->delete('videos');
 
@@ -598,8 +601,8 @@ class ControllerMicropubReceive extends Controller {
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/audio/'. urldecode($upload_shot["name"]));
 
-            $this->load->model('blog/audio');
-	    $this->load->model('blog/post');
+	        $this->load->model('blog/post');
+
             $data = array();
             $data['audio_file'] = DIR_UPLOAD_REL . '/audio/'. $upload_shot["name"];
             $data['body'] = $this->request->post['content'];
@@ -634,7 +637,7 @@ class ControllerMicropubReceive extends Controller {
             }
 
 
-            $audio_id = $this->model_blog_audio->newAudio($data);
+            $audio_id = $this->model_blog_post->newPost('audio', $data);
             $this->cache->delete('posts');
             $this->cache->delete('audios');
 
@@ -680,8 +683,9 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function createBookmark(){
-        $this->load->model('blog/bookmark');
+
         $this->load->model('blog/post');
+
         $data = array();
         $data['body'] = $this->request->post['content'];
         $data['bookmark'] = $this->request->post['bookmark'];
@@ -709,7 +713,7 @@ class ControllerMicropubReceive extends Controller {
         }
         
         //$this->log->write(print_r($data,true));
-        $bookmark_id = $this->model_blog_bookmark->newBookmark($data);
+        $bookmark_id = $this->model_blog_post->newPost('bookmark', $data);
         //$this->log->write($bookmark_id);
         $this->cache->delete('posts');
         $this->cache->delete('bookmarks');
@@ -732,8 +736,9 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function createCheckin(){
-        $this->load->model('blog/checkin');
+
         $this->load->model('blog/post');
+
         $data = array();
         $data['body'] = $this->request->post['content'];
 
@@ -764,7 +769,7 @@ class ControllerMicropubReceive extends Controller {
         }
         
         //$this->log->write(print_r($data,true));
-        $checkin_id = $this->model_blog_checkin->newCheckin($data);
+        $checkin_id = $this->model_blog_post->newPost('checkin', $data);
         //$this->log->write($checkin_id);
         $this->cache->delete('posts');
         $this->cache->delete('checkins');
@@ -785,8 +790,9 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function createRsvp(){
-        $this->load->model('blog/rsvp');
+
         $this->load->model('blog/post');
+
         $data = array();
         $data['body'] = $this->request->post['content'];
 
@@ -825,7 +831,7 @@ class ControllerMicropubReceive extends Controller {
         }
         
         //$this->log->write(print_r($data,true));
-        $rsvp_id = $this->model_blog_rsvp->newRsvp($data);
+        $rsvp_id = $this->model_blog_post->newPost('rsvp', $data);
         //$this->log->write($rsvp_id);
         $this->cache->delete('posts');
         $this->cache->delete('rsvps');
@@ -850,8 +856,9 @@ class ControllerMicropubReceive extends Controller {
     }
 
     private function createLike(){
-        $this->load->model('blog/like');
+
         $this->load->model('blog/post');
+
         $data = array();
         $data['like-of'] = $this->request->post['like-of'];
 
@@ -868,7 +875,7 @@ class ControllerMicropubReceive extends Controller {
         }
         
         //$this->log->write(print_r($data,true));
-        $like_id = $this->model_blog_like->newLike($data);
+        $like_id = $this->model_blog_post->newPost('like', $data);
         //$this->log->write($note_id);
         $this->cache->delete('posts');
         $this->cache->delete('likes');
