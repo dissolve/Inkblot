@@ -14,6 +14,7 @@ define('LOCALTIMEZONE', 'America/New_York');
 define('SITE_TITLE', 'Ben Roberts');
 define('SITE_SUBTITLE', 'SysAdmin, Developer, Technologist');
 
+define('AUTHOR_NAME', 'Ben Roberts');
 define('EMAIL', 'dev@null.me');
 
 define('GOOGLE_ANALYTICS_ID', 'UA-XXXXXXXX-1');

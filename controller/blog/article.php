@@ -20,7 +20,6 @@ class ControllerBlogArticle extends Controller {
             $this->response->redirect($post['permalink']);
         }
 
-		$this->load->model('blog/author');
 		$this->load->model('blog/category');
 		$this->load->model('blog/post');
 		$this->load->model('blog/interaction');
@@ -51,7 +50,7 @@ class ControllerBlogArticle extends Controller {
             if(intval($post['deleted']) == 1) {
                 $data['deleted'] = true;
             }
-            $author = $this->model_blog_author->getAuthor($post['author_id']);
+            $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
 	    $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
 	    $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
@@ -179,7 +178,6 @@ class ControllerBlogArticle extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->load->model('blog/author');
 		$this->load->model('blog/post');
 		$this->load->model('blog/interaction');
 		$this->load->model('blog/category');
@@ -188,9 +186,9 @@ class ControllerBlogArticle extends Controller {
 		
 		foreach ($this->model_blog_post->getRecentPostsByType('article') as $post) {
                 $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
-                $author = $this->model_blog_author->getAuthor($post['author_id']);
-	        $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
-	        $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
+                $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
+                $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
+                $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
 
                 $extra_data_array = array(
                     'body_html' => html_entity_decode($post['body']),

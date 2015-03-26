@@ -119,7 +119,6 @@ class ModelBlogPost extends Model {
 
 
         $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='".$this->db->escape($type)."',
-            `author_id` = 1,
             `timestamp` = ".$timestamp.",
             `year` = ".(int)$year.",
             `month` = ".(int)$month.",
@@ -380,20 +379,6 @@ class ModelBlogPost extends Model {
 		return $data_array;
 	}
 
-	public function getPostsByAuthor($author_id, $limit=20, $skip=0) {
-        $post_id_array = $this->cache->get('posts.author.'. $author_id . '.'. $skip . '.'.  $limit);
-        if(!$post_id_array){
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE author_id = '".(int)$author_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-            $post_id_array = $query->rows;
-            $this->cache->set('posts.author.'.$author_id . '.'. $skip . '.'.  $limit, $post_id_array);
-        }
-	
-        $data_array = array();
-        foreach($post_id_array as $post){
-            $data_array[] = $this->getPost($post['post_id']);
-        }
-		return $data_array;
-	}
 
 	public function getPostsByArchive($type, $year, $month, $limit=20, $skip=0) {
 		$data = $this->cache->get($type. '.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
