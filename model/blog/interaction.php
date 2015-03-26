@@ -14,6 +14,7 @@ class ModelBlogInteraction extends Model {
 
 
         if($post_id || (isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount']))) {
+            $this->load->model('blog/post');
 //TODO: this can likely be cleaned up to reducde dependance on model_blog_post
             $post = null;
             if($post_id){
@@ -112,7 +113,7 @@ class ModelBlogInteraction extends Model {
 	return $data;
     }
 
-    public function getInteractionsForPost($post_id, $type, $limit=100, $skip=0) {
+    public function getInteractionsForPost($type, $post_id, $limit=100, $skip=0) {
 	//correct my vocabulary
 	if($type == 'comment'){
 	    $type = 'reply';
@@ -127,8 +128,8 @@ class ModelBlogInteraction extends Model {
 	return $data;
     }
 
-    public function getInteractionCountForPost($post_id, $type) {
-        $data = $this->cache->get('interatcions.'.$type.'.post.count.'.$post_id);
+    public function getInteractionCountForPost($type, $post_id) {
+        $data = $this->cache->get('interactions.'.$type.'.post.count.'.$post_id);
         if(!$data){
             $query = $this->db->query("SELECT COUNT(*) AS total FROM " . DATABASE . ".interactions WHERE interaction_type='".$type."' AND post_id = ".(int)$post_id." AND deleted=0");
             $data = $query->row['total'];
