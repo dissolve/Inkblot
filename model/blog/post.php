@@ -116,19 +116,9 @@ class ModelBlogPost extends Model {
 
         $newcount = $query->row['newval'];
 
-        $syndication_extra = '';
-        if(isset($data['syndication_extra']) && !empty($data['syndication_extra'])){
-            $syndication_extra = $this->db->escape($data['syndication_extra']);
-        }
 
-        $slug = '';
-        if(isset($data['slug']) && !empty($data['slug'])){
-            $slug = $this->db->escape($data['slug']);
-        }
 
         $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='".$this->db->escape($type)."',
-            `syndication_extra` = '".$syndication_extra."',
-            `slug` = '".$slug."',
             `author_id` = 1,
             `timestamp` = ".$timestamp.",
             `year` = ".(int)$year.",
@@ -136,10 +126,21 @@ class ModelBlogPost extends Model {
             `day` = ".(int)$day.",
             `draft` = ".(int)$draft.",
             `deleted` = 0,
+
             `body` = '". (isset($data['body']) && !empty($data['body']) ? $this->db->escape($data['body']) : ""). "',
+            `slug` = '". (isset($data['slug']) && !empty($data['slug']) ? $this->db->escape($data['slug']) : ""). "',
+            `syndication_extra` = '". (isset($data['syndication_extra']) && !empty($data['syndication_extra']) ? $this->db->escape($data['syndication_extra']) : ""). "',
+
             `daycount` = ".(int)$newcount .
-            (isset($data['artist']) && !empty($data['artist']) ? ", artist='".$this->db->escape($data['artist'])."'" : "").
+
+            (isset($data['artist']) && !empty($data['artist']) ? ", artist='".$this->db->escape($data['artist'])."'" : ""). //for "listens"
             (isset($data['bookmark_like_url']) && !empty($data['bookmark_like_url']) ? ", bookmark_like_url='".$this->db->escape($data['bookmark_like_url'])."'" : "").
+            (isset($data['tag_category']) && !empty($data['tag_category']) ? ", tag_category='".$this->db->escape($data['tag_category'])."'" : "").
+            (isset($data['tag_person']) && !empty($data['tag_person']) ? ", tag_person='".$this->db->escape($data['tag_person'])."'" : "").
+            (isset($data['tag_url']) && !empty($data['tag_url']) ? ", tag_url='".$this->db->escape($data['tag_url'])."'" : "").
+            (isset($data['tag_shape']) && !empty($data['tag_shape']) ? ", tag_shape='".$this->db->escape($data['tag_shape'])."'" : "").
+            (isset($data['tag_coords']) && !empty($data['tag_coords']) ? ", tag_coords='".$this->db->escape($data['tag_coords'])."'" : "").
+
             (isset($data['title']) && !empty($data['title']) ? ", title='".$this->db->escape($data['title'])."'" : "").
             (isset($data['audio_file']) && !empty($data['audio_file']) ? ", audio_file='".$this->db->escape($data['audio_file'])."'" : "").
             (isset($data['image_file']) && !empty($data['image_file']) ? ", image_file='".$this->db->escape($data['image_file'])."'" : "").
