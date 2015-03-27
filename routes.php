@@ -35,6 +35,8 @@ $routes['article']            = 'blog/article/latest';
 $routes['article/']           = 'blog/article/latest';
 $routes['note']               = 'blog/note/latest';
 $routes['note/']              = 'blog/note/latest';
+$routes['tag']                = 'blog/tag/latest';
+$routes['tag/']               = 'blog/tag/latest';
 $routes['rsvp']               = 'blog/rsvp/latest';
 $routes['rsvp/']              = 'blog/rsvp/latest';
 $routes['checkin']            = 'blog/checkin/latest';
@@ -82,6 +84,10 @@ $advanced_routes[] = array('controller' => 'blog/article',
 $advanced_routes[] = array('controller' => 'blog/note',
     'expression' => '`^note/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
     'reverse' => 'note/{year}/{month}/{day}/{daycount}/{slug}');
+
+$advanced_routes[] = array('controller' => 'blog/tag',
+    'expression' => '`^tag/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
+    'reverse' => 'tag/{year}/{month}/{day}/{daycount}/{slug}');
 
 $advanced_routes[] = array('controller' => 'blog/rsvp',
     'expression' => '`^rsvp/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',

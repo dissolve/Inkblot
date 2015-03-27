@@ -366,6 +366,9 @@ class ControllerMicropubReceive extends Controller {
             $this->load->model('webmention/vouch');
             $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
+        if(isset($this->request->post['tag-of'])){
+            $data['replyto'] = $this->request->post['tag-of'];
+        }
         if(isset($this->request->post['category'])){
             $data['category'] = $this->request->post['category'];
         }
