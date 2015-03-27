@@ -1,6 +1,6 @@
 <?php  
 class ControllerMicropubReceive extends Controller {
-	public function index() {
+    public function index() {
         //$this->log->write(print_r($this->request->post, true));
         //$this->log->write(file_get_contents("php://input"));
         $supported_array = array(
@@ -45,7 +45,7 @@ class ControllerMicropubReceive extends Controller {
 
         } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'json_actions'){
             $json = $supported_array;
-			$this->response->setOutput(json_encode($json));
+            $this->response->setOutput(json_encode($json));
         } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'indie-config'){
             $build_array = array();
             foreach($supported_array as $type => $value){
@@ -62,12 +62,16 @@ class ControllerMicropubReceive extends Controller {
   }
 }());
 </script>";
-			$this->response->setOutput($indieconfig);
+            $this->response->setOutput($indieconfig);
 
 
         } else {
             $headers = apache_request_headers();
-            if(isset($this->request->post['access_token']) || (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) && !empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) || isset($headers['Authorization'])){
+            //check that we were even offered an access token
+            if(!isset($this->request->post['access_token']) && (!isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) && !isset($headers['Authorization'])){
+                header('HTTP/1.1 401 Unauthorized');
+                exit();
+            } else {
                 $token = $this->request->post['access_token'];
                 if(!$token){
                     $parts = explode(' ', $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
@@ -82,56 +86,97 @@ class ControllerMicropubReceive extends Controller {
                 $auth_info = $this->model_auth_token->getAuthFromToken(urldecode($token));
 
 
+                $has_post_access = false;
+                $has_edit_access = false;
+                $has_delete_access = false;
+
                 if(!empty($auth_info) && in_array('post', explode(' ', $auth_info['scope']))) {
+                    $has_post_access = true;
+                } 
+                if(!empty($auth_info) && in_array('edit', explode(' ', $auth_info['scope']))) {
+                    $has_edit_access = true;
+                } 
+                if(!empty($auth_info) && in_array('delete', explode(' ', $auth_info['scope']))) {
+                    $has_delete_access = true;
+                } 
 
-                    $token_user = str_replace(array('http://', 'https://'),array('',''), $auth_info['user']);
-                    $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
+                $token_user = str_replace(array('http://', 'https://'),array('',''), $auth_info['user']);
+                $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
 
-                    if($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) {
-
-                        if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
-                            $this->getPost();
-                        //$this->log->write(print_r($this->request->post, true));
-                        } elseif(isset($this->request->post['mp-action']) && strtolower($this->request->post['mp-action']) == 'delete'){
-                            $this->deletePost();
-                        } elseif(isset($this->request->post['mp-action']) && strtolower($this->request->post['mp-action']) == 'undelete'){
-                            $this->undeletePost();
-                        } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'article'){
-                            $this->createArticle();
-                        } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'checkin'){
-                            $this->createCheckin();
-                        } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'rsvp'){
-                            $this->createRsvp();
-                        } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
-                            $this->createBookmark();
-                        } elseif(isset($this->request->post['like-of']) && !empty($this->request->post['like-of'])){
-                            $this->createLike();
-                        } elseif(isset($_FILES['video']) && !empty($_FILES['video'])){
-                            $this->createVideo();
-                        } elseif(isset($_FILES['audio']) && !empty($_FILES['audio'])){
-                            $this->createAudio();
-                        } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
-                            $this->createPhoto();
-                        } elseif(isset($this->request->post['mp-action']) && strtolower($this->request->post['mp-action']) == 'edit'){
-                            $this->editPost();
-                        } else {
-                            $this->createNote();
-                        }
-                        
-                    } else {
-                        header('HTTP/1.1 401 Unauthorized');
-                        exit();
-                    }
-                } else {
+                if($token_user != $myself && $token_user.'/' != $myself && $token_user != $myself .'/' ) {
                     header('HTTP/1.1 401 Unauthorized');
                     exit();
-                }
-            } else {
-                header('HTTP/1.1 401 Unauthorized');
-                exit();
-            }
-        }
-    }
+                } else {
+
+                    $mp_action = '';
+                    if(isset($this->request->post['mp-action']) && !empty($this->request->post['mp-action'])){
+                        $mp_action = strtolower($this->request->post['mp-action']);
+                    } 
+                                        
+                    switch ($mp_action) {
+                    case 'delete':
+                        if($has_delete_access){
+                            $this->deletePost();
+                        } else {
+                            header('HTTP/1.1 401 Unauthorized');
+                            exit();
+                        }
+                        break;
+                    case 'undelete':
+                        // NOTE: should undeletePost() need post access? delete access? both?
+                        if($has_post_access){
+                            $this->undeletePost();
+                        } else {
+                            header('HTTP/1.1 401 Unauthorized');
+                            exit();
+                        }
+                        break;
+                    case 'edit':
+                        if($has_edit_access){
+                            $this->editPost();
+                        } else {
+                            header('HTTP/1.1 401 Unauthorized');
+                            exit();
+                        }
+                        break;
+                    case 'create':
+                    default:
+                        if($has_post_access){
+                            // NOTE: should getPost() need post access?
+                            if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
+                                $this->getPost();
+                            } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'article'){
+                                $this->createPost('article');
+                            } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'checkin'){
+                                $this->createPost('checkin');
+                            } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'rsvp'){
+                                $this->createPost('rsvp');
+                            } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'tag'){
+                                $this->createPost('tag');
+                            } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
+                                $this->createPost('bookmark');
+                            } elseif(isset($this->request->post['like-of']) && !empty($this->request->post['like-of'])){
+                                $this->createPost('like');
+                            } elseif(isset($_FILES['video']) && !empty($_FILES['video'])){
+                                $this->createPost('video');
+                            } elseif(isset($_FILES['audio']) && !empty($_FILES['audio'])){
+                                $this->createPost('audio');
+                            } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
+                                $this->createPost('photo');
+                            } else {
+                                $this->createPost('note');
+                            }
+                        } else {
+                            header('HTTP/1.1 401 Unauthorized');
+                            exit();
+                        }
+                        break;
+                    } //end switch case
+                        
+                }  // end check for token is my own
+            }  // end check for access token offered
+        } //end else from endpoint data lookup
+    } //end index funciton
 
     private function getPost(){
         $post = $this->getPostByURL($this->request->get['url']);
@@ -231,573 +276,111 @@ class ControllerMicropubReceive extends Controller {
     }
 
 
-    private function createNote(){
-        //$this->log->write('called createNote()');
-        //
+    private function createPost($type){
+
         $this->load->model('blog/post');
 
         $data = array();
-        $data['body'] = $this->request->post['content'];
-        $data['slug'] = $this->request->post['slug'];
 
-        $data['slug'] = '';
-        if(isset($this->request->post['slug'])) {
-            $data['slug'] = $this->request->post['slug'];
-        }
-
-        //if(isset($this->request->post['draft'])){
-            //$data['draft'] = $this->request->post['draft'];
-        //}
-
-        //TODO
-        // $this->request->post['h'];
-        if(isset($this->request->post['published'])){
-            $data['published'] = $this->request->post['published'];
-        }
-        if(isset($this->request->post['category'])){
-            $data['category'] = $this->request->post['category'];
-        }
-        if(isset($this->request->post['in-reply-to'])){
-            $data['replyto'] = $this->request->post['in-reply-to'];
-            $this->load->model('webmention/vouch');
-            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
-        }
-        if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
-            $data['location'] = $this->request->post['location'];
-        }
-        if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
-            $data['place_name'] = $this->request->post['place_name'];
-        }
-
-        
-        //$this->log->write(print_r($data,true));
-        $note_id = $this->model_blog_post->newPost('note', $data);
-        //$this->log->write($note_id);
-        $this->cache->delete('posts');
-        $this->cache->delete('notes');
-
-        $note = $this->model_blog_post->getPost($note_id);
-
-        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-            $syn_extra = '';
-            foreach($this->request->post['syndicate-to'] as $synto){
-                if(strlen($note['body'].$note['permashortcitation']) < 140){
-                    $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                } else {
-                    $syn_extra .= '<a href="'.$synto.'"></a>';
-                }
-            }
-            $this->model_blog_post->setSyndicationExtra($note['post_id'], $syn_extra);
-        } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-            $syn_extra = '';
-            foreach($this->request->post['mp-syndicate-to'] as $synto){
-                if(strlen($note['body'].$note['permashortcitation']) < 140){
-                    $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                } else {
-                    $syn_extra .= '<a href="'.$synto.'"></a>';
-                }
-            }
-            $this->model_blog_post->setSyndicationExtra($note['post_id'], $syn_extra);
-        }
-
-        if($note && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
-            $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($note['post_id'], $this->request->post['syndication']);
-            $this->cache->delete('post.'.$note['post_id']);
-        }
-        //if($note['draft'] != 1){
-            $this->load->model('webmention/send_queue');
-            $this->model_webmention_send_queue->addEntry($note['post_id'], $this->request->post['vouch']);
-        //}
-
-        $this->cache->delete('post.'.$note['post_id']);
-
-        $this->response->addHeader('HTTP/1.1 201 Created');
-        $this->response->addHeader('Location: '. $note['permalink']);
-        $this->response->setOutput($note['permalink']);
-    }
-
-    private function createArticle(){
-        //$this->log->write('called createArticle()');
-        //$this->log->write($this->request->post['content']);
-        //
-        $this->load->model('blog/post');
-
-        $data = array();
-        $data['body'] = $this->request->post['content'];
-        $data['title'] = $this->request->post['title'];
-        $data['slug'] = $this->request->post['slug'];
-
-        if(isset($this->request->post['draft'])){
-            $data['draft'] = $this->request->post['draft'];
-        }
-
-        //TODO
-        // $this->request->post['h'];
-        if(isset($this->request->post['published'])){
-            $data['published'] = $this->request->post['published'];
-        }
-        if(isset($this->request->post['category'])){
-            $data['category'] = $this->request->post['category'];
-        }
-        if(isset($this->request->post['in-reply-to'])){
-            $data['replyto'] = $this->request->post['in-reply-to'];
-            $this->load->model('webmention/vouch');
-            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
-        }
-        if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
-            $data['location'] = $this->request->post['location'];
-        }
-        if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
-            $data['place_name'] = $this->request->post['place_name'];
-        }
-
-        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['mp-syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        }
-        
-        
-        $article_id = $this->model_blog_post->newPost('article', $data);
-        $this->cache->delete('posts');
-        $this->cache->delete('articles');
-
-        $article = $this->model_blog_post->getPost($article_id);
-
-        if($article && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
-            $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($article['post_id'], $this->request->post['syndication']);
-            $this->cache->delete('post.'.$article['post_id']);
-        }
-
-        if($article['draft'] != 1){
-            $this->load->model('webmention/send_queue');
-            $this->model_webmention_send_queue->addEntry($article_id, $this->request->post['vouch']);
-        }
-
-        $this->cache->delete('post.'.$article['post_id']);
-
-        $this->response->addHeader('HTTP/1.1 201 Created');
-        $this->response->addHeader('Location: '. $article['permalink']);
-        $this->response->setOutput($article['permalink']);
-    }
-
-    private function createPhoto(){
-        //$this->log->write('called createPhoto()');
-        
         if(isset($_FILES['photo'])){
             $upload_shot = $_FILES['photo'];
-        } else {
-            $this->log->write('cannot find file in $_FILES');
-            $this->log->write(print_r($_FILES, true));
-            header('HTTP/1.1 449 Retry With file');
-            exit();
-        }
-
-
-        if( $upload_shot['error'] == 0) {
+            if( $upload_shot['error'] != 0) {
+                header('HTTP/1.1 500 Error');
+                exit();
+            }
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/photo/'. urldecode($upload_shot["name"]));
 
-            $this->load->model('blog/post');
-
-            $data = array();
             $data['image_file'] = DIR_UPLOAD_REL .'/photo/'. $upload_shot["name"];
-            $data['body'] = $this->request->post['content'];
-
-            //TODO
-            // $this->request->post['h'];
-            // $this->request->post['photo'];
-            if(isset($this->request->post['published'])){
-                $data['published'] = $this->request->post['published'];
-            }
-            if(isset($this->request->post['category'])){
-                $data['category'] = $this->request->post['category'];
-            }
-            if(isset($this->request->post['in-reply-to'])){
-                $data['replyto'] = $this->request->post['in-reply-to'];
-                $this->load->model('webmention/vouch');
-                $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
-            }
-            if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
-                $data['location'] = $this->request->post['location'];
-            }
-            if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
-                $data['place_name'] = $this->request->post['place_name'];
-            }
-            if(isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
-                $inputval = strtolower($this->request->post['rsvp']);
-                if($inputval == 'yes'){
-                    $data['rsvp'] = 'yes';
-                } else {
-                    $data['rsvp'] = 'no';
-                }
-            }
-
-
-            $photo_id = $this->model_blog_post->newPost('photo', $data);
-
-            $this->cache->delete('posts');
-            $this->cache->delete('photos');
-
-            $photo = $this->model_blog_post->getPost($photo_id);
-
-            //$data['syndication_extra'] = '<a href="https://www.brid.gy/publish/twitter" class="u-bridgy-omit-link"></a>';
-            //$data['syndication_extra'] .= '<a href="https://www.brid.gy/publish/facebook"></a>';
-            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['syndicate-to'] as $synto){
-                    if(strlen($photo['body'].$photo['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_post->setSyndicationExtra($photo['post_id'], $syn_extra);
-            } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['mp-syndicate-to'] as $synto){
-                    if(strlen($photo['body'].$photo['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_post->setSyndicationExtra($photo['post_id'], $syn_extra);
-            }
-
-            $this->load->model('blog/post');
-            if($photo && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
-                $this->model_blog_post->addSyndication($photo['post_id'], $this->request->post['syndication']);
-            }
-
-            $this->load->model('webmention/send_queue');
-            $this->model_webmention_send_queue->addEntry($photo_id, $this->request->post['vouch']);
-
-            $this->cache->delete('post.'.$photo['post_id']);
-
-            $this->response->addHeader('HTTP/1.1 201 Created');
-            $this->response->addHeader('Location: '. $photo['permalink']);
-            $this->response->setOutput($photo['permalink']);
         }
-    }
-    private function createVideo(){
-        //$this->log->write('called createVideo()');
-        
         if(isset($_FILES['video'])){
             $upload_shot = $_FILES['video'];
-        } else {
-            $this->log->write('cannot find file in $_FILES');
-            $this->log->write(print_r($_FILES, true));
-            header('HTTP/1.1 449 Retry With file');
-            exit();
-        }
-
-
-        if( $upload_shot['error'] == 0) {
+            if( $upload_shot['error'] != 0) {
+                header('HTTP/1.1 500 Error');
+                exit();
+            }
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/video/'. urldecode($upload_shot["name"]));
 
-	        $this->load->model('blog/post');
-
-            $data = array();
-            $data['video_file'] = DIR_UPLOAD_REL . '/video/'. $upload_shot["name"];
-            $data['body'] = $this->request->post['content'];
-
-            //TODO
-            // $this->request->post['h'];
-            // $this->request->post['video'];
-            if(isset($this->request->post['published'])){
-                $data['published'] = $this->request->post['published'];
-            }
-            if(isset($this->request->post['category'])){
-                $data['category'] = $this->request->post['category'];
-            }
-            if(isset($this->request->post['in-reply-to'])){
-                $data['replyto'] = $this->request->post['in-reply-to'];
-                $this->load->model('webmention/vouch');
-                $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
-            }
-            if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
-                $data['location'] = $this->request->post['location'];
-            }
-            if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
-                $data['place_name'] = $this->request->post['place_name'];
-            }
-            if(isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
-                $inputval = strtolower($this->request->post['rsvp']);
-                if($inputval == 'yes'){
-                    $data['rsvp'] = 'yes';
-                } else {
-                    $data['rsvp'] = 'no';
-                }
-            }
-
-
-            $video_id = $this->model_blog_post->newPost('video', $data);
-            $this->cache->delete('posts');
-            $this->cache->delete('videos');
-
-            $video = $this->model_blog_post->getPost($video_id);
-
-            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['syndicate-to'] as $synto){
-                    if(strlen($video['body'].$video['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_post->setSyndicationExtra($video['post_id'], $syn_extra);
-            } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['mp-syndicate-to'] as $synto){
-                    if(strlen($video['body'].$video['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_post->setSyndicationExtra($video['post_id'], $syn_extra);
-            }
-
-            $this->load->model('blog/post');
-            if($video && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
-                $this->model_blog_post->addSyndication($video['post_id'], $this->request->post['syndication']);
-            }
-
-            $this->load->model('webmention/send_queue');
-            $this->model_webmention_send_queue->addEntry($video_id, $this->request->post['vouch']);
-
-            $this->cache->delete('post.'.$video['post_id']);
-
-            $this->response->addHeader('HTTP/1.1 201 Created');
-            $this->response->addHeader('Location: '. $video['permalink']);
-            $this->response->setOutput($video['permalink']);
+            $data['video_file'] = DIR_UPLOAD_REL .'/video/'. $upload_shot["name"];
         }
-    }
-    private function createAudio(){
-        //$this->log->write('called createAudio()');
-        
         if(isset($_FILES['audio'])){
             $upload_shot = $_FILES['audio'];
-        } else {
+            if( $upload_shot['error'] != 0) {
+                header('HTTP/1.1 500 Error');
+                exit();
+            }
+
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/audio/'. urldecode($upload_shot["name"]));
+
+            $data['audio_file'] = DIR_UPLOAD_REL .'/audio/'. $upload_shot["name"];
+        }
+
+        if($type == 'photo' && !isset($data['image_file'])){
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
             exit();
         }
 
-
-        if( $upload_shot['error'] == 0) {
-
-            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/audio/'. urldecode($upload_shot["name"]));
-
-	        $this->load->model('blog/post');
-
-            $data = array();
-            $data['audio_file'] = DIR_UPLOAD_REL . '/audio/'. $upload_shot["name"];
-            $data['body'] = $this->request->post['content'];
-
-            //TODO
-            // $this->request->post['h'];
-            // $this->request->post['audio'];
-            if(isset($this->request->post['published'])){
-                $data['published'] = $this->request->post['published'];
-            }
-            if(isset($this->request->post['category'])){
-                $data['category'] = $this->request->post['category'];
-            }
-            if(isset($this->request->post['in-reply-to'])){
-                $data['replyto'] = $this->request->post['in-reply-to'];
-                $this->load->model('webmention/vouch');
-                $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
-            }
-            if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
-                $data['location'] = $this->request->post['location'];
-            }
-            if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
-                $data['place_name'] = $this->request->post['place_name'];
-            }
-            if(isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
-                $inputval = strtolower($this->request->post['rsvp']);
-                if($inputval == 'yes'){
-                    $data['rsvp'] = 'yes';
-                } else {
-                    $data['rsvp'] = 'no';
-                }
-            }
-
-
-            $audio_id = $this->model_blog_post->newPost('audio', $data);
-            $this->cache->delete('posts');
-            $this->cache->delete('audios');
-
-            $audio = $this->model_blog_post->getPost($audio_id);
-
-
-            if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['syndicate-to'] as $synto){
-                    if(strlen($audio['body'].$audio['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_post->setSyndicationExtra($audio['post_id'], $syn_extra);
-            } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-                $syn_extra = '';
-                foreach($this->request->post['mp-syndicate-to'] as $synto){
-                    if(strlen($audio['body'].$audio['permashortcitation']) < 140){
-                        $syn_extra .= '<a href="'.$synto.'" class="u-bridgy-omit-link"></a>';
-                    } else {
-                        $syn_extra .= '<a href="'.$synto.'"></a>';
-                    }
-                }
-                $this->model_blog_post->setSyndicationExtra($audio['post_id'], $syn_extra);
-            }
-
-            $this->load->model('blog/post');
-            if($audio && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
-                $this->model_blog_post->addSyndication($audio['post_id'], $this->request->post['syndication']);
-            }
-
-            $this->load->model('webmention/send_queue');
-            $this->model_webmention_send_queue->addEntry($audio_id, $this->request->post['vouch']);
-
-            $this->cache->delete('post.'.$audio['post_id']);
-
-            $this->response->addHeader('HTTP/1.1 201 Created');
-            $this->response->addHeader('Location: '. $audio['permalink']);
-            $this->response->setOutput($audio['permalink']);
+        if($type == 'video' && !isset($data['video_file'])){
+            $this->log->write('cannot find file in $_FILES');
+            $this->log->write(print_r($_FILES, true));
+            header('HTTP/1.1 449 Retry With file');
+            exit();
         }
-    }
-
-    private function createBookmark(){
-
-        $this->load->model('blog/post');
-
-        $data = array();
-        $data['body'] = $this->request->post['content'];
-        $data['bookmark'] = $this->request->post['bookmark'];
-
-        if(isset($this->request->post['category'])){
-            $data['category'] = $this->request->post['category'];
+        if($type == 'audio' && !isset($data['audio_file'])){
+            $this->log->write('cannot find file in $_FILES');
+            $this->log->write(print_r($_FILES, true));
+            header('HTTP/1.1 449 Retry With file');
+            exit();
         }
-        if(isset($this->request->post['description']) && !empty($this->request->post['description'])){
-            $data['description'] = $this->request->post['description'];
-        }
-        if(isset($this->request->post['name']) && !empty($this->request->post['name'])){
-            $data['name'] = $this->request->post['name'];
-        }
-
-        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['mp-syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        }
-        
-        //$this->log->write(print_r($data,true));
-        $bookmark_id = $this->model_blog_post->newPost('bookmark', $data);
-        //$this->log->write($bookmark_id);
-        $this->cache->delete('posts');
-        $this->cache->delete('bookmarks');
-
-        $bookmark = $this->model_blog_post->getPost($bookmark_id);
-
-        if($bookmark && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
-            $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($bookmark['post_id'], $this->request->post['syndication']);
-            $this->cache->delete('post.'.$bookmark['post_id']);
-        }
-        $this->load->model('webmention/send_queue');
-        $this->model_webmention_send_queue->addEntry($bookmark_id);
-
-        $this->cache->delete('post.'.$bookmark['post_id']);
-
-        $this->response->addHeader('HTTP/1.1 201 Created');
-        $this->response->addHeader('Location: '. $bookmark['permalink']);
-        $this->response->setOutput($bookmark['permalink']);
-    }
-
-    private function createCheckin(){
-
-        $this->load->model('blog/post');
-
-        $data = array();
-        $data['body'] = $this->request->post['content'];
-
-        $data['slug'] = '';
 
         //TODO
         // $this->request->post['h'];
+
+        if(isset($this->request->post['content'])){
+            $data['body'] = $this->request->post['content'];
+        } else {
+            $data['body'] = '';
+        }
         if(isset($this->request->post['published'])){
             $data['published'] = $this->request->post['published'];
         }
-        if(isset($this->request->post['location']) && !empty($this->request->post['location'])){
+        if(isset($this->request->post['slug'])){
+            $data['slug'] = $this->request->post['slug'];
+        } else {
+            $data['slug'] = '';
+        }
+        if(isset($this->request->post['draft'])){
+            $data['draft'] = $this->request->post['draft'];
+        }
+        if(isset($this->request->post['like-of'])){
+            $data['like-of'] = $this->request->post['like-of'];
+        }
+        if(isset($this->request->post['bookmark'])){
+            $data['bookmark'] = $this->request->post['bookmark'];
+        }
+        if(isset($this->request->post['in-reply-to'])){
+            $data['replyto'] = $this->request->post['in-reply-to'];
+            $this->load->model('webmention/vouch');
+            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
+        }
+        if(isset($this->request->post['category'])){
+            $data['category'] = $this->request->post['category'];
+        }
+        if(isset($this->request->post['name'])){
+            $data['name'] = $this->request->post['name'];
+        }
+        if(isset($this->request->post['description'])){
+            $data['description'] = $this->request->post['description'];
+        }
+        if(isset($this->request->post['location'])){
             $data['location'] = $this->request->post['location'];
         }
-        if(isset($this->request->post['place_name']) && !empty($this->request->post['place_name'])){
+        if(isset($this->request->post['place_name'])){
             $data['place_name'] = $this->request->post['place_name'];
         }
-
-        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['mp-syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        }
-        
-        //$this->log->write(print_r($data,true));
-        $checkin_id = $this->model_blog_post->newPost('checkin', $data);
-        //$this->log->write($checkin_id);
-        $this->cache->delete('posts');
-        $this->cache->delete('checkins');
-
-        $checkin = $this->model_blog_post->getPost($checkin_id);
-
-        if($checkin && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
-            $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($checkin['post_id'], $this->request->post['syndication']);
-            $this->cache->delete('post.'.$checkin['post_id']);
-        }
-
-        $this->cache->delete('post.'.$checkin['post_id']);
-
-        $this->response->addHeader('HTTP/1.1 201 Created');
-        $this->response->addHeader('Location: '. $checkin['permalink']);
-        $this->response->setOutput($checkin['permalink']);
-    }
-
-    private function createRsvp(){
-
-        $this->load->model('blog/post');
-
-        $data = array();
-        $data['body'] = $this->request->post['content'];
-
-        $data['slug'] = '';
-
         if(isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
             $inputval = strtolower($this->request->post['rsvp']);
             if($inputval == 'yes'){
@@ -807,17 +390,6 @@ class ControllerMicropubReceive extends Controller {
             }
         }
 
-        //TODO
-        // $this->request->post['h'];
-        if(isset($this->request->post['published'])){
-            $data['published'] = $this->request->post['published'];
-        }
-        if(isset($this->request->post['in-reply-to'])){
-            $data['replyto'] = $this->request->post['in-reply-to'];
-            $this->load->model('webmention/vouch');
-            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
-        }
-
         if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
             $data['syndication_extra'] = '';
             foreach($this->request->post['syndicate-to'] as $synto){
@@ -830,72 +402,24 @@ class ControllerMicropubReceive extends Controller {
             }
         }
         
-        //$this->log->write(print_r($data,true));
-        $rsvp_id = $this->model_blog_post->newPost('rsvp', $data);
-        //$this->log->write($rsvp_id);
-        $this->cache->delete('posts');
-        $this->cache->delete('rsvps');
+        $post_id = $this->model_blog_post->newPost($type, $data);
+        $this->cache->delete('posts.type');
 
-        $rsvp = $this->model_blog_post->getPost($rsvp_id);
+        $post = $this->model_blog_post->getPost($post_id);
 
-        if($rsvp && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+        if($post && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
             $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($rsvp['post_id'], $this->request->post['syndication']);
-            $this->cache->delete('post.'.$rsvp['post_id']);
-        }
-
-        $this->cache->delete('post.'.$rsvp['post_id']);
-
-        //todo add vouch url in here
-        $this->load->model('webmention/send_queue');
-        $this->model_webmention_send_queue->addEntry($rsvp_id, $this->request->post['vouch']);
-
-        $this->response->addHeader('HTTP/1.1 201 Created');
-        $this->response->addHeader('Location: '. $rsvp['permalink']);
-        $this->response->setOutput($rsvp['permalink']);
-    }
-
-    private function createLike(){
-
-        $this->load->model('blog/post');
-
-        $data = array();
-        $data['like-of'] = $this->request->post['like-of'];
-
-        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        } if(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['mp-syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        }
-        
-        //$this->log->write(print_r($data,true));
-        $like_id = $this->model_blog_post->newPost('like', $data);
-        //$this->log->write($note_id);
-        $this->cache->delete('posts');
-        $this->cache->delete('likes');
-
-        $like = $this->model_blog_post->getPost($like_id);
-
-        if($like && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
-            $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($like['post_id'], $this->request->post['syndication']);
-            $this->cache->delete('post.'.$like['post_id']);
+            $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
         }
 
         $this->load->model('webmention/send_queue');
-        $this->model_webmention_send_queue->addEntry($bookmark_id, $this->request->post['vouch']);
+        $this->model_webmention_send_queue->addEntry($post_id, $this->request->post['vouch']);
 
-	$this->cache->delete('post.'.$like['post_id']);
+        $this->cache->delete('post.'.$post['post_id']);
 
         $this->response->addHeader('HTTP/1.1 201 Created');
-	$this->response->addHeader('Location: '. $like['permalink']);
-	$this->response->setOutput($note['permalink']);
+        $this->response->addHeader('Location: '. $post['permalink']);
+        $this->response->setOutput($post['permalink']);
     }
 
     private function getPostByURL($real_url){
