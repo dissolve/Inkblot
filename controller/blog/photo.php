@@ -56,6 +56,7 @@ class ControllerBlogPhoto extends Controller {
             $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
             $fetch_comments = $this->model_blog_interaction->getInteractionsForPost('reply', $post['post_id']);
             $likes = $this->model_blog_interaction->getInteractionsForPost('like', $post['post_id']);
+            $tags = $this->model_blog_interaction->getInteractionsForPost('tag', $post['post_id']);
             $mentions = $this->model_blog_interaction->getInteractionsForPost('mention', $post['post_id']);
 
             $comments = array();
