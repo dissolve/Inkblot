@@ -381,7 +381,7 @@ class ControllerMicropubReceive extends Controller {
         if(isset($this->request->post['place_name'])){
             $data['place_name'] = $this->request->post['place_name'];
         }
-        if(isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
+        if($type == 'rsvp' && isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
             $inputval = strtolower($this->request->post['rsvp']);
             if($inputval == 'yes'){
                 $data['rsvp'] = 'yes';
@@ -403,7 +403,7 @@ class ControllerMicropubReceive extends Controller {
         }
         
         $post_id = $this->model_blog_post->newPost($type, $data);
-        $this->cache->delete('posts.type');
+        $this->cache->delete('posts');
 
         $post = $this->model_blog_post->getPost($post_id);
 
