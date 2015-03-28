@@ -106,6 +106,19 @@ class ControllerWebmentionQueue extends Controller {
     }
 
     private function get_context_id($source_url){
+
+        //todo check if $source_url is a syndicated copy of my own posts
+        $result = $this->db->query("SELECT post_id FROM ". DATABASE.".post_syndication WHERE syndication_url = '".$source_url."' LIMIT 1");
+        if($result->row){
+            $this->load->model('blog/post');
+            $post = $this->model_blog_post->getPost($result->row['post_id']);
+            $source_url = $post['permalink'];
+
+        }
+        
+        //todo check if $source_url is a syndicated copy of comments on my site
+
+        //download the page content
         $c = curl_init();
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_URL, $source_url);
@@ -115,103 +128,103 @@ class ControllerWebmentionQueue extends Controller {
         curl_close($c);
         unset($c);
 
-        if($page_content !== FALSE){
+        if($page_content === FALSE){
+            return null;
+        }
 
-            $mf2_parsed = Mf2\parse($page_content, $real_source_url);
-            foreach($mf2_parsed['items'] as $item){
-                $source_data = IndieWeb\comments\parse($item);
-                if(empty($source_data['url'])){
-                    $mf2_parsed_2 = Mf2\Shim\parseTwitter($page_content, $real_source_url);
-                    $source_data_2 = IndieWeb\comments\parse($item);
-                    if(!empty($source_data_2['url'])){
-                        $mf2_parsed = $mf2_parsed_2;
-                        $source_data = $source_data_2;
-                    }
-                } else {
-                    break;
-                }
-                //if(empty($source_data['url'])){
-                    //$mf2_parsed = Mf2\Shim\parseFacebook($page_content, $real_source_url);
-                    //$source_data = IndieWeb\comments\parse($mf2_parsed['items'][0]);
-                //}
+        //attempt to part as mf2
+        $mf2_parsed = Mf2\parse($page_content, $real_source_url);
+        if(empty($mf2_parsed['items'])){
+            //if not items found lets try with twitter shim
+            $mf2_parsed = Mf2\Shim\parseTwitter($page_content, $real_source_url);
+        }
+        if(empty($mf2_parsed['items'])){
+            //we give up
+            return null;
+        }
+
+        //try to find the correct item
+        foreach($mf2_parsed['items'] as $item){
+            $source_data = IndieWeb\comments\parse($item);
+            if(!empty($source_data['url'])){
+                break;
             }
+        }
 
-            if(empty($source_data['url'])){
+        //we never found an item with any properties
+        if(empty($source_data['url'])){
+            return null;
+        }
+
+        $real_url = $source_data['url'];
+
+        $query = $this->db->query("SELECT * FROM ".DATABASE.".context WHERE source_url='".$this->db->escape($real_url)."' LIMIT 1");
+
+        if(!empty($query->row)){
+            return $query->row['context_id'];
+
+        } else {
+            $published = $source_data['published'];
+            $body = $source_data['text'];
+            $source_name = $source_data['name'];
+
+            $author_name = $source_data['author']['name'];
+            $author_url = $source_data['author']['url'];
+            $author_image = $source_data['author']['photo'];
+
+
+            // do our best to conver to local time
+            date_default_timezone_set(LOCALTIMEZONE);
+            $date = new DateTime($published);
+            $now = new DateTime;
+            $tz = $now->getTimezone();
+            $date->setTimezone($tz);
+            $published = $date->format('Y-m-d H:i:s')."\n";
+
+            
+            if(empty($real_url)){
                 return null;
             }
 
-            $real_url = $source_data['url'];
+            $this->db->query("INSERT INTO ". DATABASE.".context SET 
+                author_name = '".$this->db->escape($author_name)."',
+                author_url = '".$this->db->escape($author_url)."',
+                author_image = '".$this->db->escape($author_image)."',
+                source_name = '".$this->db->escape($source_name)."',
+                source_url = '".$this->db->escape($real_url)."',
+                body = '".$this->db->escape($body)."',
+                timestamp ='".$published."'");
 
-            $query = $this->db->query("SELECT * FROM ".DATABASE.".context WHERE source_url='".$this->db->escape($real_url)."' LIMIT 1");
+            $context_id = $this->db->getLastId();
 
-            if(!empty($query->row)){
-                return $query->row['context_id'];
-
-            } else {
-                $published = $source_data['published'];
-                $body = $source_data['text'];
-                $source_name = $source_data['name'];
-
-                $author_name = $source_data['author']['name'];
-                $author_url = $source_data['author']['url'];
-                $author_image = $source_data['author']['photo'];
-
-
-                // do our best to conver to local time
-                date_default_timezone_set(LOCALTIMEZONE);
-                $date = new DateTime($published);
-                $now = new DateTime;
-                $tz = $now->getTimezone();
-                $date->setTimezone($tz);
-                $published = $date->format('Y-m-d H:i:s')."\n";
-
-                
-                if(empty($real_url)){
-                    return null;
-                }
-
-                $this->db->query("INSERT INTO ". DATABASE.".context SET 
-                    author_name = '".$this->db->escape($author_name)."',
-                    author_url = '".$this->db->escape($author_url)."',
-                    author_image = '".$this->db->escape($author_image)."',
-                    source_name = '".$this->db->escape($source_name)."',
-                    source_url = '".$this->db->escape($real_url)."',
-                    body = '".$this->db->escape($body)."',
-                    timestamp ='".$published."'");
-
-                $context_id = $this->db->getLastId();
-
-                foreach($mf2_parsed['items'] as $item){
-                    if(isset($item['properties']) && isset($item['properties']['in-reply-to']) && !empty($item['properties']['in-reply-to'])){
-                        foreach($item['properties']['in-reply-to'] as $citation) {
-                            if(isset($citation['properties'])){
-                                foreach($citation['properties']['url'] as $reply_to_url){
-                                    $ctx_id = $this->get_context_id($reply_to_url);
-                                    if($ctx_id){
-                                        $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
-                                        context_id = ".(int)$context_id.",
-                                        parent_context_id = ".(int)$ctx_id);
-                                    }
-
-                                }
-                            } else  {
-                                $reply_to_url = $citation;
-
+            foreach($mf2_parsed['items'] as $item){
+                if(isset($item['properties']) && isset($item['properties']['in-reply-to']) && !empty($item['properties']['in-reply-to'])){
+                    foreach($item['properties']['in-reply-to'] as $citation) {
+                        if(isset($citation['properties'])){
+                            foreach($citation['properties']['url'] as $reply_to_url){
                                 $ctx_id = $this->get_context_id($reply_to_url);
                                 if($ctx_id){
                                     $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
                                     context_id = ".(int)$context_id.",
                                     parent_context_id = ".(int)$ctx_id);
                                 }
+
+                            }
+                        } else  {
+                            $reply_to_url = $citation;
+
+                            $ctx_id = $this->get_context_id($reply_to_url);
+                            if($ctx_id){
+                                $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
+                                context_id = ".(int)$context_id.",
+                                parent_context_id = ".(int)$ctx_id);
                             }
                         }
-                        return $context_id;
                     }
+                    return $context_id;
                 }
-                return $context_id;
             }
-        } else {
-            return null;
+            return $context_id;
         }
     }
 

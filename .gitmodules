@@ -13,9 +13,9 @@
 [submodule "libraries/php-mf2"]
 	path = libraries/php-mf2
 	url = https://github.com/dissolve/php-mf2
-[submodule "libraries/php-mf2-shim"]
-	path = libraries/php-mf2-shim
-	url = https://github.com/indieweb/php-mf2-shim
 [submodule "libraries/php-comments"]
 	path = libraries/php-comments
 	url = https://github.com/dissolve/php-comments
+[submodule "libraries/php-mf2-shim"]
+	path = libraries/php-mf2-shim
+	url = https://github.com/dissolve/php-mf2-shim.git
