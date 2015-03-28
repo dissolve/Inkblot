@@ -15,7 +15,6 @@ class ControllerWebmentionQueue extends Controller {
         } else {
             $this->load->model('webmention/queue');
             $entry = $this->model_webmention_queue->getEntry($this->request->get['id']);
-            //$this->log->write($this->request->get['id']);
             if($entry){
                 header('Webmention-Status: ' . $entry['webmention_status_code']);
 
@@ -83,7 +82,7 @@ class ControllerWebmentionQueue extends Controller {
         $result = $this->db->query("SELECT * FROM ". DATABASE.".posts WHERE NOT replyto is NULL AND context_parsed=0 LIMIT 1");
         $post = $result->row;
 
-        while($post){
+        while(!empty($post)){
             //immediately update this to say that it is parsed.. this way we don't end up trying to run it multiple times on the same post
             $this->db->query("UPDATE ". DATABASE.".posts SET context_parsed = 1 WHERE post_id = ". (int)$post_id);
 
@@ -119,19 +118,27 @@ class ControllerWebmentionQueue extends Controller {
         if($page_content !== FALSE){
 
             $mf2_parsed = Mf2\parse($page_content, $real_source_url);
-            $source_data = IndieWeb\comments\parse($mf2_parsed['items'][0]);
-            if(empty($source_data['url'])){
-                $mf2_parsed = Mf2\Shim\parseTwitter($page_content, $real_source_url);
-                $source_data = IndieWeb\comments\parse($mf2_parsed['items'][0]);
+            foreach($mf2_parsed['items'] as $item){
+                $source_data = IndieWeb\comments\parse($item);
+                if(empty($source_data['url'])){
+                    $mf2_parsed_2 = Mf2\Shim\parseTwitter($page_content, $real_source_url);
+                    $source_data_2 = IndieWeb\comments\parse($item);
+                    if(!empty($source_data_2['url'])){
+                        $mf2_parsed = $mf2_parsed_2;
+                        $source_data = $source_data_2;
+                    }
+                } else {
+                    break;
+                }
+                //if(empty($source_data['url'])){
+                    //$mf2_parsed = Mf2\Shim\parseFacebook($page_content, $real_source_url);
+                    //$source_data = IndieWeb\comments\parse($mf2_parsed['items'][0]);
+                //}
             }
-            //if(empty($source_data['url'])){
-                //$mf2_parsed = Mf2\Shim\parseFacebook($page_content, $real_source_url);
-                //$source_data = IndieWeb\comments\parse($mf2_parsed['items'][0]);
-            //}
+
             if(empty($source_data['url'])){
                 return null;
             }
-
 
             $real_url = $source_data['url'];
 
@@ -174,28 +181,32 @@ class ControllerWebmentionQueue extends Controller {
 
                 $context_id = $this->db->getLastId();
 
-                foreach($mf2_parsed['items'][0]['properties']['in-reply-to'] as $citation) {
-                    if(isset($citation['properties'])){
-                        foreach($citation['properties']['url'] as $reply_to_url){
-                            $ctx_id = $this->get_context_id($reply_to_url);
-                            if($ctx_id){
-                                $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
-                                context_id = ".(int)$context_id.",
-                                parent_context_id = ".(int)$ctx_id);
+                foreach($mf2_parsed['items'] as $item){
+                    if(isset($item['properties']) && isset($item['properties']['in-reply-to']) && !empty($item['properties']['in-reply-to'])){
+                        foreach($item['properties']['in-reply-to'] as $citation) {
+                            if(isset($citation['properties'])){
+                                foreach($citation['properties']['url'] as $reply_to_url){
+                                    $ctx_id = $this->get_context_id($reply_to_url);
+                                    if($ctx_id){
+                                        $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
+                                        context_id = ".(int)$context_id.",
+                                        parent_context_id = ".(int)$ctx_id);
+                                    }
+
+                                }
+                            } else  {
+                                $reply_to_url = $citation;
+
+                                $ctx_id = $this->get_context_id($reply_to_url);
+                                if($ctx_id){
+                                    $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
+                                    context_id = ".(int)$context_id.",
+                                    parent_context_id = ".(int)$ctx_id);
+                                }
                             }
-
                         }
-                    } else  {
-                        $reply_to_url = $citation;
-
-                        $ctx_id = $this->get_context_id($reply_to_url);
-                        if($ctx_id){
-                            $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
-                            context_id = ".(int)$context_id.",
-                            parent_context_id = ".(int)$ctx_id);
-                        }
+                        return $context_id;
                     }
-
                 }
                 return $context_id;
             }
