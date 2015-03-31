@@ -28,7 +28,7 @@
       <div class="entry-content e-content" itemprop="description articleBody">
         <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
             <i class="fa fa-bookmark-o"></i> 
-            <a class="p-bookmark" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
+            <a class="u-bookmark-of" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
         <?php } ?>
         <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
             <i class="fa fa-heart-o"></i> <br>
@@ -83,7 +83,7 @@
   
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
-          <span class="category-link"><a class="p-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>
+          <span class="category-link"><a class="u-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>
   
       <?php } // end for post_categories as category ?>
   <?php } // end if post_categories ?>
@@ -138,7 +138,7 @@
      <?php } ?>
         <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
             <i class="fa fa-bookmark-o"></i> 
-            <a class="p-bookmark" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
+            <a class="u-bookmark-of" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
         <?php } ?>
         <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
             <i class="fa fa-heart-o"></i> <br>
@@ -200,7 +200,7 @@
   
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
-          <span class="category-link"><a class="p-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>
+          <span class="category-link"><a class="u-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>
   
       <?php } // end for post_categories as category ?>
   <?php } // end if post_categories ?>

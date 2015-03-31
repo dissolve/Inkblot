@@ -163,13 +163,10 @@ class ModelBlogPost extends Model {
                 if(empty($find_cat)){
                     $this->db->query("INSERT INTO ".DATABASE.".categories SET name='".$this->db->escape($trimmed_cat)."'");
                     $cid = $this->db->getLastId();
-
                 } else {
                     $cid = $find_cat['category_id'];
-
                 }
                 $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$id);
-
             }
         }
         
@@ -313,16 +310,32 @@ class ModelBlogPost extends Model {
 
     public function addToCategory($post_id, $category_name){
         $trimmed_cat = trim($category_name);
-        $query = $this->db->query("SELECT category_id FROM ".DATABASE.".categories where name='".$this->db->escape($trimmed_cat)."'");
-        $find_cat = $query->row;
-        $cid = 0;
-        if(empty($find_cat)){
-            $this->db->query("INSERT INTO ".DATABASE.".categories SET name='".$this->db->escape($trimmed_cat)."'");
-            $cid = $this->db->getLastId();
-        } else {
-            $cid = $find_cat['category_id'];
+	if($this->is_url($category_name)){
+	    $this->addTag($catgory_name);
+	} else {
+            $query = $this->db->query("SELECT category_id FROM ".DATABASE.".categories where name='".$this->db->escape($trimmed_cat)."'");
+            $find_cat = $query->row;
+            $cid = 0;
+            if(empty($find_cat)){
+                $this->db->query("INSERT INTO ".DATABASE.".categories SET name='".$this->db->escape($trimmed_cat)."'");
+                $cid = $this->db->getLastId();
+            } else {
+                $cid = $find_cat['category_id'];
+            }
+            $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$post_id);
+	}
+    }
+
+    private function is_url($potential_string){
+	$potentional_string = strtolower($potential_string);
+        if(preg_match('/https?:\/\/.+\..+/', $potential_string)){
+            return true;
         }
-        $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$post_id);
+       return false;
+    }
+
+    public function addTag($tag_url){
+	
     }
 
     public function removeFromAllCategories($post_id){

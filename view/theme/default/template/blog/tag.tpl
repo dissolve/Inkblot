@@ -50,7 +50,7 @@
       <?php 
 	if(isset($post['tag_person']) && !empty($post['tag_person']){
           echo $post['author']['display_name'] . 
-	    ' tagged <a class="p-category h-card" href="'.$post['tag_url'].'" '.
+	    ' tagged <a class="u-category h-card" href="'.$post['tag_url'].'" '.
                 (isset($post['tag_shape']) && !empty($post['tag_shape']) ? 'shape="'.$post['tag_shape'].'" ': '').
                 (isset($post['tag_coords']) && !empty($post['tag_coords']) ? 'coords="'.$post['tag_coords'].'" ': '').
                 '>'.
@@ -92,7 +92,7 @@
 
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
-          <span class="category-link"><a class="p-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>
+          <span class="category-link"><a class="u-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>
   
       <?php } // end for post_categories as category ?>
   <?php } // end if post_categories ?>
