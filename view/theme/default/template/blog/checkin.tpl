@@ -101,7 +101,7 @@
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
           <?php if(isset($category['person_name'])){ ?>
-              <span class="category-link"><a class="u-category" href="<?php echo $category['url']?>" title="<?php echo $category['person_name']?>"><?php echo $category['person_name']?></a></span>
+              <span class="category-link"><a class="u-category h-card" href="<?php echo $category['url']?>" title="<?php echo $category['url']?>"><?php echo $category['person_name']?></a></span>
           <?php } else { ?>
               <span class="category-link"><a class="u-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>
           <?php } ?>
