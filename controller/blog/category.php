@@ -26,7 +26,7 @@ class ControllerBlogCategory extends Controller {
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
             $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
             $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
-            $like_count = $this->model_blog_interaction->getInteractionsForPost('like', $post['post_id']);
+            $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
 
             $extra_data_array = array(
                 'body_html' => html_entity_decode($post['body']),

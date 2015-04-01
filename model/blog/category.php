@@ -8,12 +8,12 @@ class ModelBlogCategory extends Model {
     public function getCategories() {
         $data = $this->cache->get('categories.all');
         if(!$data){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".categories ORDER BY name ASC");
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".categories where person_name is NULL ORDER BY name ASC");
             $data = $query->rows;
             $data_array = array();
             foreach($data as $category){
                 $data_array[] = array_merge($category, array(
-                    'permalink' => $this->url->link('blog/category', 'name='.$this->db->escape($category['name']), '')
+                    'permalink' => $this->url->link('blog/category', 'name='.urlencode($category['name']), '')
                 ));
             }
             $this->cache->set('categories.all', $data_array);
@@ -49,10 +49,15 @@ class ModelBlogCategory extends Model {
         return $data_array;
     }
 
-    public function getCategoryByName($name) {
+    public function getCategoryByName($name, $autocreate = false) {
         $cid = $this->findCategoryByName($name);
-        if(!$cid){
+
+        if($autocreate && !$cid){
             $cid = $this->addCategory($name);
+        }
+
+        if(!$cid){
+            return null;
         }
 
         $data = $this->cache->get('categories.id.'.$cid);

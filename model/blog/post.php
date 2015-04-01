@@ -157,7 +157,7 @@ class ModelBlogPost extends Model {
             $categories = explode(',',$data['category']);
             foreach ($categories as $cat) {
                 $this->load->model('blog/category');
-                $category = $this->model_blog_category->getCategoryByName($cat);
+                $category = $this->model_blog_category->getCategoryByName($cat, true);
                 $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$category['category_id'].", post_id = ".(int)$id);
             }
         }
@@ -302,7 +302,7 @@ class ModelBlogPost extends Model {
 
     public function addToCategory($post_id, $category_name){
         $this->load->model('blog/category');
-        $category = $this->model_blog_category->getCategoryByName($category_name);
+        $category = $this->model_blog_category->getCategoryByName($category_name, true);
         $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$category['category_id'].", post_id = ".(int)$post_id);
     }
 
@@ -368,8 +368,8 @@ class ModelBlogPost extends Model {
             $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='".$this->db->escape($type)."' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $data_array = array();
-            foreach($data as $audio){
-            $data_array[] = $this->getPost($audio['post_id']);
+            foreach($data as $post){
+                $data_array[] = $this->getPost($post['post_id']);
             }
             $this->cache->set($type.'.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
         } else {
@@ -384,7 +384,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC ". ($limit ? " LIMIT " . (int)$skip .  ", " . (int)$limit : ''));
             $post_id_array = $query->rows;
             if(!$limit){
-            $limit = 'all';
+                $limit = 'all';
             }
             $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $post_id_array);
         }
