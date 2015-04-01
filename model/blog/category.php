@@ -83,7 +83,7 @@ class ModelBlogCategory extends Model {
         if(!empty($find_cat)){
             return $find_cat['category_id'];
         } else {
-            return null
+            return null;
         }
 
     }
@@ -117,7 +117,7 @@ class ModelBlogCategory extends Model {
     private function getTagObj($url){
         $c = curl_init();
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($c, CURLOPT_URL, $source_url);
+        curl_setopt($c, CURLOPT_URL, $url);
         curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
         $real_source_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
         $page_content = curl_exec($c);

@@ -434,14 +434,14 @@ class ControllerMicropubReceive extends Controller {
             $real_url = ltrim(str_replace(array(HTTP_SERVER, HTTPS_SERVER),array('',''), $real_url),'/');
             preg_match($adv_route['expression'], $real_url, $matches);
             if(!empty($matches)){
-                $model = $adv_route['controller'];
+                //$model = $adv_route['controller'];
                     foreach($matches as $field => $value){
                         $data[$field] = $value;
                     }
             }
         }
      try {
-            $this->load->model($model);
+            $this->load->model('blog/post');
             $post = $this->model_blog_post->getPostByData($data);
             return $post;
         } catch (Exception $e) {
