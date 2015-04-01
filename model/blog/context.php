@@ -1,7 +1,6 @@
 <?php
-require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
-
 require_once DIR_BASE.'libraries/php-mf2/Mf2/Parser.php';
+
 require_once DIR_BASE.'libraries/php-comments/src/indieweb/comments.php';
 require_once DIR_BASE.'libraries/cassis/cassis-loader.php';
 require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/functions.php';
@@ -9,18 +8,18 @@ require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/Shim/Twitter.php';
 //require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/Shim/Facebook.php';
 class ModelBlogContext extends Model {
 
-	public function getImmediateContextForPost($post_id) {
+    public function getImmediateContextForPost($post_id) {
         $data = $this->cache->get('context.immediate.post.'.$post_id);
         if(!$data){
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".context JOIN ".DATABASE.".post_context USING(context_id) WHERE post_id = ".(int)$post_id);
             $data = $query->rows;
             $this->cache->set('context.immediate.post.'.$post_id, $data);
         }
-	
-		return $data;
-	}
+    
+    	return $data;
+    }
 
-	public function getAllContextForPost($post_id) {
+    public function getAllContextForPost($post_id) {
         $data = $this->cache->get('context.all.post.'.$post_id);
         if(!$data){
             
@@ -50,8 +49,8 @@ class ModelBlogContext extends Model {
 
             $this->cache->set('context.all.post.'.$post_id, $data);
         }
-		return $data;
-	}
+    	return $data;
+    }
 
     private function get_context_id($source_url){
         $c = curl_init();
@@ -195,7 +194,7 @@ class ModelBlogContext extends Model {
         return $data;
 
     }
-     */
-	
+    */
+    
 }
 

@@ -85,7 +85,11 @@
 
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
-          <span class="category-link"><a class="u-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>
+          <?php if(isset($category['person_name'])){ ?>
+              <span class="category-link"><a class="u-category" href="<?php echo $category['url']?>" title="<?php echo $category['person_name']?>"><?php echo $category['person_name']?></a></span>
+          <?php } else { ?>
+              <span class="category-link"><a class="u-category" href="<?php echo $category['permalink']?>" title="<?php echo $category['name']?>"><?php echo $category['name']?></a></span>
+          <?php } ?>
   
       <?php } // end for post_categories as category ?>
   <?php } // end if post_categories ?>

@@ -156,17 +156,9 @@ class ModelBlogPost extends Model {
         if(isset($data['category']) && !empty($data['category'])){
             $categories = explode(',',$data['category']);
             foreach ($categories as $cat) {
-                $trimmed_cat = trim($cat);
-                $query = $this->db->query("SELECT category_id FROM ".DATABASE.".categories where name='".$this->db->escape($trimmed_cat)."'");
-                $find_cat = $query->row;
-                $cid = 0;
-                if(empty($find_cat)){
-                    $this->db->query("INSERT INTO ".DATABASE.".categories SET name='".$this->db->escape($trimmed_cat)."'");
-                    $cid = $this->db->getLastId();
-                } else {
-                    $cid = $find_cat['category_id'];
-                }
-                $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$id);
+                $this->load->model('blog/category');
+                $category = $this->model_blog_category->getCategoryByName($cat);
+                $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$category['category_id'].", post_id = ".(int)$id);
             }
         }
         
@@ -191,12 +183,12 @@ class ModelBlogPost extends Model {
         $this->cache->delete('posts');
     }
 
-	public function getPost($post_id) {
+    public function getPost($post_id) {
         $post = $this->cache->get('post.'. $post_id);
         if(!$post){
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = ". (int)$post_id);
             $post = $query->row;
-	        $syndications = $this->getSyndications($post['post_id']);
+            $syndications = $this->getSyndications($post['post_id']);
             $shortlink = $this->short_url->link('blog/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '');
             $citation = '(' . trim(str_replace(array('http://','https://'),array('',''), HTTP_SHORT), '/'). ' '. trim(str_replace(array(HTTP_SHORT,HTTPS_SHORT),array('',''), $shortlink),'/')  .')';
             $post = array_merge($post, array(
@@ -224,8 +216,8 @@ class ModelBlogPost extends Model {
             }
             $this->cache->set('post.'. $post_id, $post);
         }
-		return $post;
-	}
+        return $post;
+    }
 
     public function getPostByData($data){
         if(isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount'])) {
@@ -235,7 +227,7 @@ class ModelBlogPost extends Model {
         }
     }
 
-	public function getPostByDayCount($year,$month, $day, $daycount) {
+    public function getPostByDayCount($year,$month, $day, $daycount) {
         $post_id = $this->cache->get('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount);
         if(!$post_id){
             $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE year = '". (int)$year . "' AND
@@ -246,42 +238,42 @@ class ModelBlogPost extends Model {
             $this->cache->set('post_id.'. $year.'.'.$month.'.'.$day.'.'.$daycount, $post_id);
         }
 
-		return $this->getPost($post_id);
-	}
+        return $this->getPost($post_id);
+    }
 
-	public function getRecentPosts($limit=10, $skip=0) {
-		$post_id_array = $this->cache->get('posts.recent.'. $skip . '.'.  $limit);
-		if(!$post_id_array){
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-		    $post_id_array = $query->rows;
-		    $this->cache->set('posts.recent.'. $skip . '.' .$limit, $post_id_array);
-		}
-	
-        	$data_array = array();
-        	foreach($post_id_array as $post){
-            		$data_array[] = $this->getPost($post['post_id']);
-        	}
-	
-		return $data_array;
-	}
+    public function getRecentPosts($limit=10, $skip=0) {
+        $post_id_array = $this->cache->get('posts.recent.'. $skip . '.'.  $limit);
+        if(!$post_id_array){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $post_id_array = $query->rows;
+            $this->cache->set('posts.recent.'. $skip . '.' .$limit, $post_id_array);
+        }
+    
+            $data_array = array();
+            foreach($post_id_array as $post){
+                    $data_array[] = $this->getPost($post['post_id']);
+            }
+    
+        return $data_array;
+    }
 
-	public function getRecentDrafts( $limit=20, $skip=0) {
-		$post_id_array = $this->cache->get('posts.drafts.'. $skip . '.'.  $limit);
-		if(!$post_id_array){
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE deleted=0 AND draft=1 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-		    $post_id_array = $query->rows;
-		    $this->cache->set('posts.drafts.'. $skip . '.'.  $limit, $post_id_array);
-		}
+    public function getRecentDrafts( $limit=20, $skip=0) {
+        $post_id_array = $this->cache->get('posts.drafts.'. $skip . '.'.  $limit);
+        if(!$post_id_array){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE deleted=0 AND draft=1 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $post_id_array = $query->rows;
+            $this->cache->set('posts.drafts.'. $skip . '.'.  $limit, $post_id_array);
+        }
 
         $data_array = array();
         foreach($post_id_array as $post){
             $data_array[] = $this->getPost($post['post_id']);
         }
-	
-		return $data_array;
-	}
+    
+        return $data_array;
+    }
 
-	public function getPostsByTypes($type_list = ['article'], $limit=20, $skip=0) {
+    public function getPostsByTypes($type_list = ['article'], $limit=20, $skip=0) {
         if($this->session->data['is_owner']){
             $post_id_array = $this->cache->get('posts.type.owner.'. implode('.',$type_list) . '.'. $skip . '.'.  $limit);
             if(!$post_id_array){
@@ -304,156 +296,133 @@ class ModelBlogPost extends Model {
         foreach($post_id_array as $post){
             $data_array[] = $this->getPost($post['post_id']);
         }
-	
-		return $data_array;
-	}
+    
+        return $data_array;
+    }
 
     public function addToCategory($post_id, $category_name){
-        $trimmed_cat = trim($category_name);
-	if($this->is_url($category_name)){
-	    $this->addTag($catgory_name);
-	} else {
-            $query = $this->db->query("SELECT category_id FROM ".DATABASE.".categories where name='".$this->db->escape($trimmed_cat)."'");
-            $find_cat = $query->row;
-            $cid = 0;
-            if(empty($find_cat)){
-                $this->db->query("INSERT INTO ".DATABASE.".categories SET name='".$this->db->escape($trimmed_cat)."'");
-                $cid = $this->db->getLastId();
-            } else {
-                $cid = $find_cat['category_id'];
-            }
-            $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$cid.", post_id = ".(int)$post_id);
-	}
+        $this->load->model('blog/category');
+        $category = $this->model_blog_category->getCategoryByName($category_name);
+        $this->db->query("INSERT INTO ".DATABASE.".categories_posts SET category_id=".(int)$category['category_id'].", post_id = ".(int)$post_id);
     }
 
-    private function is_url($potential_string){
-	$potentional_string = strtolower($potential_string);
-        if(preg_match('/https?:\/\/.+\..+/', $potential_string)){
-            return true;
-        }
-       return false;
-    }
-
-    public function addTag($tag_url){
-	
-    }
 
     public function removeFromAllCategories($post_id){
         $this->db->query("DELETE FROM ".DATABASE.".categories_posts WHERE post_id = ".(int)$post_id);
         //todo find and remove empty categories
     }
 
-	public function getPostsByCategory($category_id, $limit=20, $skip=0) {
-		$post_id_array = $this->cache->get('posts.category.'. $category_id . '.'. $skip . '.'.  $limit);
-		if(!$post_id_array){
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-		    $post_id_array = $query->rows;
-		    $this->cache->set('posts.category.'.$category_id . '.'. $skip . '.'.  $limit, $post_id_array);
-		}
-	
+    public function getPostsByCategory($category_id, $limit=20, $skip=0) {
+        $post_id_array = $this->cache->get('posts.category.'. $category_id . '.'. $skip . '.'.  $limit);
+        if(!$post_id_array){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN ".DATABASE.".categories_posts USING(post_id) WHERE category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $post_id_array = $query->rows;
+            $this->cache->set('posts.category.'.$category_id . '.'. $skip . '.'.  $limit, $post_id_array);
+        }
+    
         $data_array = array();
         foreach($post_id_array as $post){
             $data_array[] = $this->getPost($post['post_id']);
         }
-	
-		return $data_array;
-	}
+    
+        return $data_array;
+    }
 
-	public function getRecentPostsByType($type, $limit=20, $skip=0) {
-		$post_id_array = $this->cache->get('posts.'.$type.'.'. $skip . '.'.  $limit);
-		if(!$post_id_array){
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type = '".$this->db->escape($type)."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-		    $post_id_array = $query->rows;
-		    $this->cache->set('posts.'.$type . '.'. $skip . '.'.  $limit, $post_id_array);
-		}
-	
+    public function getRecentPostsByType($type, $limit=20, $skip=0) {
+        $post_id_array = $this->cache->get('posts.'.$type.'.'. $skip . '.'.  $limit);
+        if(!$post_id_array){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type = '".$this->db->escape($type)."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $post_id_array = $query->rows;
+            $this->cache->set('posts.'.$type . '.'. $skip . '.'.  $limit, $post_id_array);
+        }
+    
         $data_array = array();
         foreach($post_id_array as $post){
             $data_array[] = $this->getPost($post['post_id']);
         }
-	
-		return $data_array;
-	}
+    
+        return $data_array;
+    }
 
-	public function getPostsByDay($year, $month, $day) {
-		$post_id_array = $this->cache->get('posts.day.'. $year . '.'. $month . '.'.  $day);
-		if(!$post_id_array){
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+    public function getPostsByDay($year, $month, $day) {
+        $post_id_array = $this->cache->get('posts.day.'. $year . '.'. $month . '.'.  $day);
+        if(!$post_id_array){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE category_id = '".(int)$category_id."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND `day` = ".(int)$day." AND deleted=0 AND draft=0 ORDER BY timestamp DESC");
-		    $post_id_array = $query->rows;
-		    $this->cache->set('posts.day.'.$year . '.'. $month . '.'.  $day, $post_id_array);
-		}
-	
+            $post_id_array = $query->rows;
+            $this->cache->set('posts.day.'.$year . '.'. $month . '.'.  $day, $post_id_array);
+        }
+    
         $data_array = array();
         foreach($post_id_array as $post){
             $data_array[] = $this->getPost($post['post_id']);
         }
-	
-		return $data_array;
-	}
+    
+        return $data_array;
+    }
 
 
-	public function getPostsByArchive($type, $year, $month, $limit=20, $skip=0) {
-		$data = $this->cache->get($type. '.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
-		if(!$data){
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='".$this->db->escape($type)."' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
-		    $data = $query->rows;
-		    $data_array = array();
-		    foreach($data as $audio){
-			$data_array[] = $this->getPost($audio['post_id']);
-		    }
-		    $this->cache->set($type.'.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
-		} else {
-		    $data_array = $data;
-		}
-	
-		return $data_array;
-	}
-	public function getAnyPostsByArchive($year, $month, $limit=NULL, $skip=0) {
-		$post_id_array = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
-		if(!$post_id_array){
-		    $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC ". ($limit ? " LIMIT " . (int)$skip .  ", " . (int)$limit : ''));
-		    $post_id_array = $query->rows;
-		    if(!$limit){
-			$limit = 'all';
-		    }
-		    $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $post_id_array);
-		}
-		
-		$data_array = array();
-		foreach($post_id_array as $post){
-		    $data_array[] = $this->getPost($post['post_id']);
-		}
-		return $data_array;
-	}
+    public function getPostsByArchive($type, $year, $month, $limit=20, $skip=0) {
+        $data = $this->cache->get($type. '.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
+        if(!$data){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='".$this->db->escape($type)."' AND `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $data = $query->rows;
+            $data_array = array();
+            foreach($data as $audio){
+            $data_array[] = $this->getPost($audio['post_id']);
+            }
+            $this->cache->set($type.'.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $data_array);
+        } else {
+            $data_array = $data;
+        }
+    
+        return $data_array;
+    }
+    public function getAnyPostsByArchive($year, $month, $limit=NULL, $skip=0) {
+        $post_id_array = $this->cache->get('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit);
+        if(!$post_id_array){
+            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '".(int)$year."' AND `month` = '".(int)$month."' AND deleted=0 AND draft=0 ORDER BY timestamp DESC ". ($limit ? " LIMIT " . (int)$skip .  ", " . (int)$limit : ''));
+            $post_id_array = $query->rows;
+            if(!$limit){
+            $limit = 'all';
+            }
+            $this->cache->set('posts.date.'.$year.'.'.$month.'.'.$skip.'.'.$limit, $post_id_array);
+        }
+        
+        $data_array = array();
+        foreach($post_id_array as $post){
+            $data_array[] = $this->getPost($post['post_id']);
+        }
+        return $data_array;
+    }
 
-	public function getSyndications($post_id) {
-		$query = $this->db->query("SELECT * FROM ".DATABASE.".post_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE post_id = ".(int)$post_id);
+    public function getSyndications($post_id) {
+        $query = $this->db->query("SELECT * FROM ".DATABASE.".post_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE post_id = ".(int)$post_id);
 
-		return $query->rows;
-	}
+        return $query->rows;
+    }
 
-	public function addSyndication($post_id, $syndication_url) {
-		if(!empty($syndication_url)){
-		    $syndication_url = trim($syndication_url);
-		    //figure out what site this is.
-		    $sites_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site ");
-		    $sites = $sites_query->rows;
+    public function addSyndication($post_id, $syndication_url) {
+        if(!empty($syndication_url)){
+            $syndication_url = trim($syndication_url);
+            //figure out what site this is.
+            $sites_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site ");
+            $sites = $sites_query->rows;
 
-		    $syn_site_id = 0;
-		    foreach($sites as $site){
-			if(strpos($syndication_url, $site['site_url_match']) === 0){
-			    $syn_site_id = $site['syndication_site_id'];
-			    break;
-			}
-		    }
+            $syn_site_id = 0;
+            foreach($sites as $site){
+                if(strpos($syndication_url, $site['site_url_match']) === 0){
+                    $syn_site_id = $site['syndication_site_id'];
+                    break;
+                }
+            }
 
-		    // add site to DB
-		    $query = $this->db->query("INSERT INTO ".DATABASE.".post_syndication SET post_id = ".(int)$post_id.", syndication_site_id=".(int)$syn_site_id.", syndication_url = '".$this->db->escape($syndication_url)."'");
+            // add site to DB
+            $query = $this->db->query("INSERT INTO ".DATABASE.".post_syndication SET post_id = ".(int)$post_id.", syndication_site_id=".(int)$syn_site_id.", syndication_url = '".$this->db->escape($syndication_url)."'");
 
-		    $this->cache->delete('post.'. $post_id);
-		}
-	}
+            $this->cache->delete('post.'. $post_id);
+        }
+    }
 
 
 }
