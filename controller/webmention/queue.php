@@ -50,15 +50,25 @@ class ControllerWebmentionQueue extends Controller {
             $this->load->model('blog/post');
             $post = $this->model_blog_post->getPost($post_id);
 
-            // send webmention
-            if(isset($post['image_file'])){
-                $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' .
-                '<img src="'.$post['image_file'].'" class="u-photo photo-post" />' .html_entity_decode($post['body'].$post['syndication_extra']),false, $post['shortlink'] );
-            } elseif($post['bookmark_like_url']){
-                $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['bookmark_like_url'].'"></a>' . html_entity_decode($post['body'].$post['syndication_extra']), false, $post['shortlink'] );
-            } else {
-                $client = new IndieWeb\MentionClient($post['permalink'], '<a href="'.$post['replyto'].'">ReplyTo</a>' . html_entity_decode($post['body'].$post['syndication_extra']), false, $post['shortlink'] );
+            $this->load->model('blog/category');
+            $categories = $this->model_blog_category->getCategoriesForPost($post_id);
+
+            $webmention_text = '<a href="'.$post['replyto'].'">ReplyTo</a>';
+
+            if($post['bookmark_like_url']){
+                $webmetnion_text = '<a href="'.$post['bookmark_like_url'].'"></a>';
             }
+
+            foreach($categories as $category){
+                if(isset($category['person_name']) && !empty($category['person_name'])){
+                    $webmention_text .= '<a href="'.$category['url'].'"></a>' ;
+                }
+            }
+
+            $webmention_text .= html_entity_decode($post['body'].$post['syndication_extra']);
+            // send webmention
+            $client = new IndieWeb\MentionClient($post['permalink'], $webmention_text, false, $post['shortlink'] );
+
             $client->debug(false);
             //TODO
             $this->load->model('webmention/vouch');
