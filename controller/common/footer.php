@@ -40,8 +40,8 @@ class ControllerCommonFooter extends Controller {
         }
 		
 		$this->load->model('blog/interaction');
-		$data['recent_mentions'] = $this->model_blog_interaction->getGenericInteractions('mention',10);
-		$data['recent_tags'] = null; //TODO // $this->model_blog_post->getRecentTags(10);
+		$data['recent_mentions'] = $this->model_blog_interaction->getGenericInteractions('person-mention',10);
+		$data['recent_tags'] = $this->model_blog_interaction->getGenericInteractions('tagged',10);
 		$data['likes'] = $this->model_blog_interaction->getGenericInteractions('like');
 		$data['like_count'] = $this->model_blog_interaction->getGenericInteractionCount('like');
 		
