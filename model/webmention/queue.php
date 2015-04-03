@@ -40,5 +40,34 @@ class ModelWebmentionQueue extends Model {
         return $res->row;
 	}
 
+    public function getUnhandledWebmentions(){
+        $res = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_status_code != 200 AND (admin_status != 'dismiss' OR admin_status is NULL)");
+        return $res->rows;
+    }
+
+    public function dismiss($id){
+        $res = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_id = '".(int)$id."'");
+        if($res->row['webmention_status_code'] != 200){
+            $this->db->query("UPDATE " . DATABASE . ".webmentions SET admin_status = 'dismiss' WHERE webmention_id = ".(int)$id);
+        }
+    }
+    public function retry($id){
+        $res = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_id = '".(int)$id."'");
+        if($res->row['webmention_status_code'] != 200){
+            $this->db->query("UPDATE " . DATABASE . ".webmentions SET webmention_status_code = 202, webmention_status='retry' WHERE webmention_id = ".(int)$id);
+        }
+    }
+    public function whitelistAndRetry($id){
+        $res = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_id = '".(int)$id."'");
+        if($res->row['webmention_status_code'] != 200){
+            $res = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_id = '".(int)$id."'");
+
+            $this->load->model('webmention/vouch');
+            $this->model_webmention_vouch->addWhitelistEntry($res->row['source_url']);
+
+            $this->db->query("UPDATE " . DATABASE . ".webmentions SET webmention_status_code = 202, webmention_status='retry' WHERE webmention_id = ".(int)$id);
+        }
+    }
+
 }
 ?>

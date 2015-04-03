@@ -5,6 +5,51 @@ require_once DIR_BASE . '/libraries/cassis/cassis-loader.php';
 
 class ControllerWebmentionReceive extends Controller {
     public function index() {
+        if($this->request->server['REQUEST_METHOD'] != 'POST' && $this->session->data['is_owner']){
+            $this->webmention_manager();
+        } else {
+            $this->receive_webmention();
+        }
+    }
+
+    private function webmention_manager(){
+        $this->load->model('webmention/queue');
+        if(isset($this->request->get['id']) && isset($this->request->get['action'])){
+            $webmention_id = $this->request->get['id'];
+            $action = $this->request->get['action'];
+
+            switch($action){
+            case 'retry':
+                $this->model_webmention_queue->retry($webmention_id);
+                break;
+            case 'dismiss':
+                $this->model_webmention_queue->dismiss($webmention_id);
+                break;
+            case 'approve':
+                $this->model_webmention_queue->whitelistAndRetry($webmention_id);
+                break;
+            }
+        }
+
+
+        $list = $this->model_webmention_queue->getUnhandledWebmentions();
+        foreach($list as $entry){
+            $data['list'][] = array_merge($entry, array(
+                'action_retry' => $this->url->link('webmention/receive', 'id='.$entry['webmention_id']. '&action=retry', ''),
+                'action_dismiss' => $this->url->link('webmention/receive', 'id='.$entry['webmention_id']. '&action=dismiss', ''),
+                'action_approve' => $this->url->link('webmention/receive', 'id='.$entry['webmention_id']. '&action=approve', '')
+            ));
+
+            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/webmention/list.tpl')) {
+                $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/webmention/list.tpl', $data));
+            } else {
+                $this->response->setOutput($this->load->view('default/template/webmention/list.tpl', $data));
+            }
+        }
+    }
+
+    private function receive_webmention(){
+
         $source = $this->request->post['source'];
         $target = $this->request->post['target'];
         $vouch = $this->request->post['vouch'];
