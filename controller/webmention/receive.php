@@ -31,8 +31,8 @@ class ControllerWebmentionReceive extends Controller {
             }
         }
 
-
         $list = $this->model_webmention_queue->getUnhandledWebmentions();
+
         foreach($list as $entry){
             $data['list'][] = array_merge($entry, array(
                 'action_retry' => $this->url->link('webmention/receive', 'id='.$entry['webmention_id']. '&action=retry', ''),
@@ -40,12 +40,14 @@ class ControllerWebmentionReceive extends Controller {
                 'action_approve' => $this->url->link('webmention/receive', 'id='.$entry['webmention_id']. '&action=approve', '')
             ));
 
-            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/webmention/list.tpl')) {
-                $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/webmention/list.tpl', $data));
-            } else {
-                $this->response->setOutput($this->load->view('default/template/webmention/list.tpl', $data));
-            }
         }
+
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/webmention/list.tpl')) {
+            $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/webmention/list.tpl', $data));
+        } else {
+            $this->response->setOutput($this->load->view('default/template/webmention/list.tpl', $data));
+        }
+
     }
 
     private function receive_webmention(){
