@@ -91,11 +91,11 @@ var loadIndieConfig = function () {
     </head>
 
 
-<body class="home blog custom-background multi-column single-author custom-header" itemscope="" itemtype="http://schema.org/Blog">
+<body class="home blog custom-background multi-column single-author custom-header">
 <div id="page">
   <header>
 <br><br>
-  </header><!-- #branding -->
+  </header>
   <div id="main">
     <section id="primary">
       <main id="content" role="main">

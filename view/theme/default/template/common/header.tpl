@@ -91,11 +91,11 @@ var loadIndieConfig = function () {
     </head>
 
 
-<body class="home blog custom-background multi-column single-author custom-header" itemscope="" itemtype="http://schema.org/Blog">
+<body class="home blog custom-background multi-column single-author custom-header">
 <div id="page">
-  <header class="h-card" id="branding" role="banner">
-    <h1 id="site-title" itemprop="name" class="p-name"><a href="<?php echo $home?>" title="<?php echo $site_title?>" rel="home" itemprop="url" class="u-url url"><?php echo $site_title?></a></h1>
-    <h2 id="site-description" itemprop="description" class="p-role p-summary e-content"><?php echo $site_subtitle?></h2>
+  <header class="h-card" id="headBanner" role="banner">
+    <h1 id="site-title" class="p-name"><a href="<?php echo $home?>" title="<?php echo $site_title?>" rel="home" class="u-url"><?php echo $site_title?></a></h1>
+    <h2 id="site-description" class="p-role p-summary e-content"><?php echo $site_subtitle?></h2>
         
         <?php if ($icon) { ?>
         <img src="<?php echo $icon; ?>" class="photo u-photo" style="display:none" />
@@ -104,7 +104,7 @@ var loadIndieConfig = function () {
         <span class="p-x-pronoun-oblique" style="display:none"><?php echo $pro_oblique ?></span>
         <span class="p-x-pronoun-posessive" style="display:none"><?php echo $pro_posessive ?></span>
 
-  </header><!-- #branding -->
+  </header>
 
   <div id="main">
     <section id="primary">

@@ -137,7 +137,7 @@ body :target, body [fragmention] {
 
 /* =Header
 -------------------------------------------------------------- */
-#branding {
+#headBanner {
   display: block;
   clear: both;
   background: url(/image/uploaded/rainbow.jpg) no-repeat;
@@ -147,7 +147,7 @@ body :target, body [fragmention] {
   padding-left:5%;
   margin-bottom: 30px;
 }
-#branding  a {
+#headBanner  a {
   color:#fff;
 }
 
@@ -1345,7 +1345,7 @@ data.p-rsvp[value="yes"] {color:green}
 }
 /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
 @media only screen and (max-width: 767px) {
-  #branding {
+  #headBanner {
       height:120px;
       background-size:767px;
   }
@@ -1362,7 +1362,7 @@ data.p-rsvp[value="yes"] {color:green}
 }
 /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
 @media only screen and (max-width: 479px) {
-  #branding {
+  #headBanner {
       height:90px;
       background-size: 455px;
   }

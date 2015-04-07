@@ -173,69 +173,85 @@ class ControllerWebmentionQueue extends Controller {
         if(!empty($query->row)){
             return $query->row['context_id'];
 
-        } else {
-            $published = $source_data['published'];
-            $body = $source_data['text'];
-            $source_name = $source_data['name'];
+        } 
 
-            $author_name = $source_data['author']['name'];
-            $author_url = $source_data['author']['url'];
-            $author_image = $source_data['author']['photo'];
+        // look up url in context_syndications and if there use that id
+        
+        $query = $this->db->query("SELECT * FROM ".DATABASE.".context_syndication WHERE syndication_url='".$this->db->escape($real_url)."' LIMIT 1");
+
+        if(!empty($query->row)){
+            return $query->row['context_id'];
+        } 
+        
+        $published = $source_data['published'];
+        $body = $source_data['text'];
+        $source_name = $source_data['name'];
+
+        $author_name = $source_data['author']['name'];
+        $author_url = $source_data['author']['url'];
+        $author_image = $source_data['author']['photo'];
 
 
-            // do our best to conver to local time
-            date_default_timezone_set(LOCALTIMEZONE);
-            $date = new DateTime($published);
-            $now = new DateTime;
-            $tz = $now->getTimezone();
-            $date->setTimezone($tz);
-            $published = $date->format('Y-m-d H:i:s')."\n";
+        // do our best to conver to local time
+        date_default_timezone_set(LOCALTIMEZONE);
+        $date = new DateTime($published);
+        $now = new DateTime;
+        $tz = $now->getTimezone();
+        $date->setTimezone($tz);
+        $published = $date->format('Y-m-d H:i:s')."\n";
 
-            
-            if(empty($real_url)){
-                return null;
+        $this->db->query("INSERT INTO ". DATABASE.".context SET 
+            author_name = '".$this->db->escape($author_name)."',
+            author_url = '".$this->db->escape($author_url)."',
+            author_image = '".$this->db->escape($author_image)."',
+            source_name = '".$this->db->escape($source_name)."',
+            source_url = '".$this->db->escape($real_url)."',
+            body = '".$this->db->escape($body)."',
+            timestamp ='".$published."'");
+
+        $context_id = $this->db->getLastId();
+
+        foreach($sourch_data['syndications'] as $syndication_url){
+            //TODO figure out what syndicaiton_site_id to use
+            $this->db->query("INSERT INTO ". DATABASE.".context_syndication SET syndication_url = '".$this->db->escape($syndication_url)."', context_id = ".(int)$context_id);
+
+            //remove any syndicated copies we have already parsed
+            $query = $this->db->query("SELECT * FROM ".DATABASE.".context WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+            if(!empty($query->row)){
+                $this->db->query("DELETE FROM ".DATABASE.".context WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                $this->db->query("UPDATE ".DATABASE.".context_to_context set context_parent_id = ".(int)$context_id." WHERE context_parent_id=".(int)$query->row['context_id']);
             }
+        }
 
-            $this->db->query("INSERT INTO ". DATABASE.".context SET 
-                author_name = '".$this->db->escape($author_name)."',
-                author_url = '".$this->db->escape($author_url)."',
-                author_image = '".$this->db->escape($author_image)."',
-                source_name = '".$this->db->escape($source_name)."',
-                source_url = '".$this->db->escape($real_url)."',
-                body = '".$this->db->escape($body)."',
-                timestamp ='".$published."'");
-
-            $context_id = $this->db->getLastId();
-
-            foreach($mf2_parsed['items'] as $item){
-                if(isset($item['properties']) && isset($item['properties']['in-reply-to']) && !empty($item['properties']['in-reply-to'])){
-                    foreach($item['properties']['in-reply-to'] as $citation) {
-                        if(isset($citation['properties'])){
-                            foreach($citation['properties']['url'] as $reply_to_url){
-                                $ctx_id = $this->get_context_id($reply_to_url);
-                                if($ctx_id){
-                                    $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
-                                    context_id = ".(int)$context_id.",
-                                    parent_context_id = ".(int)$ctx_id);
-                                }
-
-                            }
-                        } else  {
-                            $reply_to_url = $citation;
-
+        foreach($mf2_parsed['items'] as $item){
+            if(isset($item['properties']) && isset($item['properties']['in-reply-to']) && !empty($item['properties']['in-reply-to'])){
+                foreach($item['properties']['in-reply-to'] as $citation) {
+                    if(isset($citation['properties'])){
+                        foreach($citation['properties']['url'] as $reply_to_url){
                             $ctx_id = $this->get_context_id($reply_to_url);
                             if($ctx_id){
                                 $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
                                 context_id = ".(int)$context_id.",
                                 parent_context_id = ".(int)$ctx_id);
                             }
+
+                        }
+                    } else  {
+                        $reply_to_url = $citation;
+
+                        $ctx_id = $this->get_context_id($reply_to_url);
+                        if($ctx_id){
+                            $this->db->query("INSERT INTO ". DATABASE.".context_to_context SET 
+                            context_id = ".(int)$context_id.",
+                            parent_context_id = ".(int)$ctx_id);
                         }
                     }
-                    return $context_id;
                 }
+                return $context_id;
             }
-            return $context_id;
         }
+        return $context_id;
+        
     }
 
 }

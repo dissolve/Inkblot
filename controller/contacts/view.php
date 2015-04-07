@@ -4,7 +4,6 @@ class ControllerContactsView extends Controller {
 		
 		$this->load->model('blog/mycard');
 		
-        //$data['auth_page'] = $this->url->link('auth/login','c=contacts/me','');
         $data['auth_page'] = $this->url->link('auth/login');
         $data['auth_endpoint'] = AUTH_ENDPOINT;
 
@@ -19,16 +18,14 @@ class ControllerContactsView extends Controller {
         } else {
 
 
-            $this->load->model('blog/author');
-            $author = $this->model_blog_author->getAuthor(1);
 
-            $this->document->setTitle($author['first_name'].' '.$author['last_name']);
+            $this->document->setTitle(AUTHOR_FIRST_NAME. ' ' . AUTHOR_LAST_NAME);
             $data['contact'] = array();
 
             foreach ($this->model_blog_mycard->getData($this->session->data['user_site'], 'contact') as $result) {
                     $data['contact'][] = array(
-                        'first_name' => $author['first_name'],
-                        'last_name' => $author['last_name'],
+                        'first_name' => AUTHOR_FIRST_NAME,
+                        'last_name' => AUTHOR_LAST_NAME,
                         'url'    => str_replace('{}', $result['value'], $result['link_format']),
                         'image'  => $result['image'],
                         'value'  => str_replace('{}', $result['value'], $result['mobile_label']),

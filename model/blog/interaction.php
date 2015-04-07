@@ -2,6 +2,13 @@
 class ModelBlogInteraction extends Model {
 
     public function addWebmention($data, $webmention_id, $comment_data, $post_id = null){
+
+        //check if the source of this is already parsed
+        $query = $this->db->query("SELECT * FROM ".DATABASE.".interaction_syndication WHERE syndication_url='".$comment_data['url']."' LIMIT 1");
+        if(!empty($query->row)){
+            return null;
+        }
+
         if(isset($comment_data['published']) && !empty($comment_data['published'])){
             // do our best to conver to local time
             date_default_timezone_set(LOCALTIMEZONE);
@@ -15,7 +22,6 @@ class ModelBlogInteraction extends Model {
 
         if($post_id || (isset($data['year']) && isset($data['month']) && isset($data['day']) && isset($data['daycount']))) {
             $this->load->model('blog/post');
-//TODO: this can likely be cleaned up to reducde dependance on model_blog_post
             $post = null;
             if($post_id){
                 $post= $this->model_blog_post->getPost($post_id);
@@ -72,6 +78,19 @@ class ModelBlogInteraction extends Model {
                     ($autoapprove ? ", approved=1" : '' ) .
             "");
 
+            $interaction_id = $this->db->getLastId();
+
+            foreach($comment_data['syndications'] as $syndication_url){
+                //TODO figure out what syndicaiton_site_id to use
+                $this->db->query("INSERT INTO ". DATABASE.".interaction_syndication SET syndication_url = '".$this->db->escape($syndication_url)."', interaction_id = ".(int)$interaction_id);
+
+                //remove any syndicated copies we have already parsed
+                $query = $this->db->query("SELECT * FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                if(!empty($query->row)){
+                    $this->db->query("DELETE FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                }
+            }
+
             if($autoapprove && $type=='tag'){
                 foreach($comment_data['tags'] as $tag){
                     if(isset($tag['category'])){
@@ -83,7 +102,6 @@ class ModelBlogInteraction extends Model {
 
             }
 
-            $interaction_id = $this->db->getLastId();
             $this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
             $this->cache->delete('interactions');
 

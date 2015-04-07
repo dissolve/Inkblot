@@ -2,16 +2,16 @@
 <?php date_default_timezone_set(LOCALTIMEZONE); ?> 
 <h1><?php echo $title ?></h1>
 <?php foreach($posts as $post) { ?>
-<article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" itemprop="blogPost" itemscope="" itemtype="http://schema.org/BlogPosting">
+<article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
   <header class="entry-header">
     <?php if($post['post_type'] != 'listen'){ ?>
-    <h1 class="entry-title p-name" itemprop="name headline"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" itemprop="url"><?php echo $post['title']?></a></h1>
+    <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['title']?>" rel="bookmark"><?php echo $post['title']?></a></h1>
     <?php } ?>
 
         <div class="entry-meta">      
       <span class="sep">Posted on </span>
-        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="url u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo $post['timestamp']?>" itemprop="dateModified"><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
-        <address class="byline"> <span class="sep"> by </span> <span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt='' src='<?php echo $post['author_image']?>' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="url uid u-url u-uid fn p-name" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author" itemprop="url"><span itemprop="name"><?php echo $post['author']['display_name']?></span></a></span></address>
+        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo $post['timestamp']?>"><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
+        <address class="byline"> <span class="sep"> by </span> <span class="author p-author h-card"><img alt='' src='<?php echo $post['author_image']?>' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="u-url u-uid p-name" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author"><?php echo $post['author']['display_name']?></a></span></address>
         <?php if($post['replyto']) { ?>
             <div class="repyto">
                In Reply To <a class="u-in-reply-to" rel="in-reply-to" href="<?php echo $post['replyto']?>">This</a>
@@ -20,7 +20,7 @@
         </div><!-- .entry-meta -->
       </header><!-- .entry-header -->
 
-      <div class="entry-content e-content" itemprop="description articleBody">
+      <div class="entry-content e-content">
         <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
             <i class="fa fa-bookmark-o"></i> 
             <a class="u-bookmark-of" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
