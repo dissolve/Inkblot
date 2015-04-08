@@ -80,9 +80,26 @@ class ModelBlogInteraction extends Model {
 
             $interaction_id = $this->db->getLastId();
 
+            $syndication_sites = $this->cache->get('syndication.sites');
+            if(!$syndication_sites){
+                $syn_site_query = $this->db->query("SELECT * FROM ".DATABASE.".syndication_site");
+                $syndication_sites = $syn_site_query->rows;
+                $this->cache->set('syndication.sites',$syndication_sites); 
+            }
+
             foreach($comment_data['syndications'] as $syndication_url){
-                //TODO figure out what syndicaiton_site_id to use
-                $this->db->query("INSERT INTO ". DATABASE.".interaction_syndication SET syndication_url = '".$this->db->escape($syndication_url)."', interaction_id = ".(int)$interaction_id);
+
+                // figure out what syndicaiton_site_id to use
+                foreach($syndication_sites as $possible_site){
+                    if(strpos($syndication_url, $possible_site['site_url_match']) === 0){
+                        $syn_site_id = $possible_site['syndication_site_id'];
+                    }
+                }
+
+                $this->db->query("INSERT INTO ". DATABASE.".interaction_syndication 
+                    SET syndication_url = '".$this->db->escape($syndication_url)."',
+                    ". (isset($syn_site_id) ? "syndication_site_id = ".(int)$syn_site_id . ", " : "" ) . "
+                        interaction_id = ".(int)$interaction_id);
 
                 //remove any syndicated copies we have already parsed
                 $query = $this->db->query("SELECT * FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
