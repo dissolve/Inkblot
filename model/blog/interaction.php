@@ -80,7 +80,7 @@ class ModelBlogInteraction extends Model {
 
             $interaction_id = $this->db->getLastId();
 
-            if(isset($comment_data['syndications']){
+            if(isset($comment_data['syndications'])){
                 foreach($comment_data['syndications'] as $syndication_url){
                     //TODO figure out what syndicaiton_site_id to use
                     $this->db->query("INSERT INTO ". DATABASE.".interaction_syndication SET syndication_url = '".$this->db->escape($syndication_url)."', interaction_id = ".(int)$interaction_id);
