@@ -211,15 +211,17 @@ class ControllerWebmentionQueue extends Controller {
 
         $context_id = $this->db->getLastId();
 
-        foreach($sourch_data['syndications'] as $syndication_url){
-            //TODO figure out what syndicaiton_site_id to use
-            $this->db->query("INSERT INTO ". DATABASE.".context_syndication SET syndication_url = '".$this->db->escape($syndication_url)."', context_id = ".(int)$context_id);
+        if(isset($sourch_data['syndications'] )){
+            foreach($sourch_data['syndications'] as $syndication_url){
+                //TODO figure out what syndicaiton_site_id to use
+                $this->db->query("INSERT INTO ". DATABASE.".context_syndication SET syndication_url = '".$this->db->escape($syndication_url)."', context_id = ".(int)$context_id);
 
-            //remove any syndicated copies we have already parsed
-            $query = $this->db->query("SELECT * FROM ".DATABASE.".context WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
-            if(!empty($query->row)){
-                $this->db->query("DELETE FROM ".DATABASE.".context WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
-                $this->db->query("UPDATE ".DATABASE.".context_to_context set context_parent_id = ".(int)$context_id." WHERE context_parent_id=".(int)$query->row['context_id']);
+                //remove any syndicated copies we have already parsed
+                $query = $this->db->query("SELECT * FROM ".DATABASE.".context WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                if(!empty($query->row)){
+                    $this->db->query("DELETE FROM ".DATABASE.".context WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                    $this->db->query("UPDATE ".DATABASE.".context_to_context set context_parent_id = ".(int)$context_id." WHERE context_parent_id=".(int)$query->row['context_id']);
+                }
             }
         }
 

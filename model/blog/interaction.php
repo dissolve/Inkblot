@@ -80,14 +80,16 @@ class ModelBlogInteraction extends Model {
 
             $interaction_id = $this->db->getLastId();
 
-            foreach($comment_data['syndications'] as $syndication_url){
-                //TODO figure out what syndicaiton_site_id to use
-                $this->db->query("INSERT INTO ". DATABASE.".interaction_syndication SET syndication_url = '".$this->db->escape($syndication_url)."', interaction_id = ".(int)$interaction_id);
+            if(isset($comment_data['syndications']){
+                foreach($comment_data['syndications'] as $syndication_url){
+                    //TODO figure out what syndicaiton_site_id to use
+                    $this->db->query("INSERT INTO ". DATABASE.".interaction_syndication SET syndication_url = '".$this->db->escape($syndication_url)."', interaction_id = ".(int)$interaction_id);
 
-                //remove any syndicated copies we have already parsed
-                $query = $this->db->query("SELECT * FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
-                if(!empty($query->row)){
-                    $this->db->query("DELETE FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                    //remove any syndicated copies we have already parsed
+                    $query = $this->db->query("SELECT * FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                    if(!empty($query->row)){
+                        $this->db->query("DELETE FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                    }
                 }
             }
 
