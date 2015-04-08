@@ -397,9 +397,15 @@ class ModelBlogPost extends Model {
     }
 
     public function getSyndications($post_id) {
-        $query = $this->db->query("SELECT * FROM ".DATABASE.".post_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE post_id = ".(int)$post_id);
 
-        return $query->rows;
+        $data = $this->cache->get('syndications.post.'.$post_id);
+        if(!$data){
+            $query = $this->db->query("SELECT * FROM ".DATABASE.".post_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE post_id = ".(int)$post_id);
+
+            $data = $query->rows;
+            $this->cache->set('syndications.post.'.$post_id, $data);
+        }
+        return $data;
     }
 
     public function addSyndication($post_id, $syndication_url) {

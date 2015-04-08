@@ -65,6 +65,9 @@ class ControllerBlogArticle extends Controller {
                 foreach($fetch_comments as $comm){
                     $clean_comm = trim(str_replace(array('http://','https://'),array('',''), $comm['source_url']), '/');
                     $clean_user = trim(str_replace(array('http://','https://'),array('',''), $this->session->data['user_site']), '/');
+
+                    $comm['syndications'] => $this->model_blog_interaction->getSyndications($comm['interaction_id']);
+
                     $comm['actions'] = array();
                     if(strpos($clean_comm,$clean_user) === 0){
                         if($mpconfig['edit']){
@@ -94,7 +97,6 @@ class ControllerBlogArticle extends Controller {
                 }
             }
 
-            $context = $this->model_blog_context->getAllContextForPost($post['post_id']);
 
             $data['post'] = array_merge($post, array(
                 'body_html' => html_entity_decode($post['body']),
@@ -106,8 +108,15 @@ class ControllerBlogArticle extends Controller {
                 'mentions' => $mentions,
                 'like_count' => $like_count,
                 'likes' => $likes,
-                'context' => $context
+                'context' => array()
                 ));
+
+            $contexts = $this->model_blog_context->getAllContextForPost($post['post_id']);
+            foreach($contexts as $context){
+                $data['post']['context'][] = array_merge($context, array('syndications' => $this->model_blog_context->getSyndications($context['context_id'])));
+            }
+
+
 
             if(strlen($data['post']['body']. $post['permashortcitation']) < 140 ){
                 $data['post']['body'] .= "\n\n".$data['post']['permashortcitation'];

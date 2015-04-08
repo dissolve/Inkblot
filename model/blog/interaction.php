@@ -86,25 +86,27 @@ class ModelBlogInteraction extends Model {
                 $syndication_sites = $syn_site_query->rows;
                 $this->cache->set('syndication.sites',$syndication_sites); 
             }
+            if(isset($comment_data['syndications'])){
 
-            foreach($comment_data['syndications'] as $syndication_url){
+                foreach($comment_data['syndications'] as $syndication_url){
 
-                // figure out what syndicaiton_site_id to use
-                foreach($syndication_sites as $possible_site){
-                    if(strpos($syndication_url, $possible_site['site_url_match']) === 0){
-                        $syn_site_id = $possible_site['syndication_site_id'];
+                    // figure out what syndicaiton_site_id to use
+                    foreach($syndication_sites as $possible_site){
+                        if(strpos($syndication_url, $possible_site['site_url_match']) === 0){
+                            $syn_site_id = $possible_site['syndication_site_id'];
+                        }
                     }
-                }
 
-                $this->db->query("INSERT INTO ". DATABASE.".interaction_syndication 
-                    SET syndication_url = '".$this->db->escape($syndication_url)."',
-                    ". (isset($syn_site_id) ? "syndication_site_id = ".(int)$syn_site_id . ", " : "" ) . "
-                        interaction_id = ".(int)$interaction_id);
+                    $this->db->query("INSERT INTO ". DATABASE.".interaction_syndication 
+                        SET syndication_url = '".$this->db->escape($syndication_url)."',
+                        ". (isset($syn_site_id) ? "syndication_site_id = ".(int)$syn_site_id . ", " : "" ) . "
+                            interaction_id = ".(int)$interaction_id);
 
-                //remove any syndicated copies we have already parsed
-                $query = $this->db->query("SELECT * FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
-                if(!empty($query->row)){
-                    $this->db->query("DELETE FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                    //remove any syndicated copies we have already parsed
+                    $query = $this->db->query("SELECT * FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                    if(!empty($query->row)){
+                        $this->db->query("DELETE FROM ".DATABASE.".interaction WHERE source_url='".$this->db->escape($syndication_url)."' LIMIT 1");
+                    }
                 }
             }
 
@@ -177,7 +179,7 @@ class ModelBlogInteraction extends Model {
             $data = $query->rows;
             $this->cache->set('interactions.'.$type.'.post.'.$post_id.'.'. $skip . '.' .$limit, $data);
         }
-    return $data;
+        return $data;
     }
 
     public function getInteractionCountForPost($type, $post_id) {
@@ -187,8 +189,19 @@ class ModelBlogInteraction extends Model {
             $data = $query->row['total'];
             $this->cache->set('interactions.'.$type.'.post.count.'.$post_id, $data);
         }
-    return $data;
+        return $data;
     }
 
+    public function getSyndications($interaction_id) {
+
+        $data = $this->cache->get('syndications.interaction.'.$interaction_id);
+        if(!$data){
+            $query = $this->db->query("SELECT * FROM ".DATABASE.".interaction_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE interaction_id = ".(int)$interaction_id);
+
+            $data = $query->rows;
+            $this->cache->set('syndications.interaction.'.$interaction_id, $data);
+        }
+        return $data;
+    }
 
 }

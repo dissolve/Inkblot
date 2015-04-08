@@ -195,6 +195,18 @@ class ModelBlogContext extends Model {
 
     }
     */
+
+    public function getSyndications($context_id) {
+
+        $data = $this->cache->get('syndications.context.'.$context_id);
+        if(!$data){
+            $query = $this->db->query("SELECT * FROM ".DATABASE.".context_syndication JOIN ".DATABASE.".syndication_site USING(syndication_site_id) WHERE context_id = ".(int)$context_id);
+
+            $data = $query->rows;
+            $this->cache->set('syndications.context.'.$context_id, $data);
+        }
+        return $data;
+    }
     
 }
 
