@@ -6,6 +6,7 @@ class ModelBlogInteraction extends Model {
         //check if the source of this is already parsed
         $query = $this->db->query("SELECT * FROM ".DATABASE.".interaction_syndication WHERE syndication_url='".$comment_data['url']."' LIMIT 1");
         if(!empty($query->row)){
+            $this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '200', webmention_status = 'duplicate' WHERE webmention_id = ". (int)$webmention_id);
             return null;
         }
 
