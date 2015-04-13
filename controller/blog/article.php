@@ -66,7 +66,7 @@ class ControllerBlogArticle extends Controller {
                     $clean_comm = trim(str_replace(array('http://','https://'),array('',''), $comm['source_url']), '/');
                     $clean_user = trim(str_replace(array('http://','https://'),array('',''), $this->session->data['user_site']), '/');
 
-                    $comm['syndications'] => $this->model_blog_interaction->getSyndications($comm['interaction_id']);
+                    $comm['syndications'] = $this->model_blog_interaction->getSyndications($comm['interaction_id']);
 
                     $comm['actions'] = array();
                     if(strpos($clean_comm,$clean_user) === 0){
