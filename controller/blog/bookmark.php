@@ -19,6 +19,9 @@ class ControllerBlogBookmark extends Controller {
         if($this->request->get['slug'] != $post['slug'] ) {
             $this->response->redirect($post['permalink']);
         }
+        if( explode('/',  $this->request->server['REQUEST_URI'])[1] != $post['post_type'] ) { 
+            $this->response->redirect($post['permalink']);
+        }
 
 		$this->load->model('blog/category');
 		$this->load->model('blog/post');
@@ -136,6 +139,9 @@ class ControllerBlogBookmark extends Controller {
 
 
             $title = strip_tags($data['post']['title']);
+            if(empty($title)){
+                $title = SITE_TITLE;
+            }
             $body = strip_tags($data['post']['body_html']);
             $short_title = (strlen(html_entity_decode($title)) > 60 ? htmlentities(substr(html_entity_decode($title), 0, 57). '...') : $title);
             $description = (strlen(html_entity_decode($body)) > 200 ? htmlentities(substr(html_entity_decode($body), 0, 197). '...') : $body);
