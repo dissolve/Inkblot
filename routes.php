@@ -54,6 +54,10 @@ $routes['video/']             = 'blog/video/latest';
 $routes['audio']              = 'blog/audio/latest';
 $routes['audio/']             = 'blog/audio/latest';
 
+$routes['manifest']      = 'webmention/notification/manifest';
+$routes['subscribe']      = 'webmention/notification/subscribe';
+$routes['unsubscribe']      = 'webmention/notification/unsubscribe';
+
 $advanced_routes[] = array('controller' => 'blog/pages',
     'expression' => '`^page/(?P<id>\w+)`i',
     'reverse' => 'page/{slug}');

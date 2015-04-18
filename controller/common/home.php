@@ -55,6 +55,7 @@ class ControllerCommonHome extends Controller {
 			    $extra_data_array['excerpt_html'] = html_entity_decode($post['excerpt']);
             }
 
+            $this->data['is_owner'] = $this->session->data['is_owner'];
             if($this->session->data['is_owner']){
                 if($post['deleted'] == 1){
                     $extra_data_array['actions']['undelete'] = array('title' => 'Undelete', 'icon' => "<i class='fa fa-undo'></i>", 'link' => $this->url->link('micropub/client/undeletePost', 'id='.$post['post_id'],''));

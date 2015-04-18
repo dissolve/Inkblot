@@ -223,6 +223,7 @@ class ControllerWebmentionReceive extends Controller {
 
                 if(!$valid_link_found){
                     $this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Vouch Invalid' WHERE webmention_id = ". (int)$webmention_id);
+                    $action = $this->load->controller('webmention/notification/pushMessage');
                     $result = $this->db->query("SELECT * FROM ". DATABASE.".webmentions WHERE webmention_status_code = '202' LIMIT 1");
                     $webmention = $result->row;
                     continue;
@@ -381,6 +382,7 @@ class ControllerWebmentionReceive extends Controller {
 
 
             }
+            $action = $this->load->controller('webmention/notification/pushMessage');
 
             $result = $this->db->query("SELECT * FROM ". DATABASE.".webmentions WHERE webmention_status_code = '202' LIMIT 1");
             $webmention = $result->row;

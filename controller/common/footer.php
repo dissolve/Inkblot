@@ -18,6 +18,7 @@ class ControllerCommonFooter extends Controller {
         $data['sitesearch'] = trim(str_replace(array('http://','https://'),array('',''), HTTP_SERVER), '/');
 
         if($this->session->data['is_owner']){
+            $data['is_owner'] = true;
             $data['newlink'] = $this->url->link('micropub/client', '', '');
             $data['webaction'] = $this->url->link('micropub/receive', 'q=indie-config&handler=%s', '');
         }

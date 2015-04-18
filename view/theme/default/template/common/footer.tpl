@@ -102,11 +102,20 @@
     <?php } ?>
 </section>
         <?php if(isset($webaction)){ ?>
-        <section class="widget">
+        <section id='webaction' class="widget">
             <button onclick=" window.navigator.registerProtocolHandler('web+action', '<?php echo $webaction;?>' , 'Postly');" value="" >Register Your Handler</button>
         </section>
         <?php } ?>
 
+<?php if(isset($is_owner)){ ?>
+        <section id='toggle_notifications' class="widget">
+            <button class="js-push-button" disabled> 
+              Enable Push Messages  
+            </button>
+        </section>
+
+    <script src="/view/javascript/push.js?v=1"></script>
+<?php } // end is_owner?>
 </div><!-- #secondary .widget-area -->
 
 </aside>

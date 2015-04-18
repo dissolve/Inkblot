@@ -21,6 +21,9 @@ define('EMAIL', 'dev@null.me');
 
 define('GOOGLE_ANALYTICS_ID', 'UA-XXXXXXXX-1');
 
+define('GCM_PROJECT_ID', 'XXXXXXXXXXXXX');
+define('GCM_API_KEY', 'XXXXXXXXXXXXX');
+
 //prouns, because why not
 define('PRONOUN_NOMINATIVE', 'e');
 define('PRONOUN_OBLIQUE', 'em');

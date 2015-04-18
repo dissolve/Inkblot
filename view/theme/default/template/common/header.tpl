@@ -24,6 +24,9 @@
         <link rel="me" href="<?php echo $public_whitelist ?>">
         <link rel="profile" href="http://microformats.org/profile/specs" />
         <link rel="profile" href="http://microformats.org/profile/hatom" />
+        <?php if(isset($is_owner)){ ?>
+            <link rel="manifest" href="manifest">
+        <?php } ?>
 
         <link rel='stylesheet' id='sempress-style-css'  href='/view/theme/default/stylesheet/stylesheet.css' type='text/css' media='all' />
         <link href="/view/shared/font-awesome-4.2.0/css/font-awesome.css" rel="stylesheet">

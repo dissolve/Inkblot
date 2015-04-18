@@ -77,6 +77,10 @@ class ControllerCommonHeader extends Controller {
         $logger_endpoint =  $this->url->link('logs/endpoint');
         $public_whitelist = $this->url->link('information/whitelist');
 
+        if($this->session->data['is_owner']){
+            $data['is_owner'] = true;
+        }
+
         $this->response->addHeader('Link: <'. $webmention_handler.'>; rel="webmention"', false);
         $this->response->addHeader('Link: <'. $auth_endpoint.'>; rel="authorization_endpoint"', false);
         $this->response->addHeader('Link: <'. $token_endpoint.'>; rel="token_endpoint"', false);

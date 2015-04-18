@@ -23,6 +23,7 @@ class ControllerAdminCache extends Controller {
             $this->cache->delete('comments');
             $this->cache->delete('mydata');
             $this->cache->delete('whitelist');
+            $this->cache->delete('interactions');
 
             $json['success'] = "Full cache cleared!";
             if(isset($this->request->get['reason'])){
