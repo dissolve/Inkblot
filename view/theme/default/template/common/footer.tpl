@@ -75,7 +75,7 @@
 <?php } //end if recent mentions ?>
 
 <?php if(!empty($recent_tags)){ ?>
-<section id="mentions" class="widget widget_links"><h3 class="widget-title">Recent Tags</h3>
+<section id="tags" class="widget widget_links"><h3 class="widget-title">Recent Tags</h3>
 	<ul>
         <?php foreach($recent_tags as $mention){?>
             <li><a href="<?php echo $mention['source_url'];?>" title="External Web Mention"><?php echo $mention['source_url'];?></a></li>
