@@ -2,57 +2,66 @@
 class ModelWebmentionVouch extends Model {
     public function recordReferer($referer){
 
-        //start out with some basic tests to make sure we have something useful
-        if(!isset($referer)){
-            return;
-        }
-        $referer = trim($referer);
-        if(empty($referer) || $referer == '-'){
-            return;
-        }
-        // make sure this isn't an internal link
-        $short_self  =  trim(str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER), '/');
-        $trimmed_ref  =  trim(str_replace(array('http://', 'https://'),array('',''), $referer), '/');
-        if(strpos($trimmed_ref, $short_self) === 0){
-            return;
-        }
+        $query = $this->db->query("SELECT * FROM  " . DATABASE . ".referer_receive_queue WHERE url='".$this->db->escape($referer)."' LIMIT 1");
+        if(!$query->num_rows == 0){
+            //start out with some basic tests to make sure we have something useful
+            if(!isset($referer)){
+                return;
+            }
+            $referer = trim($referer);
+            if(empty($referer) || $referer == '-'){
+                return;
+            }
+            // make sure this isn't an internal link
+            $short_self  =  trim(str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER), '/');
+            $trimmed_ref  =  trim(str_replace(array('http://', 'https://'),array('',''), $referer), '/');
+            if(strpos($trimmed_ref, $short_self) === 0){
+                return;
+            }
 
-        //make sure the link isn't just the main page as this is usually going to change quickly
-        $ref_domain = parse_url('http://'.$trimmed_ref, PHP_URL_HOST);
-        if($trimmed_ref == $ref_domain){
-            return;
+            //make sure the link isn't just the main page as this is usually going to change quickly
+            $ref_domain = parse_url('http://'.$trimmed_ref, PHP_URL_HOST);
+            if($trimmed_ref == $ref_domain){
+                return;
+            }
+
+            //make sure we don't already have this vouch
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".vouches WHERE vouch_url = '".$this->db->escape($referer)."' OR vouch_url_alt = '".$this->db->escape($referer)."'");
+            if(!empty($query->rows)){
+                return;
+            }
+
+            //now we want to loop through all parts of our domain and make sure it isn't blacklisted.
+            // so if we have abc.def.ghi.com well check for
+            //      abc.def.ghi.com
+            // then def.ghi.com
+            // then ghi.com
+            //  if any of these are found, the referer is ignored
+
+            $domain_parts = explode('.',$ref_domain);
+
+            for($i = count($domain_parts); $i >= 2; $i--){
+                    $search_val =  implode('.', array_slice($domain_parts, -$i));
+                    $query = $this->db->query("SELECT * FROM " . DATABASE . ".untrusted_vouchers WHERE domain = '".$this->db->escape($search_val)."'");
+                    if(!empty($query->rows)){
+                        return;
+                    }
+            }
+
+            // referer makes it in to the aysnc queue
+            $this->db->query("INSERT INTO " . DATABASE . ".referer_receive_queue SET url='".$this->db->escape($referer)."'");
         }
-
-        //make sure we don't already have this vouch
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".vouches WHERE vouch_url = '".$this->db->escape($referer)."' OR vouch_url_alt = '".$this->db->escape($referer)."'");
-        if(!empty($query->rows)){
-            return;
-        }
-
-        //now we want to loop through all parts of our domain and make sure it isn't blacklisted.
-        // so if we have abc.def.ghi.com well check for
-        //      abc.def.ghi.com
-        // then def.ghi.com
-        // then ghi.com
-        //  if any of these are found, the referer is ignored
-
-        $domain_parts = explode('.',$ref_domain);
-
-        for($i = count($domain_parts); $i >= 2; $i--){
-                $search_val =  implode('.', array_slice($domain_parts, -$i));
-                $query = $this->db->query("SELECT * FROM " . DATABASE . ".untrusted_vouchers WHERE domain = '".$this->db->escape($search_val)."'");
-                if(!empty($query->rows)){
-                    return;
-                }
-        }
-
-        // referer makes it in to the aysnc queue
-        $this->db->query("INSERT INTO " . DATABASE . ".referer_receive_queue SET url='".$this->db->escape($referer)."'");
     }
 
     //async processor
     // this will loop through all entries in the queue and validate that they have valid links back to my site
     public function processReferers(){
+        $query = $this->db->query("SELECT queue_id FROM " . DATABASE . ".referer_receive_queue rrq JOIN ".DATABASE.".referrer_ignore ri on rrq.url LIKE ri.url_match ;");
+
+        foreach($query->rows as $queue_entry){
+            $this->db->query("DELETE FROM " . DATABASE . ".referer_receive_queue where queue_id = ".(int)$queue_entry['queue_id']);
+        }
+
         $query = $this->db->query("SELECT * FROM " . DATABASE . ".referer_receive_queue limit 1;");
 
         $entry = $query->row;

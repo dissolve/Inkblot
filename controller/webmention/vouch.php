@@ -39,7 +39,7 @@ class ControllerWebmentionVouch extends Controller {
 	}
 
     public function processreferers() {
-        $this->load('webmention/vouch');
+        $this->load->model('webmention/vouch');
         $this->model_webmention_vouch->processReferers();
     }
 
