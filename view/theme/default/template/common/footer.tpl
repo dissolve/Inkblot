@@ -23,6 +23,19 @@
 </section>
 
 
+<?php if($recent_interactions) { ?>
+    <section id="recent-interactions-2" class="widget widget_recent_entries">
+    <h3 class="widget-title">Recent interactions</h3>
+    <ul>
+    <?php foreach($recent_interactions as $interaction){ ?>
+        <li>
+            <a href="<?php echo $interaction['post']['permalink']?>"><?php echo $interaction['interaction_type'] . ' by ' . $interaction['author_name']?></a>
+        </li>
+    <?php } // end foreach recent_drafts?>
+    </ul>
+    </section>
+<?php } ?>
+
 <?php if($recent_drafts) { ?>
     <section id="recent-drafts-2" class="widget widget_recent_entries">
     <h3 class="widget-title">Recent Drafts</h3>

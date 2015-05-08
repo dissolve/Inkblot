@@ -1,5 +1,20 @@
 <?php
 class ModelBlogMycard extends Model {
+	public function getDataAll($contact_site = NULL, $classification='all') {
+		$data = $this->cache->get('mydata.all.user.'.$classification.'.'.$contacts);
+		if(!$data){
+            $query = $this->db->query("SELECT mydata.*, field_types.* 
+							FROM ".DATABASE.".mydata 
+							JOIN ".DATABASE.".field_types USING(field_type_id) 
+						WHERE classification = '".$this->db->escape($classification)."' 
+						ORDER BY mydata.sorting ASC");
+		    $data = $query->rows;
+		    $this->cache->set('mydata.all.user.'.$classification.'.'.$contacts, $data);
+		}
+	
+		return $data;
+	}
+    
 	public function getData($contact_site = NULL, $classification='all') {
         
         $contacts = '0';

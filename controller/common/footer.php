@@ -38,6 +38,8 @@ class ControllerCommonFooter extends Controller {
         if($this->session->data['is_owner']){
             $this->load->model('blog/post');
             $data['recent_drafts'] = $this->model_blog_post->getRecentDrafts(10);
+            $this->load->model('blog/interaction');
+            $data['recent_interactions'] = $this->model_blog_interaction->getRecentInteractions(10);
         }
 		
 		$this->load->model('blog/interaction');

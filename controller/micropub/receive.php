@@ -20,6 +20,12 @@ class ControllerMicropubReceive extends Controller {
             "mp-syndicate-to[]=https://www.brid.gy/publish/twitter",
             "mp-syndicate-to[]=https://www.brid.gy/publish/facebook"
         );
+        $supported_syndication_array_for_json = array(
+            "syndicate-to" => array("https://www.brid.gy/publish/twitter",
+                                      "https://www.brid.gy/publish/facebook"),
+            "mp-syndicate-to" => array("https://www.brid.gy/publish/twitter",
+                                      "https://www.brid.gy/publish/facebook")
+        );
         
         if(isset($this->request->get['q']) && $this->request->get['q'] == 'actions'){
             if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
@@ -36,12 +42,20 @@ class ControllerMicropubReceive extends Controller {
             }
 
         } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'syndicate-to'){
-            $supported = implode('&', $supported_syndication_array);
-            $this->response->setOutput($supported);
+            if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
+                $this->response->setOutput(json_encode($supported_syndication_array_for_json));
+            } else {
+                $supported = implode('&', $supported_syndication_array);
+                $this->response->setOutput($supported);
+            }
 
         } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'mp-syndicate-to'){
-            $supported = implode('&', $supported_syndication_array);
-            $this->response->setOutput($supported);
+            if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
+                $this->response->setOutput(json_encode($supported_syndication_array_for_json));
+            } else {
+                $supported = implode('&', $supported_syndication_array);
+                $this->response->setOutput($supported);
+            }
 
         } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'json_actions'){
             $json = $supported_array;
@@ -182,7 +196,11 @@ class ControllerMicropubReceive extends Controller {
         $post = $this->getPostByURL($this->request->get['url']);
         if($post) {
             $this->response->addHeader('HTTP/1.1 200 OK');
-            $this->response->setOutput(http_build_query($post));
+            if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
+                $this->response->setOutput(json_encode($post));
+            } else {
+                $this->response->setOutput(http_build_query($post));
+            }
         }
 
     }

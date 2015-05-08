@@ -26,6 +26,7 @@ $routes['new/checkin']        = 'micropub/client/checkin';
 
 $routes['undelete']           = 'micropub/client/undeletePost';
 $routes['vouchsearch']        = 'webmention/vouch/get';
+$routes['activity']          = 'information/activity';
 $routes['whitelist']          = 'information/whitelist';
 $routes['whitelist/delete']   = 'information/whitelist/remove';
 $routes['whitelist/private']  = 'information/whitelist/makeprivate';

@@ -176,7 +176,7 @@ class ModelBlogInteraction extends Model {
 
         $data = $this->cache->get('interactions.'.$type.'.post.'.$post_id.'.'. $skip . '.'.  $limit);
         if(!$data){
-            $query = $this->db->query("SELECT interactions.*, webmentions.vouch_url FROM " . DATABASE . ".interactions JOIN " . DATABASE . ".webmentions USING(webmention_id) WHERE interaction_type='".$type."' AND post_id = ".(int)$post_id." AND deleted=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT interactions.*, webmentions.vouch_url FROM " . DATABASE . ".interactions JOIN " . DATABASE . ".webmentions USING(webmention_id) WHERE interaction_type='".$type."' AND post_id = ".(int)$post_id." AND deleted=0 ORDER BY timestamp ASC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = $query->rows;
             $this->cache->set('interactions.'.$type.'.post.'.$post_id.'.'. $skip . '.' .$limit, $data);
         }
@@ -201,6 +201,24 @@ class ModelBlogInteraction extends Model {
 
             $data = $query->rows;
             $this->cache->set('syndications.interaction.'.$interaction_id, $data);
+        }
+        return $data;
+    }
+
+    public function getRecentInteractions($limit = 20, $skip = 0){
+
+        $data = $this->cache->get('interactions.recent.post.'. $skip . '.'.  $limit);
+        if(!$data){
+            $this->load->model('blog/post');
+
+            $query = $this->db->query("SELECT interactions.*, webmentions.vouch_url FROM " . DATABASE . ".interactions JOIN " . DATABASE . ".webmentions USING(webmention_id) WHERE deleted=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $data = array();
+            foreach($query->rows as $row){
+                $data[] = array_merge($row, array(
+                    'post' => $this->model_blog_post->getPost($row['post_id'])
+                ));
+            }
+            $this->cache->set('interactions.recent.'. $skip . '.' .$limit, $data);
         }
         return $data;
     }
