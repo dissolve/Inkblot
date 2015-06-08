@@ -1,6 +1,7 @@
 <?php echo $header; ?>
 <?php date_default_timezone_set(LOCALTIMEZONE); ?> 
 <div class="h-feed" id="posts-stream">
+<div style="display:none;" class="p-name">Main Feed</div>
 <?php foreach($posts as $post) { ?>
 
 <article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" >
@@ -31,6 +32,14 @@
         <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
             <i class="fa fa-heart-o"></i> <br>
             I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
+        <?php } ?>
+        <?php if(isset($post['follow']) && !empty($post['follow'])) { ?>
+            <?php echo $post['author']['display_name'] . 
+             ($post['post_type'] == 'follow' ? ' followed ' : ' unfollowed ' ) .
+            '<a class="u-follow-of h-card" href="'.$post['follow']['url'].'" >'.
+            (isset($post['follow']['photo']) && !empty($post['follow']['photo']) ? '<img class="u-photo" style="width:40px;" src="'.$post['follow']['photo'].'" />' : '' ).
+            $post['follow']['name'].
+            '</a>'; ?>
         <?php } ?>
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>

@@ -1,6 +1,7 @@
 <?php
 class Document {
 	private $title;
+	private $bodyclass;
 	private $description;
 	private $keywords;
 	private $icon;
@@ -15,6 +16,14 @@ class Document {
 
 	public function getTitle() {
 		return $this->title;
+	}
+
+	public function setBodyClass($bodyclass) {
+		$this->bodyclass = $bodyclass;
+	}
+
+	public function getBodyClass() {
+		return $this->bodyclass;
 	}
 
 	public function setDescription($description) {

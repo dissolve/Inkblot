@@ -47,45 +47,50 @@ class ControllerWebmentionQueue extends Controller {
         $post_id = $this->model_webmention_send_queue->getNext();
 
         while($post_id){
-            $this->load->model('blog/post');
-            $post = $this->model_blog_post->getPost($post_id);
-
-            $this->load->model('blog/category');
-            $categories = $this->model_blog_category->getCategoriesForPost($post_id);
-
-            $webmention_text = '<a href="'.$post['replyto'].'">ReplyTo</a>';
-
-            if($post['bookmark_like_url']){
-                $webmetnion_text = '<a href="'.$post['bookmark_like_url'].'"></a>';
-            }
-
-            foreach($categories as $category){
-                if(isset($category['person_name']) && !empty($category['person_name'])){
-                    $webmention_text .= '<a href="'.$category['url'].'"></a>' ;
-                }
-            }
-
-            $webmention_text .= html_entity_decode($post['body'].$post['syndication_extra']);
-            // send webmention
-            $client = new IndieWeb\MentionClient($post['permalink'], $webmention_text, false, $post['shortlink'] );
-
-            $client->debug(false);
-            //TODO
-            $this->load->model('webmention/vouch');
-            $searcher = $this->model_webmention_vouch;
-            $sent = $client->sendSupportedMentions($searcher);
-            //
-            //$sent = $client->sendSupportedMentions();
-            $urls = $client->getReturnedUrls();
-            foreach($urls as $syn_url){
-                $this->model_blog_post->addSyndication($post_id, $syn_url);
-            }
-
-            $this->cache->delete('post.'.$post_id);
+            $this->sendWebmention($post_id);
 
             $post_id = $this->model_webmention_send_queue->getNext();
-
         } //end while
+    }
+
+
+    public function sendWebmention($post_id){
+
+        $this->load->model('blog/post');
+        $post = $this->model_blog_post->getPost($post_id);
+
+        $this->load->model('blog/category');
+        $categories = $this->model_blog_category->getCategoriesForPost($post_id);
+
+        $webmention_text = '<a href="'.$post['replyto'].'">ReplyTo</a>';
+
+        if($post['bookmark_like_url']){
+            $webmetnion_text = '<a href="'.$post['bookmark_like_url'].'"></a>';
+        }
+
+        foreach($categories as $category){
+            if(isset($category['person_name']) && !empty($category['person_name'])){
+                $webmention_text .= '<a href="'.$category['url'].'"></a>' ;
+            }
+        }
+
+        $webmention_text .= html_entity_decode($post['body'].$post['syndication_extra']);
+        // send webmention
+        $client = new IndieWeb\MentionClient($post['permalink'], $webmention_text, false, $post['shortlink'] );
+
+        $client->debug(false);
+        //TODO
+        $this->load->model('webmention/vouch');
+        $searcher = $this->model_webmention_vouch;
+        $sent = $client->sendSupportedMentions($searcher);
+        //
+        //$sent = $client->sendSupportedMentions();
+        $urls = $client->getReturnedUrls();
+        foreach($urls as $syn_url){
+            $this->model_blog_post->addSyndication($post_id, $syn_url);
+        }
+
+        $this->cache->delete('post.'.$post_id);
     }
 
     public function processcontexts(){

@@ -211,7 +211,7 @@ class ModelBlogInteraction extends Model {
         if(!$data){
             $this->load->model('blog/post');
 
-            $query = $this->db->query("SELECT interactions.*, webmentions.vouch_url FROM " . DATABASE . ".interactions JOIN " . DATABASE . ".webmentions USING(webmention_id) WHERE deleted=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query("SELECT interactions.*, webmentions.vouch_url, webmentions.target_url FROM " . DATABASE . ".interactions JOIN " . DATABASE . ".webmentions USING(webmention_id) WHERE deleted=0 ORDER BY timestamp DESC LIMIT ". (int)$skip . ", " . (int)$limit);
             $data = array();
             foreach($query->rows as $row){
                 $data[] = array_merge($row, array(

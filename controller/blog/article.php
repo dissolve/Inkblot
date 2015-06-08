@@ -6,6 +6,8 @@ class ControllerBlogArticle extends Controller {
             parse_str($this->session->data['mp-config'], $mpconfig);
         }
 
+        $this->document->setBodyClass('h-entry');
+
         $year = $this->request->get['year'];
         $month = $this->request->get['month'];
         $day = $this->request->get['day'];
@@ -190,6 +192,7 @@ class ControllerBlogArticle extends Controller {
 		$data['title'] = 'Latest Articles';
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
+        $this->document->setBodyClass('h-feed');
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');

@@ -19,7 +19,7 @@
     <?php } ?>
     </div>
 
-          <article id="tag-<?php echo $post['post_id']?>" class="tag-<?php echo $post['post_id']?> tag type-tag status-publish format-standard category-uncategorized <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
+          <article id="unfollow-<?php echo $post['post_id']?>" class="unfollow-<?php echo $post['post_id']?> unfollow type-unfollow status-publish format-standard category-uncategorized <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
 
     <header class="entry-meta comment_header">
         <div class="entry-meta">      
@@ -45,22 +45,14 @@
     <?php if(!empty($post['title'])){ ?>
     <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" ><?php echo $post['title']?></a></h1>
     <?php } ?>
-      <div class="entry-content e-content tag <?php echo (empty($post['title']) ? 'p-name' : '')?>">
-            <i class="fa fa-heart-o"></i><br>
+      <div class="entry-content e-content unfollow <?php echo (empty($post['title']) ? 'p-name' : '')?>">
       <?php 
-	if(isset($post['tag_person']) && !empty($post['tag_person']){
+
           echo $post['author']['display_name'] . 
-	    ' tagged <a class="u-category h-card" href="'.$post['tag_url'].'" '.
-                (isset($post['tag_shape']) && !empty($post['tag_shape']) ? 'shape="'.$post['tag_shape'].'" ': '').
-                (isset($post['tag_coords']) && !empty($post['tag_coords']) ? 'coords="'.$post['tag_coords'].'" ': '').
-                '>'.
-                $post['tag_person'].
-	    '</a> in '.
-            '<a class="u-tag-of" href="'.$post['like-of'].'">this post</a>.';
-	} else {
-          echo $post['author']['display_name'] . ' tagged <a class="u-tag-of" href="'.$post['like-of'].'">this post</a> with <span class="p-category">'.$post['tag_category'].'</span>.' ;
-	}
-          echo $post['body_html'];
+            ' unfollowed <a class="u-follow-of h-card" href="'.$post['following']['url'].'" >'.
+            (isset($post['following']['photo']) && !empty($post['following']['photo']) ? '<img class="u-photo" style="width:40px;" src="'.$post['following']['photo'].'" />' : '' ).
+            $post['following']['name'].
+            '</a>';
           echo $post['syndication_extra'];
       ?>
       

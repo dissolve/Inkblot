@@ -59,7 +59,6 @@ class ControllerCommonHeader extends Controller {
             }
 
         }
-		$data['title'] = $this->document->getTitle();
 		
 		if ($this->request->server['HTTPS']) {
 			$server = $this->config->get('config_ssl');
@@ -69,6 +68,13 @@ class ControllerCommonHeader extends Controller {
 
 		$data['site_title'] = SITE_TITLE;
 		$data['site_subtitle'] = SITE_SUBTITLE;
+
+        $data['feedlinks'] = array();
+		$data['feedlinks'][] =  array( 'link' => $this->url->link('blog/article/latest'), 'title'=>'Latest Articles');
+		$data['feedlinks'][] =  array( 'link' => $this->url->link('blog/note/latest'), 'title'=>'Latest Notes');
+		$data['feedlinks'][] =  array( 'link' => $this->url->link('blog/like/latest'), 'title'=>'Latest Likes');
+		$data['feedlinks'][] =  array( 'link' => $this->url->link('blog/photo/latest'), 'title'=>'Latest Photos');
+
 
 		$webmention_handler = $this->url->link('webmention/receive');
         $auth_endpoint = AUTH_ENDPOINT;
@@ -104,6 +110,8 @@ class ControllerCommonHeader extends Controller {
         }
 
 		$data['base'] = $server;
+		$data['title'] = $this->document->getTitle();
+		$data['bodyclass'] = $this->document->getBodyClass();
 		$data['description'] = $this->document->getDescription();
 		$data['keywords'] = $this->document->getKeywords();
 		$data['links'] = $this->document->getLinks();	 

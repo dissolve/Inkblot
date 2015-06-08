@@ -5,18 +5,25 @@ require_once DIR_BASE.'libraries/php-mf2/Mf2/Parser.php';
 //require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/Shim/Twitter.php';
 
 class ModelBlogCategory extends Model {
-    public function getCategories() {
-        $data = $this->cache->get('categories.all');
+    public function getCategories($min = 1) {
+        $data = $this->cache->get('categories.all.'.$min);
         if(!$data){
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".categories where person_name is NULL ORDER BY name ASC");
+            $query = $this->db->query(
+            "SELECT categories.* 
+                FROM " . DATABASE . ".categories 
+                JOIN " . DATABASE . ".categories_posts USING (category_id)
+                GROUP BY category_id 
+                HAVING count(post_id) >= ".(int)$min."
+                ORDER BY name;");
+
             $data = $query->rows;
             $data_array = array();
             foreach($data as $category){
                 $data_array[] = array_merge($category, array(
-                    'permalink' => $this->url->link('blog/category', 'name='.urlencode($category['name']), '')
+                    'permalink' => $this->url->link('information/category', 'name='.urlencode($category['name']), '')
                 ));
             }
-            $this->cache->set('categories.all', $data_array);
+            $this->cache->set('categories.all.'.$min, $data_array);
         } else {
             $data_array = $data;
         }
@@ -38,7 +45,7 @@ class ModelBlogCategory extends Model {
             $data_array = array();
             foreach($data as $category){
                 $data_array[] = array_merge($category, array(
-                    'permalink' => $this->url->link('blog/category', 'name='.$this->db->escape($category['name']), '')
+                    'permalink' => $this->url->link('information/category', 'name='.$this->db->escape($category['name']), '')
                 ));
             }
             $this->cache->set('categories.post.'.$post_id, $data_array);
@@ -65,7 +72,7 @@ class ModelBlogCategory extends Model {
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".categories WHERE category_id = '".$this->db->escape($cid)."'");
             $data = $query->row;
             if($data){
-                $data['permalink'] = $this->url->link('blog/category', 'name='.$this->db->escape($data['name']), '');
+                $data['permalink'] = $this->url->link('information/category', 'name='.$this->db->escape($data['name']), '');
             }
             $this->cache->set('categories.id.'.$cid, $data);
 

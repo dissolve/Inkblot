@@ -147,7 +147,8 @@ class ModelBlogPost extends Model {
             (isset($data['rsvp']) && !empty($data['rsvp']) ? ", rsvp='".$this->db->escape($data['rsvp'])."'" : "").
             (isset($data['location']) && !empty($data['location']) ? ", location='".$this->db->escape($data['location'])."'" : "").
             (isset($data['place_name']) && !empty($data['place_name']) ? ", place_name='".$this->db->escape($data['place_name'])."'" : "").
-            (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='".$this->db->escape($data['replyto'])."'" : "");
+            (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='".$this->db->escape($data['replyto'])."'" : "").
+            (isset($data['following_id']) && !empty($data['following_id']) ? ", following_id='".(int)$data['following_id']."'" : "");
 
         $query = $this->db->query($sql);
 
@@ -189,7 +190,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = ". (int)$post_id);
             $post = $query->row;
             $syndications = $this->getSyndications($post['post_id']);
-            $shortlink = $this->short_url->link('blog/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '');
+            $shortlink = $this->short_url->link('information/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '');
             //$citation = '(' . trim(str_replace(array('http://','https://'),array('',''), HTTP_SHORT), '/'). ' '. trim(str_replace(array(HTTP_SHORT,HTTPS_SHORT),array('',''), $shortlink),'/')  .')';
             $post = array_merge($post, array(
                 'syndications' => $syndications,

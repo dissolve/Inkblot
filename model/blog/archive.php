@@ -12,7 +12,7 @@ class ModelBlogArchive extends Model {
             foreach($data as $archive){
                 $data_array[] = array(
 					'name' => $month_names[$archive['month']-1] .' ' .$archive['year'],
-					'permalink' => $this->url->link('blog/archive', 'year='.$archive['year'] . '&' .'month='.$archive['month'] , '')
+					'permalink' => $this->url->link('information/archive', 'year='.$archive['year'] . '&' .'month='.$archive['month'] , '')
                 );
             }
             $this->cache->set('archives.all', $data_array);

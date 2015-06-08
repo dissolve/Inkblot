@@ -1,5 +1,5 @@
 <?php  
-class ControllerBlogCheckin extends Controller {
+class ControllerBlogUnfollow extends Controller {
 	public function index() {
         if($this->session->data['mp-config']){
             $mpconfig = array();
@@ -25,10 +25,10 @@ class ControllerBlogCheckin extends Controller {
             $this->response->redirect($post['permalink']);
         }
 
-		$this->load->model('blog/category');
-		$this->load->model('blog/post');
-		$this->load->model('blog/interaction');
-		$this->load->model('blog/context');
+	$this->load->model('blog/category');
+	$this->load->model('blog/post');
+	$this->load->model('blog/interaction');
+	$this->load->model('contacts/following');
 
         if($this->session->data['is_owner']){
             $data['is_owner'] = true;
@@ -92,6 +92,9 @@ class ControllerBlogCheckin extends Controller {
                     if($mpconfig['like']){
                         $comm['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link'=> str_replace('{url}', urlencode($comm['source_url']), $mpconfig['like']));
                     }
+                    if($mpconfig['tag']){
+                        $comm['actions']['tag'] = array('title' => 'Tag', 'icon' => "<i class='fa fa-tag'></i>", 'link'=> str_replace('{url}', urlencode($comm['source_url']), $mpconfig['tag']));
+                    }
                     if($mpconfig['bookmark']){
                         $comm['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link'=> str_replace('{url}', urlencode($comm['source_url']), $mpconfig['bookmark']));
                     }
@@ -99,10 +102,9 @@ class ControllerBlogCheckin extends Controller {
                 }
             }
 
-            $context = $this->model_blog_context->getAllContextForPost($post['post_id']);
 
             $data['post'] = array_merge($post, array(
-                'body_html' => html_entity_decode($post['body']),
+                'following' => $this->model_contacts_following->getFollowing($post['following_id']),
                 'author' => $author,
                 'author_image' => '/image/static/icon_128.jpg',
                 'categories' => $categories,
@@ -111,18 +113,12 @@ class ControllerBlogCheckin extends Controller {
                 'mentions' => $mentions,
                 'like_count' => $like_count,
                 'likes' => $likes,
-                'context' => $context
                 ));
 
-            /*
-            $data['post']['body'] .= "\n\nChecked In At ".$data['post']['place_name']. "\n".$data['post']['location'];
-            $data['post']['body_html'] .= "<br><br>Checked In At ".$data['post']['place_name']."<br><i class='fa fa-compass'></i> ".$data['post']['location'];
-
-            $data['post']['permashort'] = null;
-            if(strlen($data['post']['body']. $post['permashortcitation']) < 140 ){
-                $data['post']['permashort'] = $data['post']['permashortcitation'];
-            }
-             */
+            //if(strlen($data['post']['body']. $post['permashortcitation']) < 140 ){
+                //$data['post']['body'] .= "\n\n".$data['post']['permashortcitation'];
+                //$data['post']['body_html'] .= "<br> <br>".$data['post']['permashortcitation'];
+            //}
             $data['post']['actions'] = array();
 
 
@@ -143,6 +139,9 @@ class ControllerBlogCheckin extends Controller {
             }
             if($mpconfig['like']){
                 $data['post']['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
+            }
+            if($mpconfig['tag']){
+                $data['post']['actions']['tag'] = array('title' => 'Tag', 'icon' => "<i class='fa fa-tag'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['tag']));
             }
             if($mpconfig['bookmark']){
                 $data['post']['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
@@ -173,18 +172,18 @@ class ControllerBlogCheckin extends Controller {
             $data['header'] = $this->load->controller('common/header');
             $data['footer'] = $this->load->controller('common/footer');
 
-            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/checkin.tpl')) {
-                $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/checkin.tpl', $data));
+            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/unfollow.tpl')) {
+                $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/unfollow.tpl', $data));
             } else {
-                $this->response->setOutput($this->load->view('default/template/blog/checkin.tpl', $data));
+                $this->response->setOutput($this->load->view('default/template/blog/unfollow.tpl', $data));
             }
         } // end else not deleted
 	}
 
 	public function latest() {
 
-		$this->document->setTitle('Latest Checkins');
-		$data['title'] = 'Latest Checkins';
+		$this->document->setTitle('Latest Unfollows');
+		$data['title'] = 'Latest Unfollows';
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
         $this->document->setBodyClass('h-feed');
@@ -195,17 +194,18 @@ class ControllerBlogCheckin extends Controller {
 		$this->load->model('blog/post');
 		$this->load->model('blog/interaction');
 		$this->load->model('blog/category');
+        $this->load->model('contacts/following');
 
 		$data['posts'] = array();
 		
-		foreach ($this->model_blog_post->getRecentPostsByType('checkin') as $post) {
+		foreach ($this->model_blog_post->getRecentPostsByType('unfollow') as $post) {
                 $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
                 $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
                 $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
                 $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
 
                 $extra_data_array = array(
-                    'body_html' => html_entity_decode($post['body']),
+                    'following' => $this->model_contacts_following->getFollowing($post['following_id']),
                     'author' => $author,
                     'author_image' => '/image/static/icon_128.jpg',
                     'categories' => $categories,
@@ -230,6 +230,9 @@ class ControllerBlogCheckin extends Controller {
                 }
                 if($mpconfig['like']){
                     $extra_data_array['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
+                }
+                if($mpconfig['tag']){
+                    $extra_data_array['actions']['tag'] = array('title' => 'Tag', 'icon' => "<i class='fa fa-tag'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['tag']));
                 }
                 if($mpconfig['bookmark']){
                     $extra_data_array['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link'=> str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));

@@ -1,5 +1,5 @@
 <?php  
-class ControllerBlogArchive extends Controller {
+class ControllerInformationArchive extends Controller {
 	public function index() {
         if($this->session->data['mp-config']){
             $mpconfig = array();
@@ -15,6 +15,7 @@ class ControllerBlogArchive extends Controller {
 		$data['title'] = 'Posts for '.$month_names[$month] .', '.$year;
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
+        $this->document->setBodyClass('h-feed');
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -40,6 +41,10 @@ class ControllerBlogArchive extends Controller {
                 'like_count' => $like_count,
                 'actions' => array());
 
+            if(isset($post['following_id']) && !empty($post['following_id'])){
+                $this->load->model('contacts/following');
+			    $extra_data_array['follow'] = $this->model_contacts_following->getFollowing($post['following_id']);
+            }
             if($this->session->data['is_owner']){
                 if($post['deleted'] == 1){
                     $extra_data_array['actions']['undelete'] = array('title' => 'Undelete', 'icon' => "<i class='fa fa-undo'></i>", 'link' => $this->url->link('micropub/client/undeletePost', 'id='.$post['post_id'],''));

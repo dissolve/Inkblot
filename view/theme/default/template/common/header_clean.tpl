@@ -91,7 +91,7 @@ var loadIndieConfig = function () {
     </head>
 
 
-<body class="home blog custom-background multi-column single-author custom-header">
+<body class="home blog single-author <?php echo $bodyclass?>">
 <div id="page">
   <header>
 <br><br>

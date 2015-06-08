@@ -72,6 +72,58 @@ class ControllerMicropubClient extends Controller {
 			$this->response->setOutput($this->load->view('default/template/micropub/new.tpl', $data));
 		}
 	}
+	public function contacts() {
+
+		$this->document->setTitle('Contacts Management');
+		$data['title'] = 'Contacts Management';
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['login'] = $this->url->link('auth/login');
+
+        if($this->session->data['is_owner']){
+            $data['is_owner'] = true;
+        }
+
+		$this->document->setDescription($this->config->get('config_meta_description'));
+
+		if(isset($this->session->data['user_site'])){
+		    $user = $this->session->data['user_site'];
+		    $data['user_name'] = $user;
+
+            $micropub_endpoint = $this->session->data['micropub_'.$user];
+            if(!$micropub_endpoint){
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+                $this->session->data['micropub_'.$user] = $micropub_endpoint;
+            }
+		    if($micropub_endpoint){
+                $data['micropubEndpoint'] = $micropub_endpoint;
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
+            $data['syn_arr'] = $this->get_syndication_array();
+		}
+
+		//if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    //$this->load->model('blog/post');
+		    //$data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		//}
+
+		if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
+		    $data['card'] = $this->getCard($this->request->get['url']);
+		}
+
+		if(isset($this->request->get['mp-action'])){
+		   $data['mp_action'] = strtolower($this->request->get['mp-action']);
+		}
+
+		$data['token'] = isset($this->session->data['token']);
+
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/contacts.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/contacts.tpl', $data));
+		} else {
+			$this->response->setOutput($this->load->view('default/template/micropub/contacts.tpl', $data));
+		}
+	}
 
 	public function note() {
 
@@ -366,7 +418,9 @@ class ControllerMicropubClient extends Controller {
     public function send() {
 
         $post_data_array = $this->request->post;
-        $post_data_array['h'] = 'entry';
+        if(!isset($post_data_array['h']) || empty($post_data_array['h'])){
+            $post_data_array['h'] = 'entry';
+        }
 
         if(isset($post_data_array['mp-type']) && $post_data_array['mp-type'] == 'article'){
             $post_data_array['content']  = html_entity_decode($post_data_array['content']);
@@ -421,6 +475,47 @@ class ControllerMicropubClient extends Controller {
         }
     }
 
+    private function getCard($card_url){
+
+        $ch = curl_init($card_url);
+
+        if(!$ch){$this->log->write('error with curl_init');}
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        $real_source_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+        $page_content = curl_exec($ch);
+        $mfitems = Mf2\parse($page_content, $real_source_url)['items'];
+        $card_mf2 = null;
+        foreach($mfitems as $mf){
+            if(array_key_exists('type', $mf) && in_array('h-card', $mf['type']) && array_key_exists('properties', $mf)) {
+                $card_mf2 = $mf;
+                break;
+            }
+        }
+
+        if($card_mf2){
+            $card = array();
+            $properties = $mf['properties'];
+            //$this->log->write(print_r($properties,true));
+
+            if(array_key_exists('photo', $properties)) {
+                $card['photo'] = $properties['photo'][0];
+            }
+
+            if(array_key_exists('name', $properties)) {
+                $card['name'] = $properties['name'][0];
+            }
+
+            if(array_key_exists('url', $properties)) {
+                $card['url'] = $properties['url'][0];
+            } else {
+                $card['url'] = $real_source_url;
+            }
+        }
+
+        return $card;
+    }
     private function download_entry($entry_url, $as_html=false){
         $ch = curl_init($entry_url);
 

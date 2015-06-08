@@ -38,6 +38,10 @@
         <link rel="apple-touch-icon-precomposed" href="<?php echo $icon?>" />
         <?php } ?>
 
+        <?php foreach($feedlinks as $feed){ ?>
+            <link rel="feed" type="text/html" href="<?php echo $feed['link']?>" title="<?php echo $feed['title']?>" />
+        <?php }?>
+
         <script src="/view/javascript/vendor/modernizr-2.6.2.min.js"></script>
         <script src="/view/javascript/fragmention.js"></script>
         <script src="/view/javascript/intents.js"></script>
@@ -94,7 +98,7 @@ var loadIndieConfig = function () {
     </head>
 
 
-<body class="home blog custom-background multi-column single-author custom-header">
+<body class="home blog single-author <?php echo $bodyclass?>">
 <div id="page">
   <header class="h-card" id="headBanner" role="banner">
     <h1 id="site-title" class="p-name"><a href="<?php echo $home?>" title="<?php echo $site_title?>" rel="home" class="u-url"><?php echo $site_title?></a></h1>

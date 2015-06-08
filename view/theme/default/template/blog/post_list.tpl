@@ -29,6 +29,18 @@
             <i class="fa fa-heart-o"></i> <br>
             I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
         <?php } ?>
+        <?php if(isset($post['follow']) && !empty($post['follow'])) { ?>
+            <?php echo $post['author']['display_name'] . 
+             ($post['type'] == 'follow' ? ' followed ' : ' unfollowed ' ) .
+            '<a class="u-follow-of h-card" href="'.$post['following']['url'].'" >'.
+            (isset($post['following']['photo']) && !empty($post['following']['photo']) ? '<img class="u-photo" style="width:40px;" src="'.$post['following']['photo'].'" />' : '' ).
+            $post['following']['name'].
+            '</a>'; ?>
+        <?php } ?>
+        <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
+            <i class="fa fa-heart-o"></i> <br>
+            I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
+        <?php } ?>
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
         <?php } ?>

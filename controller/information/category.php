@@ -1,5 +1,5 @@
 <?php  
-class ControllerBlogCategory extends Controller {
+class ControllerInformationCategory extends Controller {
 	public function index() {
         if($this->session->data['mp-config']){
             $mpconfig = array();
@@ -13,6 +13,7 @@ class ControllerBlogCategory extends Controller {
 		$data['title'] = 'Posts Filed Under '.$category['name'];
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
+        $this->document->setBodyClass('h-feed');
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');

@@ -1,5 +1,5 @@
 <?php  
-class ControllerBlogShortener extends Controller {
+class ControllerCommonShortener extends Controller {
 	public function index() {
 
 		$this->load->model('blog/post');

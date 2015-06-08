@@ -24,6 +24,8 @@ $routes['delete']             = 'micropub/client/deletePost';
 $routes['new/note']           = 'micropub/client/note';
 $routes['new/checkin']        = 'micropub/client/checkin';
 
+$routes['manage/contacts']    = 'micropub/client/contacts';
+
 $routes['undelete']           = 'micropub/client/undeletePost';
 $routes['vouchsearch']        = 'webmention/vouch/get';
 $routes['activity']          = 'information/activity';
@@ -38,6 +40,10 @@ $routes['note']               = 'blog/note/latest';
 $routes['note/']              = 'blog/note/latest';
 $routes['tag']                = 'blog/tag/latest';
 $routes['tag/']               = 'blog/tag/latest';
+$routes['follow']             = 'blog/follow/latest';
+$routes['follow/']            = 'blog/follow/latest';
+$routes['unfollow']           = 'blog/unfollow/latest';
+$routes['unfollow/']          = 'blog/unfollow/latest';
 $routes['rsvp']               = 'blog/rsvp/latest';
 $routes['rsvp/']              = 'blog/rsvp/latest';
 $routes['checkin']            = 'blog/checkin/latest';
@@ -67,11 +73,11 @@ $advanced_routes[] = array('controller' => 'webmention/queue',
     'expression' => '`^queue/(?P<id>\d+)`i',
     'reverse' => 'queue/{id}');
 
-$advanced_routes[] = array('controller' => 'blog/category',
+$advanced_routes[] = array('controller' => 'information/category',
     'expression' => '`^category/(?P<name>\w+)/?`i',
     'reverse' => 'category/{name}');
 
-$advanced_routes[] = array('controller' => 'blog/shortener',
+$advanced_routes[] = array('controller' => 'common/shortener',
     'expression' => '`^s/(?P<eid>.+)`',
     'reverse' => 's/{eid}');
 
@@ -93,6 +99,14 @@ $advanced_routes[] = array('controller' => 'blog/note',
 $advanced_routes[] = array('controller' => 'blog/tag',
     'expression' => '`^tag/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
     'reverse' => 'tag/{year}/{month}/{day}/{daycount}/{slug}');
+
+$advanced_routes[] = array('controller' => 'blog/follow',
+    'expression' => '`^follow/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
+    'reverse' => 'follow/{year}/{month}/{day}/{daycount}/{slug}');
+
+$advanced_routes[] = array('controller' => 'blog/unfollow',
+    'expression' => '`^unfollow/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
+    'reverse' => 'unfollow/{year}/{month}/{day}/{daycount}/{slug}');
 
 $advanced_routes[] = array('controller' => 'blog/rsvp',
     'expression' => '`^rsvp/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
@@ -127,15 +141,15 @@ $advanced_routes[] = array('controller' => 'blog/audio',
     'reverse' => 'audio/{year}/{month}/{day}/{daycount}/');
 
 
-$advanced_routes[] = array('controller' => 'blog/author',
+$advanced_routes[] = array('controller' => 'information/author',
     'expression' => '`^author/(?P<id>\d+)`i',
     'reverse' => 'author/{id}');
 
-$advanced_routes[] = array('controller' => 'blog/archive/day',
+$advanced_routes[] = array('controller' => 'information/archive/day',
     'expression' => '`^(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/?`i',
     'reverse' => '{year}/{month}/{day}');
 
-$advanced_routes[] = array('controller' => 'blog/archive',
+$advanced_routes[] = array('controller' => 'information/archive',
     'expression' => '`^(?P<year>\d{4})/(?P<month>\d{1,2})/?`i',
     'reverse' => '{year}/{month}');
 

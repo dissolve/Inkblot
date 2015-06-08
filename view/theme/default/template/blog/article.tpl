@@ -1,6 +1,6 @@
 <?php echo $header; ?>
 <?php date_default_timezone_set(LOCALTIMEZONE); ?> 
-<div class="h-entry hentry">
+<div >
   <div class="context_history">
   <?php foreach($post['context'] as $ctx){ ?>
         <div class="comment h-cite entry-meta" >

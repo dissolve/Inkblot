@@ -78,7 +78,7 @@ class ControllerCommonFooter extends Controller {
 		$this->load->model('blog/category');
 		$data['categories'] = array();
 
-		foreach ($this->model_blog_category->getCategories() as $result) {
+		foreach ($this->model_blog_category->getCategories(2) as $result) {
 				$data['categories'][] = $result;
     	}
 		

@@ -2,6 +2,7 @@
 class ControllerInformationActivity extends Controller {
     public function index(){
 		$this->document->setTitle('Recent Activity');
+		$this->document->setBodyClass('h-feed');
 		$data['title'] = 'Recent Activity';
 
 		$data['header'] = $this->load->controller('common/header');
@@ -13,9 +14,10 @@ class ControllerInformationActivity extends Controller {
         }
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
+		$this->document->setBodyClass('h-feed');
 
         $this->load->model('blog/interaction');
-        $data['recent_interactions'] = $this->model_blog_interaction->getRecentInteractions(40);
+        $data['recent_interactions'] = $this->model_blog_interaction->getRecentInteractions(500);
 
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/information/interactions.tpl')) {
