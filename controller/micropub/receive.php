@@ -20,12 +20,21 @@ class ControllerMicropubReceive extends Controller {
             "mp-syndicate-to[]=https://www.brid.gy/publish/twitter",
             "mp-syndicate-to[]=https://www.brid.gy/publish/facebook"
         );
+
+        $this->load->model('auth/mpsyndicate');
+        $mp_syndication_targets = $this->model_auth_mpsyndicate->getSiteList();
+        foreach($mp_syndication_targets as $target){
+            $supported_syndication_array[] = 'syndicate-to[]='.$target;
+            $supported_syndication_array[] = 'mp-syndicate-to[]='.$target;
+            
+        }
+
         $supported_syndication_array_for_json = array(
-            "syndicate-to" => array("https://www.brid.gy/publish/twitter",
-                                      "https://www.brid.gy/publish/facebook"),
-            "mp-syndicate-to" => array("https://www.brid.gy/publish/twitter",
+            "syndicate-to" => array_merge($mp_syndication_targets, array("https://www.brid.gy/publish/twitter",
+                                      "https://www.brid.gy/publish/facebook")),
+            "mp-syndicate-to" => array_merge($mp_syndication_targets, array("https://www.brid.gy/publish/twitter",
                                       "https://www.brid.gy/publish/facebook")
-        );
+        ));
         
         if(isset($this->request->get['q']) && $this->request->get['q'] == 'actions'){
             if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
@@ -83,7 +92,7 @@ class ControllerMicropubReceive extends Controller {
             $headers = apache_request_headers();
             //check that we were even offered an access token
             if(!isset($this->request->post['access_token']) && (!isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) && !isset($headers['Authorization'])){
-                    $this->log->write('err0');
+                    //$this->log->write('err0');
                 header('HTTP/1.1 401 Unauthorized');
                 exit();
             } else {
@@ -106,6 +115,7 @@ class ControllerMicropubReceive extends Controller {
                 $has_delete_access = false;
                 $has_follow_access = false;
                 $has_contacts_access = false;
+                $has_register_access = false;
 
                 if(!empty($auth_info) && in_array('post', explode(' ', $auth_info['scope']))) {
                     $has_post_access = true;
@@ -122,15 +132,71 @@ class ControllerMicropubReceive extends Controller {
                 if(!empty($auth_info) && in_array('contacts', explode(' ', $auth_info['scope']))) {
                     $has_contacts_access = true;
                 } 
+                if(!empty($auth_info) && in_array('register', explode(' ', $auth_info['scope']))) {
+                    $has_register_access = true;
+                } 
 
                 $token_user = str_replace(array('http://', 'https://'),array('',''), $auth_info['user']);
                 $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
 
                 if($token_user != $myself && $token_user.'/' != $myself && $token_user != $myself .'/' ) {
-                    $this->log->write('err1');
+                    //$this->log->write('err1');
                     header('HTTP/1.1 401 Unauthorized');
                     exit();
                 } else {
+
+                    // ----------------------------------------
+                    // Handle new micropub endpoint registration
+                    // ----------------------------------------
+                    if($this->request->get['register'] && $has_register_access){
+                        $me = $this->request->get['me']; //the other mp site
+                        $redir = $this->request->get['redirect_uri']; //the other mp site
+                        $code = $this->request->get['code'];
+                        $client_id = $this->request->get['client_id']; // this is me
+        //$client_id = $this->url->link('');
+
+        //look up user's token provider
+        $token_endpoint = IndieAuth\Client::discoverTokenEndpoint($me);
+
+
+        $post_array = array(
+            'grant_type'    => 'authorization_code',
+            'code'          => $code,
+            'redirect_uri'  => $redir,
+            'client_id'     => $client_id,
+            'me'            => $me
+        );
+        if(isset($this->request->get['state'])){
+            $post_array['state'] = $this->request->get['state'];
+        }
+
+        $post_data = http_build_query($post_array);
+
+        $ch = curl_init($token_endpoint);
+
+        if(!$ch){$this->log->write('error with curl_init');}
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+
+        $response = curl_exec($ch);
+
+        $results = array();
+        parse_str($response, $results);
+        $token = $results['access_token'];
+
+                        //TODO: get token
+
+                        $this->load->model('auth/mpsyndicate');
+                        $this->model_auth_mpsyndicate->addSite($site, $token);
+
+
+                        die();
+                    }
+                    // ----------------------------------------
+                    // END Handle new micropub endpoint registration
+                    // ----------------------------------------
 
                     $mp_action = '';
                     if(isset($this->request->post['mp-action']) && !empty($this->request->post['mp-action'])){
@@ -149,7 +215,7 @@ class ControllerMicropubReceive extends Controller {
                             if($has_follow_access){
                                 $this->unfollowCard();
                             } else {
-                    $this->log->write('err2');
+                    //$this->log->write('err2');
                                 header('HTTP/1.1 401 Unauthorized');
                                 exit();
                             }
@@ -158,7 +224,7 @@ class ControllerMicropubReceive extends Controller {
                             if($has_follow_access){
                                 $this->followCard();
                             } else {
-                    $this->log->write('err3');
+                    //$this->log->write('err3');
                                 header('HTTP/1.1 401 Unauthorized');
                                 exit();
                             }
@@ -167,7 +233,7 @@ class ControllerMicropubReceive extends Controller {
                             if($has_contacts_access){
                                 $this->editCard();
                             } else {
-                    $this->log->write('err4');
+                    //$this->log->write('err4');
                                 header('HTTP/1.1 401 Unauthorized');
                                 exit();
                             }
@@ -176,7 +242,7 @@ class ControllerMicropubReceive extends Controller {
                             if($has_contacts_access){
                                 $this->delCard();
                             } else {
-                    $this->log->write('err5');
+                    //$this->log->write('err5');
                                 header('HTTP/1.1 401 Unauthorized');
                                 exit();
                             }
@@ -186,7 +252,7 @@ class ControllerMicropubReceive extends Controller {
                             if($has_contacts_access){
                                 $this->addCard();
                             } else {
-                    $this->log->write('err6');
+                    //$this->log->write('err6');
                                 header('HTTP/1.1 401 Unauthorized');
                                 exit();
                             }
@@ -200,7 +266,7 @@ class ControllerMicropubReceive extends Controller {
                             if($has_delete_access){
                                 $this->deletePost();
                             } else {
-                    $this->log->write('err7');
+                    //$this->log->write('err7');
                                 header('HTTP/1.1 401 Unauthorized');
                                 exit();
                             }
@@ -210,7 +276,7 @@ class ControllerMicropubReceive extends Controller {
                             if($has_post_access){
                                 $this->undeletePost();
                             } else {
-                    $this->log->write('err8');
+                    //$this->log->write('err8');
                                 header('HTTP/1.1 401 Unauthorized');
                                 exit();
                             }
@@ -219,7 +285,7 @@ class ControllerMicropubReceive extends Controller {
                             if($has_edit_access){
                                 $this->editPost();
                             } else {
-                    $this->log->write('err9');
+                    //$this->log->write('err9');
                                 header('HTTP/1.1 401 Unauthorized');
                                 exit();
                             }
@@ -231,28 +297,28 @@ class ControllerMicropubReceive extends Controller {
                                 if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
                                     $this->getPost();
                                 } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'article'){
-                                    $this->createPost('article');
+                                    $this->createPost('article', $auth_info['client_id']);
                                 } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'checkin'){
-                                    $this->createPost('checkin');
+                                    $this->createPost('checkin', $auth_info['client_id']);
                                 } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'rsvp'){
-                                    $this->createPost('rsvp');
+                                    $this->createPost('rsvp', $auth_info['client_id']);
                                 } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'tag'){
-                                    $this->createPost('tag');
+                                    $this->createPost('tag', $auth_info['client_id']);
                                 } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
-                                    $this->createPost('bookmark');
+                                    $this->createPost('bookmark', $auth_info['client_id']);
                                 } elseif(isset($this->request->post['like-of']) && !empty($this->request->post['like-of'])){
-                                    $this->createPost('like');
+                                    $this->createPost('like', $auth_info['client_id']);
                                 } elseif(isset($_FILES['video']) && !empty($_FILES['video'])){
-                                    $this->createPost('video');
+                                    $this->createPost('video', $auth_info['client_id']);
                                 } elseif(isset($_FILES['audio']) && !empty($_FILES['audio'])){
-                                    $this->createPost('audio');
+                                    $this->createPost('audio', $auth_info['client_id']);
                                 } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
-                                    $this->createPost('photo');
+                                    $this->createPost('photo', $auth_info['client_id']);
                                 } else {
-                                    $this->createPost('note');
+                                    $this->createPost('note', $auth_info['client_id']);
                                 }
                             } else {
-                    $this->log->write('err10');
+                    //$this->log->write('err10');
                                 header('HTTP/1.1 401 Unauthorized');
                                 exit();
                             }
@@ -371,7 +437,7 @@ class ControllerMicropubReceive extends Controller {
     }
 
 
-    private function createPost($type){
+    private function createPost($type, $client_id = null){
 
         $this->load->model('blog/post');
 
@@ -502,6 +568,10 @@ class ControllerMicropubReceive extends Controller {
                 $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
             }
         }
+
+        if($client_id){
+            $data['created_by'] = $client_id;
+        }
         
         $post_id = $this->model_blog_post->newPost($type, $data);
         $this->cache->delete('posts');
@@ -521,6 +591,8 @@ class ControllerMicropubReceive extends Controller {
         }
 
         $this->cache->delete('post.'.$post['post_id']);
+
+        $this->syndicate_by_mp($data, $post['permalink']);
 
         $this->response->addHeader('HTTP/1.1 201 Created');
         $this->response->addHeader('Location: '. $post['permalink']);
@@ -643,6 +715,44 @@ class ControllerMicropubReceive extends Controller {
         $this->response->addHeader('HTTP/1.1 201 Created');
         $this->response->addHeader('Location: '. $post['permalink']);
         $this->response->setOutput($post['permalink']);
+    }
+
+    function syndicate_by_mp($data, $url){
+        $this->load->model('auth/mpsyndicate');
+        $mp_syndication_targets = $this->model_auth_mpsyndicate->getSiteList();
+
+        $data['url'] = $url;
+
+        $syndicate_tos = $data['syndicate-to'];
+        if(empty($syndicate_tos)){
+            $syndicate_tos = $data['mp-syndicate-to'];
+        }
+        unset($data['syndicate-to']);
+        unset($data['mp-syndicate-to']);
+        //we want to make sure we don't relay syndicate-to values
+
+        foreach($syndicate_tos as $mp_target){
+            if(in_array($mp_target, $mp_syndication_targets)){
+
+                $site_data = $this->model_auth_mpsyndicate->getTokenForName($mp_target);
+
+                $token = $site_data['token'];
+
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($site_data['site_url']);
+                $ch = curl_init($micropub_endpoint);
+
+                //if(!$ch){$this->log->write('error with curl_init');}
+
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '. $token));
+                curl_setopt($ch, CURLOPT_HEADER, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+                $response = curl_exec($ch);
+            }
+        }
+
     }
 
 }

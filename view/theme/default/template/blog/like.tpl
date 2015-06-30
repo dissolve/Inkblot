@@ -105,6 +105,15 @@
     <div style="clear:both"></div>
 	</span>
     <?php } ?>
+
+   <?php if(isset($post['created_by'])){ 
+        $client_id = strtolower($post['created_by']);
+        if(preg_match('/https?:\/\/.+\..+/', $client_id)){ ?>
+            <div class="client_line">Created by <a class="u-x-created-by" href="<?php echo $post['created_by']?>"><?php echo $post['created_by']?></a></div>
+        <?php } else { ?>
+            <div class="client_line">Created by <span class="p-x-created-by"><?php echo $post['created_by']?></span></div>
+        <?php } ?>
+    <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
     <?php if($post['comment_count'] > 0) { ?>

@@ -8,6 +8,9 @@
     <span class='p-given-name'><?php echo $author['first_name'] ?></span>
     <span class='p-family-name'><?php echo $author['last_name'] ?></span>
   </span>
+<?php if(isset($author['url'])){ ?>
+    <a href="<?php echo $author['url']?>">Website</a>
+<?php } ?>
 </h1>
 
 <div class="links">

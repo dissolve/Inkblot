@@ -1,6 +1,6 @@
 <?php echo $header; ?>
 <?php date_default_timezone_set(LOCALTIMEZONE); ?> 
-<div >
+<div>
   <div class="context_history">
   <?php foreach($post['context'] as $ctx){ ?>
         <div class="comment h-cite entry-meta" >
@@ -45,7 +45,7 @@
     <?php if(!empty($post['title'])){ ?>
     <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" ><?php echo $post['title']?></a></h1>
     <?php } ?>
-      <div class="entry-content e-content p-article">
+      <div class="entry-content e-content:<?php echo (empty($post['title']) ? 'p-name' : '')?>">
           <?php echo $post['body_html'];?>
           <?php echo $post['syndication_extra'];?>
       
@@ -99,6 +99,15 @@
         <?php } ?>
     <div style="clear:both"></div>
 	</span>
+    <?php } ?>
+
+   <?php if(isset($post['created_by'])){ 
+        $client_id = strtolower($post['created_by']);
+        if(preg_match('/https?:\/\/.+\..+/', $client_id)){ ?>
+            <div class="client_line">Created by <a class="u-x-created-by" href="<?php echo $post['created_by']?>"><?php echo $post['created_by']?></a></div>
+        <?php } else { ?>
+            <div class="client_line">Created by <span class="p-x-created-by"><?php echo $post['created_by']?></span></div>
+        <?php } ?>
     <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 

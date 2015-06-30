@@ -148,6 +148,7 @@ class ModelBlogPost extends Model {
             (isset($data['location']) && !empty($data['location']) ? ", location='".$this->db->escape($data['location'])."'" : "").
             (isset($data['place_name']) && !empty($data['place_name']) ? ", place_name='".$this->db->escape($data['place_name'])."'" : "").
             (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='".$this->db->escape($data['replyto'])."'" : "").
+            (isset($data['created_by']) && !empty($data['created_by']) ? ", created_by='".$this->db->escape($data['created_by'])."'" : "").
             (isset($data['following_id']) && !empty($data['following_id']) ? ", following_id='".(int)$data['following_id']."'" : "");
 
         $query = $this->db->query($sql);

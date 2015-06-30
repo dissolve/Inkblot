@@ -122,6 +122,7 @@ class ControllerAuthLogin extends Controller {
             $this->session->data['success'] = "You are now logged in as ".$me;
 
             $token_user = str_replace(array('http://', 'https://'),array('',''), $me);
+            $token_user = trim($token_user, '/');
 
             $myself = trim($this->normalize_url(HTTP_SERVER),'/');
             $myself = trim(str_replace(array('http://', 'https://'),array('',''), $myself), '/');
