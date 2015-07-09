@@ -349,12 +349,22 @@ class ControllerWebmentionReceive extends Controller {
                     } else {
                         $this->load->model('blog/interaction');
                         if($editing){
-                            $this->model_blog_interaction->editWebmention($data, $webmention_id, $comment_data);
+                            $interaction_id = $this->model_blog_interaction->editWebmention($data, $webmention_id, $comment_data);
                         } else {
-                            //$this->log->write(' calling model_blog_interaction->addWebmention with '. print_r($data, true). ' ' .  $webmention_id . " " . print_r( $comment_data, true));
-                            $this->model_blog_interaction->addWebmention($data, $webmention_id, $comment_data);
-                            //$this->log->write(' DONE');
+                            $interaction_id = $this->model_blog_interaction->addWebmention($data, $webmention_id, $comment_data);
                         }
+
+                        //salmention
+                        $res = $this->db->query("SELECT post_id FROM " . DATABASE . ".interactions WHERE interaction_id = '".(int)$interaction_id."' LIMIT 1");
+                        if($res->row){
+                            $post_id = $res->row['post_id'];
+                            if(defined('QUEUED_SEND')){
+                                $this->model_webmention_send_queue->addEntry($post_id);
+                            } else {
+                                $this->load->controller('webmention/queue/sendWebmention', $post_id);
+                            }
+                        }
+                        //end salmention
                     }
                 } catch (Exception $e) {
                     if(empty($comment_data['url'])){

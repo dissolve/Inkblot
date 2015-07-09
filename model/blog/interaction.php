@@ -125,6 +125,7 @@ class ModelBlogInteraction extends Model {
             $this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
             $this->cache->delete('interactions');
 
+            return $interaction_id;
 
         } else {
             throw new Exception('Cannot look up record');
@@ -136,11 +137,12 @@ class ModelBlogInteraction extends Model {
 
         $query = $this->db->query("SELECT webmention_id, interactions.* FROM ". DATABASE.".webmentions JOIN ".DATABASE.".interactions USING(webmention_id) WHERE webmention_id = ".(int)$webmention_id." LIMIT 1");
         $webmention = $query->row;
-    if($webmention_id){
-        $this->db->query("UPDATE ".DATABASE.".interactions SET deleted=1 WHERE webmention_id = ".(int)$webmention_id);
-        $this->addWebmention($data, $webmention_id, $comment_data, $post_id);
-        $this->db->query("UPDATE ".DATABASE.".webmentions SET webmention_status='Updated' WHERE webmention_id = ".(int)$webmention_id);
-    }
+        if($webmention_id){
+            $this->db->query("UPDATE ".DATABASE.".interactions SET deleted=1 WHERE webmention_id = ".(int)$webmention_id);
+            $new_interaction_id = $this->addWebmention($data, $webmention_id, $comment_data, $post_id);
+            $this->db->query("UPDATE ".DATABASE.".webmentions SET webmention_status='Updated' WHERE webmention_id = ".(int)$webmention_id);
+            return $new_interaction_id;
+        }
     
     }
 
