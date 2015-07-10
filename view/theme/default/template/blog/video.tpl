@@ -117,7 +117,7 @@
     <?php if($post['comment_count'] > 0) { ?>
     <div class="comments">
         <?php foreach($post['comments'] as $comment) { ?>
-            <div class="comment">
+            <div class="comment p-comment h-cite">
                 <div class='comment_header'>
                     <span class="minicard h-card vcard author p-author">
                         <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>" />
@@ -138,7 +138,7 @@
                       <?php } ?>
                   </span>
                 </div>
-                <div class='comment_body'>
+                <div class='comment_body p-content'>
                     <?php echo $comment['body']?>
                 </div>
             </div>
