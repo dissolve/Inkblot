@@ -186,13 +186,15 @@ class ControllerMicropubReceive extends Controller {
         parse_str($response, $results);
         $token = $results['access_token'];
 
-                        //TODO: get token
-
                         $this->load->model('auth/mpsyndicate');
                         $this->model_auth_mpsyndicate->addSite($site, $token);
 
+                        //TODO:  test all of this
 
-                        die();
+                        $this->response->addHeader('HTTP/1.1 200 OK');
+                        $this->response->setOutput("Syndication Target Added!");
+                        exit();
+
                     }
                     // ----------------------------------------
                     // END Handle new micropub endpoint registration
