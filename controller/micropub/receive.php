@@ -423,7 +423,8 @@ class ControllerMicropubReceive extends Controller {
                 }
             }
             if(isset($this->request->post['category']) && !empty($this->request->post['category'])){
-                $categories = explode(',', $this->request->post['category']);
+                $categories = explode(',', urldecode($this->request->post['category']));
+                $this->log->write(print_r($categories));
                 foreach($categories as $category){
                     $this->model_blog_post->addToCategory($post['post_id'], $category);
                 }
@@ -535,9 +536,6 @@ class ControllerMicropubReceive extends Controller {
             $this->load->model('webmention/vouch');
             $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
-        if(isset($this->request->post['category'])){
-            $data['category'] = $this->request->post['category'];
-        }
         if(isset($this->request->post['name'])){
             $data['name'] = $this->request->post['name'];
         }
@@ -576,6 +574,14 @@ class ControllerMicropubReceive extends Controller {
         }
         
         $post_id = $this->model_blog_post->newPost($type, $data);
+
+        if(isset($this->request->post['category']) && !empty($this->request->post['category'])){
+            $categories = explode(',', urldecode($this->request->post['category']));
+            $this->log->write(print_r($categories));
+            foreach($categories as $category){
+                $this->model_blog_post->addToCategory($post_id, $category);
+            }
+        }
         $this->cache->delete('posts');
 
         $post = $this->model_blog_post->getPost($post_id);

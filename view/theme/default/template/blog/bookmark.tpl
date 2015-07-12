@@ -92,8 +92,8 @@
 <br>
 <span id="general-likes"><a id="like"><h3 class="widget-title"><?php echo $post['like_count'] . ($post['like_count'] > 1 ? ' People' : ' Person')?> Liked This Post</h3></a>
         <?php foreach($post['likes'] as $like){?>
-                <span class="likewrapper">
-                <a href="<?php echo (isset($like['author_url']) ? $like['author_url']: $like['source_url'])?>" rel="nofollow">
+                <span class="likewrapper h-cite p-like">
+                <a class="u-url" href="<?php echo $like['source_url']?>" rel="nofollow">
                     <img class='like_author' src="<?php echo (isset($like['author_image']) ? $like['author_image']: '/image/person.jpg') ?>"
                         title="<?php echo (isset($like['author_name']) ? $like['author_name']: 'Author Image') ?>" /></a>
                 </span>
@@ -119,14 +119,12 @@
                 <div class='comment_header'>
                     <span class="minicard h-card vcard author p-author">
                         <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>" />
+                        <a class="p-name fn value name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" ><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?></a>
                     </span>
-                    <a class="p-name fn value name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" />
-                    <?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?> <!-- <?php echo $comment['source_name']?> -->
-                    </a>
 
                     <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($comment['timestamp']))?></time></a>
                     <?php if($comment['vouch_url']) { ?>
-                        <a href="<?php echo $comment['vouch_url']?>" class="u-url vouch">Vouched</a>
+                        <a href="<?php echo $comment['vouch_url']?>" class="vouch">Vouched</a>
                     <?php } ?>
                    <span class="other-controls">
                       <?php foreach($comment['actions'] as $actiontype => $action){ ?>

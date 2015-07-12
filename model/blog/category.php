@@ -57,6 +57,8 @@ class ModelBlogCategory extends Model {
     }
 
     public function getCategoryByName($name, $autocreate = false) {
+        $name = trim($name);
+
         $cid = $this->findCategoryByName($name);
 
         if($autocreate && !$cid){
@@ -101,6 +103,8 @@ class ModelBlogCategory extends Model {
     }
 
     public function addCategory($category_name){
+
+        $category_name = trim($category_name);
 
         $cid = $this->findCategoryByName($category_name);
 
