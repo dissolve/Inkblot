@@ -17,7 +17,7 @@ class ControllerInformationActivity extends Controller {
 		$this->document->setBodyClass('h-feed');
 
         $this->load->model('blog/interaction');
-        $data['recent_interactions'] = $this->model_blog_interaction->getRecentInteractions(500);
+        $data['recent_interactions'] = $this->model_blog_interaction->getRecentInteractions(50);
 
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/information/interactions.tpl')) {

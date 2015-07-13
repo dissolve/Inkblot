@@ -1,9 +1,15 @@
 <?php echo $header; ?>
+<?php date_default_timezone_set(LOCALTIMEZONE); ?> 
+<style>
+.h-entry time { color:grey; margin:5px 10px; font-size:0.9em; float:left; min-width:155px;}
+.h-entry {margin-bottom: 1px; margin-top 1px; border-bottom: 1px solid lightgrey; }
+</style>
 
 <article>
 
         <?php foreach($recent_interactions as $interaction){ ?>
         <div class="h-entry" id="i<?php echo $interaction['interaction_id']?>">
+            <time class="date dt-published" datetime="<?php echo $interaction['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($interaction['timestamp']))?></time>
             <span class="h-card p-author">
             <a class="u-url p-name" href="<?php echo $interaction['author_url']?>">
                 <?php if($interaction['author_image']){ ?>
@@ -12,6 +18,7 @@
                 <?php echo $interaction['author_name']?>
             </a> 
             </span>
+
 
             <?php 
                 switch($interaction['interaction_type']){
@@ -55,7 +62,9 @@
                     page
                 </a>
             <?php } ?>
+
         </div>
+
         <?php } //end foreach whitelist as entry ?>
 
 
