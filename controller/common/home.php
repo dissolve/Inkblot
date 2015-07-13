@@ -56,7 +56,7 @@ class ControllerCommonHome extends Controller {
             }
             if(isset($post['following_id']) && !empty($post['following_id'])){
                 $this->load->model('contacts/following');
-			    $extra_data_array['follow'] = $this->model_contacts_following->getFollowing($post['following_id']);
+			    $extra_data_array['following'] = $this->model_contacts_following->getFollowing($post['following_id']);
             }
 
             $this->data['is_owner'] = $this->session->data['is_owner'];

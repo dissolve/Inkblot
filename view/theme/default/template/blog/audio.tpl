@@ -7,8 +7,8 @@
             <div class="comment_header">    
                 <span class="minicard h-card vcard author p-author">
                     <img class="comment_author logo u-photo" src="<?php echo $ctx['author_image']?>" alt="<?php echo $ctx['author_name']?>" width="48" />
+                    <a class="p-name u-url" href="<?php echo $ctx['author_url']?>"><?php echo $ctx['author_name']?></a>
                 </span>
-                <a class="p-name fn value name u-url" href="<?php echo $ctx['author_url']?>"><?php echo $ctx['author_name']?></a>
                 <a href="<?php echo $ctx['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $ctx['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($ctx['timestamp']))?></time></a>
             </div>
                                                            
@@ -19,13 +19,13 @@
     <?php } ?>
     </div>
 
-          <article id="audio-<?php echo $post['post_id']?>" class="audio-<?php echo $post['post_id']?> audio type-audio status-publish format-standard category-uncategorized <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
+          <article id="post-<?php echo $post['post_id']?>" class="audio type-audio <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
 
     <header class="entry-meta comment_header">
         <div class="entry-meta">      
         <span class="author p-author vcard hcard h-card">
             <img alt='' src='<?php echo $post['author_image']?>' class='u-photo ' height='40' width='40' /> 
-            <span class="p-name"><a class="url uid u-url u-uid fn" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author">
+            <span class="p-name"><a class="url u-url" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author">
                 <?php echo $post['author']['display_name']?>
             </a></span>
         </span>
@@ -43,7 +43,7 @@
   <div class='articlebody'>
 
     <?php if(!empty($post['title'])){ ?>
-    <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" ><?php echo $post['title']?></a></h1>
+    <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" ><?php echo $post['title']?></a></h1>
     <?php } ?>
       <div class="entry-content e-content">
         <audio controls class="u-audio">
@@ -121,7 +121,7 @@
                 <div class='comment_header'>
                     <span class="minicard h-card vcard author p-author">
                         <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>" />
-                        <a class="p-name fn value name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" ><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?></a>
+                        <a class="p-name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" ><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?></a>
                     </span>
 
                     <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($comment['timestamp']))?></time></a>

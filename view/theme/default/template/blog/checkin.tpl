@@ -66,9 +66,6 @@
 
           }
           echo '</span>'; //end p-geo
-          if(isset($post['permashortcitation'])){
-              echo "<br><br>".$post['permashortcitation'];
-          }
           echo $post['syndication_extra'];
       ?>
       

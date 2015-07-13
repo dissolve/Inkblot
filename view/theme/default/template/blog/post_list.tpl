@@ -1,8 +1,9 @@
 <?php echo $header; ?>
 <?php date_default_timezone_set(LOCALTIMEZONE); ?> 
-<h1><?php echo $title ?></h1>
+<div class="h-feed">
+<h1 class="p-name"><?php echo $title ?></h1>
 <?php foreach($posts as $post) { ?>
-<article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
+<article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?> type-<?php echo $post['post_type']?> h-entry <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
   <header class="entry-header">
     <?php if($post['post_type'] != 'listen'){ ?>
     <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['title']?>" rel="bookmark"><?php echo $post['title']?></a></h1>
@@ -10,8 +11,8 @@
 
         <div class="entry-meta">      
       <span class="sep">Posted on </span>
-        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo $post['timestamp']?>"><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
-        <address class="byline"> <span class="sep"> by </span> <span class="author p-author h-card"><img alt='' src='<?php echo $post['author_image']?>' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="u-url u-uid p-name" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author"><?php echo $post['author']['display_name']?></a></span></address>
+        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="u-url"> <time class="dt-published" datetime="<?php echo $post['timestamp']?>"><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
+        <address class="byline"> <span class="sep"> by </span> <span class="p-author h-card"><img alt='' src='<?php echo $post['author_image']?>' class='u-photo avatar photo' height='40' width='40' /> <a class="u-url p-name" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author"><?php echo $post['author']['display_name']?></a></span></address>
         <?php if($post['replyto']) { ?>
             <div class="repyto">
                In Reply To <a class="u-in-reply-to" rel="in-reply-to" href="<?php echo $post['replyto']?>">This</a>
@@ -20,7 +21,11 @@
         </div><!-- .entry-meta -->
       </header><!-- .entry-header -->
 
+     <?php if(isset($post['excerpt_html'])) { ?>
+      <div class="p-summary">
+     <?php } else { ?>
       <div class="entry-content e-content">
+     <?php } ?>
         <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
             <i class="fa fa-bookmark-o"></i> 
             <a class="u-bookmark-of" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
@@ -29,9 +34,9 @@
             <i class="fa fa-heart-o"></i> <br>
             I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
         <?php } ?>
-        <?php if(isset($post['follow']) && !empty($post['follow'])) { ?>
+        <?php if(isset($post['following']) && !empty($post['following'])) { ?>
             <?php echo $post['author']['display_name'] . 
-             ($post['type'] == 'follow' ? ' followed ' : ' unfollowed ' ) .
+             ($post['post_type'] == 'follow' ? ' followed ' : ' unfollowed ' ) .
             '<a class="u-follow-of h-card" href="'.$post['following']['url'].'" >'.
             (isset($post['following']['photo']) && !empty($post['following']['photo']) ? '<img class="u-photo" style="width:40px;" src="'.$post['following']['photo'].'" />' : '' ).
             $post['following']['name'].
@@ -64,7 +69,11 @@
             <?php echo (strtolower($post['rsvp']) == 'yes' ? 'Attending' : 'Not Attending' );?>
             </data><br>
         <?php } ?>
-            <?php echo $post['body_html']?>
+             <?php if(isset($post['excerpt_html'])) {?>
+                <?php echo $post['excerpt_html']?>
+             <?php } else { ?>
+                <?php echo $post['body_html']?>
+             <?php } ?>
             <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
             echo "<br>Checked In At ".$post['place_name'];
             } ?>
@@ -78,6 +87,9 @@
       </div><!-- .entry-content -->
   
   <footer class="entry-meta">
+             <?php if(isset($post['excerpt_html'])) {?>
+                <a href="<?php echo $post['permalink']?>" class="u-url">More...</a>
+             <?php } ?>
     <?php if($post['comment_count'] > 0) { ?>
     <span class="comments-link"><a href="<?php echo $post['permalink']?>#comments" title="Comments for <?php echo $post['title']?>"><i class="fa fa-comment-o"></i> <?php echo $post['comment_count'] ?></a></span>
     <span class="sep"> | </span>
@@ -98,7 +110,6 @@
   
       <?php } // end for post_categories as category ?>
   <?php } // end if post_categories ?>
-
   <?php if(!empty($post['syndications'])){ ?>
     <div class="syndications">
     <?php foreach($post['syndications'] as $elsewhere){ ?>
@@ -131,5 +142,5 @@
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
 <?php } //end foreach posts ?>
-
+</div>
 <?php echo $footer; ?>

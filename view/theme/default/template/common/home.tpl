@@ -3,15 +3,16 @@
 <div class="h-feed" id="posts-stream">
 <div style="display:none;" class="p-name">Main Feed</div>
 <?php foreach($posts as $post) { ?>
-
-<article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?>-<?php echo $post['post_id']?> <?php echo $post['post_type']?> type-<?php echo $post['post_type']?> status-publish format-standard category-uncategorized h-entry hentry h-as-article <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" >
+<article id="post-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?> h-entry <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" >
   <header class="entry-header">
+    <?php if($post['post_type'] != 'listen'){ ?>
     <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['title']?>" rel="bookmark"><?php echo $post['title']?></a></h1>
+    <?php } ?>
 
         <div class="entry-meta">      
       <span class="sep">Posted on </span>
-        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo date("c", strtotime($post['timestamp']))?>" ><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
-        <address class="byline"> <span class="sep"> by </span> <span class="author p-author vcard hcard h-card"><img alt='' src='<?php echo $author_image?>' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="uid u-url u-uid fn p-name" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author"><?php echo $post['author']['display_name']?></a></span></address>
+        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="u-url"> <time class="dt-published" datetime="<?php echo date("c", strtotime($post['timestamp']))?>" ><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
+        <address class="byline"> <span class="sep"> by </span> <span class="p-author h-card"><img alt='' src='<?php echo $author_image?>' class='u-photo avatar photo' height='40' width='40' /> <a class="u-url p-name" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author"><?php echo $post['author']['display_name']?></a></span></address>
         <?php if($post['replyto']) { ?>
             <div class="repyto">
                In Reply To <a class="u-in-reply-to" rel="in-reply-to" href="<?php echo $post['replyto']?>">This</a>
@@ -33,13 +34,17 @@
             <i class="fa fa-heart-o"></i> <br>
             I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
         <?php } ?>
-        <?php if(isset($post['follow']) && !empty($post['follow'])) { ?>
+        <?php if(isset($post['following']) && !empty($post['following'])) { ?>
             <?php echo $post['author']['display_name'] . 
              ($post['post_type'] == 'follow' ? ' followed ' : ' unfollowed ' ) .
-            '<a class="u-follow-of h-card" href="'.$post['follow']['url'].'" >'.
-            (isset($post['follow']['photo']) && !empty($post['follow']['photo']) ? '<img class="u-photo" style="width:40px;" src="'.$post['follow']['photo'].'" />' : '' ).
-            $post['follow']['name'].
+            '<a class="u-follow-of h-card" href="'.$post['following']['url'].'" >'.
+            (isset($post['following']['photo']) && !empty($post['following']['photo']) ? '<img class="u-photo" style="width:40px;" src="'.$post['following']['photo'].'" />' : '' ).
+            $post['following']['name'].
             '</a>'; ?>
+        <?php } ?>
+        <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
+            <i class="fa fa-heart-o"></i> <br>
+            I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
         <?php } ?>
         <?php if($post['image_file']) { ?>
             <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
