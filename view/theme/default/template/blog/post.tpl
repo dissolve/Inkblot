@@ -42,54 +42,8 @@
     </header>
   <div class='articlebody'>
 
-    <?php if(!empty($post['title'])){ ?>
-    <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" ><?php echo $post['title']?></a></h1>
-    <?php } ?>
-      <div class="entry-content e-content <?php echo (empty($post['title']) ? 'p-name' : '')?>">
+        <?php echo $postbody?>
 
-      <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
-            <i class="fa fa-bookmark-o"></i>
-            <a class="u-bookmark-of" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name']) ? $post['name']:$post['bookmark'])?></a> <br>
-      <?php } ?>
-      <?php if(isset($post['audio_file']) && !empty($post['audio_file'])) { ?>
-        <audio controls class="u-audio">
-            <source src="<?php echo $post['audio_file']?>" type="audio/mp4">
-            <a href="<?php echo $post['audio_file']?>" >Link</a>
-        <audio>
-      <?php } ?>
-
-      <?php 
-          if(isset($post['rsvp']) && !empty($post['rsvp'])) {
-            echo '<data class="p-rsvp" value="'.$post['rsvp'].'">';
-            echo $post['body_html'];
-            echo '</data>';
-          } else {
-            echo $post['body_html'];
-          }
-          if($post['post_type'] == 'checkin') { 
-              echo '<span class="p-geo">';
-              if(isset($post['place_name']) && !empty($post['place_name'])){
-                  echo "<br>";
-                  echo '<span class="p-name">Checked In At '.$post['place_name']. '</span>';
-              }
-              if(isset($post['location']) && !empty($post['location'])){
-                  // echo "<br>".$post['location'];
-                  $joined_loc = str_replace('geo:', '', $post['location']);
-                  $latlng = explode($joined_loc, ',');
-                  echo '<br>';
-                  echo '<img class="p-map" id="map" style="width: 400px; height: 300px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=400x300&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'.$joined_loc.'"/>';
-                  echo '<span class="h-geo">';
-                  echo '<data class="p-latitude" value="'.$latlng[0].'"></data>';
-                  echo '<data class="p-longitude" value="'.$latlng[1].'"></data>';
-                  echo '</span>'; //end h-geo
-
-              }
-              echo '</span>'; //end p-geo
-          }
-          echo $post['syndication_extra'];
-      ?>
-      
-      </div><!-- .entry-content -->
   </div>
   
   <footer class="entry-meta">
