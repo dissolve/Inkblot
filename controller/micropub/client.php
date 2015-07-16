@@ -388,7 +388,8 @@ class ControllerMicropubClient extends Controller {
                 $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
                 $this->session->data['micropub_'.$user] = $micropub_endpoint;
             }
-            $ch = curl_init($micropub_endpoint.'?q=syndicate-to');
+
+            $ch = curl_init($micropub_endpoint.(strpos($micropub_endpoint, '?') === false ? '?' : '&').'q=syndicate-to');
 
             if(!$ch){$this->log->write('error with curl_init');}
 
@@ -562,7 +563,7 @@ class ControllerMicropubClient extends Controller {
             $this->session->data['micropub_'.$user] = $micropub_endpoint;
         }
 
-        $ch = curl_init($micropub_endpoint. '?url='.$this->request->get['url']);
+        $ch = curl_init($micropub_endpoint.(strpos($micropub_endpoint, '?') === false ? '?' : '&').'url='.$this->request->get['url']);
 
         if(!$ch){$this->log->write('error with curl_init');}
 
