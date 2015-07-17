@@ -1,5 +1,5 @@
 <?php  
-class ControllerBlogNote extends Controller {
+class ControllerBlogPost extends Controller {
 	public function index() {
         if($this->session->data['mp-config']){
             $mpconfig = array();
@@ -163,6 +163,7 @@ class ControllerBlogNote extends Controller {
 
             $data['header'] = $this->load->controller('common/header');
             $data['footer'] = $this->load->controller('common/footer');
+            $data['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
 
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/post.tpl')) {
                 $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/post.tpl', $data));

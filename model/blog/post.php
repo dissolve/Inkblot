@@ -195,7 +195,9 @@ class ModelBlogPost extends Model {
             //$citation = '(' . trim(str_replace(array('http://','https://'),array('',''), HTTP_SHORT), '/'). ' '. trim(str_replace(array(HTTP_SHORT,HTTPS_SHORT),array('',''), $shortlink),'/')  .')';
             $post = array_merge($post, array(
                 'syndications' => $syndications,
-                'permalink' => $this->url->link('blog/'.$post['post_type'], 'year='.$post['year']. '&' . 
+                'permalink' => $this->url->link('blog/post', 
+                                                'post_type='.$post['post_type']. '&' .
+                                                'year='.$post['year']. '&' . 
                                                 'month='.$post['month']. '&' . 
                                                 'day='.$post['day']. '&' . 
                                                 'daycount='.$post['daycount']. 

@@ -88,57 +88,10 @@ $advanced_routes[] = array('controller' => 'common/fixroute',
     'reverse' => 'post/{year}/{month}/{day}/{daycount}/{slug}');
 //The way this file is processed, the  later routes have precedence
 
-$advanced_routes[] = array('controller' => 'blog/article',
-    'expression' => '`^article/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'article/{year}/{month}/{day}/{daycount}/{slug}');
+$advanced_routes[] = array('controller' => 'blog/post',
+    'expression' => '`^(?P<post_type>[a-z]+)/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
+    'reverse' => '{post_type}/{year}/{month}/{day}/{daycount}/{slug}');
 
-$advanced_routes[] = array('controller' => 'blog/note',
-    'expression' => '`^note/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'note/{year}/{month}/{day}/{daycount}/{slug}');
-
-$advanced_routes[] = array('controller' => 'blog/tag',
-    'expression' => '`^tag/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'tag/{year}/{month}/{day}/{daycount}/{slug}');
-
-$advanced_routes[] = array('controller' => 'blog/follow',
-    'expression' => '`^follow/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'follow/{year}/{month}/{day}/{daycount}/{slug}');
-
-$advanced_routes[] = array('controller' => 'blog/unfollow',
-    'expression' => '`^unfollow/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'unfollow/{year}/{month}/{day}/{daycount}/{slug}');
-
-$advanced_routes[] = array('controller' => 'blog/rsvp',
-    'expression' => '`^rsvp/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'rsvp/{year}/{month}/{day}/{daycount}/{slug}');
-
-$advanced_routes[] = array('controller' => 'blog/checkin',
-    'expression' => '`^checkin/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'checkin/{year}/{month}/{day}/{daycount}/{slug}');
-
-$advanced_routes[] = array('controller' => 'blog/bookmark',
-    'expression' => '`^bookmark/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'bookmark/{year}/{month}/{day}/{daycount}/{slug}');
-
-$advanced_routes[] = array('controller' => 'blog/like',
-    'expression' => '`^like/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'like/{year}/{month}/{day}/{daycount}/{slug}');
-
-$advanced_routes[] = array('controller' => 'blog/listen',
-    'expression' => '`^listen/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'listen/{year}/{month}/{day}/{daycount}/{slug}');
-
-$advanced_routes[] = array('controller' => 'blog/photo',
-    'expression' => '`^photo/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'photo/{year}/{month}/{day}/{daycount}/');
-
-$advanced_routes[] = array('controller' => 'blog/video',
-    'expression' => '`^video/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'video/{year}/{month}/{day}/{daycount}/');
-
-$advanced_routes[] = array('controller' => 'blog/audio',
-    'expression' => '`^audio/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => 'audio/{year}/{month}/{day}/{daycount}/');
 
 
 $advanced_routes[] = array('controller' => 'information/author',
