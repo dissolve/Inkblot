@@ -34,32 +34,6 @@ $routes['whitelist/delete']   = 'information/whitelist/remove';
 $routes['whitelist/private']  = 'information/whitelist/makeprivate';
 $routes['whitelist/public']   = 'information/whitelist/makepublic';
 
-$routes['article']            = 'blog/article/latest';
-$routes['article/']           = 'blog/article/latest';
-$routes['note']               = 'blog/note/latest';
-$routes['note/']              = 'blog/note/latest';
-$routes['tag']                = 'blog/tag/latest';
-$routes['tag/']               = 'blog/tag/latest';
-$routes['follow']             = 'blog/follow/latest';
-$routes['follow/']            = 'blog/follow/latest';
-$routes['unfollow']           = 'blog/unfollow/latest';
-$routes['unfollow/']          = 'blog/unfollow/latest';
-$routes['rsvp']               = 'blog/rsvp/latest';
-$routes['rsvp/']              = 'blog/rsvp/latest';
-$routes['checkin']            = 'blog/checkin/latest';
-$routes['checkin/']           = 'blog/checkin/latest';
-$routes['bookmark']           = 'blog/bookmark/latest';
-$routes['bookmark/']          = 'blog/bookmark/latest';
-$routes['like']               = 'blog/like/latest';
-$routes['like/']              = 'blog/like/latest';
-$routes['listen']             = 'blog/listen/latest';
-$routes['listen/']            = 'blog/listen/latest';
-$routes['photo']              = 'blog/photo/latest';
-$routes['photo/']             = 'blog/photo/latest';
-$routes['video']              = 'blog/video/latest';
-$routes['video/']             = 'blog/video/latest';
-$routes['audio']              = 'blog/audio/latest';
-$routes['audio/']             = 'blog/audio/latest';
 
 $routes['manifest']      = 'webmention/notification/manifest';
 $routes['subscribe']      = 'webmention/notification/subscribe';
@@ -89,8 +63,12 @@ $advanced_routes[] = array('controller' => 'common/fixroute',
 //The way this file is processed, the  later routes have precedence
 
 $advanced_routes[] = array('controller' => 'blog/post',
-    'expression' => '`^(?P<post_type>[a-z]+)/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
+    'expression' => '`^(?P<post_type>\w+)/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
     'reverse' => '{post_type}/{year}/{month}/{day}/{daycount}/{slug}');
+
+$advanced_routes[] = array('controller' => 'blog/post/latest',
+    'expression' => '`^(?P<post_type>\w+)/?$`',
+    'reverse' => '{post_type}/');
 
 
 

@@ -175,8 +175,10 @@ class ControllerBlogPost extends Controller {
 
 	public function latest() {
 
-		$this->document->setTitle('Latest Notes');
-		$data['title'] = 'Latest Notes';
+        $post_type = $this->request->get['post_type'];
+
+		$this->document->setTitle('Latest '.ucfirst($post_type).' Stream');
+		$data['title'] = 'Latest '.ucfirst($post_type).' Stream';
 
 		$this->document->setDescription($this->config->get('config_meta_description'));
         $this->document->setBodyClass('h-feed');
@@ -190,7 +192,7 @@ class ControllerBlogPost extends Controller {
 
 		$data['posts'] = array();
 		
-		foreach ($this->model_blog_post->getRecentPostsByType('note') as $post) {
+		foreach ($this->model_blog_post->getRecentPostsByType($post_type) as $post) {
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
             $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
 	        $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
@@ -206,7 +208,7 @@ class ControllerBlogPost extends Controller {
                 'like_count' => $like_count,
                 'actions' => array());
 
-            $extra_data_array['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
+            //$extra_data_array['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
 
 
             if($this->session->data['is_owner']){
