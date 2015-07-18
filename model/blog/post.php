@@ -191,7 +191,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = ". (int)$post_id);
             $post = $query->row;
             $syndications = $this->getSyndications($post['post_id']);
-            $shortlink = $this->short_url->link('information/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '');
+            $shortlink = $this->short_url->link('common/shortener', 'eid='.$this->num_to_sxg($post['post_id']), '');
             //$citation = '(' . trim(str_replace(array('http://','https://'),array('',''), HTTP_SHORT), '/'). ' '. trim(str_replace(array(HTTP_SHORT,HTTPS_SHORT),array('',''), $shortlink),'/')  .')';
             $post = array_merge($post, array(
                 'syndications' => $syndications,

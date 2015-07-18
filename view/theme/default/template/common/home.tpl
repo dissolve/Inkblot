@@ -9,6 +9,10 @@
     <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['title']?>" rel="bookmark"><?php echo $post['title']?></a></h1>
     <?php } ?>
 
+<?php if($post['post_type'] == 'snark'){ ?>
+    <h3 class="snark_alert">Sarcasm Alert</h3>
+<?php } ?>
+
         <div class="entry-meta">      
       <span class="sep">Posted on </span>
         <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="u-url"> <time class="dt-published" datetime="<?php echo date("c", strtotime($post['timestamp']))?>" ><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>

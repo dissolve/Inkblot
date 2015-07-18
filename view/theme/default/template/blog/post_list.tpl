@@ -9,6 +9,10 @@
     <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['title']?>" rel="bookmark"><?php echo $post['title']?></a></h1>
     <?php } ?>
 
+<?php if($post['post_type'] == 'snark'){ ?>
+    <h3 class="snark_alert">Sarcasm Alert</h3>
+<?php } ?>
+
         <div class="entry-meta">      
       <span class="sep">Posted on </span>
         <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="u-url"> <time class="dt-published" datetime="<?php echo $post['timestamp']?>"><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
@@ -134,9 +138,9 @@
    <?php if(isset($post['created_by'])){ 
         $client_id = strtolower($post['created_by']);
         if(preg_match('/https?:\/\/.+\..+/', $client_id)){ ?>
-            <div class="client_line">Created by <a class="u-x-created-by" href="<?php echo $post['created_by']?>"><?php echo $post['created_by']?></a></div>
+            <div class="client_line">Created by <a class="u-x-client-id" href="<?php echo $post['created_by']?>"><?php echo $post['created_by']?></a></div>
         <?php } else { ?>
-            <div class="client_line">Created by <span class="p-x-created-by"><?php echo $post['created_by']?></span></div>
+            <div class="client_line">Created by <span class="p-x-client-id"><?php echo $post['created_by']?></span></div>
         <?php } ?>
     <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->

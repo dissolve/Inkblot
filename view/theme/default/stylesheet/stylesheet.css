@@ -1354,6 +1354,8 @@ data.p-rsvp[value="yes"] {color:green}
 
 .client_line {font-size:0.7em; color:gray;}
 
+.snark_alert {color:red; margin-left:20px;}
+
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
 }

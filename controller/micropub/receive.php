@@ -306,6 +306,8 @@ class ControllerMicropubReceive extends Controller {
                                     $this->createPost('rsvp', $auth_info['client_id']);
                                 } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'tag'){
                                     $this->createPost('tag', $auth_info['client_id']);
+                                } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'snark'){
+                                    $this->createPost('snark', $auth_info['client_id']);
                                 } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
                                     $this->createPost('bookmark', $auth_info['client_id']);
                                 } elseif(isset($this->request->post['like-of']) && !empty($this->request->post['like-of'])){

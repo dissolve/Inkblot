@@ -52,6 +52,16 @@
                         ed.destroy('input-body');
                     }
                 }
+                function showSnark(){
+                    $('.form-group').hide();
+                    $('.required').removeClass('required');
+                    $('.group-note').show();
+                    $('.form-group.content').addClass('required');
+                    $('.control-label[for="input-replyto"]').html('Reply To');
+                    if(ed){
+                        ed.destroy('input-body');
+                    }
+                }
                 function showArticle(){
                     $('.form-group').hide();
                     $('.required').removeClass('required');
@@ -101,6 +111,7 @@
 
 
                 $('#radio-note').click(function(){showNote()});
+                $('#radio-snark').click(function(){showSnark()});
                 $('#radio-article').click(function(){showArticle()});
                 $('#radio-rsvp').click(function(){showRsvp()});
                 $('#radio-checkin').click(function(){showCheckin()});
@@ -117,6 +128,8 @@
                     showLike();
                 <?php } elseif($type == 'bookmark'){ ?>
                     showBookmark();
+                <?php } elseif($type == 'snark'){ ?>
+                    showSnark();
                 <?php } else { ?>
                     showNote();
                 <?php } ?>
@@ -158,6 +171,7 @@
                 <div class="type-select-wrap">
 
                     <input type="radio" name="mp-type" class="type-select" value="note"     id="radio-note"     <?php echo($type == 'note' ? '' :'checked')?> class="form-control" /><label class="type-select-label" for="radio-note">Note</label>
+                    <input type="radio" name="mp-type" class="type-select" value="snark"     id="radio-snark"    <?php echo($type == 'snark' ? '' :'checked')?> class="form-control" /><label class="type-select-label" for="radio-snark">Snark</label>
                     <input type="radio" name="mp-type" class="type-select" value="article"  id="radio-article"  <?php echo($type == 'article'?'checked':'')?> class="form-control" /><label class="type-select-label" for="radio-article">Article</label>
                     <input type="radio" name="mp-type" class="type-select" value="rsvp"     id="radio-rsvp"     <?php echo($type == 'rsvp' ? 'checked': '')?> class="form-control" /><label class="type-select-label" for="radio-rsvp">RSVP</label>
                     <input type="radio" name="mp-type" class="type-select" value="checkin"  id="radio-checkin"  <?php echo($type == 'checkin'?'checked':'')?> class="form-control" /><label class="type-select-label" for="radio-checkin">Checkin</label>

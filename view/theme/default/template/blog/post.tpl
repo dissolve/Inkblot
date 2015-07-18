@@ -5,7 +5,7 @@
   <?php foreach($post['context'] as $ctx){ ?>
         <div class="comment h-cite entry-meta" >
             <div class="comment_header">    
-                <span class="minicard h-card vcard author p-author">
+                <span class="minicard h-card p-author">
                     <img class="comment_author logo u-photo" src="<?php echo $ctx['author_image']?>" alt="<?php echo $ctx['author_name']?>" width="48" />
                     <a class="p-name u-url" href="<?php echo $ctx['author_url']?>"><?php echo $ctx['author_name']?></a>
                 </span>
@@ -23,7 +23,7 @@
 
     <header class="entry-meta comment_header">
         <div class="entry-meta">      
-        <span class="author p-author vcard hcard h-card">
+        <span class="author p-author  hcard h-card">
             <img alt='' src='<?php echo $post['author_image']?>' class='u-photo ' height='40' width='40' /> 
             <span class="p-name"><a class="url u-url" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author">
                 <?php echo $post['author']['display_name']?>
@@ -98,9 +98,9 @@
    <?php if(isset($post['created_by'])){ 
         $client_id = strtolower($post['created_by']);
         if(preg_match('/https?:\/\/.+\..+/', $client_id)){ ?>
-            <div class="client_line">Created by <a class="u-x-created-by" href="<?php echo $post['created_by']?>"><?php echo $post['created_by']?></a></div>
+            <div class="client_line">Created by <a class="u-x-client-id" href="<?php echo $post['created_by']?>"><?php echo $post['created_by']?></a></div>
         <?php } else { ?>
-            <div class="client_line">Created by <span class="p-x-created-by"><?php echo $post['created_by']?></span></div>
+            <div class="client_line">Created by <span class="p-x-client-id"><?php echo $post['created_by']?></span></div>
         <?php } ?>
     <?php } ?>
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
@@ -110,7 +110,7 @@
         <?php foreach($post['comments'] as $comment) { ?>
             <div class="comment p-comment h-cite">
                 <div class='comment_header'>
-                    <span class="minicard h-card vcard author p-author">
+                    <span class="minicard h-card  p-author">
                         <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>" />
                         <a class="p-name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" ><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?></a>
                     </span>
