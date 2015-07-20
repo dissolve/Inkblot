@@ -530,7 +530,7 @@ class ControllerMicropubClient extends Controller {
         $post = array();
         if(array_key_exists('type', $mf) && in_array('h-entry', $mf['type']) && array_key_exists('properties', $mf)) {
             $properties = $mf['properties'];
-            $this->log->write(print_r($properties,true));
+            //$this->log->write(print_r($properties,true));
 
             if(array_key_exists('content', $properties)) {
                 if($as_html){

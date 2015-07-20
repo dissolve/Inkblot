@@ -1,7 +1,7 @@
 <?php  
 class ControllerMicropubReceive extends Controller {
     public function index() {
-        $this->log->write(print_r($this->request->post, true));
+        //$this->log->write(print_r($this->request->post, true));
         //$this->log->write(file_get_contents("php://input"));
         $supported_array = array(
                 "edit" => "https://ben.thatmustbe.me/edit?url={url}",

@@ -89,7 +89,7 @@ class ModelBlogPost extends Model {
         }
     }
     public function newPost($type, $data){
-        $this->log->write(print_r($data, true));
+        //$this->log->write(print_r($data, true));
 
         if(isset($data['published'])) {
             $year = date('Y', strtotime($data['published']));
@@ -152,7 +152,7 @@ class ModelBlogPost extends Model {
             (isset($data['created_by']) && !empty($data['created_by']) ? ", created_by='".$this->db->escape($data['created_by'])."'" : "").
             (isset($data['following_id']) && !empty($data['following_id']) ? ", following_id='".(int)$data['following_id']."'" : "");
 
-        $this->log->write($sql);
+        //$this->log->write($sql);
         $query = $this->db->query($sql);
 
         $id = $this->db->getLastId();
@@ -207,6 +207,8 @@ class ModelBlogPost extends Model {
                 'shortlink' => $shortlink//,
                 //'permashortcitation' => $citation
             ));
+            $post['name'] = $post['title'];
+
             if($post['post_type'] == 'article' && preg_match('/<hr \/>/', $post['body'])){
                 $post['excerpt'] = preg_replace('/<hr \/>.*/s','',$post['body']);
                 $post['body'] = preg_replace('/<hr \/>/','',$post['body']);
@@ -215,7 +217,6 @@ class ModelBlogPost extends Model {
             $post['timestamp'] =  date("c", strtotime( $post['timestamp']));
             if($post['post_type'] == 'bookmark'){
                 $post['bookmark'] = $post['bookmark_like_url'];
-                $post['name'] = $post['title'];
                 $post['description'] = $post['body'];
             } elseif($post['post_type'] == 'like'){
                 $post['like-of'] = $post['bookmark_like_url'];
