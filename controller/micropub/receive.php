@@ -400,7 +400,7 @@ class ControllerMicropubReceive extends Controller {
             }
 
             $simple_editable_fields = array(
-                'title' => 'title',
+                'name' => 'name',
                 'content' => 'body',
                 'location' => 'location',
                 'place_name' => 'place_name',

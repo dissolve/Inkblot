@@ -130,7 +130,8 @@
                     showBookmark();
                 <?php } elseif($type == 'snark'){ ?>
                     showSnark();
-                <?php } else { ?>
+                <?php } else { 
+                    $type = 'note'; ?>
                     showNote();
                 <?php } ?>
 
@@ -170,8 +171,8 @@
 		    <input type="hidden" name="mp-action" value="create" />
                 <div class="type-select-wrap">
 
-                    <input type="radio" name="mp-type" class="type-select" value="note"     id="radio-note"     <?php echo($type == 'note' ? '' :'checked')?> class="form-control" /><label class="type-select-label" for="radio-note">Note</label>
-                    <input type="radio" name="mp-type" class="type-select" value="snark"     id="radio-snark"    <?php echo($type == 'snark' ? '' :'checked')?> class="form-control" /><label class="type-select-label" for="radio-snark">Snark</label>
+                    <input type="radio" name="mp-type" class="type-select" value="note"     id="radio-note"     <?php echo($type == 'note' ?'checked' : '')?> class="form-control" /><label class="type-select-label" for="radio-note">Note</label>
+                    <input type="radio" name="mp-type" class="type-select" value="snark"     id="radio-snark"   <?php echo($type == 'snark' ? 'checked': '')?> class="form-control" /><label class="type-select-label" for="radio-snark">Snark</label>
                     <input type="radio" name="mp-type" class="type-select" value="article"  id="radio-article"  <?php echo($type == 'article'?'checked':'')?> class="form-control" /><label class="type-select-label" for="radio-article">Article</label>
                     <input type="radio" name="mp-type" class="type-select" value="rsvp"     id="radio-rsvp"     <?php echo($type == 'rsvp' ? 'checked': '')?> class="form-control" /><label class="type-select-label" for="radio-rsvp">RSVP</label>
                     <input type="radio" name="mp-type" class="type-select" value="checkin"  id="radio-checkin"  <?php echo($type == 'checkin'?'checked':'')?> class="form-control" /><label class="type-select-label" for="radio-checkin">Checkin</label>
@@ -182,10 +183,10 @@
             </div>
             <div class="content">
 
-                <div class="form-group group-note group-article title">
+                <div class="form-group group-note group-article group-bookmark title">
                   <label class="col-sm-2 control-label" for="input-title">Title</label>
                   <div class="col-sm-10">
-                    <input type="text" name="title" value="<?php echo isset($post) ? $post['title'] : ''; ?>" placeholder="Sample Title" id="input-title" class="form-control" />
+                    <input type="text" name="name" value="<?php echo isset($post) ? $post['name'] : ''; ?>" placeholder="Sample Title" id="input-title" class="form-control" />
                   </div>
                 </div>
 
@@ -223,13 +224,6 @@
                   <label class="col-sm-2 control-label" for="input-bookmark">Bookmark URL</label>
                   <div class="col-sm-10">
                     <input type="text" name="bookmark" value="<?php echo isset($post) ? $post['bookmark'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
-                  </div>
-                </div>
-
-                <div class="form-group group-bookmark">
-                  <label class="col-sm-2 control-label" for="input-title">Name</label>
-                  <div class="col-sm-10">
-                    <input type="text" name="name" value="<?php echo isset($post) ? $post['name'] : ''; ?>" placeholder="Name of Bookmark" id="input-name" class="form-control" />
                   </div>
                 </div>
 

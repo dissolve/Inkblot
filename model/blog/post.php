@@ -43,8 +43,8 @@ class ModelBlogPost extends Model {
         if(isset($data['post_id'])){
             $set_data = array();
 
-            if(isset($data['title']) && !empty($data['title'])){
-                $set_data[] = "title ='".$this->db->escape($data['title'])."'";
+            if(isset($data['name']) && !empty($data['name'])){
+                $set_data[] = "title ='".$this->db->escape($data['name'])."'";
             } else {
                 $set_data[] = "title =''";
             }
@@ -89,6 +89,7 @@ class ModelBlogPost extends Model {
         }
     }
     public function newPost($type, $data){
+        $this->log->write(print_r($data, true));
 
         if(isset($data['published'])) {
             $year = date('Y', strtotime($data['published']));
@@ -140,7 +141,7 @@ class ModelBlogPost extends Model {
             (isset($data['tag_shape']) && !empty($data['tag_shape']) ? ", tag_shape='".$this->db->escape($data['tag_shape'])."'" : "").
             (isset($data['tag_coords']) && !empty($data['tag_coords']) ? ", tag_coords='".$this->db->escape($data['tag_coords'])."'" : "").
 
-            (isset($data['title']) && !empty($data['title']) ? ", title='".$this->db->escape($data['title'])."'" : "").
+            (isset($data['name']) && !empty($data['name']) ? ", title='".$this->db->escape($data['name'])."'" : "").
             (isset($data['audio_file']) && !empty($data['audio_file']) ? ", audio_file='".$this->db->escape($data['audio_file'])."'" : "").
             (isset($data['image_file']) && !empty($data['image_file']) ? ", image_file='".$this->db->escape($data['image_file'])."'" : "").
             (isset($data['video_file']) && !empty($data['video_file']) ? ", video_file='".$this->db->escape($data['video_file'])."'" : "").
@@ -151,6 +152,7 @@ class ModelBlogPost extends Model {
             (isset($data['created_by']) && !empty($data['created_by']) ? ", created_by='".$this->db->escape($data['created_by'])."'" : "").
             (isset($data['following_id']) && !empty($data['following_id']) ? ", following_id='".(int)$data['following_id']."'" : "");
 
+        $this->log->write($sql);
         $query = $this->db->query($sql);
 
         $id = $this->db->getLastId();
