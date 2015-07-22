@@ -104,8 +104,8 @@ class ControllerWebmentionReceive extends Controller {
 
         // we are using vouch, and they have given us a valid vouch url but its not an acceptable vouch
         //   we queue for moderation
-        //   TODO: update this to say "pending moderation"
         $this->load->model('webmention/queue');
+        // even though we return 202 (as it is pending moderation) we set this to 449 so is not processed as acceptable
         $queue_id = $this->model_webmention_queue->addEntry($source, $target, $vouch, '449' );
 
         $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
@@ -122,6 +122,13 @@ class ControllerWebmentionReceive extends Controller {
         if(!USE_VOUCH){
             return true;
         }
+        if(strpos($url, 'http://') === 0 && strpos($url, HTTP_SERVER) === 0){
+            return true;
+        }
+        if(strpos($url, 'https://') === 0 && strpos($url, HTTPS_SERVER) === 0){
+            return true;
+        }
+
         $this->load->model('webmention/vouch');
         return $this->model_webmention_vouch->isWhiteListed($url);
     }
@@ -167,7 +174,7 @@ class ControllerWebmentionReceive extends Controller {
             $editing = FALSE;
             $edit_q = $this->db->query("SELECT * FROM ".DATABASE.".interaction_syndication WHERE webmention_id=".(int)$webmention_id." LIMIT 1");
             if(!empty($edit_q->row)) {
-                $interaction_id = $edit_q->row['interaction_id']
+                $interaction_id = $edit_q->row['interaction_id'];
                 $editing = TRUE;
             }
 
