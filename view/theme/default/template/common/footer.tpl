@@ -63,7 +63,7 @@
 <ul>
     <?php foreach($categories as $category){?>
         <li class="cat-item cat-item-1">
-            <a href="<?php echo $category['permalink'];?>" rel='feed' type="text/html" title="Posts filed under <?php echo $category['name'];?>"><?php echo $category['name'];?></a>
+            <a href="<?php echo $category['permalink'];?>" type="text/html" title="Posts filed under <?php echo $category['name'];?>"><?php echo $category['name'];?></a>
         </li>
     <?php } ?>
 </ul>
