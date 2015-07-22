@@ -1,31 +1,17 @@
 <?php
 class ModelWebmentionQueue extends Model {
-	public function addEntry($source, $target, $vouch=null) {
-        //$target = rtrim($target, '/') . '/';  // ALWAYS USER A TRAILING / 
-        //find it this is an update
+	public function addEntry($source, $target, $vouch=null, $status_code='202') {
+        //find if this is an update
         $query = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE source_url='".$this->db->escape($source)."' AND target_url='".$this->db->escape($target)."'");
         $results = $query->row;
         if(empty($results)){
-            $this->db->query("INSERT INTO " . DATABASE . ".webmentions SET source_url='".$this->db->escape($source)."', target_url='".$this->db->escape($target)."', `timestamp` = NOW(), webmention_status_code='202', webmention_status='queued'". ($vouch ? ", vouch_url='".$this->db->escape($vouch)."'": ""));
+            $this->db->query("INSERT INTO " . DATABASE . ".webmentions SET source_url='".$this->db->escape($source)."', target_url='".$this->db->escape($target)."', `timestamp` = NOW(), webmention_status_code='".$status_code."', webmention_status='queued'". ($vouch ? ", vouch_url='".$this->db->escape($vouch)."'": ""));
             $id = $this->db->getLastId();
             return $id;
         } else {
             //this is an update or delete
-            $this->db->query("UPDATE " . DATABASE . ".webmentions set webmention_status_code='202', webmention_status = 'queued'". ($vouch ? ", vouch_url='".$this->db->escape($vouch)."'": "")." WHERE webmention_id = '".(int)$results['webmention_id']."'");
+            $this->db->query("UPDATE " . DATABASE . ".webmentions set webmention_status_code='".$status_code."', webmention_status = 'queued'". ($vouch ? ", vouch_url='".$this->db->escape($vouch)."'": "")." WHERE webmention_id = '".(int)$results['webmention_id']."'");
             return $results['webmention_id'];
-
-        }
-	}
-
-	public function addUnvouchedEntry($source, $target) {
-        //$target = rtrim($target, '/') . '/';  // ALWAYS USER A TRAILING / 
-        //find it this is an update
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE source_url='".$this->db->escape($source)."' AND target_url='".$this->db->escape($target)."'");
-        $results = $query->row;
-        if(empty($results)){
-            $this->db->query("INSERT INTO " . DATABASE . ".webmentions SET source_url='".$this->db->escape($source)."', target_url='".$this->db->escape($target)."', `timestamp` = NOW(), webmention_status_code='449', webmention_status='queued'");
-            $id = $this->db->getLastId();
-            return $id;
 
         }
 	}

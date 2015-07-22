@@ -55,78 +55,67 @@ class ControllerWebmentionReceive extends Controller {
         $source = $this->request->post['source'];
         $target = $this->request->post['target'];
         $vouch = $this->request->post['vouch'];
-        //$this->log->write('v1: ='.$vouch);
 
-        // are URLs Valid?
+        // make sure our source and target are valid urls
         if(!$this->is_valid_url($source) || !$this->is_valid_url($target)){
             header('HTTP/1.1 400 Bad Request');
             exit();
-        } elseif (!$this->is_approved_source($source)){
-
-            if(!USE_VOUCH){
-                header('HTTP/1.1 400 Bad Request');
-                exit();
-            } else {
-                if(!isset($this->request->post['vouch'])){
-
-                    $this->load->model('webmention/queue');
-                    $queue_id = $this->model_webmention_queue->addUnvouchedEntry($source, $target, $vouch);
-
-                    if(isset($this->request->post['callback'])){
-                        $this->model_webmention_queue->setCallback($queue_id, $this->request->post['callback']);
-                    }
-
-                    $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
-
-                    $this->response->addHeader('Link: <'.$link.'>; rel="status"');
-                    header('HTTP/1.1 449 Retry With vouch');
-                    exit();
-
-                } elseif(!$this->is_valid_url($vouch)){
-                    header('HTTP/1.1 400 Bad Request');
-                    exit();
-                } elseif(!$this->is_approved_source($vouch)){
-                    header('HTTP/1.1 400 Bad Request');
-                    exit();
-
-                } else {
-                    //todo  review this
-                    $this->response->addHeader('HTTP/1.1 202 Accepted');
-
-                    $this->load->model('webmention/queue');
-                    $queue_id = $this->model_webmention_queue->addEntry($source, $target, $vouch);
-                    //$this->log->write('v2: ='.$vouch);
-
-                    if(isset($this->request->post['callback'])){
-                        $this->model_webmention_queue->setCallback($queue_id, $this->request->post['callback']);
-                    }
-
-                    $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
-
-                    $this->response->addHeader('Link: <'.$link.'>; rel="status"');
-
-                    $this->response->setOutput($link);
-                }
-            }
-
-        } else {
-            $this->response->addHeader('HTTP/1.1 202 Accepted');
-
+        }
+    
+        //if the source is approved, i don't need or want the vouch, i just auto accept it and throw the vouch away
+        //  or if I am not using vouches, and i have a valid source, and target, i just auto accept
+        if ($this->is_approved_source($source) || !USE_VOUCH){
             $this->load->model('webmention/queue');
-            //$queue_id = $this->model_webmention_queue->addEntry($source, $target);
-            //$this->log->write('v3: ='.$vouch);
-            $queue_id = $this->model_webmention_queue->addEntry($source, $target, $vouch);
-
-            if(isset($this->request->post['callback'])){
-                $this->model_webmention_queue->setCallback($queue_id, $this->request->post['callback']);
-            }
+            $queue_id = $this->model_webmention_queue->addEntry($source, $target, null, '202');
 
             $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
 
             $this->response->addHeader('Link: <'.$link.'>; rel="status"');
+            $this->response->addHeader('HTTP/1.1 202 Accepted');
+
+            $this->response->setOutput($link);
+            exit();
+        }
+        // if we are using vouch, and there is not vouch, or its invalid,  respond retry with 449
+        //  still save webmention in case i want to approve manually later
+        if(!$this->is_valid_url($vouch)){
+            $this->load->model('webmention/queue');
+            $queue_id = $this->model_webmention_queue->addEntry($source, $target, null, '449' );
+
+
+            $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
+
+            $this->response->addHeader('Link: <'.$link.'>; rel="status"');
+            header('HTTP/1.1 449 Retry With vouch');
+            exit();
+        }
+        if($this->is_approved_source($vouch)){
+            $this->load->model('webmention/queue');
+            $queue_id = $this->model_webmention_queue->addEntry($source, $target, $vouch, '202');
+
+
+            $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
+
+            $this->response->addHeader('Link: <'.$link.'>; rel="status"');
+            $this->response->addHeader('HTTP/1.1 202 Accepted');
 
             $this->response->setOutput($link);
         }
+
+        // we are using vouch, and they have given us a valid vouch url but its not an acceptable vouch
+        //   we queue for moderation
+        //   TODO: update this to say "pending moderation"
+        $this->load->model('webmention/queue');
+        $queue_id = $this->model_webmention_queue->addEntry($source, $target, $vouch, '449' );
+
+        $link = $this->url->link('webmention/queue', 'id='.$queue_id, '');
+
+        $this->response->addHeader('Link: <'.$link.'>; rel="status"');
+        $this->response->addHeader('HTTP/1.1 202 Accepted');
+
+        $this->response->setOutput($link);
+
+
     }
 
     private function is_approved_source($url){
@@ -159,6 +148,9 @@ class ControllerWebmentionReceive extends Controller {
         while($webmention){
 
             $webmention_id = $webmention['webmention_id'];
+
+
+            //TODO this is a big issue, if the webmention sets updated (salmention) after I have already started processing, the result could be a race condition of the two mentions, leading to two or more interactions showing up
             
             // some fetches were taking too long and there would end up being 2 processes running on the same webmention
             // this resulted in double likes, etc 
@@ -172,13 +164,13 @@ class ControllerWebmentionReceive extends Controller {
                 $vouch_url = trim($webmention['vouch_url']);
             }
 
-            $resulting_comment_id = (int)$webmention['resulting_comment_id'];
-            $resulting_mention_id = (int)$webmention['resulting_mention_id'];
-            $resulting_like_id = (int)$webmention['resulting_like_id'];
             $editing = FALSE;
-            if($resulting_comment_id > 0 || $resulting_mention_id > 0 || $resulting_like_id > 0){
+            $edit_q = $this->db->query("SELECT * FROM ".DATABASE.".interaction_syndication WHERE webmention_id=".(int)$webmention_id." LIMIT 1");
+            if(!empty($edit_q->row)) {
+                $interaction_id = $edit_q->row['interaction_id']
                 $editing = TRUE;
             }
+
 
             if($vouch_url){
                 $valid_link_found = false;
@@ -265,15 +257,10 @@ class ControllerWebmentionReceive extends Controller {
 
             if($page_content === FALSE){
                 if($editing && $return_code == 410){
-                    if($resulting_comment_id > 0){
-                        $this->db->query("UPDATE ". DATABASE.".comments SET body = '*Comment Deleted*' WHERE comment_id = ". (int)$resulting_comment_id);
+                    if(isset($interaction_id)){
+                        $this->db->query("UPDATE ". DATABASE.".interaction SET deleted=1 WHERE interaction_id = ". (int)$interaction_id);
                     }
-                    if($resulting_mention_id > 0){
-                        $this->db->query("DELETE FROM ". DATABASE.".mentions WHERE mention_id = ". (int)$resulting_mention_id);
-                    }
-                    if($resulting_like_id > 0){
-                        $this->db->query("DELETE FROM ". DATABASE.".likes WHERE like_id = ". (int)$resulting_like_id);
-                    }
+
                     //our curl command failed to fetch the source site
                     $this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '410', webmention_status = 'Deleted' WHERE webmention_id = ". (int)$webmention_id);
 
@@ -282,22 +269,13 @@ class ControllerWebmentionReceive extends Controller {
                     $this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Failed To Fetch Source' WHERE webmention_id = ". (int)$webmention_id);
                 }
 
-            //} elseif(strpos($real_url, HTTP_SERVER) !== 0 && strpos($real_url, HTTPS_SERVER) !== 0){
-                ////target_url does not point actually redirect to our site
-                //$this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Target Link Does Not Point Here' WHERE webmention_id = ". (int)$webmention_id);
-        //
             } elseif(stristr($page_content, $target_url) === FALSE){
                 //we could not find the target_url anywhere on the source page.
                 $this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '400', webmention_status = 'Target Link Not Found At Source' WHERE webmention_id = ". (int)$webmention_id);
-                    if($resulting_comment_id > 0){
-                        $this->db->query("UPDATE ". DATABASE.".comments SET body = '*Comment Deleted*' WHERE comment_id = ". (int)$resulting_comment_id);
-                    }
-                    if($resulting_mention_id > 0){
-                        $this->db->query("DELETE FROM ". DATABASE.".mentions WHERE mention_id = ". (int)$resulting_mention_id);
-                    }
-                    if($resulting_like_id > 0){
-                        $this->db->query("DELETE FROM ". DATABASE.".likes WHERE like_id = ". (int)$resulting_like_id);
-                    }
+
+                if($editing && isset($interaction_id)){
+                    $this->db->query("UPDATE ". DATABASE.".interaction SET deleted=1 WHERE interaction_id = ". (int)$interaction_id);
+                }
 
             } else {
                 $mf2_parsed = Mf2\parse($page_content, $real_source_url);
