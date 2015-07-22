@@ -156,9 +156,6 @@ class ControllerWebmentionReceive extends Controller {
 
             $webmention_id = $webmention['webmention_id'];
 
-
-            //TODO this is a big issue, if the webmention sets updated (salmention) after I have already started processing, the result could be a race condition of the two mentions, leading to two or more interactions showing up
-            
             // some fetches were taking too long and there would end up being 2 processes running on the same webmention
             // this resulted in double likes, etc 
             // This prevents another run from picking up the same webmentions now.
@@ -172,7 +169,7 @@ class ControllerWebmentionReceive extends Controller {
             }
 
             $editing = FALSE;
-            $edit_q = $this->db->query("SELECT * FROM ".DATABASE.".interaction_syndication WHERE webmention_id=".(int)$webmention_id." LIMIT 1");
+            $edit_q = $this->db->query("SELECT * FROM ".DATABASE.".interactions WHERE webmention_id=".(int)$webmention_id." LIMIT 1");
             if(!empty($edit_q->row)) {
                 $interaction_id = $edit_q->row['interaction_id'];
                 $editing = TRUE;
