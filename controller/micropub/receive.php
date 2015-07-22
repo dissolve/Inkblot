@@ -1,7 +1,7 @@
 <?php  
 class ControllerMicropubReceive extends Controller {
     public function index() {
-        $this->log->write(print_r($this->request->post, true));
+        //$this->log->write(print_r($this->request->post, true));
         //$this->log->write(file_get_contents("php://input"));
         $supported_array = array(
                 "edit" => "https://ben.thatmustbe.me/edit?url={url}",
@@ -400,7 +400,7 @@ class ControllerMicropubReceive extends Controller {
             }
 
             $simple_editable_fields = array(
-                'title' => 'title',
+                'name' => 'name',
                 'content' => 'body',
                 'location' => 'location',
                 'place_name' => 'place_name',

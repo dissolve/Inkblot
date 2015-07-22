@@ -138,7 +138,7 @@
                 <div class="form-group group-note group-article title">
                   <label class="col-sm-2 control-label" for="input-title">Title</label>
                   <div class="col-sm-10">
-                    <input type="text" name="title" value="<?php echo isset($post) ? $post['title'] : ''; ?>" placeholder="Sample Title" id="input-title" class="form-control" />
+                    <input type="text" name="name" value="<?php echo isset($post) ? $post['name'] : ''; ?>" placeholder="Sample Title" id="input-title" class="form-control" />
                   </div>
                 </div>
 

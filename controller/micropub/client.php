@@ -432,7 +432,6 @@ class ControllerMicropubClient extends Controller {
             $syn_to_hack = 'syndicate-to='.urlencode(implode(',', $post_data_array['syndicate-to'])) . '&';
         }
 
-        //$this->log->write(print_r($post_data_array, true));
         $post_data = $syn_to_hack . http_build_query($post_data_array);
 
         $user = $this->session->data['user_site'];
@@ -531,7 +530,7 @@ class ControllerMicropubClient extends Controller {
         $post = array();
         if(array_key_exists('type', $mf) && in_array('h-entry', $mf['type']) && array_key_exists('properties', $mf)) {
             $properties = $mf['properties'];
-            $this->log->write(print_r($properties,true));
+            //$this->log->write(print_r($properties,true));
 
             if(array_key_exists('content', $properties)) {
                 if($as_html){
@@ -542,7 +541,7 @@ class ControllerMicropubClient extends Controller {
             }
 
             if(array_key_exists('name', $properties)) {
-                $post['title'] = $properties['name'][0];
+                $post['name'] = $properties['name'][0];
             }
 
             if(array_key_exists('in-reply-to', $properties)) {
