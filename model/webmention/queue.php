@@ -30,6 +30,10 @@ class ModelWebmentionQueue extends Model {
         $res = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_status_code != 200 AND (admin_status != 'dismiss' OR admin_status is NULL)");
         return $res->rows;
     }
+    public function getUnhandledWebmentionCount(){
+        $res = $this->db->query("SELECT count(*) as count FROM " . DATABASE . ".webmentions WHERE webmention_status_code != 200 AND (admin_status != 'dismiss' OR admin_status is NULL)");
+        return $res->row['count'];
+    }
 
     public function dismiss($id){
         $res = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_id = '".(int)$id."'");

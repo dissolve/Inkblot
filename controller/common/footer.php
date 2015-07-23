@@ -17,10 +17,18 @@ class ControllerCommonFooter extends Controller {
         $data['google_analytics_id'] = GOOGLE_ANALYTICS_ID;
         $data['sitesearch'] = trim(str_replace(array('http://','https://'),array('',''), HTTP_SERVER), '/');
 
+
         if($this->session->data['is_owner']){
             $data['is_owner'] = true;
             $data['newlink'] = $this->url->link('micropub/client', '', '');
             $data['webaction'] = $this->url->link('micropub/receive', 'q=indie-config&handler=%s', '');
+
+            $this->load->model('webmention/queue');
+            $moderation_count = $this->model_webmention_queue->getUnhandledWebmentionCount();
+            if($moderation_count > 0){
+                $data['moderation_count'] = $moderation_count;
+                $data['moderation_url'] = $this->url->link('webmention/receive');
+            }
         }
 
 		$data['mylinks'] = array();

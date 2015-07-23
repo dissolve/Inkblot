@@ -22,6 +22,11 @@
   </form>
 </section>
 
+<?php if($moderation_count) { ?>
+    <section id="moderation" class="widget widget_recent_entries">
+    <a href="<?php echo $moderation_url?>" style="color:red"><h3 class="widget-title">Pending Webmentions <span style="color:red;font-weight:bold">(<?php echo $moderation_count?>)</span></h3></a>
+    </section>
+<?php } ?>
 
 <?php if($recent_interactions) { ?>
     <section id="recent-interactions-2" class="widget widget_recent_entries">
