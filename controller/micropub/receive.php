@@ -1,4 +1,8 @@
 <?php  
+require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
+require_once DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
+require_once DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
+
 class ControllerMicropubReceive extends Controller {
     public function index() {
         //$this->log->write(print_r($this->request->post, true));
@@ -149,42 +153,9 @@ class ControllerMicropubReceive extends Controller {
                     // Handle new micropub endpoint registration
                     // ----------------------------------------
                     if($this->request->get['register'] && $has_register_access){
-                        $me = $this->request->get['me']; //the other mp site
-                        $redir = $this->request->get['redirect_uri']; //the other mp site
-                        $code = $this->request->get['code'];
-                        $client_id = $this->request->get['client_id']; // this is me
-        //$client_id = $this->url->link('');
 
-        //look up user's token provider
-        $token_endpoint = IndieAuth\Client::discoverTokenEndpoint($me);
-
-
-        $post_array = array(
-            'grant_type'    => 'authorization_code',
-            'code'          => $code,
-            'redirect_uri'  => $redir,
-            'client_id'     => $client_id,
-            'me'            => $me
-        );
-        if(isset($this->request->get['state'])){
-            $post_array['state'] = $this->request->get['state'];
-        }
-
-        $post_data = http_build_query($post_array);
-
-        $ch = curl_init($token_endpoint);
-
-        if(!$ch){$this->log->write('error with curl_init');}
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-
-        $response = curl_exec($ch);
-
-        $results = array();
-        parse_str($response, $results);
-        $token = $results['access_token'];
+        $token = $this->request->get['register_token'];
+        $site = $this->request->get['register'];
 
                         $this->load->model('auth/mpsyndicate');
                         $this->model_auth_mpsyndicate->addSite($site, $token);
@@ -593,6 +564,8 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
         }
 
+        $this->syndicate_by_mp($this->request->post, $post['permalink']);
+
         $this->load->model('webmention/send_queue');
         if(defined('QUEUED_SEND')){
             $this->model_webmention_send_queue->addEntry($post_id);
@@ -602,7 +575,6 @@ class ControllerMicropubReceive extends Controller {
 
         $this->cache->delete('post.'.$post['post_id']);
 
-        $this->syndicate_by_mp($data, $post['permalink']);
 
         $this->response->addHeader('HTTP/1.1 201 Created');
         $this->response->addHeader('Location: '. $post['permalink']);
@@ -728,6 +700,8 @@ class ControllerMicropubReceive extends Controller {
     }
 
     function syndicate_by_mp($data, $url){
+        //$this->log->write('called syndicate_by_mp with '. $url);
+        //$this->log->write(print_r($data,true));
         $this->load->model('auth/mpsyndicate');
         $mp_syndication_targets = $this->model_auth_mpsyndicate->getSiteList();
 
@@ -744,14 +718,14 @@ class ControllerMicropubReceive extends Controller {
         foreach($syndicate_tos as $mp_target){
             if(in_array($mp_target, $mp_syndication_targets)){
 
-                $site_data = $this->model_auth_mpsyndicate->getTokenForName($mp_target);
+                $site_data = $this->model_auth_mpsyndicate->getDataForName($mp_target);
 
                 $token = $site_data['token'];
 
-                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($site_data['site_url']);
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($mp_target);
                 $ch = curl_init($micropub_endpoint);
 
-                //if(!$ch){$this->log->write('error with curl_init');}
+                if(!$ch){$this->log->write('error with curl_init');}
 
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POST, true);
@@ -760,6 +734,8 @@ class ControllerMicropubReceive extends Controller {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
                 $response = curl_exec($ch);
+            $this->log->write('responded with  '. $response);
+
             }
         }
 
