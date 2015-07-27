@@ -564,7 +564,7 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
         }
 
-        $this->syndicate_by_mp($this->request->post, $post['permalink']);
+        $this->syndicate_by_mp($this->request->post, $post['permalink'], $post_id);
 
         $this->load->model('webmention/send_queue');
         if(defined('QUEUED_SEND')){
@@ -699,9 +699,10 @@ class ControllerMicropubReceive extends Controller {
         $this->response->setOutput($post['permalink']);
     }
 
-    function syndicate_by_mp($data, $url){
+    function syndicate_by_mp($data, $url, $post_id){
         //$this->log->write('called syndicate_by_mp with '. $url);
         //$this->log->write(print_r($data,true));
+        $this->load->model('blog/post');
         $this->load->model('auth/mpsyndicate');
         $mp_syndication_targets = $this->model_auth_mpsyndicate->getSiteList();
 
@@ -733,8 +734,24 @@ class ControllerMicropubReceive extends Controller {
                 curl_setopt($ch, CURLOPT_HEADER, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
-                $response = curl_exec($ch);
-            $this->log->write('responded with  '. $response);
+                $body = curl_exec($ch);
+                $this->log->write(' -------------' . print_r($body, true) . '-------------------' );
+                $headers = curl_getinfo($ch);
+
+                if($headers['http_code'] == 201){
+                    //$this->log->write('responded with  '. $headers['redirect_url']);
+                    $matches = null;
+                    preg_match('/Location\s*:\s*(https?:\/\/[^\s]+)/', $body, $matches);
+                    if($matches && isset($matches[1])){
+                        $this->model_blog_post->addSyndication($post_id, $matches[1]);
+                    }
+                    //$this->log->write('all_headers  '. print_r($headers, true));
+                    
+                } else{
+
+                    $this->log->write('error got http_code  '. $headers['http_code']);
+
+                }
 
             }
         }
