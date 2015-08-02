@@ -7,25 +7,27 @@ class ControllerAdminCache extends Controller {
         $json = array();
         if($this->session->data['is_owner']){
 
-            $this->cache->delete('author');
             $this->cache->delete('archives');
             $this->cache->delete('article');
+            $this->cache->delete('author');
             $this->cache->delete('categories');
+            $this->cache->delete('comments');
             $this->cache->delete('context');
-            $this->cache->delete('mentions');
-            $this->cache->delete('post');
-            $this->cache->delete('posts');
-            $this->cache->delete('photo');
-            $this->cache->delete('photos');
-            $this->cache->delete('note');
-            $this->cache->delete('notes');
+            $this->cache->delete('followings');
+            $this->cache->delete('interactions');
             $this->cache->delete('likes');
             $this->cache->delete('listens');
-            $this->cache->delete('comments');
+            $this->cache->delete('mentions');
             $this->cache->delete('mydata');
+            $this->cache->delete('note');
+            $this->cache->delete('notes');
+            $this->cache->delete('photo');
+            $this->cache->delete('photos');
+            $this->cache->delete('post');
+            $this->cache->delete('post_id');
+            $this->cache->delete('posts');
+            $this->cache->delete('syndications');
             $this->cache->delete('whitelist');
-            $this->cache->delete('interactions');
-            $this->cache->delete('followings');
 
             $json['success'] = "Full cache cleared!";
             if(isset($this->request->get['reason'])){
