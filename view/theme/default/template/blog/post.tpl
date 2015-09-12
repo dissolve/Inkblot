@@ -108,9 +108,9 @@
     <?php if($post['comment_count'] > 0) { ?>
     <div class="comments">
         <?php foreach($post['comments'] as $comment) { ?>
-            <div class="comment p-comment h-cite">
+            <div class="comment u-comment h-cite">
                 <div class='comment_header'>
-                    <span class="minicard h-card  p-author">
+                    <span class="minicard h-card u-author">
                         <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>" />
                         <a class="p-name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" ><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?></a>
                     </span>
@@ -127,7 +127,7 @@
                       <?php } ?>
                   </span>
                 </div>
-                <div class='comment_body p-content'>
+                <div class='comment_body p-content p-name'>
                     <?php echo $comment['body']?>
                 </div>
             </div>

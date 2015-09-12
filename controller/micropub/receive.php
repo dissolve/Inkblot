@@ -735,7 +735,7 @@ class ControllerMicropubReceive extends Controller {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
                 $body = curl_exec($ch);
-                $this->log->write(' -------------' . print_r($body, true) . '-------------------' );
+                //$this->log->write(' -------------' . print_r($body, true) . '-------------------' );
                 $headers = curl_getinfo($ch);
 
                 if($headers['http_code'] == 201){
