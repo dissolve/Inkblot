@@ -55,7 +55,7 @@
                   <div class="col-sm-10">
                     <select name="syndicate-to[]" id="input-syndicateto" multiple="multiple">
                         <?php foreach($syn_arr as $syndication_target) { ?>
-                        <option value="<?php echo $syndication_target?>"><?php echo $syndication_target?></option>
+                        <option value="<?php echo $syndication_target?>" <?php echo (isset($post['syndicate-to']) && $syndication_target == $post['syndicate-to'] ? ' selected ':'')?>><?php echo $syndication_target?></option>
                         <?php } ?>
                     </select>
                   </div>
