@@ -527,7 +527,7 @@ class ControllerMicropubClient extends Controller {
         if(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'article'){
             $this->response->redirect($this->url->link('micropub/client/article'));
         } elseif(isset($this->request->post['postly-live'])){
-            $this->response->redirect($this->url->link('micropub/client/live'),$syn_to_hack . 'category='.$post_data_array['category'] );
+            $this->response->redirect($this->url->link('micropub/client/live',$syn_to_hack . 'category='.$post_data_array['category'] );
         } else {
             $this->response->redirect($this->url->link('micropub/client'));
         }
