@@ -125,6 +125,62 @@ class ControllerMicropubClient extends Controller {
 		}
 	}
 
+	public function live() {
+
+		$this->document->setTitle('Post A Note');
+		$this->document->setIcon('/image/static/note.jpg');
+        $this->document->addMeta("mobile-web-app-capable","yes");
+		$data['title'] = 'Post A Note';
+
+		$data['header'] = $this->load->controller('common/header/clean');
+		$data['footer'] = $this->load->controller('common/footer/clean');
+		$data['login'] = $this->url->link('auth/login');
+
+        if($this->session->data['is_owner']){
+            $data['is_owner'] = true;
+        }
+
+		$this->document->setDescription($this->config->get('config_meta_description'));
+
+		if(isset($this->session->data['user_site'])){
+		    $user = $this->session->data['user_site'];
+		    $data['user_name'] = $user;
+
+            $micropub_endpoint = $this->session->data['micropub_'.$user];
+            if(!$micropub_endpoint){
+                $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($user);
+                $this->session->data['micropub_'.$user] = $micropub_endpoint;
+            }
+		    if($micropub_endpoint){
+                $data['micropubEndpoint'] = $micropub_endpoint;
+                $data['action'] = $this->url->link('micropub/client/send', '', '');
+		    }
+            $data['syn_arr'] = $this->get_syndication_array();
+		}
+
+        $data['post'] = array();
+
+		if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
+		    $this->load->model('blog/post');
+		    $data['post'] = $this->model_blog_post->getPost($this->request->get['id']);
+		}
+
+		if(isset($this->request->get['category'])){
+		   $data['post']['category'] = $this->request->get['category'];
+		}
+		if(isset($this->request->get['syndicate-to'])){
+		   $data['post']['syndicate-to'] = $this->request->get['syndicate-to'];
+		}
+
+		$data['token'] = isset($this->session->data['token']);
+
+
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/micropub/live.tpl')) {
+			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/micropub/live.tpl', $data));
+		} else {
+			$this->response->setOutput($this->load->view('default/template/micropub/live.tpl', $data));
+		}
+	}
 	public function note() {
 
 		$this->document->setTitle('Post A Note');
@@ -470,6 +526,8 @@ class ControllerMicropubClient extends Controller {
         }
         if(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'article'){
             $this->response->redirect($this->url->link('micropub/client/article'));
+        } elseif(isset($this->request->post['postly-live'])){
+            $this->response->redirect($this->url->link('micropub/client/live'),'',$syn_to_hadk . 'category='.$post_data_array['category'] );
         } else {
             $this->response->redirect($this->url->link('micropub/client'));
         }

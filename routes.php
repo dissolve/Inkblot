@@ -18,6 +18,7 @@ $routes['logout']             = 'auth/logout';
 $routes['contact']            = 'contacts/view';
 $routes['micropub-send']      = 'micropub/client/send';
 $routes['new']                = 'micropub/client';
+$routes['live']                = 'micropub/client/live';
 $routes['edit']               = 'micropub/client/editPost';
 $routes['delete']             = 'micropub/client/deletePost';
 
