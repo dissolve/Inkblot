@@ -564,7 +564,7 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
         }
 
-        $this->syndicate_by_mp($this->request->post, $post['permalink'], $post_id);
+        $this->syndicate_by_mp($this->request->post, $post['shortlink'], $post_id);
 
         $this->load->model('webmention/send_queue');
         if(defined('QUEUED_SEND')){
