@@ -3,7 +3,7 @@
 define('VERSION', '0.1');
 
 // Configuration
-require_once('config/blog.php');
+require_once(__DIR__ . '/config/blog.php');
 
 // Startup
 require_once(DIR_SYSTEM . 'startup.php');
