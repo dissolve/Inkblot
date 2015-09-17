@@ -1,5 +1,15 @@
 <?php echo $header; ?>
  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+ <script src="/view/javascript/jquery-2.1.1.min.js"></script>
+ <script src="/libraries/cassis/cassis.js"></script>
+<script>
+    $(function(){ 
+        $('#input-body').keyup(function(){
+            $('#input-body-ct').html(140 - count(tw_text_proxy($('#input-body').val())));
+        });
+
+    });
+</script>
 
           <article id="" class="article">
 
@@ -45,6 +55,7 @@
                   <label class="col-sm-2 control-label" for="input-body">Body</label>
                   <div class="col-sm-10">
                     <textarea name="content" placeholder="Body of Post" id="input-body" class="form-control"><?php echo isset($post['category']) ? '#'.$post['category']. ' '  : ''; ?></textarea>
+                    <span id="input-body-ct"></span>
                   </div>
                 </div>
 
