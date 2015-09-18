@@ -44,7 +44,7 @@ class ControllerCommonHome extends Controller {
 			$like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
 
             $extra_data_array = array(
-			    'body_html' => html_entity_decode(isset($post['excerpt']) ? $post['excerpt'] : $post['body']),
+                'body_html' => preg_replace('/\@([a-zA-Z0-9_]{1,15})/', '<a href="https://twitter.com/$1">@$1</a>', html_entity_decode(isset($post['excerpt']) ? $post['excerpt'] : $post['body'])),
 			    'author' => $author,
                 'author_image' => '/image/static/icon_200.jpg',
 			    'categories' => $categories,

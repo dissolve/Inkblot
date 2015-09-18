@@ -6,7 +6,7 @@ class ControllerBlogPost extends Controller {
             parse_str($this->session->data['mp-config'], $mpconfig);
         }
 
-        $this->document->setBodyClass('h-entry');
+        $this->document->setBodyClass('h-event');
 
         $year = $this->request->get['year'];
         $month = $this->request->get['month'];
@@ -43,7 +43,7 @@ class ControllerBlogPost extends Controller {
 
             $data['header'] = $this->load->controller('common/header');
             $data['footer'] = $this->load->controller('common/footer');
-            $data['postbody'] = preg_replace('/\@([a-zA-Z0-9_]{1,15})/', '<a href="https://twitter.com/$1">@$1</a>', $this->load->controller('common/postbody', $post['post_id']));
+            $data['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
 
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/deleted.tpl')) {
                 $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/common/deleted.tpl', $data));
@@ -100,7 +100,17 @@ class ControllerBlogPost extends Controller {
                 }
             }
 
-            $context = $this->model_blog_context->getAllContextForPost($post['post_id']);
+            //TODO
+        $data['name'] = $post['title'];
+        $data['dt-start'] = $post['event_start_timestamp'];
+        $data['dt-end'] = $post['event_end_timestamp'];
+        $data['location'] = $post['location'];
+        $data['place_name'] = $post['place_name'];
+        $data['organizer'] = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
+        $data['description'] = $post['body_html'];
+        //      p-attendee
+        //      p-x-responses
+
 
             $data['post'] = array_merge($post, array(
                 'author' => $author,
@@ -156,20 +166,20 @@ class ControllerBlogPost extends Controller {
             $this->document->addMeta('twitter:description', $description);
             $this->document->addMeta('twitter:image', '/image/static/icon_200.jpg');
 
-            $this->document->addMeta('og:type', 'article');
+            //TODO check this
+            $this->document->addMeta('og:type', 'event');
             $this->document->addMeta('og:title', $short_title);
             $this->document->addMeta('og:description', $description);
             $this->document->addMeta('og:image', '/image/static/icon_200.jpg');
 
             $data['header'] = $this->load->controller('common/header');
             $data['footer'] = $this->load->controller('common/footer');
-            //$data['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
-            $data['postbody'] = preg_replace('/\@([a-zA-Z0-9_]{1,15})/', '<a href="https://twitter.com/$1">@$1</a>', $this->load->controller('common/postbody', $post['post_id']));
+            $data['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
 
-            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/post.tpl')) {
-                $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/post.tpl', $data));
+            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/event.tpl')) {
+                $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/event.tpl', $data));
             } else {
-                $this->response->setOutput($this->load->view('default/template/blog/post.tpl', $data));
+                $this->response->setOutput($this->load->view('default/template/blog/event.tpl', $data));
             }
         } // end else not deleted
 	}
@@ -201,7 +211,7 @@ class ControllerBlogPost extends Controller {
 
 
             $extra_data_array = array(
-                'body_html' => preg_replace('/\@([a-zA-Z0-9_]{1,15})/', '<a href="https://twitter.com/$1">@$1</a>', html_entity_decode($post['body'])),
+                'body_html' => html_entity_decode($post['body']),
                 'author' => $author,
                 'author_image' => '/image/static/icon_128.jpg',
                 'categories' => $categories,
