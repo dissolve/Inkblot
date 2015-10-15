@@ -1,7 +1,17 @@
 <?php echo $header; ?>
 <?php date_default_timezone_set(LOCALTIMEZONE); ?> 
-<div class="h-feed">
-<h1 class="p-name"><?php echo $title ?></h1>
+
+<h1>
+        <span class="p-author h-card">
+ <a class="u-url" href="<?php echo $author['link']?>" title="<?php echo $author['display_name']?>">
+<img alt='Author Image' src='<?php echo $author['image']?>' class='u-photo photo' height='40' width='40' title="<?php echo $author['display_name']?>"/>
+</a>
+<span class="p-name" style="display:none;"><?php echo $author['display_name']?></span>
+</span>
+<span class="p-name"><?php echo $title ?></span>
+</h1>
+
+
 <?php foreach($posts as $post) { ?>
 <article id="<?php echo $post['post_type']?>-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?> type-<?php echo $post['post_type']?> h-entry <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
   <header class="entry-header">
@@ -146,5 +156,4 @@
   </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
 
 <?php } //end foreach posts ?>
-</div>
 <?php echo $footer; ?>

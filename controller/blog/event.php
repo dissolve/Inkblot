@@ -56,7 +56,11 @@ class ControllerBlogPost extends Controller {
             if(intval($post['deleted']) == 1) {
                 $data['deleted'] = true;
             }
-            $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
+            $author = array(
+                'link' => $this->url->link(''),
+                'display_name' => AUTHOR_NAME,
+                'image' => '/image/static/icon_128.jpg'
+            );
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
             $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
             $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
@@ -205,7 +209,11 @@ class ControllerBlogPost extends Controller {
 		
 		foreach ($this->model_blog_post->getRecentPostsByType($post_type) as $post) {
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
-            $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
+            $author = array(
+                'link' => $this->url->link(''),
+                'display_name' => AUTHOR_NAME,
+                'image' => '/image/static/icon_128.jpg'
+            );
 	        $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
 	        $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
 

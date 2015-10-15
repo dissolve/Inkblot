@@ -191,11 +191,20 @@ class ControllerBlogPost extends Controller {
 		$this->load->model('blog/interaction');
 		$this->load->model('blog/category');
 
+        $data['author'] = array(
+            'link' => $this->url->link(''),
+            'display_name' => AUTHOR_NAME,
+            'image' => '/image/static/icon_128.jpg'
+        );
 		$data['posts'] = array();
 		
 		foreach ($this->model_blog_post->getRecentPostsByType($post_type) as $post) {
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
-            $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
+            $author = array(
+                'link' => $this->url->link(''),
+                'display_name' => AUTHOR_NAME,
+                'image' => '/image/static/icon_128.jpg'
+            );
 	        $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
 	        $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
 

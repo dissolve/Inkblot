@@ -3,6 +3,8 @@ $routes = array();
 $advanced_routes = array();
 
 $routes['']                   = 'common/home';
+$routes['feed']               = 'blog/feed';
+$routes['feed/full']          = 'blog/feed/firehose';
 $routes['sitemap']            = 'information/sitemap';
 
 $routes['clearcache']         = 'admin/cache';
