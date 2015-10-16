@@ -5,7 +5,7 @@ class ModelBlogPost extends Model {
     //TODO: add a boolean flag to for ASC, so change the sort order
     //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full posts
 
-    public function num_to_sxg($n)
+    public function numToSxg($n)
     {
          $s = "";
           $m = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ_abcdefghijkmnopqrstuvwxyz";
@@ -20,7 +20,7 @@ class ModelBlogPost extends Model {
           return $s;
     }
 
-    public function sxg_to_num($s)
+    public function sxgToNum($s)
     {
          $n = 0;
           $j = strlen($s);
@@ -217,7 +217,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = " . (int)$post_id);
             $post = $query->row;
             $syndications = $this->getSyndications($post['post_id']);
-            $shortlink = $this->short_url->link('common/shortener', 'eid=' . $this->num_to_sxg($post['post_id']), '');
+            $shortlink = $this->short_url->link('common/shortener', 'eid=' . $this->numToSxg($post['post_id']), '');
             //$citation = '(' . trim(str_replace(array('http://','https://'),array('',''), HTTP_SHORT), '/'). ' '. trim(str_replace(array(HTTP_SHORT,HTTPS_SHORT),array('',''), $shortlink),'/')  .')';
             $post = array_merge($post, array(
                 'syndications' => $syndications,

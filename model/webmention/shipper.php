@@ -1,9 +1,7 @@
 <?php
-
-require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
-
 class ModelWebmentionShipper extends Model {
 
+    require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
 
     private function getWebmentionURL($url)
     {

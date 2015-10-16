@@ -108,7 +108,7 @@ class ControllerWebmentionQueue extends Controller {
             $source_url = trim($post['replyto']); //todo want to support multiples
 
             $post_id = $post['post_id'];
-            $context_id = $this->get_context_id($source_url);
+            $context_id = $this->getContextId($source_url);
 
             if ($context_id) {
                 $this->db->query("INSERT INTO " . DATABASE . ".post_context SET 
@@ -124,7 +124,7 @@ class ControllerWebmentionQueue extends Controller {
         $this->cache->delete('context');
     }
 
-    private function get_context_id($source_url)
+    private function getContextId($source_url)
     {
 
         //todo check if $source_url is a syndicated copy of my own posts
@@ -257,7 +257,7 @@ class ControllerWebmentionQueue extends Controller {
                 foreach ($item['properties']['in-reply-to'] as $citation) {
                     if (isset($citation['properties'])) {
                         foreach ($citation['properties']['url'] as $reply_to_url) {
-                            $ctx_id = $this->get_context_id($reply_to_url);
+                            $ctx_id = $this->getContextId($reply_to_url);
                             if ($ctx_id) {
                                 $this->db->query("INSERT INTO " . DATABASE . ".context_to_context SET 
                                 context_id = " . (int)$context_id . ",
@@ -268,7 +268,7 @@ class ControllerWebmentionQueue extends Controller {
                     } else {
                         $reply_to_url = $citation;
 
-                        $ctx_id = $this->get_context_id($reply_to_url);
+                        $ctx_id = $this->getContextId($reply_to_url);
                         if ($ctx_id) {
                             $this->db->query("INSERT INTO " . DATABASE . ".context_to_context SET 
                             context_id = " . (int)$context_id . ",

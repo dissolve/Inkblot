@@ -1,10 +1,10 @@
 <?php
-require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
-//require_once DIR_BASE.'libraries/cassis/cassis-loader.php';
-//require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/functions.php';
-//require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/Shim/Twitter.php';
-
 class ModelBlogCategory extends Model {
+    require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
+    //require_once DIR_BASE.'libraries/cassis/cassis-loader.php';
+    //require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/functions.php';
+    //require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/Shim/Twitter.php';
+
     public function getCategories($min = 1)
     {
         $data = $this->cache->get('categories.all.' . $min);
@@ -42,7 +42,14 @@ class ModelBlogCategory extends Model {
     {
         $data = $this->cache->get('categories.post' . $post_id);
         if (!$data) {
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".categories JOIN " . DATABASE . ".categories_posts USING(category_id) WHERE post_id = '" . (int)$post_id . "' AND NOT category_id = 0 ORDER BY name ASC");
+            $query = $this->db->query(
+                "SELECT * " .
+                " FROM " . DATABASE . ".categories " .
+                " JOIN " . DATABASE . ".categories_posts USING(category_id) " .
+                " WHERE post_id = '" . (int)$post_id . "' " .
+                " AND NOT category_id = 0 " .
+                " ORDER BY name ASC"
+            );
             $data = $query->rows;
 
             $data_array = array();
@@ -116,19 +123,27 @@ class ModelBlogCategory extends Model {
 
         if ($cid == null) {
             //todo add twitter handle checking too
-            if ($this->is_url($category_name)) {
+            if ($this->isUrl($category_name)) {
                 $tag_obj = $this->getTagObj($category_name);
-                $this->db->query("INSERT INTO " . DATABASE . ".categories SET name='" . $this->db->escape($category_name) . "', person_name='" . $tag_obj['name'] . "', url='" . $tag_obj['url'] . "'");
+                $this->db->query(
+                    "INSERT INTO " . DATABASE . ".categories " .
+                    " SET name='" . $this->db->escape($category_name) . "', " .
+                    " person_name='" . $tag_obj['name'] . "', " .
+                    " url='" . $tag_obj['url'] . "'"
+                );
                 $cid = $this->db->getLastId();
             } else {
-                $this->db->query("INSERT INTO " . DATABASE . ".categories SET name='" . $this->db->escape($category_name) . "'");
+                $this->db->query(
+                    "INSERT INTO " . DATABASE . ".categories " .
+                    " SET name='" . $this->db->escape($category_name) . "'"
+                );
                 $cid = $this->db->getLastId();
             }
         }
         return $cid;
     }
 
-    private function is_url($potential_string)
+    private function isUrl($potential_string)
     {
         $potentional_string = strtolower($potential_string);
         if (preg_match('/https?:\/\/.+\..+/', $potential_string)) {

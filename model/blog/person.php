@@ -3,8 +3,8 @@ class ModelBlogPerson extends Model {
 
 
     /**
- * storePerson
-     *  @arg data array the array of data describing a person assumed to contain
+     *  Save a person or recall an existing one
+     *  @arg Data array the array of data describing a person assumed to contain
      *    name -the person's name
      *    url - the url of the person
      *    image - url of the image of the person to display

@@ -3,7 +3,12 @@ class ModelWebmentionVouch extends Model {
     public function recordReferer($referer)
     {
 
-        $query = $this->db->query("SELECT * FROM  " . DATABASE . ".referer_receive_queue WHERE url='" . $this->db->escape($referer) . "' LIMIT 1");
+        $query = $this->db->query(
+            "SELECT * " .
+            " FROM  " . DATABASE . ".referer_receive_queue " .
+            " WHERE url='" . $this->db->escape($referer) . "' " .
+            " LIMIT 1"
+        );
         if (!$query->num_rows == 0) {
             //start out with some basic tests to make sure we have something useful
             if (!isset($referer)) {
@@ -27,7 +32,12 @@ class ModelWebmentionVouch extends Model {
             }
 
             //make sure we don't already have this vouch
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".vouches WHERE vouch_url = '" . $this->db->escape($referer) . "' OR vouch_url_alt = '" . $this->db->escape($referer) . "'");
+            $query = $this->db->query(
+                "SELECT * " .
+                " FROM " . DATABASE . ".vouches " .
+                " WHERE vouch_url = '" . $this->db->escape($referer) . "' " .
+                " OR vouch_url_alt = '" . $this->db->escape($referer) . "'"
+            );
             if (!empty($query->rows)) {
                 return;
             }
@@ -43,7 +53,9 @@ class ModelWebmentionVouch extends Model {
 
             for ($i = count($domain_parts); $i >= 2; $i--) {
                     $search_val = implode('.', array_slice($domain_parts, -$i));
-                    $query = $this->db->query("SELECT * FROM " . DATABASE . ".untrusted_vouchers WHERE domain = '" . $this->db->escape($search_val) . "'");
+                    $query = $this->db->query("SELECT * " .
+                        " FROM " . DATABASE . ".untrusted_vouchers " .
+                        " WHERE domain = '" . $this->db->escape($search_val) . "'");
                 if (!empty($query->rows)) {
                     return;
                 }
@@ -58,13 +70,16 @@ class ModelWebmentionVouch extends Model {
     // this will loop through all entries in the queue and validate that they have valid links back to my site
     public function processReferers()
     {
-        $query = $this->db->query("SELECT queue_id FROM " . DATABASE . ".referer_receive_queue rrq JOIN " . DATABASE . ".referrer_ignore ri on rrq.url LIKE ri.url_match ;");
+        $query = $this->db->query("SELECT queue_id " .
+            " FROM " . DATABASE . ".referer_receive_queue rrq JOIN " . DATABASE . ".referrer_ignore ri on rrq.url LIKE ri.url_match ;");
 
         foreach ($query->rows as $queue_entry) {
             $this->db->query("DELETE FROM " . DATABASE . ".referer_receive_queue where queue_id = " . (int)$queue_entry['queue_id']);
         }
 
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".referer_receive_queue limit 1;");
+        $query = $this->db->query("SELECT * " .
+            " FROM " . DATABASE . ".referer_receive_queue " .
+            " LIMIT 1;");
 
         $entry = $query->row;
 
@@ -148,7 +163,11 @@ class ModelWebmentionVouch extends Model {
                 }
 
                 if (!$already_filled) {
-                    $this->db->query(($already_existing ? "UPDATE " : "INSERT INTO ") . DATABASE . ".vouches SET  vouch_url" . ($fill_alt ? "_alt" : "") . " = '" . $this->db->escape($referer) . "' " . (!$already_existing ? ", " : " WHERE ") . " domain='" . $this->db->escape($domain) . "'");
+                    $this->db->query(
+                        ($already_existing ? "UPDATE " : "INSERT INTO ") . DATABASE . ".vouches " .
+                        " SET  vouch_url" . ($fill_alt ? "_alt" : "") . " = '" . $this->db->escape($referer) . "' " .
+                        (!$already_existing ? ", " : " WHERE ") . " domain='" . $this->db->escape($domain) . "'"
+                    );
                 }
 
             }
@@ -156,7 +175,8 @@ class ModelWebmentionVouch extends Model {
             $this->db->query("DELETE FROM " . DATABASE . ".referer_receive_queue where queue_id = " . (int)$entry['queue_id']);
 
             //get the next queued item
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".referer_receive_queue limit 1");
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".referer_receive_queue " .
+                " LIMIT 1");
             $entry = $query->row;
         }
     }
