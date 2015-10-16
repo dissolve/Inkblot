@@ -3,7 +3,8 @@ class ModelBlogPost extends Model {
 
 
     //TODO: add a boolean flag to for ASC, so change the sort order
-    //TODO: limit and skip should probably be moved to the controller since these functions just fetch the IDs, not the full posts
+    //TODO: limit and skip should probably be moved to the controller
+    //       since these functions just fetch the IDs, not the full posts
 
     public function numToSxg($n)
     {
@@ -139,38 +140,77 @@ class ModelBlogPost extends Model {
 
 
 
-        $sql = "INSERT INTO " . DATABASE . ".posts SET `post_type`='" . $this->db->escape($type) . "',
-            `timestamp` = " . $timestamp . ",
-            `year` = " . (int)$year . ",
-            `month` = " . (int)$month . ",
-            `day` = " . (int)$day . ",
-            `draft` = " . (int)$draft . ",
-            `deleted` = 0,
+        $sql = "INSERT INTO " . DATABASE . ".posts " .
+            " SET `post_type`='" . $this->db->escape($type) . "', " .
+            " `timestamp` = " . $timestamp . ", " .
+            " `year` = " . (int)$year . ", " .
+            " `month` = " . (int)$month . ", " .
+            " `day` = " . (int)$day . ", " .
+            " `draft` = " . (int)$draft . ", " .
+            " `deleted` = 0, " .
+            " `body` = '" . (isset($data['body']) && !empty($data['body']) ? $this->db->escape($data['body']) : "") . "', " .
+            " `slug` = '" . (isset($data['slug']) && !empty($data['slug']) ? $this->db->escape($data['slug']) : "") . "', " .
 
-            `body` = '" . (isset($data['body']) && !empty($data['body']) ? $this->db->escape($data['body']) : "") . "',
-            `slug` = '" . (isset($data['slug']) && !empty($data['slug']) ? $this->db->escape($data['slug']) : "") . "',
-            `syndication_extra` = '" . (isset($data['syndication_extra']) && !empty($data['syndication_extra']) ? $this->db->escape($data['syndication_extra']) : "") . "',
+            " `syndication_extra` = '" . (
+                isset($data['syndication_extra']) && !empty($data['syndication_extra'])
+                ? $this->db->escape($data['syndication_extra'])
+                : "") .
+            "', " .
 
-            `daycount` = " . (int)$newcount .
+            " `daycount` = " . (int)$newcount .
 
-            (isset($data['artist']) && !empty($data['artist']) ? ", artist='" . $this->db->escape($data['artist']) . "'" : "") . //for "listens"
-            (isset($data['bookmark_like_url']) && !empty($data['bookmark_like_url']) ? ", bookmark_like_url='" . $this->db->escape($data['bookmark_like_url']) . "'" : "") .
-            (isset($data['tag_category']) && !empty($data['tag_category']) ? ", tag_category='" . $this->db->escape($data['tag_category']) . "'" : "") .
-            (isset($data['tag_person']) && !empty($data['tag_person']) ? ", tag_person='" . $this->db->escape($data['tag_person']) . "'" : "") .
-            (isset($data['tag_url']) && !empty($data['tag_url']) ? ", tag_url='" . $this->db->escape($data['tag_url']) . "'" : "") .
-            (isset($data['tag_shape']) && !empty($data['tag_shape']) ? ", tag_shape='" . $this->db->escape($data['tag_shape']) . "'" : "") .
-            (isset($data['tag_coords']) && !empty($data['tag_coords']) ? ", tag_coords='" . $this->db->escape($data['tag_coords']) . "'" : "") .
+            (isset($data['artist']) && !empty($data['artist'])
+                ? ", artist='" . $this->db->escape($data['artist']) . "'"
+                : "") . //for "listens"
+            (isset($data['bookmark_like_url']) && !empty($data['bookmark_like_url'])
+            ? ", bookmark_like_url='" . $this->db->escape($data['bookmark_like_url']) . "'"
+                : "") .
+            (isset($data['tag_category']) && !empty($data['tag_category'])
+                ? ", tag_category='" . $this->db->escape($data['tag_category']) . "'"
+                : "") .
+            (isset($data['tag_person']) && !empty($data['tag_person'])
+                ? ", tag_person='" . $this->db->escape($data['tag_person']) . "'"
+                : "") .
+            (isset($data['tag_url']) && !empty($data['tag_url'])
+                ? ", tag_url='" . $this->db->escape($data['tag_url']) . "'"
+                : "") .
+            (isset($data['tag_shape']) && !empty($data['tag_shape'])
+                ? ", tag_shape='" . $this->db->escape($data['tag_shape']) . "'"
+                : "") .
+            (isset($data['tag_coords']) && !empty($data['tag_coords'])
+                ? ", tag_coords='" . $this->db->escape($data['tag_coords']) . "'"
+                : "") .
 
-            (isset($data['name']) && !empty($data['name']) ? ", title='" . $this->db->escape($data['name']) . "'" : "") .
-            (isset($data['audio_file']) && !empty($data['audio_file']) ? ", audio_file='" . $this->db->escape($data['audio_file']) . "'" : "") .
-            (isset($data['image_file']) && !empty($data['image_file']) ? ", image_file='" . $this->db->escape($data['image_file']) . "'" : "") .
-            (isset($data['video_file']) && !empty($data['video_file']) ? ", video_file='" . $this->db->escape($data['video_file']) . "'" : "") .
-            (isset($data['rsvp']) && !empty($data['rsvp']) ? ", rsvp='" . $this->db->escape($data['rsvp']) . "'" : "") .
-            (isset($data['location']) && !empty($data['location']) ? ", location='" . $this->db->escape($data['location']) . "'" : "") .
-            (isset($data['place_name']) && !empty($data['place_name']) ? ", place_name='" . $this->db->escape($data['place_name']) . "'" : "") .
-            (isset($data['replyto']) && !empty($data['replyto']) ? ", replyto='" . $this->db->escape($data['replyto']) . "'" : "") .
-            (isset($data['created_by']) && !empty($data['created_by']) ? ", created_by='" . $this->db->escape($data['created_by']) . "'" : "") .
-            (isset($data['following_id']) && !empty($data['following_id']) ? ", following_id='" . (int)$data['following_id'] . "'" : "");
+            (isset($data['name']) && !empty($data['name'])
+                ? ", title='" . $this->db->escape($data['name']) . "'"
+                : "") .
+            (isset($data['audio_file']) && !empty($data['audio_file'])
+                ? ", audio_file='" . $this->db->escape($data['audio_file']) . "'"
+                : "") .
+            (isset($data['image_file']) && !empty($data['image_file'])
+                ? ", image_file='" . $this->db->escape($data['image_file']) . "'"
+                : "") .
+            (isset($data['video_file']) && !empty($data['video_file'])
+                ? ", video_file='" . $this->db->escape($data['video_file']) . "'"
+                : "") .
+            (isset($data['rsvp']) && !empty($data['rsvp'])
+                ? ", rsvp='" . $this->db->escape($data['rsvp']) . "'"
+                : "") .
+            (isset($data['location']) && !empty($data['location'])
+                ? ", location='" . $this->db->escape($data['location']) . "'"
+                : "") .
+            (isset($data['place_name']) && !empty($data['place_name'])
+                ? ", place_name='" . $this->db->escape($data['place_name']) . "'"
+                : "") .
+            (isset($data['replyto']) && !empty($data['replyto'])
+                ? ", replyto='" . $this->db->escape($data['replyto']) . "'"
+                : "") .
+            (isset($data['created_by']) && !empty($data['created_by'])
+                ? ", created_by='" . $this->db->escape($data['created_by']) . "'"
+                : "") .
+            (isset($data['following_id']) && !empty($data['following_id'])
+                ? ", following_id='" . (int)$data['following_id'] . "'"
+                : "");
 
         //$this->log->write($sql);
         $query = $this->db->query($sql);
@@ -182,7 +222,11 @@ class ModelBlogPost extends Model {
             foreach ($categories as $cat) {
                 $this->load->model('blog/category');
                 $category = $this->model_blog_category->getCategoryByName($cat, true);
-                $this->db->query("INSERT INTO " . DATABASE . ".categories_posts SET category_id=" . (int)$category['category_id'] . ", post_id = " . (int)$id);
+                $this->db->query(
+                    "INSERT INTO " . DATABASE . ".categories_posts " .
+                    " SET category_id=" . (int)$category['category_id'] . ", " .
+                    " post_id = " . (int)$id
+                );
             }
         }
 
@@ -191,12 +235,16 @@ class ModelBlogPost extends Model {
 
     public function setSyndicationExtra($post_id, $syn_extra_val)
     {
-        $this->db->query("UPDATE " . DATABASE . ".posts SET syndication_extra='" . $this->db->escape($syn_extra_val) . "' WHERE post_id = " . (int)$post_id);
+        $this->db->query("UPDATE " . DATABASE . ".posts " .
+            " SET syndication_extra='" . $this->db->escape($syn_extra_val) . "' " .
+            " WHERE post_id = " . (int)$post_id);
     }
 
     public function deletePost($post_id)
     {
-        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=1 WHERE post_id = " . (int)$post_id;
+        $sql = "UPDATE " . DATABASE . ".posts " .
+            " SET `deleted`=1 " .
+            " WHERE post_id = " . (int)$post_id;
         $this->db->query($sql);
         $this->cache->delete('post.' . $post_id);
         $this->cache->delete('posts');
@@ -204,7 +252,9 @@ class ModelBlogPost extends Model {
 
     public function undeletePost($post_id)
     {
-        $sql = "UPDATE " . DATABASE . ".posts SET `deleted`=0 WHERE post_id = " . (int)$post_id;
+        $sql = "UPDATE " . DATABASE . ".posts " .
+            " SET `deleted`=0 " .
+            " WHERE post_id = " . (int)$post_id;
         $this->db->query($sql);
         $this->cache->delete('post.' . $post_id);
         $this->cache->delete('posts');
@@ -214,11 +264,20 @@ class ModelBlogPost extends Model {
     {
         $post = $this->cache->get('post.' . $post_id);
         if (!$post) {
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE post_id = " . (int)$post_id);
+            $query = $this->db->query(
+                "SELECT * " .
+                " FROM " . DATABASE . ".posts " .
+                " WHERE post_id = " . (int)$post_id
+            );
             $post = $query->row;
             $syndications = $this->getSyndications($post['post_id']);
-            $shortlink = $this->short_url->link('common/shortener', 'eid=' . $this->numToSxg($post['post_id']), '');
-            //$citation = '(' . trim(str_replace(array('http://','https://'),array('',''), HTTP_SHORT), '/'). ' '. trim(str_replace(array(HTTP_SHORT,HTTPS_SHORT),array('',''), $shortlink),'/')  .')';
+            $shortlink = $this->short_url->link(
+                'common/shortener',
+                'eid=' . $this->numToSxg($post['post_id']),
+                ''
+            );
+            //$citation = '(' . trim(str_replace(array('http://','https://'),array('',''), HTTP_SHORT), '/').
+            //' '. trim(str_replace(array(HTTP_SHORT,HTTPS_SHORT),array('',''), $shortlink),'/')  .')';
             $post = array_merge($post, array(
                 'syndications' => $syndications,
                 'permalink' => $this->url->link(
@@ -266,10 +325,14 @@ class ModelBlogPost extends Model {
     {
         $post_id = $this->cache->get('post_id.' . $year . '.' . $month . '.' . $day . '.' . $daycount);
         if (!$post_id) {
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE year = '" . (int)$year . "' AND
-                                                                                  month = '" . (int)$month . "' AND
-                                                                                  day = '" . (int)$day . "' AND
-                                                                                  daycount = '" . (int)$daycount . "'");
+            $query = $this->db->query(
+                "SELECT post_id " .
+                " FROM " . DATABASE . ".posts " .
+                " WHERE year = '" . (int)$year . "' " .
+                " AND month = '" . (int)$month . "' " .
+                " AND day = '" . (int)$day . "' " .
+                " AND daycount = '" . (int)$daycount . "'"
+            );
             $post_id = $query->row['post_id'];
             $this->cache->set('post_id.' . $year . '.' . $month . '.' . $day . '.' . $daycount, $post_id);
         }
@@ -281,7 +344,14 @@ class ModelBlogPost extends Model {
     {
         $post_id_array = $this->cache->get('posts.recent.' . $skip . '.' . $limit);
         if (!$post_id_array) {
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT " . (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query(
+                "SELECT post_id " .
+                " FROM " . DATABASE . ".posts " .
+                " WHERE deleted=0 " .
+                " AND draft=0 " .
+                " ORDER BY timestamp DESC " .
+                " LIMIT " . (int)$skip . ", " . (int)$limit
+            );
             $post_id_array = $query->rows;
             $this->cache->set('posts.recent.' . $skip . '.' . $limit, $post_id_array);
         }
@@ -298,7 +368,14 @@ class ModelBlogPost extends Model {
     {
         $post_id_array = $this->cache->get('posts.drafts.' . $skip . '.' . $limit);
         if (!$post_id_array) {
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE deleted=0 AND draft=1 ORDER BY timestamp DESC LIMIT " . (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query(
+                "SELECT post_id " .
+                " FROM " . DATABASE . ".posts " .
+                " WHERE deleted=0 " .
+                " AND draft=1 " .
+                " ORDER BY timestamp DESC " .
+                " LIMIT " . (int)$skip . ", " . (int)$limit
+            );
             $post_id_array = $query->rows;
             $this->cache->set('posts.drafts.' . $skip . '.' . $limit, $post_id_array);
         }
@@ -317,7 +394,13 @@ class ModelBlogPost extends Model {
             $post_id_array = $this->cache->get('posts.type.owner.' . implode('.', $type_list) . '.' . $skip . '.' . $limit);
             if (!$post_id_array) {
                 // todo need to map this->db->escape
-                $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type IN ('" . implode("','", $type_list) . "') AND draft=0 ORDER BY timestamp DESC LIMIT " . (int)$skip . ", " . (int)$limit);
+                $query = $this->db->query(
+                    "SELECT post_id FROM " . DATABASE . ".posts " .
+                    " WHERE post_type IN ('" . implode("','", $type_list) . "') " .
+                    " AND draft=0 " .
+                    " ORDER BY timestamp DESC " .
+                    " LIMIT " . (int)$skip . ", " . (int)$limit
+                );
                 $post_id_array = $query->rows;
                 $this->cache->set('posts.type.owner.' . implode('.', $type_list) . '.' . $skip . '.' . $limit, $post_id_array);
             }
@@ -325,7 +408,14 @@ class ModelBlogPost extends Model {
             $post_id_array = $this->cache->get('posts.type.' . implode('.', $type_list) . '.' . $skip . '.' . $limit);
             if (!$post_id_array) {
                 // todo need to map this->db->escape
-                $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type IN ('" . implode("','", $type_list) . "') AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT " . (int)$skip . ", " . (int)$limit);
+                $query = $this->db->query(
+                    "SELECT post_id FROM " . DATABASE . ".posts " .
+                    " WHERE post_type IN ('" . implode("','", $type_list) . "') " .
+                    " AND deleted=0 " .
+                    " AND draft=0 " .
+                    " ORDER BY timestamp DESC " .
+                    " LIMIT " . (int)$skip . ", " . (int)$limit
+                );
                 $post_id_array = $query->rows;
                 $this->cache->set('posts.type.' . implode('.', $type_list) . '.' . $skip . '.' . $limit, $post_id_array);
             }
@@ -343,13 +433,20 @@ class ModelBlogPost extends Model {
     {
         $this->load->model('blog/category');
         $category = $this->model_blog_category->getCategoryByName($category_name, true);
-        $this->db->query("INSERT INTO " . DATABASE . ".categories_posts SET category_id=" . (int)$category['category_id'] . ", post_id = " . (int)$post_id);
+        $this->db->query(
+            "INSERT INTO " . DATABASE . ".categories_posts " .
+            " SET category_id=" . (int)$category['category_id'] . ", " .
+            " post_id = " . (int)$post_id
+        );
     }
 
 
     public function removeFromAllCategories($post_id)
     {
-        $this->db->query("DELETE FROM " . DATABASE . ".categories_posts WHERE post_id = " . (int)$post_id);
+        $this->db->query(
+            "DELETE FROM " . DATABASE . ".categories_posts " .
+            " WHERE post_id = " . (int)$post_id
+        );
         //todo find and remove empty categories
     }
 
@@ -357,7 +454,15 @@ class ModelBlogPost extends Model {
     {
         $post_id_array = $this->cache->get('posts.category.' . $category_id . '.' . $skip . '.' . $limit);
         if (!$post_id_array) {
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts JOIN " . DATABASE . ".categories_posts USING(post_id) WHERE category_id = '" . (int)$category_id . "' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT " . (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query(
+                "SELECT post_id FROM " . DATABASE . ".posts " .
+                " JOIN " . DATABASE . ".categories_posts USING(post_id) " .
+                " WHERE category_id = '" . (int)$category_id . "' " .
+                " AND deleted=0 " .
+                " AND draft=0 " .
+                " ORDER BY timestamp DESC " .
+                " LIMIT " . (int)$skip . ", " . (int)$limit
+            );
             $post_id_array = $query->rows;
             $this->cache->set('posts.category.' . $category_id . '.' . $skip . '.' . $limit, $post_id_array);
         }
@@ -374,7 +479,15 @@ class ModelBlogPost extends Model {
     {
         $post_id_array = $this->cache->get('posts.' . $type . '.' . $skip . '.' . $limit);
         if (!$post_id_array) {
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type = '" . $this->db->escape($type) . "' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT " . (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query(
+                "SELECT post_id " .
+                " FROM " . DATABASE . ".posts " .
+                " WHERE post_type = '" . $this->db->escape($type) . "' " .
+                " AND deleted=0 " .
+                " AND draft=0 " .
+                " ORDER BY timestamp DESC " .
+                " LIMIT " . (int)$skip . ", " . (int)$limit
+            );
             $post_id_array = $query->rows;
             $this->cache->set('posts.' . $type . '.' . $skip . '.' . $limit, $post_id_array);
         }
@@ -391,8 +504,25 @@ class ModelBlogPost extends Model {
     {
         $post_id_array = $this->cache->get('posts.day.' . $year . '.' . $month . '.' . $day);
         if (!$post_id_array) {
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE category_id = '" . (int)$category_id . "' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT " . (int)$skip . ", " . (int)$limit);
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '" . (int)$year . "' AND `month` = '" . (int)$month . "' AND `day` = " . (int)$day . " AND deleted=0 AND draft=0 ORDER BY timestamp DESC");
+            $query = $this->db->query(
+                "SELECT post_id " .
+                " FROM " . DATABASE . ".posts " .
+                " WHERE category_id = '" . (int)$category_id . "' " .
+                " AND deleted=0 " .
+                " AND draft=0 " .
+                " ORDER BY timestamp DESC " .
+                " LIMIT " . (int)$skip . ", " . (int)$limit
+            );
+            $query = $this->db->query(
+                "SELECT post_id " .
+                " FROM " . DATABASE . ".posts " .
+                " WHERE `year` = '" . (int)$year . "' " .
+                " AND `month` = '" . (int)$month . "' " .
+                " AND `day` = " . (int)$day . " " .
+                " AND deleted=0 " .
+                " AND draft=0 " .
+                " ORDER BY timestamp DESC"
+            );
             $post_id_array = $query->rows;
             $this->cache->set('posts.day.' . $year . '.' . $month . '.' . $day, $post_id_array);
         }
@@ -410,7 +540,17 @@ class ModelBlogPost extends Model {
     {
         $data = $this->cache->get($type . '.date.' . $year . '.' . $month . '.' . $skip . '.' . $limit);
         if (!$data) {
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE post_type='" . $this->db->escape($type) . "' AND `year` = '" . (int)$year . "' AND `month` = '" . (int)$month . "' AND deleted=0 AND draft=0 ORDER BY timestamp DESC LIMIT " . (int)$skip . ", " . (int)$limit);
+            $query = $this->db->query(
+                "SELECT post_id " .
+                " FROM " . DATABASE . ".posts " .
+                " WHERE post_type='" . $this->db->escape($type) . "' " .
+                " AND `year` = '" . (int)$year . "' " .
+                " AND `month` = '" . (int)$month . "' " .
+                " AND deleted=0 " .
+                " AND draft=0 " .
+                " ORDER BY timestamp DESC " .
+                " LIMIT " . (int)$skip . ", " . (int)$limit
+            );
             $data = $query->rows;
             $data_array = array();
             foreach ($data as $post) {
@@ -427,7 +567,16 @@ class ModelBlogPost extends Model {
     {
         $post_id_array = $this->cache->get('posts.date.' . $year . '.' . $month . '.' . $skip . '.' . $limit);
         if (!$post_id_array) {
-            $query = $this->db->query("SELECT post_id FROM " . DATABASE . ".posts WHERE `year` = '" . (int)$year . "' AND `month` = '" . (int)$month . "' AND deleted=0 AND draft=0 ORDER BY timestamp DESC " . ($limit ? " LIMIT " . (int)$skip . ", " . (int)$limit : ''));
+            $query = $this->db->query(
+                "SELECT post_id " .
+                " FROM " . DATABASE . ".posts " .
+                " WHERE `year` = '" . (int)$year . "' " .
+                " AND `month` = '" . (int)$month . "' " .
+                " AND deleted=0 " .
+                " AND draft=0 " .
+                " ORDER BY timestamp DESC " .
+                ($limit ? " LIMIT " . (int)$skip . ", " . (int)$limit : '')
+            );
             $post_id_array = $query->rows;
             if (!$limit) {
                 $limit = 'all';
@@ -447,7 +596,12 @@ class ModelBlogPost extends Model {
 
         $data = $this->cache->get('syndications.post.' . $post_id);
         if (!$data) {
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".post_syndication JOIN " . DATABASE . ".syndication_site USING(syndication_site_id) WHERE post_id = " . (int)$post_id);
+            $query = $this->db->query(
+                "SELECT * " .
+                "FROM " . DATABASE . ".post_syndication " .
+                " JOIN " . DATABASE . ".syndication_site USING(syndication_site_id) " .
+                " WHERE post_id = " . (int)$post_id
+            );
 
             $data = $query->rows;
             $this->cache->set('syndications.post.' . $post_id, $data);
@@ -460,7 +614,10 @@ class ModelBlogPost extends Model {
         if (!empty($syndication_url)) {
             $syndication_url = trim($syndication_url);
             //figure out what site this is.
-            $sites_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site ");
+            $sites_query = $this->db->query(
+                "SELECT * " .
+                "FROM " . DATABASE . ".syndication_site "
+            );
             $sites = $sites_query->rows;
 
             $syn_site_id = 0;
@@ -472,7 +629,12 @@ class ModelBlogPost extends Model {
             }
 
             // add site to DB
-            $query = $this->db->query("INSERT INTO " . DATABASE . ".post_syndication SET post_id = " . (int)$post_id . ", syndication_site_id=" . (int)$syn_site_id . ", syndication_url = '" . $this->db->escape($syndication_url) . "'");
+            $query = $this->db->query(
+                "INSERT INTO " . DATABASE . ".post_syndication " .
+                " SET post_id = " . (int)$post_id . ", " .
+                " syndication_site_id=" . (int)$syn_site_id . ", " .
+                " syndication_url = '" . $this->db->escape($syndication_url) . "'"
+            );
 
             $this->cache->delete('post.' . $post_id);
         }

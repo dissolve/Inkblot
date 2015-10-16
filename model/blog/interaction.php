@@ -89,21 +89,38 @@ class ModelBlogInteraction extends Model {
             $this->load->model('blog/person');
             $person_id = $this->model_blog_person->storePerson($comment_data['author']);
 
-            $this->db->query("INSERT INTO " . DATABASE . ".interactions SET source_url = '" . $comment_data['url'] . "'" .
-                    ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name'])) ? ", author_name='" . $comment_data['author']['name'] . "'" : "") .
-                    ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url'])) ? ", author_url='" . $comment_data['author']['url'] . "'" : "") .
-                    ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo'])) ? ", author_image='" . $comment_data['author']['photo'] . "'" : "") .
-                    ", author_person_id ='" . $person_id. "'" .
-                    ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of'])) ? ", tag_of='" . $comment_data['tag-of'] . "'" : "") .
-                    ((isset($comment_data['text'])  && !empty($comment_data['text'])) ? ", body='" . $this->db->escape($comment_data['text']) . "'" : "") .
-                    ((isset($comment_data['name'])  && !empty($comment_data['name'])) ? ", source_name='" . $this->db->escape($comment_data['name']) . "'" : "") .
-                    ((isset($comment_data['published'])  && !empty($comment_data['published'])) ? ", `timestamp`='" . $this->db->escape($comment_data['published']) . "'" : ", `timestamp`=NOW()") .
-                    ", webmention_id='" . $webmention_id . "'" .
-                    ", interaction_type='" . $interaction_type . "'" .
-                            ", post_id = " . (int)$post['post_id'] .
-                    ", parse_timestamp = NOW()" .
-                    ($autoapprove ? ", approved=1" : '' ) .
-            "");
+            $this->db->query(
+                "INSERT INTO " . DATABASE . ".interactions " .
+                " SET source_url = '" . $comment_data['url'] . "'" .
+                ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))
+                    ? ", author_name='" . $comment_data['author']['name'] . "'"
+                    : "") .
+                ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))
+                    ? ", author_url='" . $comment_data['author']['url'] . "'"
+                    : "") .
+                ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))
+                    ? ", author_image='" . $comment_data['author']['photo'] . "'"
+                    : "") .
+                ", author_person_id ='" . $person_id . "'" .
+                ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of']))
+                    ? ", tag_of='" . $comment_data['tag-of'] . "'"
+                    : "") .
+                ((isset($comment_data['text'])  && !empty($comment_data['text']))
+                    ? ", body='" . $this->db->escape($comment_data['text']) . "'"
+                    : "") .
+                ((isset($comment_data['name'])  && !empty($comment_data['name']))
+                    ? ", source_name='" . $this->db->escape($comment_data['name']) . "'"
+                    : "") .
+                ((isset($comment_data['published'])  && !empty($comment_data['published']))
+                    ? ", `timestamp`='" . $this->db->escape($comment_data['published']) . "'"
+                    : ", `timestamp`=NOW()") .
+                ", webmention_id='" . $webmention_id . "'" .
+                ", interaction_type='" . $interaction_type . "'" .
+                ", post_id = " . (int)$post['post_id'] .
+                ", parse_timestamp = NOW()" .
+                ($autoapprove ? ", approved=1" : '' ) .
+                ""
+            );
 
             $interaction_id = $this->db->getLastId();
 
@@ -271,12 +288,11 @@ class ModelBlogInteraction extends Model {
             );
             $data = array();
             $this->load->model('blog/person');
-            foreach($query->rows as $row){
-
+            foreach ($query->rows as $row) {
                 $person = $this->model_blog_person->getPerson($row['author_person_id']);
-                $row['author_name']  = (!empty($person) ? $person['name'] : ''); 
-                $row['author_url']   = (!empty($person) ? $person['url'] : ''); 
-                $row['author_image'] = (!empty($person) ? $person['image'] : ''); 
+                $row['author_name']  = (!empty($person) ? $person['name'] : '');
+                $row['author_url']   = (!empty($person) ? $person['url'] : '');
+                $row['author_image'] = (!empty($person) ? $person['image'] : '');
 
                 $second_level_query = $this->db->query(
                     "SELECT sli.*, " .
@@ -373,9 +389,15 @@ class ModelBlogInteraction extends Model {
             " interaction_type='reply'," .
             " interaction_id=" . (int)$interaction_id . ", " .
             " author_person_id=" . (int)$person_id . ", " .
-            ((isset($data['text']) && !empty($data['text'])) ? " body='" . $this->db->escape($data['text']) . "', " : "") .
-            ((isset($data['name'])  && !empty($data['name'])) ? " source_name='" . $this->db->escape($data['name']) . "', " : "") .
-            ((isset($data['published'])  && !empty($data['published'])) ? " `timestamp`='" . $this->db->escape($data['published']) . "'," : " `timestamp`=NOW(),") .
+            ((isset($data['text']) && !empty($data['text']))
+                ? " body='" . $this->db->escape($data['text']) . "', "
+                : "") .
+            ((isset($data['name'])  && !empty($data['name']))
+                ? " source_name='" . $this->db->escape($data['name']) . "', "
+                : "") .
+            ((isset($data['published'])  && !empty($data['published']))
+                ? " `timestamp`='" . $this->db->escape($data['published']) . "',"
+                : " `timestamp`=NOW(),") .
             " parse_timestamp = NOW()"
         );
 
