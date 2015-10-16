@@ -122,6 +122,8 @@ class ModelBlogInteraction extends Model {
 
             }
 
+            //TODO: add $comment_data['comments'] to 
+
             $this->db->query("UPDATE ". DATABASE.".webmentions SET webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = ". (int)$webmention_id);
             $this->cache->delete('interactions');
 
