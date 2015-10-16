@@ -1245,6 +1245,13 @@ img.comment_author { width:30px; height:30px; }
     text-decoration:underline;
 }
 
+.subcomment {
+    background-color:#eee;
+    padding-left:30px;
+    padding-top:5px;
+    border-top:1px solid #ddd;
+}
+
 #syndications img {height:20px; width:20px !important; border:none !important; margin:none;padding:none;}
 .syndications img {height:20px; width:20px !important; border:none !important; margin:none;padding:none;}
 .admin-controls { text-align:right; font-size:10pt;}

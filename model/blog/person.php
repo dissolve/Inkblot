@@ -55,7 +55,7 @@ class ModelBlogPerson extends Model {
             $person = $query->row;
             $this->cache->set('person.' . $person_id, $person);
         }
-        return $post;
+        return $person;
     }
 
 }

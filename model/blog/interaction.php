@@ -86,10 +86,14 @@ class ModelBlogInteraction extends Model {
             //TODO: move this to some config setting
             $autoapprove = true;
 
+            $this->load->model('blog/person');
+            $person_id = $this->model_blog_person->storePerson($comment_data['author']);
+
             $this->db->query("INSERT INTO " . DATABASE . ".interactions SET source_url = '" . $comment_data['url'] . "'" .
                     ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name'])) ? ", author_name='" . $comment_data['author']['name'] . "'" : "") .
                     ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url'])) ? ", author_url='" . $comment_data['author']['url'] . "'" : "") .
                     ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo'])) ? ", author_image='" . $comment_data['author']['photo'] . "'" : "") .
+                    ", author_person_id ='" . $person_id. "'" .
                     ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of'])) ? ", tag_of='" . $comment_data['tag-of'] . "'" : "") .
                     ((isset($comment_data['text'])  && !empty($comment_data['text'])) ? ", body='" . $this->db->escape($comment_data['text']) . "'" : "") .
                     ((isset($comment_data['name'])  && !empty($comment_data['name'])) ? ", source_name='" . $this->db->escape($comment_data['name']) . "'" : "") .
@@ -151,7 +155,8 @@ class ModelBlogInteraction extends Model {
 
             }
 
-            //grab sub comments
+            //TODO: should remove all sub comments then reimport
+            //store sub comments
             foreach ($comment_data['comments'] as $subcomment) {
                 $this->addSecondLevelInteraction($interaction_id, $subcomment);
             }
@@ -264,7 +269,32 @@ class ModelBlogInteraction extends Model {
                 " ORDER BY timestamp ASC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
-            $data = $query->rows;
+            $data = array();
+            $this->load->model('blog/person');
+            foreach($query->rows as $row){
+
+                $person = $this->model_blog_person->getPerson($row['author_person_id']);
+                $row['author_name']  = (!empty($person) ? $person['name'] : ''); 
+                $row['author_url']   = (!empty($person) ? $person['url'] : ''); 
+                $row['author_image'] = (!empty($person) ? $person['image'] : ''); 
+
+                $second_level_query = $this->db->query(
+                    "SELECT sli.*, " .
+                    " p.name as author_name, " .
+                    " p.url as author_url, " .
+                    " p.image as author_image " .
+                    " FROM " . DATABASE . ".second_level_interactions sli " .
+                    " LEFT JOIN " . DATABASE . ".people p " .
+                    " ON sli.author_person_id  = p.person_id " .
+                    " WHERE interaction_id='" . $row['interaction_id'] . "' " .
+                    " ORDER BY timestamp ASC "
+                );
+
+                $row['comments'] = $second_level_query->rows;
+
+                $data[] = $row;
+            }
+
             $this->cache->set('interactions.' . $type . '.post.' . $post_id . '.' . $skip . '.' . $limit, $data);
         }
         return $data;
@@ -338,9 +368,9 @@ class ModelBlogInteraction extends Model {
         $this->load->model('blog/person');
         $person_id = $this->model_blog_person->storePerson($data['author']);
         $this->db->query(
-            "INSERT INTO " . DATABASE . ".second_levelinteractions " .
-            " SET source_url = '" . $this->db->escape($data['url']) . "' " .
-            " type='reply'," .
+            "INSERT INTO " . DATABASE . ".second_level_interactions " .
+            " SET source_url = '" . $this->db->escape($data['url']) . "', " .
+            " interaction_type='reply'," .
             " interaction_id=" . (int)$interaction_id . ", " .
             " author_person_id=" . (int)$person_id . ", " .
             ((isset($data['text']) && !empty($data['text'])) ? " body='" . $this->db->escape($data['text']) . "', " : "") .

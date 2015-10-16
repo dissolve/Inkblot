@@ -130,6 +130,24 @@
                 <div class='comment_body p-content p-name'>
                     <?php echo $comment['body']?>
                 </div>
+                <?php foreach($comment['comments'] as $subcomment) { ?>
+                    <div class="subcomment u-comment h-cite">
+                    
+                        <div class='comment_header'>
+                            <span class="minicard h-card u-author">
+                                <img class='comment_author' src="<?php echo (isset($subcomment['author_image']) ? $subcomment['author_image']: '/image/person.jpg') ?>" />
+                                <a class="p-name u-url" href="<?php echo (isset($subcomment['author_url']) ? $subcomment['author_url']: $subcomment['source_url'])?>" rel="nofollow" title="<?php echo (isset($subcomment['author_name']) ? $subcomment['author_name']: 'View Author') ?>" ><?php echo (isset($subcomment['author_name']) ? $subcomment['author_name']: 'A Reader') ?></a>
+                            </span>
+
+                            <a href="<?php echo $subcomment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $subcomment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($subcomment['timestamp']))?></time></a>
+                        </div>
+                        <div class='comment_body p-content p-name'>
+                            <?php echo $comment['body']?>
+                        </div>
+                    </div>
+
+                <?php } // end foreach subcomment ?>
+
             </div>
         <?php } ?>
 	</div>
