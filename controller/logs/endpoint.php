@@ -1,42 +1,36 @@
-<?php  
+<?php
 class ControllerLogsEndpoint extends Controller {
-	public function index() {
+    public function index()
+    {
             $headers = apache_request_headers();
-            if(isset($this->request->post['access_token']) || (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) && !empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) || isset($headers['Authorization']) || $this->session->data['is_owner']){
-                $token = $this->request->post['access_token'];
-                if(!$token){
-                    $parts = explode(' ', $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
-                    $token = $parts[1];
-                }
-                if(!$token){
-                    $parts = explode(' ', $headers['Authorization']);
-                    $token = $parts[1];
-                }
+        if (isset($this->request->post['access_token']) || (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) && !empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) || isset($headers['Authorization']) || $this->session->data['is_owner']) {
+            $token = $this->request->post['access_token'];
+            if (!$token) {
+                $parts = explode(' ', $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
+                $token = $parts[1];
+            }
+            if (!$token) {
+                $parts = explode(' ', $headers['Authorization']);
+                $token = $parts[1];
+            }
 
-                $this->load->model('auth/token');
-                $auth_info = $this->model_auth_token->getAuthFromToken(urldecode($token));
+            $this->load->model('auth/token');
+            $auth_info = $this->model_auth_token->getAuthFromToken(urldecode($token));
 
 
-                if((!empty($auth_info) && in_array('logs', explode(' ', $auth_info['scope']))) || $this->session->data['is_owner']) {
+            if ((!empty($auth_info) && in_array('logs', explode(' ', $auth_info['scope']))) || $this->session->data['is_owner']) {
+                $token_user = str_replace(array('http://', 'https://'), array('',''), $auth_info['user']);
+                $myself = str_replace(array('http://', 'https://'), array('',''), HTTP_SERVER);
 
-                    $token_user = str_replace(array('http://', 'https://'),array('',''), $auth_info['user']);
-                    $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
-
-                    if(($token_user == $myself || $token_user.'/' == $myself || $token_user == $myself .'/' ) || $this->session->data['is_owner']) { 
-
-                        if(isset($this->request->get['h']) && strtolower($this->request->get['h']) == 'feed'){
-                            $this->getFeed();
-                        } elseif(isset($this->request->post['h']) && strtolower($this->request->post['h']) == 'entry'){
-                            $this->saveLogEntry();
-                        } else {
-                            $this->feedList();
-                        }
-                        
+                if (($token_user == $myself || $token_user . '/' == $myself || $token_user == $myself . '/' ) || $this->session->data['is_owner']) {
+                    if (isset($this->request->get['h']) && strtolower($this->request->get['h']) == 'feed') {
+                        $this->getFeed();
+                    } elseif (isset($this->request->post['h']) && strtolower($this->request->post['h']) == 'entry') {
+                        $this->saveLogEntry();
                     } else {
-                        header('HTTP/1.1 401 Unauthorized');
-                        echo 'Unauthorized';
-                        exit();
+                        $this->feedList();
                     }
+
                 } else {
                     header('HTTP/1.1 401 Unauthorized');
                     echo 'Unauthorized';
@@ -47,16 +41,24 @@ class ControllerLogsEndpoint extends Controller {
                 echo 'Unauthorized';
                 exit();
             }
+        } else {
+            header('HTTP/1.1 401 Unauthorized');
+            echo 'Unauthorized';
+            exit();
+        }
     }
 
-    function getFeed(){
+    function getFeed()
+    {
             $this->load->model('storage/logs');
-            $data['feed'] = $this->model_storage_logs->getFeed($this->request->get['url'],
-                    (isset($this->request->get['ls-limit']) ? $this->request->get['ls-limit'] : 100),
-                    (isset($this->request->get['ls-before']) ? $this->request->get['ls-before'] : null));
+            $data['feed'] = $this->model_storage_logs->getFeed(
+                $this->request->get['url'],
+                (isset($this->request->get['ls-limit']) ? $this->request->get['ls-limit'] : 100),
+                (isset($this->request->get['ls-before']) ? $this->request->get['ls-before'] : null)
+            );
 
             //TODO, this is not coming up correct still, not actually escaping the #
-             $data['prev'] = $this->url->link('logs/endpoint', 'h=feed&url='.urlencode($this->request->get['url']).'&ls-before='.urlencode($data['feed'][0]['published']), '');
+             $data['prev'] = $this->url->link('logs/endpoint', 'h=feed&url=' . urlencode($this->request->get['url']) . '&ls-before=' . urlencode($data['feed'][0]['published']), '');
 
 
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/logs/feed.tpl')) {
@@ -65,7 +67,8 @@ class ControllerLogsEndpoint extends Controller {
                 $this->response->setOutput($this->load->view('default/template/logs/feed.tpl', $data));
             }
     }
-    function saveLogEntry(){
+    function saveLogEntry()
+    {
             $this->load->model('storage/logs');
             $this->model_storage_logs->addLogEntry(
                 $this->request->post['in-reply-to'],
@@ -73,20 +76,21 @@ class ControllerLogsEndpoint extends Controller {
                 $this->request->post['published'],
                 $this->request->post['author_name'],
                 $this->request->post['author_name'],
-                (isset($this->request->post['author_id']) ? $this->request->post['author_id']:null));
+                (isset($this->request->post['author_id']) ? $this->request->post['author_id'] : null)
+            );
 
     }
-    function feedList(){
+    function feedList()
+    {
             $this->load->model('storage/logs');
             $data['feedlist'] = $this->model_storage_logs->getFeedList();
-            $data['logger_endpoint'] =  $this->url->link('logs/endpoint');
+            $data['logger_endpoint'] = $this->url->link('logs/endpoint');
 
-            if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/logs/feedlist.tpl')) {
-                $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/logs/feedlist.tpl', $data));
-            } else {
-                $this->response->setOutput($this->load->view('default/template/logs/feedlist.tpl', $data));
-            }
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/logs/feedlist.tpl')) {
+            $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/logs/feedlist.tpl', $data));
+        } else {
+            $this->response->setOutput($this->load->view('default/template/logs/feedlist.tpl', $data));
+        }
     }
 }
 
-?>

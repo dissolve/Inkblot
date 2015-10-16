@@ -1,16 +1,15 @@
-<?php  
+<?php
 
 require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
 require_once DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
 require_once DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
 
 class ControllerAuthToken extends Controller {
-	public function index() {
-        if(isset($this->request->post['code']) && 
+    public function index()
+    {
+        if (isset($this->request->post['code']) &&
             isset($this->request->post['me']) &&
-            isset($this->request->post['redirect_uri'])){
-
-
+            isset($this->request->post['redirect_uri'])) {
             $post_data = http_build_query(array(
                 'code'          => $this->request->post['code'],
                 'me'            => $this->request->post['me'],
@@ -25,7 +24,9 @@ class ControllerAuthToken extends Controller {
             //$this->log->write('with : ' . $post_data);
             $ch = curl_init($auth_endpoint);
 
-            if(!$ch){$this->log->write('error with curl_init');}
+            if (!$ch) {
+                $this->log->write('error with curl_init');
+            }
 
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
@@ -43,7 +44,7 @@ class ControllerAuthToken extends Controller {
             $results = array();
             parse_str($response, $results);
 
-            if($results['me']){
+            if ($results['me']) {
                 $user = $results['me'];
                 $scope = $results['scope'];
                 $client_id = $this->request->post['client_id'];
@@ -63,7 +64,6 @@ class ControllerAuthToken extends Controller {
             header('HTTP/1.1 400 Bad Request');
             exit();
         }
-	}
+    }
 
 }
-?>

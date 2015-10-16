@@ -1,10 +1,11 @@
-<?php  
+<?php
 require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
 require_once DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
 require_once DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
 
 class ControllerMicropubReceive extends Controller {
-    public function index() {
+    public function index()
+    {
         //$this->log->write(print_r($this->request->post, true));
         //$this->log->write(file_get_contents("php://input"));
         $supported_array = array(
@@ -27,64 +28,63 @@ class ControllerMicropubReceive extends Controller {
 
         $this->load->model('auth/mpsyndicate');
         $mp_syndication_targets = $this->model_auth_mpsyndicate->getSiteList();
-        foreach($mp_syndication_targets as $target){
-            $supported_syndication_array[] = 'syndicate-to[]='.$target;
-            $supported_syndication_array[] = 'mp-syndicate-to[]='.$target;
-            
+        foreach ($mp_syndication_targets as $target) {
+            $supported_syndication_array[] = 'syndicate-to[]=' . $target;
+            $supported_syndication_array[] = 'mp-syndicate-to[]=' . $target;
+
         }
 
         $supported_syndication_array_for_json = array(
             "syndicate-to" => array_merge($mp_syndication_targets, array("https://www.brid.gy/publish/twitter",
                                       "https://www.brid.gy/publish/facebook")),
             "mp-syndicate-to" => array_merge($mp_syndication_targets, array("https://www.brid.gy/publish/twitter",
-                                      "https://www.brid.gy/publish/facebook")
-        ));
-        
-        if(isset($this->request->get['q']) && $this->request->get['q'] == 'actions'){
-            if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
+                                      "https://www.brid.gy/publish/facebook")));
+
+        if (isset($this->request->get['q']) && $this->request->get['q'] == 'actions') {
+            if ($this->request->server['HTTP_ACCEPT'] == 'application/json') {
                 $json = $supported_array;
                 $this->response->setOutput(json_encode($json));
             } else {
                 $build_array = array();
-                foreach($supported_array as $type => $value){
-                    $build_array[] = $type . '='. urlencode($value);
+                foreach ($supported_array as $type => $value) {
+                    $build_array[] = $type . '=' . urlencode($value);
                 }
                 $supported = implode('&', $build_array);
 
                 $this->response->setOutput($supported);
             }
 
-        } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'syndicate-to'){
-            if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
+        } elseif (isset($this->request->get['q']) && $this->request->get['q'] == 'syndicate-to') {
+            if ($this->request->server['HTTP_ACCEPT'] == 'application/json') {
                 $this->response->setOutput(json_encode($supported_syndication_array_for_json));
             } else {
                 $supported = implode('&', $supported_syndication_array);
                 $this->response->setOutput($supported);
             }
 
-        } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'mp-syndicate-to'){
-            if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
+        } elseif (isset($this->request->get['q']) && $this->request->get['q'] == 'mp-syndicate-to') {
+            if ($this->request->server['HTTP_ACCEPT'] == 'application/json') {
                 $this->response->setOutput(json_encode($supported_syndication_array_for_json));
             } else {
                 $supported = implode('&', $supported_syndication_array);
                 $this->response->setOutput($supported);
             }
 
-        } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'json_actions'){
+        } elseif (isset($this->request->get['q']) && $this->request->get['q'] == 'json_actions') {
             $json = $supported_array;
             $this->response->setOutput(json_encode($json));
-        } elseif(isset($this->request->get['q']) && $this->request->get['q'] == 'indie-config'){
+        } elseif (isset($this->request->get['q']) && $this->request->get['q'] == 'indie-config') {
             $build_array = array();
-            foreach($supported_array as $type => $value){
-                $build_array[] = $type . ": '". $value. "'";
+            foreach ($supported_array as $type => $value) {
+                $build_array[] = $type . ": '" . $value . "'";
             }
-            $indieconfig ="
+            $indieconfig = "
 <script>
 (function() {
   if (window.parent !== window) {
     window.parent.postMessage(JSON.stringify({
       // The endpoint you use to write replies
-".implode(",\n", $build_array) ."
+" . implode(",\n", $build_array) . "
     }), '*');
   }
 }());
@@ -95,17 +95,17 @@ class ControllerMicropubReceive extends Controller {
         } else {
             $headers = apache_request_headers();
             //check that we were even offered an access token
-            if(!isset($this->request->post['access_token']) && (!isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) && !isset($headers['Authorization'])){
-                    //$this->log->write('err0');
+            if (!isset($this->request->post['access_token']) && (!isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) && !isset($headers['Authorization'])) {
+                //$this->log->write('err0');
                 header('HTTP/1.1 401 Unauthorized');
                 exit();
             } else {
                 $token = $this->request->post['access_token'];
-                if(!$token){
+                if (!$token) {
                     $parts = explode(' ', $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
                     $token = $parts[1];
                 }
-                if(!$token){
+                if (!$token) {
                     $parts = explode(' ', $headers['Authorization']);
                     $token = $parts[1];
                 }
@@ -121,41 +121,39 @@ class ControllerMicropubReceive extends Controller {
                 $has_contacts_access = false;
                 $has_register_access = false;
 
-                if(!empty($auth_info) && in_array('post', explode(' ', $auth_info['scope']))) {
+                if (!empty($auth_info) && in_array('post', explode(' ', $auth_info['scope']))) {
                     $has_post_access = true;
-                } 
-                if(!empty($auth_info) && in_array('edit', explode(' ', $auth_info['scope']))) {
+                }
+                if (!empty($auth_info) && in_array('edit', explode(' ', $auth_info['scope']))) {
                     $has_edit_access = true;
-                } 
-                if(!empty($auth_info) && in_array('delete', explode(' ', $auth_info['scope']))) {
+                }
+                if (!empty($auth_info) && in_array('delete', explode(' ', $auth_info['scope']))) {
                     $has_delete_access = true;
-                } 
-                if(!empty($auth_info) && in_array('follow', explode(' ', $auth_info['scope']))) {
+                }
+                if (!empty($auth_info) && in_array('follow', explode(' ', $auth_info['scope']))) {
                     $has_follow_access = true;
-                } 
-                if(!empty($auth_info) && in_array('contacts', explode(' ', $auth_info['scope']))) {
+                }
+                if (!empty($auth_info) && in_array('contacts', explode(' ', $auth_info['scope']))) {
                     $has_contacts_access = true;
-                } 
-                if(!empty($auth_info) && in_array('register', explode(' ', $auth_info['scope']))) {
+                }
+                if (!empty($auth_info) && in_array('register', explode(' ', $auth_info['scope']))) {
                     $has_register_access = true;
-                } 
+                }
 
-                $token_user = str_replace(array('http://', 'https://'),array('',''), $auth_info['user']);
-                $myself = str_replace(array('http://', 'https://'),array('',''), HTTP_SERVER);
+                $token_user = str_replace(array('http://', 'https://'), array('',''), $auth_info['user']);
+                $myself = str_replace(array('http://', 'https://'), array('',''), HTTP_SERVER);
 
-                if($token_user != $myself && $token_user.'/' != $myself && $token_user != $myself .'/' ) {
+                if ($token_user != $myself && $token_user . '/' != $myself && $token_user != $myself . '/' ) {
                     //$this->log->write('err1');
                     header('HTTP/1.1 401 Unauthorized');
                     exit();
                 } else {
-
                     // ----------------------------------------
                     // Handle new micropub endpoint registration
                     // ----------------------------------------
-                    if($this->request->get['register'] && $has_register_access){
-
-        $token = $this->request->get['register_token'];
-        $site = $this->request->get['register'];
+                    if ($this->request->get['register'] && $has_register_access) {
+                        $token = $this->request->get['register_token'];
+                        $site = $this->request->get['register'];
 
                         $this->load->model('auth/mpsyndicate');
                         $this->model_auth_mpsyndicate->addSite($site, $token);
@@ -172,145 +170,145 @@ class ControllerMicropubReceive extends Controller {
                     // ----------------------------------------
 
                     $mp_action = '';
-                    if(isset($this->request->post['mp-action']) && !empty($this->request->post['mp-action'])){
+                    if (isset($this->request->post['mp-action']) && !empty($this->request->post['mp-action'])) {
                         $mp_action = strtolower($this->request->post['mp-action']);
-                    } 
+                    }
 
                     $h = 'entry';
-                    if(isset($this->request->post['h']) && !empty($this->request->post['h'])){
+                    if (isset($this->request->post['h']) && !empty($this->request->post['h'])) {
                         $h = strtolower($this->request->post['h']);
-                    } 
+                    }
 
-                    if(strcmp($h, 'card') == 0){
-
+                    if (strcmp($h, 'card') == 0) {
                         switch ($mp_action) {
-                        case 'unfollow':
-                            if($has_follow_access){
-                                $this->unfollowCard();
-                            } else {
-                    //$this->log->write('err2');
-                                header('HTTP/1.1 401 Unauthorized');
-                                exit();
-                            }
-                            break;
-                        case 'follow':
-                            if($has_follow_access){
-                                $this->followCard();
-                            } else {
-                    //$this->log->write('err3');
-                                header('HTTP/1.1 401 Unauthorized');
-                                exit();
-                            }
-                            break;
-                        case 'edit':
-                            if($has_contacts_access){
-                                $this->editCard();
-                            } else {
-                    //$this->log->write('err4');
-                                header('HTTP/1.1 401 Unauthorized');
-                                exit();
-                            }
-                            break;
-                        case 'delete':
-                            if($has_contacts_access){
-                                $this->delCard();
-                            } else {
-                    //$this->log->write('err5');
-                                header('HTTP/1.1 401 Unauthorized');
-                                exit();
-                            }
-                            break;
-                        case 'add':
-                        default:
-                            if($has_contacts_access){
-                                $this->addCard();
-                            } else {
-                    //$this->log->write('err6');
-                                header('HTTP/1.1 401 Unauthorized');
-                                exit();
-                            }
-                            break;
+                            case 'unfollow':
+                                if ($has_follow_access) {
+                                    $this->unfollowCard();
+                                } else {
+                            //$this->log->write('err2');
+                                    header('HTTP/1.1 401 Unauthorized');
+                                    exit();
+                                }
+                                break;
+                            case 'follow':
+                                if ($has_follow_access) {
+                                    $this->followCard();
+                                } else {
+                            //$this->log->write('err3');
+                                    header('HTTP/1.1 401 Unauthorized');
+                                    exit();
+                                }
+                                break;
+                            case 'edit':
+                                if ($has_contacts_access) {
+                                    $this->editCard();
+                                } else {
+                            //$this->log->write('err4');
+                                    header('HTTP/1.1 401 Unauthorized');
+                                    exit();
+                                }
+                                break;
+                            case 'delete':
+                                if ($has_contacts_access) {
+                                    $this->delCard();
+                                } else {
+                            //$this->log->write('err5');
+                                    header('HTTP/1.1 401 Unauthorized');
+                                    exit();
+                                }
+                                break;
+                            case 'add':
+                            default:
+                                if ($has_contacts_access) {
+                                    $this->addCard();
+                                } else {
+                            //$this->log->write('err6');
+                                    header('HTTP/1.1 401 Unauthorized');
+                                    exit();
+                                }
+                                break;
                         } //end switch case
                     } else { //end hCard section
                         //hEntry section
-                                        
+
                         switch ($mp_action) {
-                        case 'delete':
-                            if($has_delete_access){
-                                $this->deletePost();
-                            } else {
-                    //$this->log->write('err7');
-                                header('HTTP/1.1 401 Unauthorized');
-                                exit();
-                            }
-                            break;
-                        case 'undelete':
-                            // NOTE: should undeletePost() need post access? delete access? both?
-                            if($has_post_access){
-                                $this->undeletePost();
-                            } else {
-                    //$this->log->write('err8');
-                                header('HTTP/1.1 401 Unauthorized');
-                                exit();
-                            }
-                            break;
-                        case 'edit':
-                            if($has_edit_access){
-                                $this->editPost();
-                            } else {
-                    //$this->log->write('err9');
-                                header('HTTP/1.1 401 Unauthorized');
-                                exit();
-                            }
-                            break;
-                        case 'create':
-                        default:
-                            if($has_post_access){
-                                // NOTE: should getPost() need post access?
-                                if(isset($this->request->get['url']) && !empty($this->request->get['url'])){
-                                    $this->getPost();
-                                } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'article'){
-                                    $this->createPost('article', $auth_info['client_id']);
-                                } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'checkin'){
-                                    $this->createPost('checkin', $auth_info['client_id']);
-                                } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'rsvp'){
-                                    $this->createPost('rsvp', $auth_info['client_id']);
-                                } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'tag'){
-                                    $this->createPost('tag', $auth_info['client_id']);
-                                } elseif(isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'snark'){
-                                    $this->createPost('snark', $auth_info['client_id']);
-                                } elseif(isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])){
-                                    $this->createPost('bookmark', $auth_info['client_id']);
-                                } elseif(isset($this->request->post['like-of']) && !empty($this->request->post['like-of'])){
-                                    $this->createPost('like', $auth_info['client_id']);
-                                } elseif(isset($_FILES['video']) && !empty($_FILES['video'])){
-                                    $this->createPost('video', $auth_info['client_id']);
-                                } elseif(isset($_FILES['audio']) && !empty($_FILES['audio'])){
-                                    $this->createPost('audio', $auth_info['client_id']);
-                                } elseif(isset($_FILES['photo']) && !empty($_FILES['photo'])){
-                                    $this->createPost('photo', $auth_info['client_id']);
+                            case 'delete':
+                                if ($has_delete_access) {
+                                    $this->deletePost();
                                 } else {
-                                    $this->createPost('note', $auth_info['client_id']);
+                            //$this->log->write('err7');
+                                    header('HTTP/1.1 401 Unauthorized');
+                                    exit();
                                 }
-                            } else {
-                    //$this->log->write('err10');
-                                header('HTTP/1.1 401 Unauthorized');
-                                exit();
-                            }
-                            break;
+                                break;
+                            case 'undelete':
+                                // NOTE: should undeletePost() need post access? delete access? both?
+                                if ($has_post_access) {
+                                    $this->undeletePost();
+                                } else {
+                            //$this->log->write('err8');
+                                    header('HTTP/1.1 401 Unauthorized');
+                                    exit();
+                                }
+                                break;
+                            case 'edit':
+                                if ($has_edit_access) {
+                                    $this->editPost();
+                                } else {
+                            //$this->log->write('err9');
+                                    header('HTTP/1.1 401 Unauthorized');
+                                    exit();
+                                }
+                                break;
+                            case 'create':
+                            default:
+                                if ($has_post_access) {
+                                    // NOTE: should getPost() need post access?
+                                    if (isset($this->request->get['url']) && !empty($this->request->get['url'])) {
+                                        $this->getPost();
+                                    } elseif (isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'article') {
+                                        $this->createPost('article', $auth_info['client_id']);
+                                    } elseif (isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'checkin') {
+                                        $this->createPost('checkin', $auth_info['client_id']);
+                                    } elseif (isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'rsvp') {
+                                        $this->createPost('rsvp', $auth_info['client_id']);
+                                    } elseif (isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'tag') {
+                                        $this->createPost('tag', $auth_info['client_id']);
+                                    } elseif (isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'snark') {
+                                        $this->createPost('snark', $auth_info['client_id']);
+                                    } elseif (isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])) {
+                                        $this->createPost('bookmark', $auth_info['client_id']);
+                                    } elseif (isset($this->request->post['like-of']) && !empty($this->request->post['like-of'])) {
+                                        $this->createPost('like', $auth_info['client_id']);
+                                    } elseif (isset($_FILES['video']) && !empty($_FILES['video'])) {
+                                        $this->createPost('video', $auth_info['client_id']);
+                                    } elseif (isset($_FILES['audio']) && !empty($_FILES['audio'])) {
+                                        $this->createPost('audio', $auth_info['client_id']);
+                                    } elseif (isset($_FILES['photo']) && !empty($_FILES['photo'])) {
+                                        $this->createPost('photo', $auth_info['client_id']);
+                                    } else {
+                                        $this->createPost('note', $auth_info['client_id']);
+                                    }
+                                } else {
+                            //$this->log->write('err10');
+                                    header('HTTP/1.1 401 Unauthorized');
+                                    exit();
+                                }
+                                break;
                         } //end switch case
-                    } //end hEntry section 
-                        
+                    } //end hEntry section
+
                 }  // end check for token is my own
             }  // end check for access token offered
         } //end else from endpoint data lookup
     } //end index funciton
 
-    private function getPost(){
+    private function getPost()
+    {
         $post = $this->getPostByURL($this->request->get['url']);
-        if($post) {
+        if ($post) {
             $this->response->addHeader('HTTP/1.1 200 OK');
-            if($this->request->server['HTTP_ACCEPT'] == 'application/json'){
+            if ($this->request->server['HTTP_ACCEPT'] == 'application/json') {
                 $this->response->setOutput(json_encode($post));
             } else {
                 $this->response->setOutput(http_build_query($post));
@@ -319,14 +317,15 @@ class ControllerMicropubReceive extends Controller {
 
     }
 
-    private function undeletePost(){
+    private function undeletePost()
+    {
         //$this->log->write('called undeletePost()');
         $post = $this->getPostByURL($this->request->post['url']);
-        if($post) {
+        if ($post) {
             $this->load->model('blog/post');
             $this->model_blog_post->undeletePost($post['post_id']);
-            $this->cache->delete('post.'.$post['post_id']);
-            $this->cache->delete('posts.'.$post['post_id']);
+            $this->cache->delete('post.' . $post['post_id']);
+            $this->cache->delete('posts.' . $post['post_id']);
 
             $this->response->addHeader('HTTP/1.1 200 OK');
             //$this->response->addHeader('Location: '. $post['permalink']);
@@ -334,18 +333,19 @@ class ControllerMicropubReceive extends Controller {
         }
     }
 
-    private function deletePost(){
-        $this->log->write('called deletePost() '.$this->request->post['url'] );
+    private function deletePost()
+    {
+        $this->log->write('called deletePost() ' . $this->request->post['url']);
         $post = $this->getPostByURL($this->request->post['url']);
-        if($post) {
+        if ($post) {
             $this->log->write('found post');
             $this->load->model('blog/post');
             $this->model_blog_post->deletePost($post['post_id']);
 
-            $this->cache->delete('post.'.$post['post_id']);
+            $this->cache->delete('post.' . $post['post_id']);
 
             $this->load->model('webmention/send_queue');
-            if(defined('QUEUED_SEND')){
+            if (defined('QUEUED_SEND')) {
                 $this->model_webmention_send_queue->addEntry($post['post_id']);
             } else {
                 $this->load->controller('webmention/queue/sendWebmention', $post['post_id']);
@@ -359,14 +359,15 @@ class ControllerMicropubReceive extends Controller {
         }
     }
 
-    private function editPost(){
+    private function editPost()
+    {
         //$this->log->write('called editPost()');
         $post = $this->getPostByURL($this->request->post['url']);
-        if($post){
+        if ($post) {
             //$this->log->write('post set');
             //$this->log->write(print_r($post,true));
             $this->load->model('blog/post');
-            if(isset($this->request->post['syndication'])){
+            if (isset($this->request->post['syndication'])) {
                 $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
             }
 
@@ -379,26 +380,26 @@ class ControllerMicropubReceive extends Controller {
                 'bookmark' => 'bookmark',
                 'slug' => 'slug');
 
-            if(isset($this->request->post['delete-fields']) && !empty($this->request->post['delete-fields'])){
-                foreach($simple_editable_fields as $field_name => $db_name){
-                    if(in_array($field_name, $this->request->post['delete-fields'])){
+            if (isset($this->request->post['delete-fields']) && !empty($this->request->post['delete-fields'])) {
+                foreach ($simple_editable_fields as $field_name => $db_name) {
+                    if (in_array($field_name, $this->request->post['delete-fields'])) {
                         $post[$db_name] = '';
                     }
                 }
-                if(in_array('category', $this->request->post['delete-fields'])){
+                if (in_array('category', $this->request->post['delete-fields'])) {
                     $this->model_blog_post->removeFromAllCategories($post['post_id']);
                 }
             }
 
-            foreach($simple_editable_fields as $field_name => $db_name){
-                if(isset($this->request->post[$field_name]) && !empty($this->request->post[$field_name])){
+            foreach ($simple_editable_fields as $field_name => $db_name) {
+                if (isset($this->request->post[$field_name]) && !empty($this->request->post[$field_name])) {
                     $post[$db_name] = $this->request->post[$field_name];
                 }
             }
-            if(isset($this->request->post['category']) && !empty($this->request->post['category'])){
+            if (isset($this->request->post['category']) && !empty($this->request->post['category'])) {
                 $categories = explode(',', urldecode($this->request->post['category']));
                 $this->log->write(print_r($categories));
-                foreach($categories as $category){
+                foreach ($categories as $category) {
                     $this->model_blog_post->addToCategory($post['post_id'], $category);
                 }
             }
@@ -413,60 +414,61 @@ class ControllerMicropubReceive extends Controller {
     }
 
 
-    private function createPost($type, $client_id = null){
+    private function createPost($type, $client_id = null)
+    {
 
         $this->load->model('blog/post');
 
         $data = array();
 
-        if(isset($_FILES['photo'])){
+        if (isset($_FILES['photo'])) {
             $upload_shot = $_FILES['photo'];
-            if( $upload_shot['error'] != 0) {
+            if ( $upload_shot['error'] != 0) {
                 header('HTTP/1.1 500 Error');
                 exit();
             }
 
-            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/photo/'. urldecode($upload_shot["name"]));
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/photo/' . urldecode($upload_shot["name"]));
 
-            $data['image_file'] = DIR_UPLOAD_REL .'/photo/'. $upload_shot["name"];
+            $data['image_file'] = DIR_UPLOAD_REL . '/photo/' . $upload_shot["name"];
         }
-        if(isset($_FILES['video'])){
+        if (isset($_FILES['video'])) {
             $upload_shot = $_FILES['video'];
-            if( $upload_shot['error'] != 0) {
+            if ( $upload_shot['error'] != 0) {
                 header('HTTP/1.1 500 Error');
                 exit();
             }
 
-            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/video/'. urldecode($upload_shot["name"]));
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/video/' . urldecode($upload_shot["name"]));
 
-            $data['video_file'] = DIR_UPLOAD_REL .'/video/'. $upload_shot["name"];
+            $data['video_file'] = DIR_UPLOAD_REL . '/video/' . $upload_shot["name"];
         }
-        if(isset($_FILES['audio'])){
+        if (isset($_FILES['audio'])) {
             $upload_shot = $_FILES['audio'];
-            if( $upload_shot['error'] != 0) {
+            if ( $upload_shot['error'] != 0) {
                 header('HTTP/1.1 500 Error');
                 exit();
             }
 
-            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD .'/audio/'. urldecode($upload_shot["name"]));
+            move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/audio/' . urldecode($upload_shot["name"]));
 
-            $data['audio_file'] = DIR_UPLOAD_REL .'/audio/'. $upload_shot["name"];
+            $data['audio_file'] = DIR_UPLOAD_REL . '/audio/' . $upload_shot["name"];
         }
 
-        if($type == 'photo' && !isset($data['image_file'])){
+        if ($type == 'photo' && !isset($data['image_file'])) {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
             exit();
         }
 
-        if($type == 'video' && !isset($data['video_file'])){
+        if ($type == 'video' && !isset($data['video_file'])) {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
             exit();
         }
-        if($type == 'audio' && !isset($data['audio_file'])){
+        if ($type == 'audio' && !isset($data['audio_file'])) {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
@@ -476,82 +478,82 @@ class ControllerMicropubReceive extends Controller {
         //TODO
         // $this->request->post['h'];
 
-        if(isset($this->request->post['content'])){
+        if (isset($this->request->post['content'])) {
             $data['body'] = $this->request->post['content'];
         } else {
             $data['body'] = '';
         }
-        if(isset($this->request->post['published'])){
+        if (isset($this->request->post['published'])) {
             $data['published'] = $this->request->post['published'];
         }
-        if(isset($this->request->post['slug'])){
+        if (isset($this->request->post['slug'])) {
             $data['slug'] = $this->request->post['slug'];
         } else {
             $data['slug'] = '';
         }
-        if(isset($this->request->post['draft'])){
+        if (isset($this->request->post['draft'])) {
             $data['draft'] = $this->request->post['draft'];
         }
-        if(isset($this->request->post['like-of'])){
+        if (isset($this->request->post['like-of'])) {
             $data['like-of'] = $this->request->post['like-of'];
         }
-        if(isset($this->request->post['bookmark'])){
+        if (isset($this->request->post['bookmark'])) {
             $data['bookmark'] = $this->request->post['bookmark'];
         }
-        if(isset($this->request->post['in-reply-to'])){
+        if (isset($this->request->post['in-reply-to'])) {
             $data['replyto'] = $this->request->post['in-reply-to'];
             $this->load->model('webmention/vouch');
             $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
-        if(isset($this->request->post['tag-of'])){
+        if (isset($this->request->post['tag-of'])) {
             //TODO: correct this once I have the DB updated
             $data['replyto'] = $this->request->post['tag-of'];
             $this->load->model('webmention/vouch');
             $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
-        if(isset($this->request->post['name'])){
+        if (isset($this->request->post['name'])) {
             $data['name'] = $this->request->post['name'];
         }
-        if(isset($this->request->post['description'])){
+        if (isset($this->request->post['description'])) {
             $data['description'] = $this->request->post['description'];
         }
-        if(isset($this->request->post['location'])){
+        if (isset($this->request->post['location'])) {
             $data['location'] = $this->request->post['location'];
         }
-        if(isset($this->request->post['place_name'])){
+        if (isset($this->request->post['place_name'])) {
             $data['place_name'] = $this->request->post['place_name'];
         }
-        if($type == 'rsvp' && isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])){
+        if ($type == 'rsvp' && isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])) {
             $inputval = strtolower($this->request->post['rsvp']);
-            if($inputval == 'yes'){
+            if ($inputval == 'yes') {
                 $data['rsvp'] = 'yes';
             } else {
                 $data['rsvp'] = 'no';
             }
         }
 
-        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
+        if (isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])) {
             $data['syndication_extra'] = '';
-            foreach($this->request->post['syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
+            foreach ($this->request->post['syndicate-to'] as $synto) {
+                $data['syndication_extra'] .= '<a href="' . $synto . '"></a>';
             }
-        } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
+        } elseif (isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])) {
             $data['syndication_extra'] = '';
-            foreach($this->request->post['mp-syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
+            foreach ($this->request->post['mp-syndicate-to'] as $synto) {
+                $data['syndication_extra'] .= '<a href="' . $synto . '"></a>';
             }
         }
 
-        if($client_id){
+        if ($client_id) {
             $data['created_by'] = $client_id;
         }
-        
+
         $post_id = $this->model_blog_post->newPost($type, $data);
 
-        if(isset($this->request->post['category']) && !empty($this->request->post['category'])){
+        if (isset($this->request->post['category']) && !empty($this->request->post['category'])) {
             $categories = explode(',', urldecode($this->request->post['category']));
             $this->log->write(print_r($categories));
-            foreach($categories as $category){
+            foreach ($categories as $category) {
                 $this->model_blog_post->addToCategory($post_id, $category);
             }
         }
@@ -559,7 +561,7 @@ class ControllerMicropubReceive extends Controller {
 
         $post = $this->model_blog_post->getPost($post_id);
 
-        if($post && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+        if ($post && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])) {
             $this->load->model('blog/post');
             $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
         }
@@ -567,36 +569,37 @@ class ControllerMicropubReceive extends Controller {
         $this->syndicate_by_mp($this->request->post, $post['shortlink'], $post_id);
 
         $this->load->model('webmention/send_queue');
-        if(defined('QUEUED_SEND')){
+        if (defined('QUEUED_SEND')) {
             $this->model_webmention_send_queue->addEntry($post_id);
         } else {
             $this->load->controller('webmention/queue/sendWebmention', $post_id);
         }
 
-        $this->cache->delete('post.'.$post['post_id']);
+        $this->cache->delete('post.' . $post['post_id']);
 
 
         $this->response->addHeader('HTTP/1.1 201 Created');
-        $this->response->addHeader('Location: '. $post['permalink']);
+        $this->response->addHeader('Location: ' . $post['permalink']);
         $this->response->setOutput($post['permalink']);
     }
 
-    private function getPostByURL($real_url){
+    private function getPostByURL($real_url)
+    {
         include DIR_BASE . '/routes.php';
 
         $data = array();
-        foreach($advanced_routes as $adv_route){
+        foreach ($advanced_routes as $adv_route) {
             $matches = array();
-            $real_url = ltrim(str_replace(array(HTTP_SERVER, HTTPS_SERVER),array('',''), $real_url),'/');
+            $real_url = ltrim(str_replace(array(HTTP_SERVER, HTTPS_SERVER), array('',''), $real_url), '/');
             preg_match($adv_route['expression'], $real_url, $matches);
-            if(!empty($matches)){
+            if (!empty($matches)) {
                 //$model = $adv_route['controller'];
-                    foreach($matches as $field => $value){
-                        $data[$field] = $value;
-                    }
+                foreach ($matches as $field => $value) {
+                    $data[$field] = $value;
+                }
             }
         }
-     try {
+        try {
             $this->load->model('blog/post');
             $post = $this->model_blog_post->getPostByData($data);
             return $post;
@@ -607,53 +610,55 @@ class ControllerMicropubReceive extends Controller {
 
 
     }
-    private function whiteListUrls($content){
+    private function whiteListUrls($content)
+    {
         $this->load->model('webmention/vouch');
         $reg_ex_match = '/(href=[\'"](?<href>[^\'"]+)[\'"][^>]*(rel=[\'"](?<rel>[^\'"]+)[\'"])?)/';
         $matches = array();
-        preg_match_all($reg_ex_match, $content ,$matches);
+        preg_match_all($reg_ex_match, $content, $matches);
 
-        for($i = 0; $i < count($matches['href']); $i++){
+        for ($i = 0; $i < count($matches['href']); $i++) {
             $href = strtolower($matches['href'][$i]);
             $rel = strtolower($matches['rel'][$i]);
 
-            if(strpos($rel,"nofollow") === FALSE){
+            if (strpos($rel, "nofollow") === false) {
                 $this->model_webmention_vouch->addWhitelistEntry($href);
             }
         }
 
         $reg_ex_match = '/(rel=[\'"](?<rel>[^\'"]+)[\'"][^>]*href=[\'"](?<href>[^\'"]+)[\'"])/';
         $matches = array();
-        preg_match_all($reg_ex_match, $vouch_content ,$matches);
-        for($i = 0; $i < count($matches['href']); $i++){
+        preg_match_all($reg_ex_match, $vouch_content, $matches);
+        for ($i = 0; $i < count($matches['href']); $i++) {
             //$this->log->write('checking '.$href . '   rel '.$rel);
             $href = strtolower($matches['href'][$i]);
             $rel = strtolower($matches['rel'][$i]);
 
-            if(strpos($rel,"nofollow") === FALSE){
+            if (strpos($rel, "nofollow") === false) {
                 $this->model_webmention_vouch->addWhitelistEntry($href);
             }
         }
     }
 
-    private function followCard(){
+    private function followCard()
+    {
 
         $this->load->model('contacts/following');
         $this->load->model('blog/post');
 
         $card_data = array();
 
-        if(isset($this->request->post['name'])){
+        if (isset($this->request->post['name'])) {
             $card_data['name'] = $this->request->post['name'];
         } else {
             $card_data['name'] = '';
         }
-        if(isset($this->request->post['url'])){
+        if (isset($this->request->post['url'])) {
             $card_data['url'] = $this->request->post['url'];
         } else {
             $card_data['url'] = '';
         }
-        if(isset($this->request->post['photo'])){
+        if (isset($this->request->post['photo'])) {
             $card_data['photo'] = $this->request->post['photo'];
         } else {
             $card_data['photo'] = '';
@@ -672,7 +677,7 @@ class ControllerMicropubReceive extends Controller {
             }
         }
          */
-        
+
         $following_id = $this->model_contacts_following->followCard($card_data);
         $post_id = $this->model_blog_post->newPost('follow', array('following_id' => $following_id));
         $this->cache->delete('followings');
@@ -680,26 +685,27 @@ class ControllerMicropubReceive extends Controller {
 
         $post = $this->model_blog_post->getPost($post_id);
 
-        if($post && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])){
+        if ($post && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])) {
             $this->load->model('blog/post');
             $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
         }
 
         $this->load->model('webmention/send_queue');
-        if(defined('QUEUED_SEND')){
+        if (defined('QUEUED_SEND')) {
             $this->model_webmention_send_queue->addEntry($post_id);
         } else {
             $this->load->controller('webmention/queue/sendWebmention', $post_id);
         }
 
-        $this->cache->delete('post.'.$post['post_id']);
+        $this->cache->delete('post.' . $post['post_id']);
 
         $this->response->addHeader('HTTP/1.1 201 Created');
-        $this->response->addHeader('Location: '. $post['permalink']);
+        $this->response->addHeader('Location: ' . $post['permalink']);
         $this->response->setOutput($post['permalink']);
     }
 
-    function syndicate_by_mp($data, $url, $post_id){
+    function syndicate_by_mp($data, $url, $post_id)
+    {
         //$this->log->write('called syndicate_by_mp with '. $url);
         //$this->log->write(print_r($data,true));
         $this->load->model('blog/post');
@@ -709,16 +715,15 @@ class ControllerMicropubReceive extends Controller {
         $data['url'] = $url;
 
         $syndicate_tos = $data['syndicate-to'];
-        if(empty($syndicate_tos)){
+        if (empty($syndicate_tos)) {
             $syndicate_tos = $data['mp-syndicate-to'];
         }
         unset($data['syndicate-to']);
         unset($data['mp-syndicate-to']);
         //we want to make sure we don't relay syndicate-to values
 
-        foreach($syndicate_tos as $mp_target){
-            if(in_array($mp_target, $mp_syndication_targets)){
-
+        foreach ($syndicate_tos as $mp_target) {
+            if (in_array($mp_target, $mp_syndication_targets)) {
                 $site_data = $this->model_auth_mpsyndicate->getDataForName($mp_target);
 
                 $token = $site_data['token'];
@@ -726,11 +731,13 @@ class ControllerMicropubReceive extends Controller {
                 $micropub_endpoint = IndieAuth\Client::discoverMicropubEndpoint($mp_target);
                 $ch = curl_init($micropub_endpoint);
 
-                if(!$ch){$this->log->write('error with curl_init');}
+                if (!$ch) {
+                    $this->log->write('error with curl_init');
+                }
 
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '. $token));
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $token));
                 curl_setopt($ch, CURLOPT_HEADER, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
@@ -738,18 +745,17 @@ class ControllerMicropubReceive extends Controller {
                 //$this->log->write(' -------------' . print_r($body, true) . '-------------------' );
                 $headers = curl_getinfo($ch);
 
-                if($headers['http_code'] == 201){
+                if ($headers['http_code'] == 201) {
                     //$this->log->write('responded with  '. $headers['redirect_url']);
                     $matches = null;
                     preg_match('/Location\s*:\s*(https?:\/\/[^\s]+)/', $body, $matches);
-                    if($matches && isset($matches[1])){
+                    if ($matches && isset($matches[1])) {
                         $this->model_blog_post->addSyndication($post_id, $matches[1]);
                     }
                     //$this->log->write('all_headers  '. print_r($headers, true));
-                    
-                } else{
 
-                    $this->log->write('error got http_code  '. $headers['http_code']);
+                } else {
+                    $this->log->write('error got http_code  ' . $headers['http_code']);
 
                 }
 
@@ -759,4 +765,3 @@ class ControllerMicropubReceive extends Controller {
     }
 
 }
-?>

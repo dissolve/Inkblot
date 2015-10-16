@@ -1,9 +1,10 @@
-<?php  
+<?php
 class ControllerAuthLogout extends Controller {
-	public function index() {
+    public function index()
+    {
         $user = $this->session->data['user_site'];
-        unset($this->session->data['syndication_'.$user]);
-        unset($this->session->data['micropub_'.$user]);
+        unset($this->session->data['syndication_' . $user]);
+        unset($this->session->data['micropub_' . $user]);
 
         unset($this->session->data['user_site']);
         unset($this->session->data['token']);
@@ -12,6 +13,5 @@ class ControllerAuthLogout extends Controller {
         unset($this->session->data['mp-config']);
         $this->session->data['success'] = "Logged out";
         $this->response->redirect($this->url->link(''));
-	}
+    }
 }
-?>

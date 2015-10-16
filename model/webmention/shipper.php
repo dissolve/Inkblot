@@ -5,7 +5,8 @@ require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
 class ModelWebmentionShipper extends Model {
 
 
-    private function getWebmentionURL($url){
+    private function getWebmentionURL($url)
+    {
         $c = curl_init();
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_URL, $url);
@@ -16,10 +17,10 @@ class ModelWebmentionShipper extends Model {
 
         $parsed = Mf2\parse($page_content);
 
-        if(isset($parsed['rels'])){
-            if(isset($parsed['rels']['webmention']) && isset($parsed['rels']['webmention'][0])) {
+        if (isset($parsed['rels'])) {
+            if (isset($parsed['rels']['webmention']) && isset($parsed['rels']['webmention'][0])) {
                 return $parsed['rels']['webmention'][0];
-            } elseif(isset($parsed['rels']['http://webmention.org/']) && isset($parsed['rels']['http://webmention.org/'][0])) {
+            } elseif (isset($parsed['rels']['http://webmention.org/']) && isset($parsed['rels']['http://webmention.org/'][0])) {
                 return $parsed['rels']['http://webmention.org/'][0];
             }
         } else {
@@ -27,13 +28,13 @@ class ModelWebmentionShipper extends Model {
         }
     }
 
-    public function sendMention($my_permalink, $target_url){
+    public function sendMention($my_permalink, $target_url)
+    {
         $webmention_handler = $this->getWebmentionURL($target_url);
-        if($webmention_handler){
-
+        if ($webmention_handler) {
             //set data
-            $data = 'source=' .urlencode($my_permalink);
-            $data .= '&target=' .urlencode($target_url);
+            $data = 'source=' . urlencode($my_permalink);
+            $data .= '&target=' . urlencode($target_url);
             //$data .= '&callback=' .urlencode($callback_url); //not implemented
 
             $c = curl_init();
@@ -58,4 +59,3 @@ class ModelWebmentionShipper extends Model {
 
     }
 }
-?>

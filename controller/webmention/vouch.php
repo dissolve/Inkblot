@@ -1,18 +1,19 @@
-<?php  
+<?php
 //TODO do i need these anymore?  should probably be in the model instead
 require_once DIR_BASE . '/libraries/php-mf2/Mf2/Parser.php';
 require_once DIR_BASE . '/libraries/php-comments/src/indieweb/comments.php';
 require_once DIR_BASE . '/libraries/cassis/cassis-loader.php';
 
 class ControllerWebmentionVouch extends Controller {
-	public function get() {
+    public function get()
+    {
         $json = array();
-        if(!$this->session->data['is_owner']) {
+        if (!$this->session->data['is_owner']) {
             //header('HTTP/1.1 400 Bad Request');
             $json['success'] = 'no';
             $this->response->setOutput(json_encode($json));
 
-        } elseif(!isset($this->request->get['url'])){
+        } elseif (!isset($this->request->get['url'])) {
             //header('HTTP/1.1 400 Bad Request');
             //exit();
             $json['success'] = 'no';
@@ -23,7 +24,7 @@ class ControllerWebmentionVouch extends Controller {
             $vouch = $this->model_webmention_vouch->getPossibleVouchFor($this->request->get['url']);
             //$this->log->write($this->request->get['id']);
 
-            if($vouch){
+            if ($vouch) {
                 $json['vouch'] = $vouch;
                 $json['success'] = 'yes';
                 $this->response->setOutput(json_encode($json));
@@ -36,12 +37,12 @@ class ControllerWebmentionVouch extends Controller {
             }
 
         }
-	}
+    }
 
-    public function processreferers() {
+    public function processreferers()
+    {
         $this->load->model('webmention/vouch');
         $this->model_webmention_vouch->processReferers();
     }
 
 }
-?>

@@ -1,12 +1,13 @@
-<?php  
+<?php
 class ControllerGroupFeed extends Controller {
-	public function index() {
+    public function index()
+    {
         $group_id = $this->request->get['group_id'];
         $this->document->setBodyClass('h-feed');
 
-		$this->load->model('group/group');
-		$data['header'] = $this->load->controller('group/header');
-		$data['footer'] = $this->load->controller('group/footer');
+        $this->load->model('group/group');
+        $data['header'] = $this->load->controller('group/header');
+        $data['footer'] = $this->load->controller('group/footer');
 
         $group_data = $this->model_group_group->getData($group_id);
         $group_members = $this->model_group_group->getMembers($group_id);
@@ -23,16 +24,16 @@ class ControllerGroupFeed extends Controller {
         //       - content
         //       ?
 
-		$this->document->setTitle($group_data['name']);
-		$data['title'] = $group_data['name'];
+        $this->document->setTitle($group_data['name']);
+        $data['title'] = $group_data['name'];
 
-		$this->document->setDescription($group_data['description']);
-		$data['description'] = $group_data['description'];
+        $this->document->setDescription($group_data['description']);
+        $data['description'] = $group_data['description'];
 
-		$data['posts'] = $group_posts;
-		$data['members'] = $group_members;
+        $data['posts'] = $group_posts;
+        $data['members'] = $group_members;
 
-        if($this->session->data['mp-config']){
+        if ($this->session->data['mp-config']) {
             $mpconfig = array();
             parse_str($this->session->data['mp-config'], $mpconfig);
         }
@@ -40,11 +41,10 @@ class ControllerGroupFeed extends Controller {
 
 
 
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/group/group_list.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/group/group_list.tpl', $data));
-		} else {
-			$this->response->setOutput($this->load->view('default/template/group/group_list.tpl', $data));
-		}
-	}
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/group/group_list.tpl')) {
+            $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/group/group_list.tpl', $data));
+        } else {
+            $this->response->setOutput($this->load->view('default/template/group/group_list.tpl', $data));
+        }
+    }
 }
-?>

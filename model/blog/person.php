@@ -2,7 +2,8 @@
 class ModelBlogPerson extends Model {
 
 
-    /** storePerson
+    /**
+ * storePerson
      *  @arg data array the array of data describing a person assumed to contain
      *    name -the person's name
      *    url - the url of the person
@@ -10,7 +11,8 @@ class ModelBlogPerson extends Model {
      *  @return int the person_id of the (possibly) newly created person
      *      returns null if error
      */
-    public function storePerson($data){
+    public function storePerson($data)
+    {
 
         if ( !isset($data['url']) && !isset($data['name']) && !isset($data['image']) ) {
             return null;
@@ -20,14 +22,14 @@ class ModelBlogPerson extends Model {
 
         $query = $this->db->query(
             "SELECT person_id " .
-            " FROM ".DATABASE.".people " .
-            " WHERE `url` = '".$this->db->escape($data['url'])."' ;"
+            " FROM " . DATABASE . ".people " .
+            " WHERE `url` = '" . $this->db->escape($data['url']) . "' ;"
         );
 
-        if($query->row){
+        if ($query->row) {
             return $query->row['person_id'];
         }
-        //TODO: check for the url being an alternate value 
+        //TODO: check for the url being an alternate value
 
 
         $this->db->query(
@@ -38,19 +40,20 @@ class ModelBlogPerson extends Model {
         );
 
         $id = $this->db->getLastId();
-        
+
     }
 
-    public function getPerson($person_id) {
-        $person = $this->cache->get('person.'. $person_id);
-        if(!$person){
+    public function getPerson($person_id)
+    {
+        $person = $this->cache->get('person.' . $person_id);
+        if (!$person) {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".people " .
                 " WHERE person_id = " . (int)$person_id
             );
             $person = $query->row;
-            $this->cache->set('person.'. $person_id, $person);
+            $this->cache->set('person.' . $person_id, $person);
         }
         return $post;
     }

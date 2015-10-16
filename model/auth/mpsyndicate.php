@@ -1,27 +1,30 @@
 <?php
 class ModelAuthMpsyndicate extends Model {
-	public function addSite($site_url, $token, $label=null) {
+    public function addSite($site_url, $token, $label = null)
+    {
         $this->db->query("INSERT INTO " . DATABASE . ".mp_syndicate SET 
-            ".($label ? " label='".$this->db->escape($label)."'," : "" ) ."
-            site_url='".$this->db->escape($site_url)."',
-            token='".$this->db->escape($token)."'");
+            " . ($label ? " label='" . $this->db->escape($label) . "'," : "" ) . "
+            site_url='" . $this->db->escape($site_url) . "',
+            token='" . $this->db->escape($token) . "'");
 
         $this->cache->delete('mpsyndicate');
-            
+
         $id = $this->db->getLastId();
         return $id ;
-	}
+    }
 
-    public function getSiteList(){
+    public function getSiteList()
+    {
         $data = $this->cache->get('mpsyndicate.all');
-        if(!$data){
+        if (!$data) {
             $query = $this->db->query(
-            "SELECT COALESCE( label, site_url) as name
-                FROM " . DATABASE . ".mp_syndicate");
+                "SELECT COALESCE( label, site_url) as name
+                FROM " . DATABASE . ".mp_syndicate"
+            );
 
             $tmp_data = $query->rows;
             $data = array();
-            foreach($tmp_data as $site){
+            foreach ($tmp_data as $site) {
                 $data[] = $site['name'];
             }
 
@@ -31,28 +34,30 @@ class ModelAuthMpsyndicate extends Model {
         return $data;
     }
 
-    public function getDataForName($sitename){
-        $data = $this->cache->get('mpsyndicate.site.'.$sitename);
-        if(!$data){
+    public function getDataForName($sitename)
+    {
+        $data = $this->cache->get('mpsyndicate.site.' . $sitename);
+        if (!$data) {
             $query = $this->db->query(
-            "SELECT * 
+                "SELECT * 
                 FROM " . DATABASE . ".mp_syndicate
-                WHERE label = '".$this->db->escape($sitename)."'
+                WHERE label = '" . $this->db->escape($sitename) . "'
                 ORDER BY mp_syndicate_site_id DESC
-                LIMIT 1");
+                LIMIT 1"
+            );
 
-            if(!empty($query->row)){
+            if (!empty($query->row)) {
                 $data = $query->row;
             } else {
-
                 $query = $this->db->query(
-                "SELECT * 
+                    "SELECT * 
                     FROM " . DATABASE . ".mp_syndicate
-                    WHERE site_url = '".$this->db->escape($sitename)."'
+                    WHERE site_url = '" . $this->db->escape($sitename) . "'
                     ORDER BY mp_syndicate_site_id DESC
-                    LIMIT 1");
+                    LIMIT 1"
+                );
 
-                if(!empty($query->row)){
+                if (!empty($query->row)) {
                     $data = $query->row;
                 } else {
                     $data = array();
@@ -60,7 +65,7 @@ class ModelAuthMpsyndicate extends Model {
             }
 
 
-            $this->cache->set('mpsyndicate.site.'.$sitename, $data);
+            $this->cache->set('mpsyndicate.site.' . $sitename, $data);
         }
 
         return $data;
@@ -68,4 +73,3 @@ class ModelAuthMpsyndicate extends Model {
 
 
 }
-?>

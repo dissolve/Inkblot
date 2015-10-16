@@ -1,15 +1,16 @@
-<?php  
+<?php
 class ControllerCommonFixroute extends Controller {
-	public function index() {
+    public function index()
+    {
         $year = $this->request->get['year'];
         $month = $this->request->get['month'];
         $day = $this->request->get['day'];
         $daycount = $this->request->get['daycount'];
 
-		$this->load->model('blog/post');
-		$post = $this->model_blog_post->getPostByDayCount($year, $month, $day, $daycount);
+        $this->load->model('blog/post');
+        $post = $this->model_blog_post->getPostByDayCount($year, $month, $day, $daycount);
 
-        if($post){
+        if ($post) {
             $this->response->redirect($post['permalink']);
         } else {
             $this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . '/1.1 404 Not Found');
@@ -30,4 +31,3 @@ class ControllerCommonFixroute extends Controller {
     }
 
 }
-?>

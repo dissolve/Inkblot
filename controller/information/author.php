@@ -1,7 +1,7 @@
-<?php  
+<?php
 class ControllerInformationAuthor extends Controller {
-	public function index() {
-		$this->response->redirect($this->url->link(''));
-	}
+    public function index()
+    {
+        $this->response->redirect($this->url->link(''));
+    }
 }
-?>

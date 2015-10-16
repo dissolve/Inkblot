@@ -1,12 +1,12 @@
-<?php 
+<?php
 class ControllerAdminCache extends Controller {
-	private $error = array(); 
-	    
-  	public function index() {
+    private $error = array();
+
+    public function index()
+    {
         //print_r(json_decode($this->session->data['mp-config'],true)); die();
         $json = array();
-        if($this->session->data['is_owner']){
-
+        if ($this->session->data['is_owner']) {
             $this->cache->delete('archives');
             $this->cache->delete('article');
             $this->cache->delete('author');
@@ -30,19 +30,18 @@ class ControllerAdminCache extends Controller {
             $this->cache->delete('whitelist');
 
             $json['success'] = "Full cache cleared!";
-            if(isset($this->request->get['reason'])){
+            if (isset($this->request->get['reason'])) {
                 $json['reason'] = $this->request->get['reason'];
             }
-            $this->log->write( "Full cache cleared!" . (isset($json['reason']) ? ' Reason: '.$json['reason'] : ''));
+            $this->log->write("Full cache cleared!" . (isset($json['reason']) ? ' Reason: ' . $json['reason'] : ''));
 
         } else {
             $json['response'] = "Authorization Needed";
 
         }
         $this->response->setOutput(json_encode($json));
-				
-  	}
+
+    }
 
 
 }
-?>
