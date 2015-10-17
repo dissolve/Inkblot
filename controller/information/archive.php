@@ -7,7 +7,10 @@ class ControllerInformationArchive extends Controller {
             parse_str($this->session->data['mp-config'], $mpconfig);
         }
 
-        $month_names = array('', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+        $month_names = array(
+            '', 'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        );
 
         $month = $this->request->get['month'];
         $year = $this->request->get['year'];
@@ -48,23 +51,78 @@ class ControllerInformationArchive extends Controller {
             }
             if ($this->session->data['is_owner']) {
                 if ($post['deleted'] == 1) {
-                    $extra_data_array['actions']['undelete'] = array('title' => 'Undelete', 'icon' => "<i class='fa fa-undo'></i>", 'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['post_id'], ''));
+                    $extra_data_array['actions']['undelete'] = array(
+                        'title' => 'Undelete',
+                        'icon' => "<i class='fa fa-undo'></i>",
+                        'link' => $this->url->link(
+                            'micropub/client/undeletePost',
+                            'id=' . $post['post_id'],
+                            ''
+                        ));
                 } else {
-                    $extra_data_array['actions']['edit'] = array('title' => 'Edit', 'icon' => "<i class='fa fa-edit'></i>", 'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['post_id'], ''));
-                    $extra_data_array['actions']['delete'] = array('title' => 'Delete', 'icon' => "<i class='fa fa-trash'></i>", 'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['post_id'], ''));
+                    $extra_data_array['actions']['edit'] = array(
+                        'title' => 'Edit',
+                        'icon' => "<i class='fa fa-edit'></i>",
+                        'link' => $this->url->link(
+                            'micropub/client/editPost',
+                            'id=' . $post['post_id'],
+                            ''
+                        )
+                    );
+                    $extra_data_array['actions']['delete'] = array(
+                        'title' => 'Delete',
+                        'icon' => "<i class='fa fa-trash'></i>",
+                        'link' => $this->url->link(
+                            'micropub/client/deletePost',
+                            'id=' . $post['post_id'],
+                            ''
+                        )
+                    );
                 }
             }
             if ($mpconfig['repost']) {
-                $extra_data_array['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-share-square-o'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']));
+                $extra_data_array['actions']['repost'] = array(
+                    'title' => 'Repost',
+                    'icon' => "<i class='fa fa-share-square-o'></i>",
+                    'link' => str_replace(
+                        '{url}',
+                        urlencode($post['permalink']),
+                        $mpconfig['repost']
+                    )
+                );
             }
             if ($mpconfig['reply']) {
-                $extra_data_array['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
+                $extra_data_array['actions']['reply'] = array(
+                    'title' => 'Reply',
+                    'icon' => "<i class='fa fa-reply'></i>",
+                    'link' => str_replace(
+                        '{url}',
+                        urlencode($post['permalink']),
+                        $mpconfig['reply']
+                    )
+                );
             }
             if ($mpconfig['like']) {
-                $extra_data_array['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
+                $extra_data_array['actions']['like'] = array(
+                    'title' => 'Like',
+                    'icon' => "<i class='fa fa-heart'></i>",
+                    'link' => str_replace(
+                        '{url}',
+                        urlencode($post['permalink']),
+                        $mpconfig['like']
+                    )
+                );
             }
             if ($mpconfig['bookmark']) {
-                $extra_data_array['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
+                $extra_data_array['actions']['bookmark'] = array(
+                    'title' => 'Bookmark',
+                    'icon' => "<i class='fa fa-bookmark'></i>",
+                    'link' => str_replace(
+                        '{url}',
+                        urlencode($post['permalink']),
+                        $mpconfig['bookmark']
+                    )
+                );
             }
 
             $data['posts'][] = array_merge($post, $extra_data_array);
@@ -79,7 +137,10 @@ class ControllerInformationArchive extends Controller {
     public function day()
     {
 
-        $month_names = array('', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+        $month_names = array(
+            '', 'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        );
 
         $day = $this->request->get['day'];
         $month = $this->request->get['month'];
@@ -118,23 +179,79 @@ class ControllerInformationArchive extends Controller {
 
             if ($this->session->data['is_owner']) {
                 if ($post['deleted'] == 1) {
-                    $extra_data_array['actions']['undelete'] = array('title' => 'Undelete', 'icon' => "<i class='fa fa-undo'></i>", 'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['post_id'], ''));
+                    $extra_data_array['actions']['undelete'] = array(
+                        'title' => 'Undelete',
+                        'icon' => "<i class='fa fa-undo'></i>",
+                        'link' => $this->url->link(
+                            'micropub/client/undeletePost',
+                            'id=' . $post['post_id'],
+                            ''
+                        )
+                    );
                 } else {
-                    $extra_data_array['actions']['edit'] = array('title' => 'Edit', 'icon' => "<i class='fa fa-edit'></i>", 'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['post_id'], ''));
-                    $extra_data_array['actions']['delete'] = array('title' => 'Delete', 'icon' => "<i class='fa fa-trash'></i>", 'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['post_id'], ''));
+                    $extra_data_array['actions']['edit'] = array(
+                        'title' => 'Edit',
+                        'icon' => "<i class='fa fa-edit'></i>",
+                        'link' => $this->url->link(
+                            'micropub/client/editPost',
+                            'id=' . $post['post_id'],
+                            ''
+                        )
+                    );
+                    $extra_data_array['actions']['delete'] = array(
+                        'title' => 'Delete',
+                        'icon' => "<i class='fa fa-trash'></i>",
+                        'link' => $this->url->link(
+                            'micropub/client/deletePost',
+                            'id=' . $post['post_id'],
+                            ''
+                        )
+                    );
                 }
             }
             if ($mpconfig['repost']) {
-                $extra_data_array['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-share-square-o'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']));
+                $extra_data_array['actions']['repost'] = array(
+                    'title' => 'Repost',
+                    'icon' => "<i class='fa fa-share-square-o'></i>",
+                    'link' => str_replace(
+                        '{url}',
+                        urlencode($post['permalink']),
+                        $mpconfig['repost']
+                    )
+                );
             }
             if ($mpconfig['reply']) {
-                $extra_data_array['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
+                $extra_data_array['actions']['reply'] = array(
+                    'title' => 'Reply',
+                    'icon' => "<i class='fa fa-reply'></i>",
+                    'link' => str_replace(
+                        '{url}',
+                        urlencode($post['permalink']),
+                        $mpconfig['reply']
+                    )
+                );
             }
             if ($mpconfig['like']) {
-                $extra_data_array['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
+                $extra_data_array['actions']['like'] = array(
+                    'title' => 'Like',
+                    'icon' => "<i class='fa fa-heart'></i>",
+                    'link' => str_replace(
+                        '{url}',
+                        urlencode($post['permalink']),
+                        $mpconfig['like']
+                    )
+                );
             }
             if ($mpconfig['bookmark']) {
-                $extra_data_array['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
+                $extra_data_array['actions']['bookmark'] = array(
+                    'title' => 'Bookmark',
+                    'icon' => "<i class='fa fa-bookmark'></i>",
+                    'link' => str_replace(
+                        '{url}',
+                        urlencode($post['permalink']),
+                        $mpconfig['bookmark']
+                    )
+                );
             }
 
                 $data['posts'][] = array_merge($post, $extra_data_array);

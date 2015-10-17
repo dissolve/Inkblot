@@ -7,13 +7,13 @@ class ControllerWebmentionReceive extends Controller {
     public function index()
     {
         if ($this->request->server['REQUEST_METHOD'] != 'POST' && $this->session->data['is_owner']) {
-            $this->webmention_manager();
+            $this->webmentionManager();
         } else {
-            $this->receive_webmention();
+            $this->receiveWebmention();
         }
     }
 
-    private function webmention_manager()
+    private function webmentionManager()
     {
         $this->load->model('webmention/queue');
         if (isset($this->request->get['id']) && isset($this->request->get['action'])) {
@@ -52,7 +52,7 @@ class ControllerWebmentionReceive extends Controller {
 
     }
 
-    private function receive_webmention()
+    private function receiveWebmention()
     {
 
         $source = $this->request->post['source'];
@@ -60,14 +60,14 @@ class ControllerWebmentionReceive extends Controller {
         $vouch = $this->request->post['vouch'];
 
         // make sure our source and target are valid urls
-        if (!$this->is_valid_url($source) || !$this->is_valid_url($target)) {
+        if (!$this->isValidUrl($source) || !$this->isValidUrl($target)) {
             header('HTTP/1.1 400 Bad Request');
             exit();
         }
 
         //if the source is approved, i don't need or want the vouch, i just auto accept it and throw the vouch away
         //  or if I am not using vouches, and i have a valid source, and target, i just auto accept
-        if ($this->is_approved_source($source) || !USE_VOUCH) {
+        if ($this->isApprovedSource($source) || !USE_VOUCH) {
             $this->load->model('webmention/queue');
             $queue_id = $this->model_webmention_queue->addEntry($source, $target, null, '202');
 
@@ -81,7 +81,7 @@ class ControllerWebmentionReceive extends Controller {
         }
         // if we are using vouch, and there is not vouch, or its invalid,  respond retry with 449
         //  still save webmention in case i want to approve manually later
-        if (!$this->is_valid_url($vouch)) {
+        if (!$this->isValidUrl($vouch)) {
             $this->load->model('webmention/queue');
             $queue_id = $this->model_webmention_queue->addEntry($source, $target, null, '449');
 
@@ -92,7 +92,7 @@ class ControllerWebmentionReceive extends Controller {
             header('HTTP/1.1 449 Retry With vouch');
             exit();
         }
-        if ($this->is_approved_source($vouch)) {
+        if ($this->isApprovedSource($vouch)) {
             $this->load->model('webmention/queue');
             $queue_id = $this->model_webmention_queue->addEntry($source, $target, $vouch, '202');
 
@@ -121,7 +121,7 @@ class ControllerWebmentionReceive extends Controller {
 
     }
 
-    private function is_approved_source($url)
+    private function isApprovedSource($url)
     {
         if (!USE_VOUCH) {
             return true;
@@ -138,7 +138,7 @@ class ControllerWebmentionReceive extends Controller {
     }
 
     //very basic function to determine if URL is valid, this is certainly a great place for improvement
-    private function is_valid_url($url)
+    private function isValidUrl($url)
     {
         if (!isset($url)) {
             return false;
@@ -152,7 +152,8 @@ class ControllerWebmentionReceive extends Controller {
         return true;
     }
 
-    public function process_webmentions()
+    //TODO, most of this should be in a moel
+    public function processWebmentions()
     {
         //check if target is at this site
         $result = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_status_code = '202' LIMIT 1");
@@ -164,7 +165,8 @@ class ControllerWebmentionReceive extends Controller {
             // some fetches were taking too long and there would end up being 2 processes running on the same webmention
             // this resulted in double likes, etc
             // This prevents another run from picking up the same webmentions now.
-            $this->db->query("UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '102', webmention_status = 'Processing' WHERE webmention_id = " . (int)$webmention_id);
+            $this->db->query(
+                "UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '102', webmention_status = 'Processing' WHERE webmention_id = " . (int)$webmention_id);
 
             $source_url = trim($webmention['source_url']);
             $target_url = trim($webmention['target_url']);
