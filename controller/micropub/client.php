@@ -33,7 +33,7 @@ class ControllerMicropubClient extends Controller {
                 $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
             }
-            $data['syn_arr'] = $this->get_syndication_array();
+            $data['syn_arr'] = $this->getSyndicationArray();
         }
 
         if ($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])) {
@@ -42,7 +42,7 @@ class ControllerMicropubClient extends Controller {
         }
 
         if (isset($this->request->get['url']) && !empty($this->request->get['url'])) {
-            $data['post'] = $this->download_entry($this->request->get['url'], isset($this->request->get['type']) && $this->request->get['type']);
+            $data['post'] = $this->downloadEntry($this->request->get['url'], isset($this->request->get['type']) && $this->request->get['type']);
         }
 
         if (isset($this->request->get['type'])) {
@@ -102,7 +102,7 @@ class ControllerMicropubClient extends Controller {
                 $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
             }
-            $data['syn_arr'] = $this->get_syndication_array();
+            $data['syn_arr'] = $this->getSyndicationArray();
         }
 
         //if($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])){
@@ -158,7 +158,7 @@ class ControllerMicropubClient extends Controller {
                 $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
             }
-            $data['syn_arr'] = $this->get_syndication_array();
+            $data['syn_arr'] = $this->getSyndicationArray();
         }
 
         $data['post'] = array();
@@ -215,7 +215,7 @@ class ControllerMicropubClient extends Controller {
                 $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
             }
-            $data['syn_arr'] = $this->get_syndication_array();
+            $data['syn_arr'] = $this->getSyndicationArray();
         }
 
         if ($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])) {
@@ -264,7 +264,7 @@ class ControllerMicropubClient extends Controller {
                 $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
             }
-            $data['syn_arr'] = $this->get_syndication_array();
+            $data['syn_arr'] = $this->getSyndicationArray();
         }
 
         if ($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])) {
@@ -306,7 +306,7 @@ class ControllerMicropubClient extends Controller {
                 $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
             }
-            $data['syn_arr'] = $this->get_syndication_array();
+            $data['syn_arr'] = $this->getSyndicationArray();
         }
 
         if ($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])) {
@@ -318,7 +318,7 @@ class ControllerMicropubClient extends Controller {
             //TaODOME
             //mpDownloadPost
             $data['post'] = $this->mpDownloadPost($this->request->get['url']);
-            //$data['post'] = $this->download_entry($this->request->get['url']);
+            //$data['post'] = $this->downloadEntry($this->request->get['url']);
         }
 
         if (isset($this->request->get['op'])) {
@@ -363,7 +363,7 @@ class ControllerMicropubClient extends Controller {
                 $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
             }
-            $data['syn_arr'] = $this->get_syndication_array();
+            $data['syn_arr'] = $this->getSyndicationArray();
         }
 
         if ($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])) {
@@ -372,7 +372,7 @@ class ControllerMicropubClient extends Controller {
         }
 
         if (isset($this->request->get['url']) && !empty($this->request->get['url'])) {
-            //$data['post'] = $this->download_entry($this->request->get['url'], true);
+            //$data['post'] = $this->downloadEntry($this->request->get['url'], true);
             $data['post'] = array('permalink' => $this->request->get['url']);
         }
 
@@ -414,7 +414,7 @@ class ControllerMicropubClient extends Controller {
                 $data['micropubEndpoint'] = $micropub_endpoint;
                 $data['action'] = $this->url->link('micropub/client/send', '', '');
             }
-            $data['syn_arr'] = $this->get_syndication_array();
+            $data['syn_arr'] = $this->getSyndicationArray();
         }
 
         if ($this->session->data['is_owner'] && isset($this->request->get['id']) && !empty($this->request->get['id'])) {
@@ -423,7 +423,7 @@ class ControllerMicropubClient extends Controller {
         }
 
         if (isset($this->request->get['url']) && !empty($this->request->get['url'])) {
-            //$data['post'] = $this->download_entry($this->request->get['url'], true);
+            //$data['post'] = $this->downloadEntry($this->request->get['url'], true);
             $data['post'] = array('permalink' => $this->request->get['url']);
         }
 
@@ -442,7 +442,7 @@ class ControllerMicropubClient extends Controller {
         }
     }
 
-    private function get_syndication_array()
+    private function getSyndicationArray()
     {
 
         $user = $this->session->data['user_site'];
@@ -593,7 +593,7 @@ class ControllerMicropubClient extends Controller {
 
         return $card;
     }
-    private function download_entry($entry_url, $as_html = false)
+    private function downloadEntry($entry_url, $as_html = false)
     {
         $ch = curl_init($entry_url);
 

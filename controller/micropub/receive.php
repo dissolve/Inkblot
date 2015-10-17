@@ -95,7 +95,9 @@ class ControllerMicropubReceive extends Controller {
         } else {
             $headers = apache_request_headers();
             //check that we were even offered an access token
-            if (!isset($this->request->post['access_token']) && (!isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) && !isset($headers['Authorization'])) {
+            if (!isset($this->request->post['access_token'])
+                && (!isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) || empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION']))
+                && !isset($headers['Authorization'])) {
                 //$this->log->write('err0');
                 header('HTTP/1.1 401 Unauthorized');
                 exit();
@@ -566,7 +568,7 @@ class ControllerMicropubReceive extends Controller {
             $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
         }
 
-        $this->syndicate_by_mp($this->request->post, $post['shortlink'], $post_id);
+        $this->syndicateByMp($this->request->post, $post['shortlink'], $post_id);
 
         $this->load->model('webmention/send_queue');
         if (defined('QUEUED_SEND')) {
@@ -704,9 +706,9 @@ class ControllerMicropubReceive extends Controller {
         $this->response->setOutput($post['permalink']);
     }
 
-    function syndicate_by_mp($data, $url, $post_id)
+    private function syndicateByMp($data, $url, $post_id)
     {
-        //$this->log->write('called syndicate_by_mp with '. $url);
+        //$this->log->write('called syndicateByMp with '. $url);
         //$this->log->write(print_r($data,true));
         $this->load->model('blog/post');
         $this->load->model('auth/mpsyndicate');

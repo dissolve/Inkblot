@@ -166,7 +166,8 @@ class ControllerWebmentionReceive extends Controller {
             // this resulted in double likes, etc
             // This prevents another run from picking up the same webmentions now.
             $this->db->query(
-                "UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '102', webmention_status = 'Processing' WHERE webmention_id = " . (int)$webmention_id);
+                "UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '102', webmention_status = 'Processing' WHERE webmention_id = " . (int)$webmention_id
+            );
 
             $source_url = trim($webmention['source_url']);
             $target_url = trim($webmention['target_url']);

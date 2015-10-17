@@ -3,7 +3,9 @@ class ControllerLogsEndpoint extends Controller {
     public function index()
     {
             $headers = apache_request_headers();
-        if (isset($this->request->post['access_token']) || (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) && !empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) || isset($headers['Authorization']) || $this->session->data['is_owner']) {
+        if (isset($this->request->post['access_token'])
+                || (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) && !empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION']))
+                || isset($headers['Authorization']) || $this->session->data['is_owner']) {
             $token = $this->request->post['access_token'];
             if (!$token) {
                 $parts = explode(' ', $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
@@ -48,7 +50,7 @@ class ControllerLogsEndpoint extends Controller {
         }
     }
 
-    function getFeed()
+    private function getFeed()
     {
             $this->load->model('storage/logs');
             $data['feed'] = $this->model_storage_logs->getFeed(
@@ -58,8 +60,11 @@ class ControllerLogsEndpoint extends Controller {
             );
 
             //TODO, this is not coming up correct still, not actually escaping the #
-             $data['prev'] = $this->url->link('logs/endpoint', 'h=feed&url=' . urlencode($this->request->get['url']) . '&ls-before=' . urlencode($data['feed'][0]['published']), '');
-
+            $data['prev'] = $this->url->link(
+                'logs/endpoint',
+                'h=feed&url=' . urlencode($this->request->get['url']) . '&ls-before=' . urlencode($data['feed'][0]['published']),
+                ''
+            );
 
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/logs/feed.tpl')) {
                 $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/logs/feed.tpl', $data));
@@ -67,7 +72,7 @@ class ControllerLogsEndpoint extends Controller {
                 $this->response->setOutput($this->load->view('default/template/logs/feed.tpl', $data));
             }
     }
-    function saveLogEntry()
+    private function saveLogEntry()
     {
             $this->load->model('storage/logs');
             $this->model_storage_logs->addLogEntry(
@@ -80,7 +85,7 @@ class ControllerLogsEndpoint extends Controller {
             );
 
     }
-    function feedList()
+    private function feedList()
     {
             $this->load->model('storage/logs');
             $data['feedlist'] = $this->model_storage_logs->getFeedList();

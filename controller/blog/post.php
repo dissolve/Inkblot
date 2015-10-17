@@ -61,8 +61,10 @@ class ControllerBlogPost extends Controller {
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
             $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
             $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
+            $repost_count = $this->model_blog_interaction->getInteractionCountForPost('repost', $post['post_id']);
             $fetch_comments = $this->model_blog_interaction->getInteractionsForPost('reply', $post['post_id']);
             $likes = $this->model_blog_interaction->getInteractionsForPost('like', $post['post_id']);
+            $reposts = $this->model_blog_interaction->getInteractionsForPost('repost', $post['post_id']);
             $mentions = $this->model_blog_interaction->getInteractionsForPost('mention', $post['post_id']);
 
             $comments = array();
@@ -86,7 +88,7 @@ class ControllerBlogPost extends Controller {
                         }
                     }
                     if ($mpconfig['repost']) {
-                        $comm['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-share-square-o'></i>", 'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['repost']));
+                        $comm['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-retweet'></i>", 'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['repost']));
                     }
                     if ($mpconfig['reply']) {
                         $comm['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['reply']));
@@ -112,6 +114,8 @@ class ControllerBlogPost extends Controller {
                 'mentions' => $mentions,
                 'like_count' => $like_count,
                 'likes' => $likes,
+                'repost_count' => $repost_count,
+                'reposts' => $reposts,
                 'context' => $context
                 ));
 
@@ -209,6 +213,7 @@ class ControllerBlogPost extends Controller {
             );
             $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
             $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
+            $repost_count = $this->model_blog_interaction->getInteractionCountForPost('repost', $post['post_id']);
 
 
             $extra_data_array = array(
@@ -218,6 +223,7 @@ class ControllerBlogPost extends Controller {
                 'categories' => $categories,
                 'comment_count' => $comment_count,
                 'like_count' => $like_count,
+                'repost_count' => $repost_count,
                 'actions' => array());
 
             //$extra_data_array['postbody'] = $this->load->controller('common/postbody', $post['post_id']);

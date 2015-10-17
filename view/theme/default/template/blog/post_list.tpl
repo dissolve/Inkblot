@@ -114,6 +114,11 @@
     <span class="sep"> | </span>
     <?php } ?>
   
+    <?php if($post['repost_count'] > 0) { ?>
+    <span class="reposts-link"><a href="<?php echo $post['permalink']?>#reposts" title="reposts of <?php echo $post['title']?>"><i class="fa fa-retweet"></i> <?php echo $post['repost_count']?></a></span>
+    <span class="sep"> | </span>
+    <?php } ?>
+  
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
           <?php if(isset($category['person_name'])){ ?>

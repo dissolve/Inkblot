@@ -82,13 +82,27 @@
 
 
     <?php if($post['like_count'] > 0) { ?>
-<br>
-<span id="general-likes"><a id="like"><h3 class="widget-title"><?php echo $post['like_count'] . ($post['like_count'] > 1 ? ' People' : ' Person')?> Liked This Post</h3></a>
+    <br>
+    <span id="general-likes"><a class="like"><h3 class="widget-title"><?php echo $post['like_count'] . ($post['like_count'] > 1 ? ' People' : ' Person')?> Liked This Post</h3></a>
         <?php foreach($post['likes'] as $like){?>
                 <span class="likewrapper h-cite p-like">
                 <a class="u-url" href="<?php echo $like['source_url']?>" rel="nofollow">
                     <img class='like_author' src="<?php echo (isset($like['author_image']) ? $like['author_image']: '/image/person.jpg') ?>"
                         title="<?php echo (isset($like['author_name']) ? $like['author_name']: 'Author Image') ?>" /></a>
+                </span>
+        <?php } ?>
+    <div style="clear:both"></div>
+	</span>
+    <?php } ?>
+
+    <?php if($post['repost_count'] > 0) { ?>
+    <br>
+    <span id="general-reposts"><a class="repost"><h3 class="widget-title"><?php echo $post['repost_count'] . ($post['repost_count'] > 1 ? ' People' : ' Person')?> Reposted This Post</h3></a>
+        <?php foreach($post['reposts'] as $repost){?>
+                <span class="repostwrapper h-cite p-repost">
+                <a class="u-url" href="<?php echo $repost['source_url']?>" rel="nofollow">
+                    <img class='repost_author' src="<?php echo (isset($repost['author_image']) ? $repost['author_image']: '/image/person.jpg') ?>"
+                        title="<?php echo (isset($repost['author_name']) ? $repost['author_name']: 'Author Image') ?>" /></a>
                 </span>
         <?php } ?>
     <div style="clear:both"></div>
