@@ -111,7 +111,7 @@ class ModelBlogPost extends Model {
     {
         //$this->log->write(print_r($data, true));
 
-        if (isset($data['published'])) {
+        if (isset($data['published']) && !empty($data['published'])) {
             $year = date('Y', strtotime($data['published']));
             $month = date('n', strtotime($data['published']));
             $day = date('j', strtotime($data['published']));
