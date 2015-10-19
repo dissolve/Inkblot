@@ -44,7 +44,11 @@ class ControllerBlogPost extends Controller {
 
             $data['header'] = $this->load->controller('common/header');
             $data['footer'] = $this->load->controller('common/footer');
-            $data['postbody'] = preg_replace('/\@([a-zA-Z0-9_]{1,15})/', '<a href="https://twitter.com/$1">@$1</a>', $this->load->controller('common/postbody', $post['post_id']));
+            $data['postbody'] = preg_replace(
+                '/\@([a-zA-Z0-9_]{1,15})/',
+                '<a href="https://twitter.com/$1">@$1</a>',
+                $this->load->controller('common/postbody', $post['post_id'])
+            );
 
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/deleted.tpl')) {
                 $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/common/deleted.tpl', $data));
@@ -77,27 +81,51 @@ class ControllerBlogPost extends Controller {
                     $comm['actions'] = array();
                     if (strpos($clean_comm, $clean_user) === 0) {
                         if ($mpconfig['edit']) {
-                            $comm['actions']['edit'] = array('title' => 'Edit', 'icon' => "<i class='fa fa-edit'></i>", 'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['edit']));
+                            $comm['actions']['edit'] = array(
+                                'title' => 'Edit',
+                                'icon' => "<i class='fa fa-edit'></i>",
+                                'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['edit']));
                         } else {
-                            $comm['actions']['delete'] = array('title' => 'Edit', 'icon' => "<i class='fa fa-edit'></i>", 'link' => $this->url->link('micropub/client/editPost', 'url=' . $comm['source_url']));
+                            $comm['actions']['delete'] = array(
+                                'title' => 'Edit',
+                                'icon' => "<i class='fa fa-edit'></i>",
+                                'link' => $this->url->link('micropub/client/editPost', 'url=' . $comm['source_url']));
                         }
                         if ($mpconfig['delete']) {
-                            $comm['actions']['delete'] = array('title' => 'Delete', 'icon' => "<i class='fa fa-trash'></i>", 'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['delete']));
+                            $comm['actions']['delete'] = array(
+                                'title' => 'Delete',
+                                'icon' => "<i class='fa fa-trash'></i>",
+                                'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['delete']));
                         } else {
-                            $comm['actions']['delete'] = array('title' => 'Delete', 'icon' => "<i class='fa fa-trash'></i>", 'link' => $this->url->link('micropub/client/deletePost', 'url=' . $comm['source_url']));
+                            $comm['actions']['delete'] = array(
+                                'title' => 'Delete',
+                                'icon' => "<i class='fa fa-trash'></i>",
+                                'link' => $this->url->link('micropub/client/deletePost', 'url=' . $comm['source_url']));
                         }
                     }
                     if ($mpconfig['repost']) {
-                        $comm['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-retweet'></i>", 'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['repost']));
+                        $comm['actions']['repost'] = array(
+                            'title' => 'Repost',
+                            'icon' => "<i class='fa fa-retweet'></i>",
+                            'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['repost']));
                     }
                     if ($mpconfig['reply']) {
-                        $comm['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['reply']));
+                        $comm['actions']['reply'] = array(
+                            'title' => 'Reply',
+                            'icon' => "<i class='fa fa-reply'></i>",
+                            'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['reply']));
                     }
                     if ($mpconfig['like']) {
-                        $comm['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['like']));
+                        $comm['actions']['like'] = array(
+                            'title' => 'Like',
+                            'icon' => "<i class='fa fa-heart'></i>",
+                            'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['like']));
                     }
                     if ($mpconfig['bookmark']) {
-                        $comm['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['bookmark']));
+                        $comm['actions']['bookmark'] = array(
+                            'title' => 'Bookmark',
+                            'icon' => "<i class='fa fa-bookmark'></i>",
+                            'link' => str_replace('{url}', urlencode($comm['source_url']), $mpconfig['bookmark']));
                     }
                     $comments[] = $comm;
                 }
@@ -124,24 +152,45 @@ class ControllerBlogPost extends Controller {
 
             if ($this->session->data['is_owner']) {
                 if ($data['deleted']) {
-                    $data['post']['actions']['undelete'] = array('title' => 'Undelete', 'icon' => "<i class='fa fa-undo'></i>", 'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['post_id'], ''));
+                    $data['post']['actions']['undelete'] = array(
+                        'title' => 'Undelete',
+                        'icon' => "<i class='fa fa-undo'></i>",
+                        'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['post_id'], ''));
                 } else {
-                    $data['post']['actions']['edit'] = array('title' => 'Edit', 'icon' => "<i class='fa fa-edit'></i>", 'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['post_id'], ''));
-                    $data['post']['actions']['delete'] = array('title' => 'Delete', 'icon' => "<i class='fa fa-trash'></i>", 'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['post_id'], ''));
+                    $data['post']['actions']['edit'] = array(
+                        'title' => 'Edit',
+                        'icon' => "<i class='fa fa-edit'></i>",
+                        'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['post_id'], ''));
+                    $data['post']['actions']['delete'] = array(
+                        'title' => 'Delete',
+                        'icon' => "<i class='fa fa-trash'></i>",
+                        'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['post_id'], ''));
                 }
             }
 
             if ($mpconfig['repost']) {
-                $data['post']['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-share-square-o'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']));
+                $data['post']['actions']['repost'] = array(
+                    'title' => 'Repost',
+                    'icon' => "<i class='fa fa-share-square-o'></i>",
+                    'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']));
             }
             if ($mpconfig['reply']) {
-                $data['post']['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
+                $data['post']['actions']['reply'] = array(
+                    'title' => 'Reply',
+                    'icon' => "<i class='fa fa-reply'></i>",
+                    'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
             }
             if ($mpconfig['like']) {
-                $data['post']['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
+                $data['post']['actions']['like'] = array(
+                    'title' => 'Like',
+                    'icon' => "<i class='fa fa-heart'></i>",
+                    'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
             }
             if ($mpconfig['bookmark']) {
-                $data['post']['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
+                $data['post']['actions']['bookmark'] = array(
+                    'title' => 'Bookmark',
+                    'icon' => "<i class='fa fa-bookmark'></i>",
+                    'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
             }
 
 
@@ -169,7 +218,11 @@ class ControllerBlogPost extends Controller {
             $data['header'] = $this->load->controller('common/header');
             $data['footer'] = $this->load->controller('common/footer');
             //$data['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
-            $data['postbody'] = preg_replace('/\@([a-zA-Z0-9_]{1,15})/', '<a href="https://twitter.com/$1">@$1</a>', $this->load->controller('common/postbody', $post['post_id']));
+            $data['postbody'] = preg_replace(
+                '/\@([a-zA-Z0-9_]{1,15})/',
+                '<a href="https://twitter.com/$1">@$1</a>',
+                $this->load->controller('common/postbody', $post['post_id'])
+            );
 
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/post.tpl')) {
                 $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/post.tpl', $data));
@@ -217,7 +270,11 @@ class ControllerBlogPost extends Controller {
 
 
             $extra_data_array = array(
-                'body_html' => preg_replace('/\@([a-zA-Z0-9_]{1,15})/', '<a href="https://twitter.com/$1">@$1</a>', html_entity_decode($post['body'])),
+                'body_html' => preg_replace(
+                    '/\@([a-zA-Z0-9_]{1,15})/',
+                    '<a href="https://twitter.com/$1">@$1</a>',
+                    html_entity_decode($post['body'])
+                ),
                 'author' => $author,
                 'author_image' => '/image/static/icon_128.jpg',
                 'categories' => $categories,
@@ -229,28 +286,49 @@ class ControllerBlogPost extends Controller {
             //$extra_data_array['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
 
 
-            if ($this->session->data['is_owner']) {
-                if ($post['deleted'] == 1) {
-                    $extra_data_array['actions']['undelete'] = array('title' => 'Undelete', 'icon' => "<i class='fa fa-undo'></i>", 'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['post_id'], ''));
-                } else {
-                    $extra_data_array['actions']['edit'] = array('title' => 'Edit', 'icon' => "<i class='fa fa-edit'></i>", 'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['post_id'], ''));
-                    $extra_data_array['actions']['delete'] = array('title' => 'Delete', 'icon' => "<i class='fa fa-trash'></i>", 'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['post_id'], ''));
+                if ($this->session->data['is_owner']) {
+                    if ($post['deleted'] == 1) {
+                        $extra_data_array['actions']['undelete'] = array(
+                        'title' => 'Undelete',
+                        'icon' => "<i class='fa fa-undo'></i>",
+                        'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['post_id'], ''));
+                    } else {
+                        $extra_data_array['actions']['edit'] = array(
+                        'title' => 'Edit',
+                        'icon' => "<i class='fa fa-edit'></i>",
+                        'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['post_id'], ''));
+                        $extra_data_array['actions']['delete'] = array(
+                        'title' => 'Delete',
+                        'icon' => "<i class='fa fa-trash'></i>",
+                        'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['post_id'], ''));
+                    }
                 }
-            }
-            if ($mpconfig['repost']) {
-                $extra_data_array['actions']['repost'] = array('title' => 'Repost', 'icon' => "<i class='fa fa-share-square-o'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']));
-            }
-            if ($mpconfig['reply']) {
-                $extra_data_array['actions']['reply'] = array('title' => 'Reply', 'icon' => "<i class='fa fa-reply'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
-            }
-            if ($mpconfig['like']) {
-                $extra_data_array['actions']['like'] = array('title' => 'Like', 'icon' => "<i class='fa fa-heart'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
-            }
-            if ($mpconfig['bookmark']) {
-                $extra_data_array['actions']['bookmark'] = array('title' => 'Bookmark', 'icon' => "<i class='fa fa-bookmark'></i>", 'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
-            }
+                if ($mpconfig['repost']) {
+                    $extra_data_array['actions']['repost'] = array(
+                    'title' => 'Repost',
+                    'icon' => "<i class='fa fa-share-square-o'></i>",
+                    'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['repost']));
+                }
+                if ($mpconfig['reply']) {
+                    $extra_data_array['actions']['reply'] = array(
+                    'title' => 'Reply',
+                    'icon' => "<i class='fa fa-reply'></i>",
+                    'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['reply']));
+                }
+                if ($mpconfig['like']) {
+                    $extra_data_array['actions']['like'] = array(
+                    'title' => 'Like',
+                    'icon' => "<i class='fa fa-heart'></i>",
+                    'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['like']));
+                }
+                if ($mpconfig['bookmark']) {
+                    $extra_data_array['actions']['bookmark'] = array(
+                    'title' => 'Bookmark',
+                    'icon' => "<i class='fa fa-bookmark'></i>",
+                    'link' => str_replace('{url}', urlencode($post['permalink']), $mpconfig['bookmark']));
+                }
 
-            $data['posts'][] = array_merge($post, $extra_data_array);
+                $data['posts'][] = array_merge($post, $extra_data_array);
         }
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/post_list.tpl')) {

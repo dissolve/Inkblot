@@ -1318,8 +1318,8 @@ article.draft:before{
 }
 #general-likes ul li, #general-likes .likewrapper { float:left; }
 #general-likes img { width:24px; height:24px; }
-#general-resposts ul li, #general-resposts .likewrapper { float:left; }
-#general-resposts img { width:24px; height:24px; }
+#general-reposts ul li, #general-reposts .likewrapper { float:left; }
+#general-reposts img { width:24px; height:24px; }
 
 ul.mp-type-list { list-style-type:none; padding:0;}
 ul.mp-type-list li { display:inline-block;}

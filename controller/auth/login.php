@@ -27,7 +27,7 @@ class ControllerAuthLogin extends Controller {
 
         // make sure they actually submitted something
         if (!empty($me)) {
-            $me = $this->normalize_url($me);
+            $me = $this->normalizeUrl($me);
 
             //look up user's auth provider
             $auth_endpoint = IndieAuth\Client::discoverAuthorizationEndpoint($me);
@@ -87,14 +87,14 @@ class ControllerAuthLogin extends Controller {
             $redir_url = $this->url->link('auth/login/callback', 'c=' . $this->request->get['c'], '');
         }
 
-        $me = $this->normalize_url($this->request->get['me']);
+        $me = $this->normalizeUrl($this->request->get['me']);
         $code = $this->request->get['code'];
         $state = (isset($this->request->get['state']) ? $this->request->get['state'] : null);
 
         //$this->log->write('callback received ...');
         //$this->log->write(print_r($this->request->get,true));
 
-        $result = $this->confirm_auth($me, $code, $redir_url, $state);
+        $result = $this->confirmAuth($me, $code, $redir_url, $state);
 
         if ($result) {
             //lets try and see if they have an MP endpoint and if so, so they offer up the actions they have
@@ -125,7 +125,7 @@ class ControllerAuthLogin extends Controller {
             $token_user = str_replace(array('http://', 'https://'), array('',''), $me);
             $token_user = trim($token_user, '/');
 
-            $myself = trim($this->normalize_url(HTTP_SERVER), '/');
+            $myself = trim($this->normalizeUrl(HTTP_SERVER), '/');
             $myself = trim(str_replace(array('http://', 'https://'), array('',''), $myself), '/');
 
             if ($token_user == $myself) {
@@ -158,11 +158,11 @@ class ControllerAuthLogin extends Controller {
             $redir_url = $this->url->link('auth/login/tokencallback', 'c=' . $this->request->get['c'], '');
         }
 
-        $me = $this->normalize_url($this->request->get['me']);
+        $me = $this->normalizeUrl($this->request->get['me']);
         $code = $this->request->get['code'];
         $state = (isset($this->request->get['state']) ? $this->request->get['state'] : null);
 
-        $result = $this->confirm_auth($me, $code, $redir_url, $state);
+        $result = $this->confirmAuth($me, $code, $redir_url, $state);
 
         if ($result) {
             //lets try and see if they have an MP endpoint and if so, so they offer up the actions they have
@@ -172,7 +172,7 @@ class ControllerAuthLogin extends Controller {
             $this->log->write($this->request->get['me'] . ' has logged in.');
 
             //TODO token stuff
-            $token_results = $this->get_token($me, $code, $redir_url, $state);
+            $token_results = $this->getToken($me, $code, $redir_url, $state);
 
             $this->session->data['token'] = $token_results['access_token'];
             $this->session->data['scope'] = $token_results['scope'];
@@ -186,7 +186,9 @@ class ControllerAuthLogin extends Controller {
 
                 //curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
                 //if(isset($token_results['access_token'])){
-                    //curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', 'Authorization: Bearer '. $token_results['access_token']));
+                //curl_setopt($ch,
+                //CURLOPT_HTTPHEADER,
+                //array( 'Content-Type: application/json', 'Authorization: Bearer '. $token_results['access_token']));
                 //}
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
@@ -201,7 +203,7 @@ class ControllerAuthLogin extends Controller {
             $token_user = str_replace(array('http://', 'https://'), array('',''), $me);
             $token_user = trim($token_user, '/');
 
-            $myself = trim($this->normalize_url(HTTP_SERVER), '/');
+            $myself = trim($this->normalizeUrl(HTTP_SERVER), '/');
             $myself = trim(str_replace(array('http://', 'https://'), array('',''), $myself), '/');
 
             if ($token_user == $myself) {
@@ -218,7 +220,7 @@ class ControllerAuthLogin extends Controller {
         $this->response->redirect($url);
     }
 
-    private function confirm_auth($me, $code, $redir, $state = null)
+    private function confirmAuth($me, $code, $redir, $state = null)
     {
 
         $client_id = $this->url->link('');
@@ -256,7 +258,7 @@ class ControllerAuthLogin extends Controller {
         //$this->log->write('endpoint_response: '.$response);
         //$this->log->write(print_r($results, true));
 
-        $results['me'] = $this->normalize_url($results['me']);
+        $results['me'] = $this->normalizeUrl($results['me']);
 
         $trimmed_me = trim($me, '/');
         $trimmed_result_me = trim($results['me'], '/');
@@ -271,7 +273,7 @@ class ControllerAuthLogin extends Controller {
     }
 
 
-    private function get_token($me, $code, $redir, $state = null)
+    private function getToken($me, $code, $redir, $state = null)
     {
 
         $client_id = $this->url->link('');
@@ -314,7 +316,7 @@ class ControllerAuthLogin extends Controller {
     }
 
 
-    private function normalize_url($url)
+    private function normalizeUrl($url)
     {
             $url = trim($url);
         if (strpos($url, 'http') !== 0) {

@@ -156,7 +156,10 @@ class ControllerWebmentionReceive extends Controller {
     public function processWebmentions()
     {
         //check if target is at this site
-        $result = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_status_code = '202' LIMIT 1");
+        $result = $this->db->query("SELECT * " .
+            " FROM " . DATABASE . ".webmentions " .
+            " WHERE webmention_status_code = '202' " .
+            " LIMIT 1");
         $webmention = $result->row;
 
         while ($webmention) {
@@ -166,7 +169,10 @@ class ControllerWebmentionReceive extends Controller {
             // this resulted in double likes, etc
             // This prevents another run from picking up the same webmentions now.
             $this->db->query(
-                "UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '102', webmention_status = 'Processing' WHERE webmention_id = " . (int)$webmention_id
+                "UPDATE " . DATABASE . ".webmentions " .
+                " SET webmention_status_code = '102', " .
+                " webmention_status = 'Processing' " .
+                " WHERE webmention_id = " . (int)$webmention_id
             );
 
             $source_url = trim($webmention['source_url']);
@@ -177,7 +183,10 @@ class ControllerWebmentionReceive extends Controller {
             }
 
             $editing = false;
-            $edit_q = $this->db->query("SELECT * FROM " . DATABASE . ".interactions WHERE webmention_id=" . (int)$webmention_id . " LIMIT 1");
+            $edit_q = $this->db->query("SELECT * " .
+                " FROM " . DATABASE . ".interactions " .
+                " WHERE webmention_id=" . (int)$webmention_id . " " .
+                " LIMIT 1");
             if (!empty($edit_q->row)) {
                 $interaction_id = $edit_q->row['interaction_id'];
                 $editing = true;
@@ -231,9 +240,15 @@ class ControllerWebmentionReceive extends Controller {
 
 
                 if (!$valid_link_found) {
-                    $this->db->query("UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '400', webmention_status = 'Vouch Invalid' WHERE webmention_id = " . (int)$webmention_id);
+                    $this->db->query("UPDATE " . DATABASE . ".webmentions " .
+                        " SET webmention_status_code = '400', " .
+                        " webmention_status = 'Vouch Invalid' " .
+                        " WHERE webmention_id = " . (int)$webmention_id);
                     $action = $this->load->controller('webmention/notification/pushMessage');
-                    $result = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_status_code = '202' LIMIT 1");
+                    $result = $this->db->query("SELECT * " .
+                        " FROM " . DATABASE . ".webmentions " .
+                        " WHERE webmention_status_code = '202' " .
+                        " LIMIT 1");
                     $webmention = $result->row;
                     continue;
                 }
@@ -270,23 +285,33 @@ class ControllerWebmentionReceive extends Controller {
             if ($page_content === false) {
                 if ($editing && $return_code == 410) {
                     if (isset($interaction_id)) {
-                        $this->db->query("UPDATE " . DATABASE . ".interaction SET deleted=1 WHERE interaction_id = " . (int)$interaction_id);
+                        $this->db->query("UPDATE " . DATABASE . ".interaction " .
+                            " SET deleted=1 " .
+                            " WHERE interaction_id = " . (int)$interaction_id);
                     }
 
                     //our curl command failed to fetch the source site
-                    $this->db->query("UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '410', webmention_status = 'Deleted' WHERE webmention_id = " . (int)$webmention_id);
+                    $this->db->query("UPDATE " . DATABASE . ".webmentions " .
+                        " SET webmention_status_code = '410', webmention_status = 'Deleted' " .
+                        " WHERE webmention_id = " . (int)$webmention_id);
 
                 } else {
                     //our curl command failed to fetch the source site
-                    $this->db->query("UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '400', webmention_status = 'Failed To Fetch Source' WHERE webmention_id = " . (int)$webmention_id);
+                    $this->db->query("UPDATE " . DATABASE . ".webmentions " .
+                        " SET webmention_status_code = '400', webmention_status = 'Failed To Fetch Source' " .
+                        " WHERE webmention_id = " . (int)$webmention_id);
                 }
 
             } elseif (stristr($page_content, $target_url) === false) {
                 //we could not find the target_url anywhere on the source page.
-                $this->db->query("UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '400', webmention_status = 'Target Link Not Found At Source' WHERE webmention_id = " . (int)$webmention_id);
+                $this->db->query("UPDATE " . DATABASE . ".webmentions " .
+                    " SET webmention_status_code = '400', webmention_status = 'Target Link Not Found At Source' " .
+                    " WHERE webmention_id = " . (int)$webmention_id);
 
                 if ($editing && isset($interaction_id)) {
-                    $this->db->query("UPDATE " . DATABASE . ".interaction SET deleted=1 WHERE interaction_id = " . (int)$interaction_id);
+                    $this->db->query("UPDATE " . DATABASE . ".interaction " .
+                        " SET deleted=1 " .
+                        " WHERE interaction_id = " . (int)$interaction_id);
                 }
 
             } else {
@@ -345,7 +370,9 @@ class ControllerWebmentionReceive extends Controller {
                         }
 
                         //salmention
-                        $res = $this->db->query("SELECT post_id FROM " . DATABASE . ".interactions WHERE interaction_id = '" . (int)$interaction_id . "' LIMIT 1");
+                        $res = $this->db->query("SELECT post_id " .
+                            " FROM " . DATABASE . ".interactions " .
+                            " WHERE interaction_id = '" . (int)$interaction_id . "' LIMIT 1");
                         if ($res->row) {
                             $post_id = $res->row['post_id'];
                             if (defined('QUEUED_SEND')) {
@@ -370,16 +397,28 @@ class ControllerWebmentionReceive extends Controller {
 
 
 
-                    $this->db->query("INSERT INTO " . DATABASE . ".interactions SET source_url = '" . $comment_data['url'] . "'" .
-                        ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name'])) ? ", author_name='" . $comment_data['author']['name'] . "'" : "") .
-                        ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url'])) ? ", author_url='" . $comment_data['author']['url'] . "'" : "") .
-                        ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo'])) ? ", author_image='" . $comment_data['author']['photo'] . "'" : "") .
-                        ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of'])) ? ", tag_of='" . $comment_data['tag-of'] . "'" : "") .
-                    ", interaction_type='" . $interaction_type . "'" .
-                    ", webmention_id='" . $webmention_id . "'" .
-                        "");
+                    $this->db->query(
+                        "INSERT INTO " . DATABASE . ".interactions " .
+                        " SET source_url = '" . $comment_data['url'] . "'" .
+                        ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))
+                        ? ", author_name='" . $comment_data['author']['name'] . "'"
+                        : "") .
+                        ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))
+                        ? ", author_url='" . $comment_data['author']['url'] . "'"
+                        : "") .
+                        ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))
+                        ? ", author_image='" . $comment_data['author']['photo'] . "'"
+                        : "") .
+                        ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of']))
+                        ? ", tag_of='" . $comment_data['tag-of'] . "'"
+                        : "") .
+                        ", interaction_type='" . $interaction_type . "'" .
+                        ", webmention_id='" . $webmention_id . "'" .
+                        ""
+                    );
                     $interaction_id = $this->db->getLastId();
-                    $this->db->query("UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '200', webmention_status = 'OK' WHERE webmention_id = " . (int)$webmention_id);
+                    $this->db->query("UPDATE " . DATABASE . ".webmentions SET webmention_status_code = '200', webmention_status = 'OK' " .
+                        " WHERE webmention_id = " . (int)$webmention_id);
                     $this->cache->delete('interactions');
 
 
@@ -389,7 +428,9 @@ class ControllerWebmentionReceive extends Controller {
             }
             $action = $this->load->controller('webmention/notification/pushMessage');
 
-            $result = $this->db->query("SELECT * FROM " . DATABASE . ".webmentions WHERE webmention_status_code = '202' LIMIT 1");
+            $result = $this->db->query("SELECT * " .
+                " FROM " . DATABASE . ".webmentions " .
+                " WHERE webmention_status_code = '202' LIMIT 1");
             $webmention = $result->row;
 
         } //end while($webmention) loop

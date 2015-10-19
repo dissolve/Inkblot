@@ -187,7 +187,12 @@ class ControllerWebmentionQueue extends Controller {
 
         // look up url in context_syndications and if there use that id
 
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".context_syndication WHERE syndication_url='" . $this->db->escape($real_url) . "' LIMIT 1");
+        $query = $this->db->query(
+            "SELECT * " .
+            " FROM " . DATABASE . ".context_syndication " .
+            " WHERE syndication_url='" . $this->db->escape($real_url) . "' " .
+            " LIMIT 1"
+        );
 
         if (!empty($query->row)) {
             return $query->row['context_id'];
@@ -244,10 +249,23 @@ class ControllerWebmentionQueue extends Controller {
                         context_id = " . (int)$context_id);
 
                 //remove any syndicated copies we have already parsed
-                $query = $this->db->query("SELECT * FROM " . DATABASE . ".context WHERE source_url='" . $this->db->escape($syndication_url) . "' LIMIT 1");
+                $query = $this->db->query(
+                    "SELECT * " .
+                    " FROM " . DATABASE . ".context " .
+                    " WHERE source_url='" . $this->db->escape($syndication_url) . "' " .
+                    " LIMIT 1"
+                );
                 if (!empty($query->row)) {
-                    $this->db->query("DELETE FROM " . DATABASE . ".context WHERE source_url='" . $this->db->escape($syndication_url) . "' LIMIT 1");
-                    $this->db->query("UPDATE " . DATABASE . ".context_to_context set context_parent_id = " . (int)$context_id . " WHERE context_parent_id=" . (int)$query->row['context_id']);
+                    $this->db->query(
+                        "DELETE FROM " . DATABASE . ".context " .
+                        " WHERE source_url='" . $this->db->escape($syndication_url) . "' " .
+                        " LIMIT 1"
+                    );
+                    $this->db->query(
+                        "UPDATE " . DATABASE . ".context_to_context " .
+                        " SET context_parent_id = " . (int)$context_id . " " .
+                        " WHERE context_parent_id=" . (int)$query->row['context_id']
+                    );
                 }
             }
         }
