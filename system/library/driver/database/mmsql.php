@@ -1,79 +1,88 @@
 <?php
 final class DBMSSQL {
-	private $link;
+    private $link;
 
-	public function __construct($hostname, $username, $password, $database) {
-		if (!$this->link = mssql_connect($hostname, $username, $password)) {
-			exit('Error: Could not make a database connection using ' . $username . '@' . $hostname);
-		}
+    public function __construct($hostname, $username, $password, $database)
+    {
+        $this->link = mssql_connect($hostname, $username, $password);
 
-		if (!mssql_select_db($database, $this->link)) {
-			exit('Error: Could not connect to database ' . $database);
-		}
+        if (!$this->link) {
+            exit('Error: Could not make a database connection using ' . $username . '@' . $hostname);
+        }
 
-		mssql_query("SET NAMES 'utf8'", $this->link);
-		mssql_query("SET CHARACTER SET utf8", $this->link);
-	}
-		
-	public function query($sql) {
-		$resource = mssql_query($sql, $this->link);
+        if (!mssql_select_db($database, $this->link)) {
+            exit('Error: Could not connect to database ' . $database);
+        }
 
-		if ($resource) {
-			if (is_resource($resource)) {
-				$i = 0;
+        mssql_query("SET NAMES 'utf8'", $this->link);
+        mssql_query("SET CHARACTER SET utf8", $this->link);
+    }
 
-				$data = array();
+    public function query($sql)
+    {
+        $resource = mssql_query($sql, $this->link);
 
-				while ($result = mssql_fetch_assoc($resource)) {
-					$data[$i] = $result;
+        if ($resource) {
+            if (is_resource($resource)) {
+                $i = 0;
 
-					$i++;
-				}
+                $data = array();
 
-				mssql_free_result($resource);
+                while ($result = mssql_fetch_assoc($resource)) {
+                    $data[$i] = $result;
 
-				$query = new stdClass();
-				$query->row = isset($data[0]) ? $data[0] : array();
-				$query->rows = $data;
-				$query->num_rows = $i;
+                    $i++;
+                }
 
-				unset($data);
+                mssql_free_result($resource);
 
-				return $query;
-			} else {
-				return true;
-			}
-		} else {
-			trigger_error('Error: ' . mssql_get_last_message($this->link) . '<br />' . $sql);
-			exit();
-		}
-	}
+                $query = new stdClass();
+                $query->row = isset($data[0]) ? $data[0] : array();
+                $query->rows = $data;
+                $query->num_rows = $i;
 
-	public function escape($value) {
-		$unpacked = unpack('H*hex', $value);
+                unset($data);
 
-		return '0x' . $unpacked['hex'];
-	}
+                return $query;
+            } else {
+                return true;
+            }
+        } else {
+            trigger_error('Error: ' . mssql_get_last_message($this->link) . '<br />' . $sql);
+            exit();
+        }
+    }
 
-	public function countAffected() {
-		return mssql_rows_affected($this->link);
-	}
+    public function escape($value)
+    {
+        $unpacked = unpack('H*hex', $value);
 
-	public function getLastId() {
-		$last_id = false;
-		
-		$resource = mssql_query("SELECT @@identity AS id", $this->link);
-		
-		if ($row = mssql_fetch_row($resource)) {
-			$last_id = trim($row[0]);
-		}
-		
-		mssql_free_result($resource);
-		
-		return $last_id;
-	}
-	
-	public function __destruct() {
-		mssql_close($this->link);
-	}
+        return '0x' . $unpacked['hex'];
+    }
+
+    public function countAffected()
+    {
+        return mssql_rows_affected($this->link);
+    }
+
+    public function getLastId()
+    {
+        $last_id = false;
+
+        $resource = mssql_query("SELECT @@identity AS id", $this->link);
+
+        $row = mssql_fetch_row($resource);
+        if ($row) {
+            $last_id = trim($row[0]);
+        }
+
+        mssql_free_result($resource);
+
+        return $last_id;
+    }
+
+    public function __destruct()
+    {
+        mssql_close($this->link);
+    }
 }

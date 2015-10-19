@@ -11,6 +11,7 @@ class ControllerErrorNotFound extends Controller {
         $data['header'] = $this->load->controller('common/header');
         $data['footer'] = $this->load->controller('common/footer');
 
+        $data['continue'] = $this->url->link('common/home');
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/error/not_found.tpl')) {
             $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/error/not_found.tpl', $data));

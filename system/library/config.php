@@ -1,31 +1,35 @@
 <?php
 class Config {
-	private $data = array();
-	
-	public function get($key) {
-		return (isset($this->data[$key]) ? $this->data[$key] : null);
-	}
+    private $data = array();
 
-	public function set($key, $value) {
-		$this->data[$key] = $value;
-	}
+    public function get($key)
+    {
+        return (isset($this->data[$key]) ? $this->data[$key] : null);
+    }
 
-	public function has($key) {
-		return isset($this->data[$key]);
-	}
+    public function set($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
 
-	public function load($filename) {
-		$file = DIR_CONFIG . $filename . '.php';
-		
-		if (file_exists($file)) { 
-			$_ = array();
+    public function has($key)
+    {
+        return isset($this->data[$key]);
+    }
 
-			require($file);
+    public function load($filename)
+    {
+        $file = DIR_CONFIG . $filename . '.php';
 
-			$this->data = array_merge($this->data, $_);
-		} else {
-			trigger_error('Error: Could not load config ' . $filename . '!');
-			exit();
-		}
-	}
+        if (file_exists($file)) {
+            $_ = array();
+
+            require($file);
+
+            $this->data = array_merge($this->data, $_);
+        } else {
+            trigger_error('Error: Could not load config ' . $filename . '!');
+            exit();
+        }
+    }
 }

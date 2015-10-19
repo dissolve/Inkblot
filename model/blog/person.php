@@ -40,6 +40,7 @@ class ModelBlogPerson extends Model {
         );
 
         $id = $this->db->getLastId();
+        $this->cache->delete('people');
 
     }
 
@@ -53,9 +54,84 @@ class ModelBlogPerson extends Model {
                 " WHERE person_id = " . (int)$person_id
             );
             $person = $query->row;
+
+            $query = $this->db->query(
+                "SELECT * " .
+                " FROM " . DATABASE . ".people_alternate_urls " .
+                " WHERE person_id = " . (int)$person_id .
+                " ORDER BY url" 
+            );
+            $person['alternates'] = $query->rows;
+
             $this->cache->set('person.' . $person_id, $person);
         }
         return $person;
     }
+
+    public function getPeople()
+    {
+        $people = $this->cache->get('people');
+        if (!$person) {
+            $query = $this->db->query(
+                "SELECT * " .
+                " FROM " . DATABASE . ".people " .
+                " ORDER BY name" 
+            );
+            $people = $query->rows;
+            foreach($people as &$person){
+                $query = $this->db->query(
+                    "SELECT * " .
+                    " FROM " . DATABASE . ".people_alternate_urls " .
+                    " WHERE person_id = " . (int)$person['person_id'] .
+                    " ORDER BY url" 
+                );
+                $person['alternates'] = $query->rows;
+            }
+            $this->cache->set('people' , $people);
+        }
+        return $person;
+    }
+
+    public function joinPeople($main_person_id, $alternate_person_id)
+    {
+        $alt_person = $this->getPerson($alternate_person_id);
+        $this->addAlternateUrl($main_person_id, $alt_person['url']);
+
+        foreach($alt_person['alternates'] as $alt){
+            $this->addAlternateUrl($main_person_id, $alt['url']);
+        }
+
+        //TODO update people in interactions, and interactions_second_level
+
+        $this->deletePerson($alternate_person_id);
+
+        $this->cache->delete('people');
+    }
+
+    public function addAlternateUrl($person_id, $alternate_url)
+    {
+        $this->db->query(
+            "INSERT INTO " . DATABASE . ".people_alterate_urls " .
+            " SET person_id = " . (int)$person_id . ", "
+            " url = '".$this->db->escape($alterate_url)."' "
+        );
+        $this->cache->delete('person.' . $person_id);
+    }
+
+    private function deletePerson($person_id)
+    {
+        //TODO check if this person is associated to anything first before delete
+        $this->db->query(
+            "DELETE FROM " . DATABASE . ".people_alterate_urls " .
+            " WHERE person_id = " . (int)$person_id 
+        );
+        $this->db->query(
+            "DELETE FROM " . DATABASE . ".people " .
+            " WHERE person_id = " . (int)$person_id 
+        );
+        $this->cache->delete('person.' . $person_id);
+        return true;
+    }
+
 
 }

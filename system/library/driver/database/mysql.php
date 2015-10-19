@@ -1,81 +1,93 @@
 <?php
 final class DBMySQL {
-	private $link;
+    private $link;
 
-	public function __construct($hostname, $username, $password, $database) {
-		if (!$this->link = mysql_connect($hostname, $username, $password)) {
-			trigger_error('Error: Could not make a database link using ' . $username . '@' . $hostname);
-		}
+    public function __construct($hostname, $username, $password, $database)
+    {
+        $this->link = mysql_connect($hostname, $username, $password);
+        if (!$this->link) {
+            trigger_error('Error: Could not make a database link using ' . $username . '@' . $hostname);
+        }
 
         // this doesn't make sense as I'm not using a specific DB
-		//if (!mysql_select_db($database, $this->link)) {
-			//trigger_error('Error: Could not connect to database ' . $database);
-		//}
-		
-		mysql_query("SET NAMES 'utf8'", $this->link);
-		mysql_query("SET CHARACTER SET utf8", $this->link);
-		mysql_query("SET CHARACTER_SET_CONNECTION=utf8", $this->link);
-		mysql_query("SET SQL_MODE = ''", $this->link);
-	}
+        //if (!mysql_select_db($database, $this->link)) {
+            //trigger_error('Error: Could not connect to database ' . $database);
+        //}
 
-	public function query($sql) {
-		if ($this->link) {
-			$resource = mysql_query($sql, $this->link);
+        mysql_query("SET NAMES 'utf8'", $this->link);
+        mysql_query("SET CHARACTER SET utf8", $this->link);
+        mysql_query("SET CHARACTER_SET_CONNECTION=utf8", $this->link);
+        mysql_query("SET SQL_MODE = ''", $this->link);
+    }
 
-			if ($resource) {
-				if (is_resource($resource)) {
-					$i = 0;
+    public function query($sql)
+    {
+        if ($this->link) {
+            $resource = mysql_query($sql, $this->link);
 
-					$data = array();
+            if ($resource) {
+                if (is_resource($resource)) {
+                    $i = 0;
 
-					while ($result = mysql_fetch_assoc($resource)) {
-						$data[$i] = $result;
+                    $data = array();
 
-						$i++;
-					}
+                    while ($result = mysql_fetch_assoc($resource)) {
+                        $data[$i] = $result;
 
-					mysql_free_result($resource);
+                        $i++;
+                    }
 
-					$query = new stdClass();
-					$query->row = isset($data[0]) ? $data[0] : array();
-					$query->rows = $data;
-					$query->num_rows = $i;
+                    mysql_free_result($resource);
 
-					unset($data);
+                    $query = new stdClass();
+                    $query->row = isset($data[0]) ? $data[0] : array();
+                    $query->rows = $data;
+                    $query->num_rows = $i;
 
-					return $query;
-				} else {
-					return true;
-				}
-			} else {
-				$trace = debug_backtrace();
+                    unset($data);
 
-				trigger_error('Error: ' . mysql_error($this->link) . '<br />Error No: ' . mysql_errno($this->link) . '<br /> Error in: <b>' . $trace[1]['file'] . '</b> line <b>' . $trace[1]['line'] . '</b><br />' . $sql);
-			}
-		}
-	}
+                    return $query;
+                } else {
+                    return true;
+                }
+            } else {
+                $trace = debug_backtrace();
 
-	public function escape($value) {
-		if ($this->link) {
-			return mysql_real_escape_string($value, $this->link);
-		}
-	}
+                trigger_error(
+                    'Error: ' . mysql_error($this->link) .
+                    '<br />Error No: ' . mysql_errno($this->link) .
+                    '<br /> Error in: <b>' . $trace[1]['file'] . '</b> line <b>' . $trace[1]['line'] . '</b><br />' .
+                    $sql
+                );
+            }
+        }
+    }
 
-	public function countAffected() {
-		if ($this->link) {
-			return mysql_affected_rows($this->link);
-		}
-	}
+    public function escape($value)
+    {
+        if ($this->link) {
+            return mysql_real_escape_string($value, $this->link);
+        }
+    }
 
-	public function getLastId() {
-		if ($this->link) {
-			return mysql_insert_id($this->link);
-		}
-	}
+    public function countAffected()
+    {
+        if ($this->link) {
+            return mysql_affected_rows($this->link);
+        }
+    }
 
-	public function __destruct() {
-		if ($this->link) {
-			mysql_close($this->link);
-		}
-	}
+    public function getLastId()
+    {
+        if ($this->link) {
+            return mysql_insert_id($this->link);
+        }
+    }
+
+    public function __destruct()
+    {
+        if ($this->link) {
+            mysql_close($this->link);
+        }
+    }
 }

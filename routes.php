@@ -18,11 +18,14 @@ $routes['login_callback']     = 'auth/login/callback';
 $routes['login_token']        = 'auth/login/tokencallback';
 $routes['logout']             = 'auth/logout';
 $routes['contact']            = 'contacts/view';
+$routes['people']             = 'people/view';
 $routes['micropub-send']      = 'micropub/client/send';
 $routes['new']                = 'micropub/client';
 $routes['live']                = 'micropub/client/live';
 $routes['edit']               = 'micropub/client/editPost';
 $routes['delete']             = 'micropub/client/deletePost';
+
+$routes['unauthorized']       = 'error/unauthorized';
 
 $routes['new/note']           = 'micropub/client/note';
 $routes['new/checkin']        = 'micropub/client/checkin';

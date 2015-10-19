@@ -1,85 +1,93 @@
 <?php
 final class Loader {
-	private $registry;
+    private $registry;
 
-	public function __construct($registry) {
-		$this->registry = $registry;
-	}
-			
-	public function controller($route) {
-		// function arguments
-		$args = func_get_args();
+    public function __construct($registry)
+    {
+        $this->registry = $registry;
+    }
 
-		// Remove the route
-		array_shift($args);	
+    public function controller($route)
+    {
+        // function arguments
+        $args = func_get_args();
 
-		$action = new Action($route, $args); 
+        // Remove the route
+        array_shift($args);
 
-		return $action->execute($this->registry);
-	}
-		
-	public function model($model) {
-		$file = DIR_APPLICATION . 'model/' . $model . '.php';
-		$class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', $model);
-				
-		if (file_exists($file)) { 
-			include_once($file);
+        $action = new Action($route, $args);
 
-			$this->registry->set('model_' . str_replace('/', '_', $model), new $class($this->registry));
-		} else {
-			trigger_error('Error: Could not load model ' . $file . '!');
-			exit();
-		}
-	}
-	
-	public function view($template, $data = array()) {
-		$file = DIR_TEMPLATE . $template;
-		
-		if (file_exists($file)) {
-			extract($data);
-			
-			ob_start();
+        return $action->execute($this->registry);
+    }
 
-			require($file);
+    public function model($model)
+    {
+        $file = DIR_APPLICATION . 'model/' . $model . '.php';
+        $class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', $model);
 
-			$output = ob_get_contents();
+        if (file_exists($file)) {
+            include_once($file);
 
-			ob_end_clean();
+            $this->registry->set('model_' . str_replace('/', '_', $model), new $class($this->registry));
+        } else {
+            trigger_error('Error: Could not load model ' . $file . '!');
+            exit();
+        }
+    }
 
-			return $output;
-		} else {
-			trigger_error('Error: Could not load template ' . $file . '!');
-			exit();
-		}
-	}
+    public function view($template, $data = array())
+    {
+        $file = DIR_TEMPLATE . $template;
 
-	public function library($library) {
-		$file = DIR_SYSTEM . 'library/' . $library . '.php';
+        if (file_exists($file)) {
+            extract($data);
 
-		if (file_exists($file)) {
-			include_once($file);
-		} else {
-			trigger_error('Error: Could not load library ' . $file . '!');
-			exit();
-		}
-	}
-	
-	public function helper($helper) {
-		$file = DIR_SYSTEM . 'helper/' . $helper . '.php';
+            ob_start();
 
-		if (file_exists($file)) {
-			include_once($file);
-		} else {
-			trigger_error('Error: Could not load helper ' . $file . '!');
-			exit();
-		}
-	}
+            require($file);
 
-	public function config($config) {
-		$this->registry->get('config')->load($config);
-	}
+            $output = ob_get_contents();
 
-	public function language($language) {
-		return $this->registry->get('language')->load($language);
-	}
+            ob_end_clean();
+
+            return $output;
+        } else {
+            trigger_error('Error: Could not load template ' . $file . '!');
+            exit();
+        }
+    }
+
+    public function library($library)
+    {
+        $file = DIR_SYSTEM . 'library/' . $library . '.php';
+
+        if (file_exists($file)) {
+            include_once($file);
+        } else {
+            trigger_error('Error: Could not load library ' . $file . '!');
+            exit();
+        }
+    }
+
+    public function helper($helper)
+    {
+        $file = DIR_SYSTEM . 'helper/' . $helper . '.php';
+
+        if (file_exists($file)) {
+            include_once($file);
+        } else {
+            trigger_error('Error: Could not load helper ' . $file . '!');
+            exit();
+        }
+    }
+
+    public function config($config)
+    {
+        $this->registry->get('config')->load($config);
+    }
+
+    public function language($language)
+    {
+        return $this->registry->get('language')->load($language);
+    }
 }

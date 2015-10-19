@@ -1,28 +1,29 @@
 <?php
 class Request {
-	public $get = array();
-	public $post = array();
-	public $cookie = array();
-	public $files = array();
-	public $server = array();
-    
-	public function __construct() {
+    public $get = array();
+    public $post = array();
+    public $cookie = array();
+    public $files = array();
+    public $server = array();
+
+    public function __construct()
+    {
         //$_GET = $this->clean($this->proper_parse_str($_SERVER['QUERY_STRING']));
         //$_POST = $this->clean($this->proper_parse_str(file_get_contents("php://input")));
-		//$_GET = $this->clean($_GET);
-		//$_POST = $this->clean($_POST);
-		$_REQUEST = $this->clean($_REQUEST);
-		$_COOKIE = $this->clean($_COOKIE);
-		$_FILES = $this->clean($_FILES);
-		$_SERVER = $this->clean($_SERVER);
+        //$_GET = $this->clean($_GET);
+        //$_POST = $this->clean($_POST);
+        $_REQUEST = $this->clean($_REQUEST);
+        $_COOKIE = $this->clean($_COOKIE);
+        $_FILES = $this->clean($_FILES);
+        $_SERVER = $this->clean($_SERVER);
 
-		$this->get = $_GET;
-		$this->post = $_POST;
-		$this->request = $_REQUEST;
-		$this->cookie = $_COOKIE;
-		$this->files = $_FILES;
-		$this->server = $_SERVER;
-	}
+        $this->get = $_GET;
+        $this->post = $_POST;
+        $this->request = $_REQUEST;
+        $this->cookie = $_COOKIE;
+        $this->files = $_FILES;
+        $this->server = $_SERVER;
+    }
 
     /*
     //lets force PHP to behave like standard PHP parsing
@@ -37,7 +38,7 @@ class Request {
       foreach ($pairs as $i) {
         # split into name and value
         list($name,$value) = explode('=', $i, 2);
-        
+
         # if name already exists
         if( isset($arr[$name]) ) {
           # stick multiple values into an array
@@ -61,17 +62,18 @@ class Request {
 
 
 
-	public function clean($data) {
-		if (is_array($data)) {
-			foreach ($data as $key => $value) {
-				unset($data[$key]);
+    public function clean($data)
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                unset($data[$key]);
 
-				$data[$this->clean($key)] = $this->clean($value);
-			}
-		} else {
-			$data = htmlspecialchars($data, ENT_COMPAT, 'UTF-8');
-		}
+                $data[$this->clean($key)] = $this->clean($value);
+            }
+        } else {
+            $data = htmlspecialchars($data, ENT_COMPAT, 'UTF-8');
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 }
