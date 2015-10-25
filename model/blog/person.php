@@ -14,21 +14,19 @@ class ModelBlogPerson extends Model {
     public function storePerson($data)
     {
 
+        $person_id = $this->getPersonByUrl($data['url']);
+
+        if ($person_id) {
+            return $person_id;
+        }
+
         if ( !isset($data['url']) && !isset($data['name']) && !isset($data['image']) ) {
             return null;
         }
 
-        //todo: should clean up url??
+        $data['url'] = $this->standardizeUrl($data['url']);
 
-        $query = $this->db->query(
-            "SELECT person_id " .
-            " FROM " . DATABASE . ".people " .
-            " WHERE `url` = '" . $this->db->escape($data['url']) . "' ;"
-        );
 
-        if ($query->row) {
-            return $query->row['person_id'];
-        }
         //TODO: check for the url being an alternate value
 
 
@@ -42,6 +40,33 @@ class ModelBlogPerson extends Model {
         $id = $this->db->getLastId();
         $this->cache->delete('people');
 
+    }
+
+    public function getPersonByUrl($url)
+    {
+        $url = $this->standardizeUrl($url);
+
+        $query = $this->db->query(
+            "SELECT person_id " .
+            " FROM " . DATABASE . ".people " .
+            " WHERE `url` = '" . $this->db->escape($url) . "' ;"
+        );
+
+        if ($query->row) {
+            return $query->row['person_id'];
+        }
+
+        $query = $this->db->query(
+            "SELECT person_id " .
+            " FROM " . DATABASE . ".people_alternate_urls " .
+            " WHERE `url` = '" . $this->db->escape($url) . "' ;"
+        );
+
+        if ($query->row) {
+            return $query->row['person_id'];
+        }
+
+        return null;
     }
 
     public function getPerson($person_id)
@@ -59,7 +84,7 @@ class ModelBlogPerson extends Model {
                 "SELECT * " .
                 " FROM " . DATABASE . ".people_alternate_urls " .
                 " WHERE person_id = " . (int)$person_id .
-                " ORDER BY url" 
+                " ORDER BY url"
             );
             $person['alternates'] = $query->rows;
 
@@ -68,28 +93,34 @@ class ModelBlogPerson extends Model {
         return $person;
     }
 
-    public function getPeople()
+    public function getPeople($limit=null, $skip=null)
     {
-        $people = $this->cache->get('people');
-        if (!$person) {
+        $people = $this->cache->get('people.'.$limit.'.'.$skip);
+        if (!$people) {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".people " .
-                " ORDER BY name" 
+                " ORDER BY name" . 
+                ($limit 
+                ? " LIMIT " . $limit .
+                    ( $skip 
+                    ? ", " . $skip
+                    : "")
+                : "")
             );
             $people = $query->rows;
-            foreach($people as &$person){
+            foreach ($people as &$person) {
                 $query = $this->db->query(
                     "SELECT * " .
                     " FROM " . DATABASE . ".people_alternate_urls " .
                     " WHERE person_id = " . (int)$person['person_id'] .
-                    " ORDER BY url" 
+                    " ORDER BY url"
                 );
                 $person['alternates'] = $query->rows;
             }
-            $this->cache->set('people' , $people);
+            $this->cache->set('people'.$limit.'.'.$skip, $people);
         }
-        return $person;
+        return $people;
     }
 
     public function joinPeople($main_person_id, $alternate_person_id)
@@ -97,7 +128,7 @@ class ModelBlogPerson extends Model {
         $alt_person = $this->getPerson($alternate_person_id);
         $this->addAlternateUrl($main_person_id, $alt_person['url']);
 
-        foreach($alt_person['alternates'] as $alt){
+        foreach ($alt_person['alternates'] as $alt) {
             $this->addAlternateUrl($main_person_id, $alt['url']);
         }
 
@@ -105,17 +136,42 @@ class ModelBlogPerson extends Model {
 
         $this->deletePerson($alternate_person_id);
 
+        $this->cache->delete('person.' . $main_person_id);
+        $this->cache->delete('person.' . $alternate_person_id);
+
         $this->cache->delete('people');
     }
 
     public function addAlternateUrl($person_id, $alternate_url)
     {
+        //todo, prevent adding an alternate that is the same as the master?
+        $query = $this->db->query(
+            "SELETC * " .
+            " FROM " . DATABASE . ".people_alterate_urls " .
+            " WHERE person_id = " . (int)$person_id . ", " . 
+            " AND url = '" . $this->db->escape($alterate_url) . "' "
+        );
+
+        if(empty($query->row)){
+            $this->db->query(
+                "INSERT INTO " . DATABASE . ".people_alterate_urls " .
+                " SET person_id = " . (int)$person_id . ", " . 
+                " url = '" . $this->db->escape($alterate_url) . "' "
+            );
+        }
+        $this->cache->delete('person.' . $person_id);
+    }
+
+    public function removeAlternateUrl($person_id, $alternate_url)
+    {
         $this->db->query(
-            "INSERT INTO " . DATABASE . ".people_alterate_urls " .
-            " SET person_id = " . (int)$person_id . ", "
-            " url = '".$this->db->escape($alterate_url)."' "
+            "DELETE FROM " . DATABASE . ".people_alterate_urls " .
+            " WHERE person_id = " . (int)$person_id . ", " . 
+            " AND url = '" . $this->db->escape($alterate_url) . "' " .
+            " LIMIT 1"
         );
         $this->cache->delete('person.' . $person_id);
+
     }
 
     private function deletePerson($person_id)
@@ -123,15 +179,44 @@ class ModelBlogPerson extends Model {
         //TODO check if this person is associated to anything first before delete
         $this->db->query(
             "DELETE FROM " . DATABASE . ".people_alterate_urls " .
-            " WHERE person_id = " . (int)$person_id 
+            " WHERE person_id = " . (int)$person_id
         );
         $this->db->query(
             "DELETE FROM " . DATABASE . ".people " .
-            " WHERE person_id = " . (int)$person_id 
+            " WHERE person_id = " . (int)$person_id
         );
-        $this->cache->delete('person.' . $person_id);
         return true;
     }
 
+    public function setPrimaryUrl($person_id, $url)
+    {
+        $url = $this->standardizeUrl($url);
+        $query = $this->db->query(
+            "SELECT * FROM " . DATABASE . ".people " .
+            " WHERE person_id = " . (int)$person_id
+        );
+        $person = $query->row;
+
+        if ($person['url'] == $url) {
+            return true;
+        }
+
+        $this->removeAlternateUrl($person_id, $url);
+        $this->addAlternateUrl($person_id, $person['url']);
+        $this->db->query(
+            "UPDATE " . DATABASE . ".people " .
+            " SET url = '" . $this->db->escape($url) . "' " .
+            " WHERE person_id = " . (int)$person_id .
+            " LIMIT 1"
+        );
+
+        $this->cache->delete('person.' . $person_id);
+    }
+
+    private function stardardizeUrl($url)
+    {
+        //TODO this clearly need a bunch of thought;
+        return trim($url);
+    }
 
 }

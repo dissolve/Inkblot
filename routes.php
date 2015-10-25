@@ -19,6 +19,7 @@ $routes['login_token']        = 'auth/login/tokencallback';
 $routes['logout']             = 'auth/logout';
 $routes['contact']            = 'contacts/view';
 $routes['people']             = 'people/view';
+$routes['people/merge']       = 'people/view/merge';
 $routes['micropub-send']      = 'micropub/client/send';
 $routes['new']                = 'micropub/client';
 $routes['live']                = 'micropub/client/live';

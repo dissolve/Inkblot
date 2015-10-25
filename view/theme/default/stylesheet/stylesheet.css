@@ -1345,6 +1345,37 @@ data.p-rsvp[value="yes"] {color:green}
 
 .snark_alert {color:red; margin-left:20px;}
 
+/* people */
+
+.person {
+    position:relative;
+    width: 500px;
+    clear:both;
+    margin:5px;
+    background:white;
+    border: 1px solid black;
+    border-radius: 4px;
+    min-height: 48px;
+}
+.person input[type="checkbox"] {
+    display:none
+}
+.person.selectedperson{
+    background: lightyellow;
+}
+.person.primaryperson{
+    background: lightgreen;
+}
+
+.person img {
+    height:48px;
+    width:48px;
+    float:left;
+    margin-right:10px;
+    border-radius: 4px;
+}
+
+
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
 }
