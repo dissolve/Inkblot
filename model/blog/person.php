@@ -225,7 +225,7 @@ class ModelBlogPerson extends Model {
         $this->cache->delete('person.' . $person_id);
     }
 
-    private function stardardizeUrl($url)
+    private function standardizeUrl($url)
     {
         //TODO this clearly need a bunch of thought;
         return trim($url);
