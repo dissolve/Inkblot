@@ -134,6 +134,18 @@ class ModelBlogPerson extends Model {
 
         //TODO update people in interactions, and interactions_second_level
 
+        $this->db->query(
+            "UPDATE " . DATABASE . ".interactions " .
+            " SET author_person_id = '" . (int)$main_person_id . "' " .
+            " WHERE author_person_id = " . (int)$alternate_person_id
+        );
+        $this->db->query(
+            "UPDATE " . DATABASE . ".second_level_interactions " .
+            " SET author_person_id = '" . (int)$main_person_id . "' " .
+            " WHERE author_person_id = " . (int)$alternate_person_id
+        );
+
+
         $this->deletePerson($alternate_person_id);
 
         $this->cache->delete('person.' . $main_person_id);
@@ -146,17 +158,17 @@ class ModelBlogPerson extends Model {
     {
         //todo, prevent adding an alternate that is the same as the master?
         $query = $this->db->query(
-            "SELETC * " .
-            " FROM " . DATABASE . ".people_alterate_urls " .
+            "SELECT * " .
+            " FROM " . DATABASE . ".people_alternate_urls " .
             " WHERE person_id = " . (int)$person_id . ", " . 
-            " AND url = '" . $this->db->escape($alterate_url) . "' "
+            " AND url = '" . $this->db->escape($alternate_url) . "' "
         );
 
         if(empty($query->row)){
             $this->db->query(
-                "INSERT INTO " . DATABASE . ".people_alterate_urls " .
+                "INSERT INTO " . DATABASE . ".people_alternate_urls " .
                 " SET person_id = " . (int)$person_id . ", " . 
-                " url = '" . $this->db->escape($alterate_url) . "' "
+                " url = '" . $this->db->escape($alternate_url) . "' "
             );
         }
         $this->cache->delete('person.' . $person_id);
@@ -165,9 +177,9 @@ class ModelBlogPerson extends Model {
     public function removeAlternateUrl($person_id, $alternate_url)
     {
         $this->db->query(
-            "DELETE FROM " . DATABASE . ".people_alterate_urls " .
+            "DELETE FROM " . DATABASE . ".people_alternate_urls " .
             " WHERE person_id = " . (int)$person_id . ", " . 
-            " AND url = '" . $this->db->escape($alterate_url) . "' " .
+            " AND url = '" . $this->db->escape($alternate_url) . "' " .
             " LIMIT 1"
         );
         $this->cache->delete('person.' . $person_id);
@@ -178,7 +190,7 @@ class ModelBlogPerson extends Model {
     {
         //TODO check if this person is associated to anything first before delete
         $this->db->query(
-            "DELETE FROM " . DATABASE . ".people_alterate_urls " .
+            "DELETE FROM " . DATABASE . ".people_alternate_urls " .
             " WHERE person_id = " . (int)$person_id
         );
         $this->db->query(

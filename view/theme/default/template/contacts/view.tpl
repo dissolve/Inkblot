@@ -9,7 +9,7 @@
     <span class='p-family-name'><?php echo $author['last_name'] ?></span>
   </span>
 <?php if(isset($author['url'])){ ?>
-    <a href="<?php echo $author['url']?>">Website</a>
+    <a class="u-url" href="<?php echo $author['url']?>">Website</a>
 <?php } ?>
 </h1>
 

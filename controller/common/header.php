@@ -94,12 +94,15 @@ class ControllerCommonHeader extends Controller {
         $this->response->addHeader('Link: <' . $auth_endpoint . '>; rel="authorization_endpoint"', false);
         $this->response->addHeader('Link: <' . $token_endpoint . '>; rel="token_endpoint"', false);
         $this->response->addHeader('Link: <' . $micropub_endpoint . '>; rel="micropub"', false);
+        if(defined('STREAM_SERVICE_URL')){
+            $this->response->addHeader('Link: <' . STREAM_SERVICE_URL . $server . $_SERVER[REQUEST_URI] . '>; rel="alternate"; type="application/json"', false);
+            $data['json_alternate'] = STREAM_SERVICE_URL . $server . $_SERVER[REQUEST_URI];
+        }
 
         $data['webmention_handler'] = $webmention_handler;
         $data['authorization_endpoint'] = $auth_endpoint;
         $data['token_endpoint'] = $token_endpoint;
         $data['micropub_endpoint'] = $micropub_endpoint;
-        $data['public_whitelist'] = $public_whitelist;
 
         if (isset($this->session->data['success'])) {
             $data['success'] = $this->session->data['success'];
