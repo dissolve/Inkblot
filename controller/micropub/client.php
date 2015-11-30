@@ -560,6 +560,7 @@ class ControllerMicropubClient extends Controller {
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 20);
         $real_source_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
         $page_content = curl_exec($ch);
         $mfitems = Mf2\parse($page_content, $real_source_url)['items'];
@@ -603,6 +604,7 @@ class ControllerMicropubClient extends Controller {
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 20);
         $real_source_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
         $page_content = curl_exec($ch);
         $mf = Mf2\parse($page_content, $real_source_url)['items'][0];

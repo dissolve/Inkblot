@@ -110,6 +110,7 @@ class ControllerAuthLogin extends Controller {
                 //curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+                curl_setopt($ch, CURLOPT_MAXREDIRS, 20);
 
                 $response = curl_exec($ch);
                 $result = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -192,6 +193,7 @@ class ControllerAuthLogin extends Controller {
                 //}
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+                curl_setopt($ch, CURLOPT_MAXREDIRS, 20);
 
                 $response = curl_exec($ch);
                 $result = curl_getinfo($ch, CURLINFO_HTTP_CODE);
