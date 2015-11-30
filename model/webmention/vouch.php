@@ -90,6 +90,7 @@ class ModelWebmentionVouch extends Model {
             curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($c, CURLOPT_URL, $referer);
             curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+            curl_setopt($c, CURLOPT_MAXREDIRS, 20);
             $referer = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
             $page_content = curl_exec($c);
 
@@ -191,6 +192,7 @@ class ModelWebmentionVouch extends Model {
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_URL, $webmention_target_url);
         curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($c, CURLOPT_MAXREDIRS, 20);
         $real_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
         $page_content = curl_exec($c);
 

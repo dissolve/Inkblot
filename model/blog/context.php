@@ -73,6 +73,7 @@ class ModelBlogContext extends Model {
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_URL, $source_url);
         curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($c, CURLOPT_MAXREDIRS, 20);
         $real_source_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
         $page_content = curl_exec($c);
         curl_close($c);

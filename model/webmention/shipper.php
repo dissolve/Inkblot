@@ -9,6 +9,7 @@ class ModelWebmentionShipper extends Model {
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_URL, $url);
         curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($c, CURLOPT_MAXREDIRS, 20);
         $page_content = curl_exec($c);
         curl_close($c);
         unset($c);
@@ -40,6 +41,7 @@ class ModelWebmentionShipper extends Model {
             curl_setopt($c, CURLOPT_POST, true);
             curl_setopt($c, CURLOPT_POSTFIELDS, $fields_string);
             curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+            curl_setopt($c, CURLOPT_MAXREDIRS, 20);
             curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($c, CURLOPT_HEADER, true);
             curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 5);
