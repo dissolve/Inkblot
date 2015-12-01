@@ -29,16 +29,22 @@ class ModelBlogPerson extends Model {
 
         //TODO: check for the url being an alternate value
 
+        if (empty($data['image']) && !empty($data['photo'])) {
+            $data['image'] = $data['photo'];
+        }
+
 
         $this->db->query(
             "INSERT INTO " . DATABASE . ".people " .
             " SET `url`='" . $this->db->escape($data['url']) . "', " .
-            " SET `name`='" . $this->db->escape($data['name']) . "', " .
-            " SET `image`='" . $this->db->escape($data['image']) . "' "
+            " `name`='" . $this->db->escape($data['name']) . "', " .
+            " `image`='" . $this->db->escape($data['image']) . "' "
         );
 
         $id = $this->db->getLastId();
         $this->cache->delete('people');
+
+        return $id;
 
     }
 
@@ -93,18 +99,18 @@ class ModelBlogPerson extends Model {
         return $person;
     }
 
-    public function getPeople($limit=null, $skip=null)
+    public function getPeople($limit = null, $skip = null)
     {
-        $people = $this->cache->get('people.'.$limit.'.'.$skip);
+        $people = $this->cache->get('people.' . $limit . '.' . $skip);
         if (!$people) {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".people " .
-                " ORDER BY name" . 
-                ($limit 
+                " ORDER BY name" .
+                ($limit
                 ? " LIMIT " . $limit .
-                    ( $skip 
-                    ? ", " . $skip
+                    ( $skip
+                    ? " OFFSET " . $skip
                     : "")
                 : "")
             );
@@ -118,7 +124,7 @@ class ModelBlogPerson extends Model {
                 );
                 $person['alternates'] = $query->rows;
             }
-            $this->cache->set('people'.$limit.'.'.$skip, $people);
+            $this->cache->set('people' . $limit . '.' . $skip, $people);
         }
         return $people;
     }
@@ -160,14 +166,14 @@ class ModelBlogPerson extends Model {
         $query = $this->db->query(
             "SELECT * " .
             " FROM " . DATABASE . ".people_alternate_urls " .
-            " WHERE person_id = " . (int)$person_id . ", " . 
+            " WHERE person_id = " . (int)$person_id . ", " .
             " AND url = '" . $this->db->escape($alternate_url) . "' "
         );
 
-        if(empty($query->row)){
+        if (empty($query->row)) {
             $this->db->query(
                 "INSERT INTO " . DATABASE . ".people_alternate_urls " .
-                " SET person_id = " . (int)$person_id . ", " . 
+                " SET person_id = " . (int)$person_id . ", " .
                 " url = '" . $this->db->escape($alternate_url) . "' "
             );
         }
@@ -178,7 +184,7 @@ class ModelBlogPerson extends Model {
     {
         $this->db->query(
             "DELETE FROM " . DATABASE . ".people_alternate_urls " .
-            " WHERE person_id = " . (int)$person_id . ", " . 
+            " WHERE person_id = " . (int)$person_id . ", " .
             " AND url = '" . $this->db->escape($alternate_url) . "' " .
             " LIMIT 1"
         );
@@ -227,8 +233,9 @@ class ModelBlogPerson extends Model {
 
     private function standardizeUrl($url)
     {
-        //TODO this clearly need a bunch of thought;
-        return trim($url);
+        $url = trim($url);
+        $url = rtrim($url, '/');
+        return  $url;
     }
 
 }

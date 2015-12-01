@@ -1,9 +1,7 @@
 <?php
 class ControllerPeopleView extends Controller {
     public function index()
-    {
-
-
+    
         $data['auth_page'] = $this->url->link('auth/login');
         $data['auth_endpoint'] = AUTH_ENDPOINT;
 
@@ -27,7 +25,7 @@ class ControllerPeopleView extends Controller {
                 $skip = max(0, $this->request->get['skip']);
             }
 
-            $data['people'] = $this->model_blog_person->getPeople($skip, 25);
+            $data['people'] = $this->model_blog_person->getPeople(25, $skip);
 
             if(count($data['people']) >= 25 ){
                 $data['next'] = $this->url->link('people/view', 'skip='.($skip+20));
