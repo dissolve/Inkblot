@@ -18,6 +18,15 @@ class ControllerBlogPost extends Controller {
 
         $post = $this->model_blog_post->getPostByDayCount($year, $month, $day, $daycount);
 
+        if(!$post){
+            $this->response->redirect( $this->url->link('error/not_found'));
+        }
+
+        if ($this->session->data['is_owner']) {
+            $data['is_owner'] = true;
+        }
+
+
         // redirect if we don't have the correct URL
         if ($this->request->get['slug'] != $post['slug'] ) {
             $this->response->redirect($post['permalink']);
@@ -31,9 +40,6 @@ class ControllerBlogPost extends Controller {
         $this->load->model('blog/interaction');
         $this->load->model('blog/context');
 
-        if ($this->session->data['is_owner']) {
-            $data['is_owner'] = true;
-        }
 
         if (intval($post['deleted']) == 1 && !$this->session->data['is_owner']) {
             $data['deleted'] = true;

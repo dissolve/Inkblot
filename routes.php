@@ -27,6 +27,7 @@ $routes['edit']               = 'micropub/client/editPost';
 $routes['delete']             = 'micropub/client/deletePost';
 
 $routes['unauthorized']       = 'error/unauthorized';
+$routes['404']                = 'error/not_found';
 
 $routes['new/note']           = 'micropub/client/note';
 $routes['new/checkin']        = 'micropub/client/checkin';

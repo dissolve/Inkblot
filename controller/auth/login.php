@@ -121,6 +121,12 @@ class ControllerAuthLogin extends Controller {
 
             // we successfullly confirmed auth
             $this->session->data['user_site'] = $this->request->get['me'];
+            $this->load->model('blog/person');
+            $person_id = $this->model_blog_person->getPersonByUrl($this->request->get['me']);
+            if($person_id){
+                $this->log->write('person_id = '. $person_id);
+                $this->session->data['person_id'] = $person_id;
+            }
             $this->session->data['success'] = "You are now logged in as " . $me;
 
             $token_user = str_replace(array('http://', 'https://'), array('',''), $me);
