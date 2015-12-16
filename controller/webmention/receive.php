@@ -285,25 +285,24 @@ class ControllerWebmentionReceive extends Controller {
             curl_close($c);
             unset($c);
 
-            if ($page_content === false) {
-                if ($editing && $return_code == 410) {
-                    if (isset($interaction_id)) {
-                        $this->db->query("UPDATE " . DATABASE . ".interaction " .
-                            " SET deleted=1 " .
-                            " WHERE interaction_id = " . (int)$interaction_id);
-                    }
+            if ($editing && $return_code == 410) {
+                if (isset($interaction_id)) {
+                    $this->db->query("UPDATE " . DATABASE . ".interactions " .
+                        " SET deleted=1 " .
+                        " WHERE interaction_id = " . (int)$interaction_id);
+                }
 
-                    //our curl command failed to fetch the source site
-                    $this->db->query("UPDATE " . DATABASE . ".webmentions " .
-                        " SET webmention_status_code = '410', webmention_status = 'Deleted' " .
-                        " WHERE webmention_id = " . (int)$webmention_id);
+                //our curl command failed to fetch the source site
+                $this->db->query("UPDATE " . DATABASE . ".webmentions " .
+                    " SET webmention_status_code = '410', webmention_status = 'Deleted' " .
+                    " WHERE webmention_id = " . (int)$webmention_id);
 
-                } else {
+            } elseif ($page_content === false) {
                     //our curl command failed to fetch the source site
                     $this->db->query("UPDATE " . DATABASE . ".webmentions " .
                         " SET webmention_status_code = '400', webmention_status = 'Failed To Fetch Source' " .
                         " WHERE webmention_id = " . (int)$webmention_id);
-                }
+                
 
             } elseif (stristr($page_content, $target_url) === false) {
                 //we could not find the target_url anywhere on the source page.
@@ -312,7 +311,7 @@ class ControllerWebmentionReceive extends Controller {
                     " WHERE webmention_id = " . (int)$webmention_id);
 
                 if ($editing && isset($interaction_id)) {
-                    $this->db->query("UPDATE " . DATABASE . ".interaction " .
+                    $this->db->query("UPDATE " . DATABASE . ".interactions " .
                         " SET deleted=1 " .
                         " WHERE interaction_id = " . (int)$interaction_id);
                 }

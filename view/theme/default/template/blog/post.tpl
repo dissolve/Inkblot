@@ -69,6 +69,21 @@
       <?php } ?>
     </div>
 
+    <?php if(!empty($post['reacjis']) ) { ?>
+    <span id="general-reacjis">
+        <?php foreach($post['reacjis'] as $reacji => $rdata){ ?>
+        <span class="reacji-container">
+                <span class="reacji"><?php echo $reacji?></span>
+                <span class="reacji-count"><?php echo count($rdata)?></span>
+        </span>
+        <?php } ?>
+
+    <div style="clear:both"></div>
+        </span>
+    <?php } ?>
+
+
+
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
           <?php if(isset($category['person_name'])){ ?>

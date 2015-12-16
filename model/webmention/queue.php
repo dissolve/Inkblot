@@ -58,6 +58,7 @@ class ModelWebmentionQueue extends Model {
         $res = $this->db->query(
             "SELECT * FROM " . DATABASE . ".webmentions " .
             " WHERE webmention_status_code != 200 " .
+            " AND webmention_status_code != 410 " .
             " AND (admin_status != 'dismiss' OR admin_status is NULL)"
         );
         return $res->rows;
@@ -67,6 +68,7 @@ class ModelWebmentionQueue extends Model {
         $res = $this->db->query(
             "SELECT count(*) as count FROM " . DATABASE . ".webmentions " .
             " WHERE webmention_status_code != 200 " .
+            " AND webmention_status_code != 410 " .
             " AND (admin_status != 'dismiss' OR admin_status is NULL)"
         );
         return $res->row['count'];

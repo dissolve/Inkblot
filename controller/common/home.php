@@ -52,6 +52,15 @@ class ControllerCommonHome extends Controller {
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
             $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
             $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
+            $reacjis = $this->model_blog_interaction->getInteractionsForPost('reacji', $post['post_id']);
+
+            $reacji_array = array();
+            foreach($reacjis as $r) {
+                if(!isset($reacji_array[$r['body']])){
+                    $reacji_array[$r['body']] = array();
+                }
+                $reacji_array[$r['body']][] = $r;
+            }
 
             $extra_data_array = array(
                 'body_html' => preg_replace(
@@ -64,6 +73,7 @@ class ControllerCommonHome extends Controller {
                 'categories' => $categories,
                 'comment_count' => $comment_count,
                 'like_count' => $like_count,
+                'reacjis' => $reacji_array,
                 'actions' => array());
                 if (isset($post['excerpt'])) {
                     $extra_data_array['excerpt_html'] = html_entity_decode($post['excerpt']);
