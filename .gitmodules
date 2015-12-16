@@ -19,3 +19,6 @@
 [submodule "libraries/php-mf2-shim"]
 	path = libraries/php-mf2-shim
 	url = https://github.com/dissolve/php-mf2-shim.git
+[submodule "libraries/single-emoji-recognizer"]
+	path = libraries/single-emoji-recognizer
+	url = https://github.com/dissolve/single-emoji-recognizer
