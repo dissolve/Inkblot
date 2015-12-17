@@ -51,11 +51,6 @@ class ModelBlogInteraction extends Model {
             $interaction_type = 'mention';
 
             switch ($comment_data['type']) {
-                case 'like':
-                    $interaction_type = 'like';
-                    $interaction_type = 'reacji';
-                    $comment_data['text'] = html_entity_decode('&#10084;'); //a heart emoji
-                break;
                 case 'reply':
                     $body_text = trim($comment_data['text']);
                     $interaction_type = 'reply';
@@ -63,6 +58,11 @@ class ModelBlogInteraction extends Model {
                         $interaction_type = 'reacji';
                         $comment_data['text'] = $body_text;
                     }
+                break;
+                case 'like':
+                    $interaction_type = 'like';
+                    $interaction_type = 'reacji';
+                    $comment_data['text'] = html_entity_decode('&#10084;'); //a heart emoji
                 break;
                 case 'repost':
                     $interaction_type = 'repost';
