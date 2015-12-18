@@ -18,6 +18,15 @@ class ControllerBlogPost extends Controller {
 
         $post = $this->model_blog_post->getPostByDayCount($year, $month, $day, $daycount);
 
+        if(!$post){
+            $this->response->redirect( $this->url->link('error/not_found'));
+        }
+
+        if ($this->session->data['is_owner']) {
+            $data['is_owner'] = true;
+        }
+
+
         // redirect if we don't have the correct URL
         if ($this->request->get['slug'] != $post['slug'] ) {
             $this->response->redirect($post['permalink']);
@@ -31,9 +40,6 @@ class ControllerBlogPost extends Controller {
         $this->load->model('blog/interaction');
         $this->load->model('blog/context');
 
-        if ($this->session->data['is_owner']) {
-            $data['is_owner'] = true;
-        }
 
         if (intval($post['deleted']) == 1 && !$this->session->data['is_owner']) {
             $data['deleted'] = true;
@@ -70,6 +76,7 @@ class ControllerBlogPost extends Controller {
             $likes = $this->model_blog_interaction->getInteractionsForPost('like', $post['post_id']);
             $reposts = $this->model_blog_interaction->getInteractionsForPost('repost', $post['post_id']);
             $mentions = $this->model_blog_interaction->getInteractionsForPost('mention', $post['post_id']);
+            $reacjis = $this->model_blog_interaction->getInteractionsForPost('reacji', $post['post_id']);
 
             $comments = array();
             if (!isset($this->session->data['user_site'])) {
@@ -132,6 +139,13 @@ class ControllerBlogPost extends Controller {
             }
 
             $context = $this->model_blog_context->getAllContextForPost($post['post_id']);
+            $reacji_array = array();
+            foreach($reacjis as $r) {
+                if(!isset($reacji_array[$r['body']])){
+                    $reacji_array[$r['body']] = array();
+                }
+                $reacji_array[$r['body']][] = $r;
+            }
 
             $data['post'] = array_merge($post, array(
                 'author' => $author,
@@ -142,6 +156,7 @@ class ControllerBlogPost extends Controller {
                 'mentions' => $mentions,
                 'like_count' => $like_count,
                 'likes' => $likes,
+                'reacjis' => $reacji_array,
                 'repost_count' => $repost_count,
                 'reposts' => $reposts,
                 'context' => $context

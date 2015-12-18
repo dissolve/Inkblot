@@ -61,8 +61,8 @@ class ControllerWebmentionReceive extends Controller {
 
         // make sure our source and target are valid urls
         if (!$this->isValidUrl($source) || !$this->isValidUrl($target)) {
-            header('HTTP/1.1 400 Bad Request');
-            exit();
+            $this->response->addHeader('HTTP/1.1 400 Bad Request');
+            return;
         }
 
         //if the source is approved, i don't need or want the vouch, i just auto accept it and throw the vouch away
@@ -77,7 +77,7 @@ class ControllerWebmentionReceive extends Controller {
             $this->response->addHeader('HTTP/1.1 202 Accepted');
 
             $this->response->setOutput($link);
-            exit();
+            return;
         }
         // if we are using vouch, and there is not vouch, or its invalid,  respond retry with 449
         //  still save webmention in case i want to approve manually later
@@ -89,8 +89,8 @@ class ControllerWebmentionReceive extends Controller {
             $link = $this->url->link('webmention/queue', 'id=' . $queue_id, '');
 
             $this->response->addHeader('Link: <' . $link . '>; rel="status"');
-            header('HTTP/1.1 449 Retry With vouch');
-            exit();
+            $this->response->addHeader('HTTP/1.1 449 Retry With vouch');
+            return;
         }
         if ($this->isApprovedSource($vouch)) {
             $this->load->model('webmention/queue');
@@ -152,7 +152,7 @@ class ControllerWebmentionReceive extends Controller {
         return true;
     }
 
-    //TODO, most of this should be in a moel
+    //TODO, most of this should be in a model
     public function processWebmentions()
     {
         //check if target is at this site
@@ -285,25 +285,24 @@ class ControllerWebmentionReceive extends Controller {
             curl_close($c);
             unset($c);
 
-            if ($page_content === false) {
-                if ($editing && $return_code == 410) {
-                    if (isset($interaction_id)) {
-                        $this->db->query("UPDATE " . DATABASE . ".interaction " .
-                            " SET deleted=1 " .
-                            " WHERE interaction_id = " . (int)$interaction_id);
-                    }
+            if ($editing && $return_code == 410) {
+                if (isset($interaction_id)) {
+                    $this->db->query("UPDATE " . DATABASE . ".interactions " .
+                        " SET deleted=1 " .
+                        " WHERE interaction_id = " . (int)$interaction_id);
+                }
 
-                    //our curl command failed to fetch the source site
-                    $this->db->query("UPDATE " . DATABASE . ".webmentions " .
-                        " SET webmention_status_code = '410', webmention_status = 'Deleted' " .
-                        " WHERE webmention_id = " . (int)$webmention_id);
+                //our curl command failed to fetch the source site
+                $this->db->query("UPDATE " . DATABASE . ".webmentions " .
+                    " SET webmention_status_code = '410', webmention_status = 'Deleted' " .
+                    " WHERE webmention_id = " . (int)$webmention_id);
 
-                } else {
+            } elseif ($page_content === false) {
                     //our curl command failed to fetch the source site
                     $this->db->query("UPDATE " . DATABASE . ".webmentions " .
                         " SET webmention_status_code = '400', webmention_status = 'Failed To Fetch Source' " .
                         " WHERE webmention_id = " . (int)$webmention_id);
-                }
+                
 
             } elseif (stristr($page_content, $target_url) === false) {
                 //we could not find the target_url anywhere on the source page.
@@ -312,7 +311,7 @@ class ControllerWebmentionReceive extends Controller {
                     " WHERE webmention_id = " . (int)$webmention_id);
 
                 if ($editing && isset($interaction_id)) {
-                    $this->db->query("UPDATE " . DATABASE . ".interaction " .
+                    $this->db->query("UPDATE " . DATABASE . ".interactions " .
                         " SET deleted=1 " .
                         " WHERE interaction_id = " . (int)$interaction_id);
                 }
@@ -400,6 +399,8 @@ class ControllerWebmentionReceive extends Controller {
                     }
 
 
+                    $this->load->model('blog/person');
+                    $person_id = $this->model_blog_person->storePerson($comment_data['author']);
 
                     $this->db->query(
                         "INSERT INTO " . DATABASE . ".interactions " .
@@ -416,6 +417,7 @@ class ControllerWebmentionReceive extends Controller {
                         ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of']))
                         ? ", tag_of='" . $comment_data['tag-of'] . "'"
                         : "") .
+                        ", author_person_id ='" . $person_id . "'" .
                         ", interaction_type='" . $interaction_type . "'" .
                         ", webmention_id='" . $webmention_id . "'" .
                         ""

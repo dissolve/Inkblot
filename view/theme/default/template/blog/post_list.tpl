@@ -104,6 +104,22 @@
              <?php if(isset($post['excerpt_html'])) {?>
                 <a href="<?php echo $post['permalink']?>" class="u-url">More...</a>
              <?php } ?>
+
+             
+    <?php if(!empty($post['reacjis']) ) { ?>
+    <span id="general-reacjis">
+        <?php foreach($post['reacjis'] as $reacji => $rdata){ ?>
+        <span class="reacji-container">
+                <span class="reacji"><?php echo $reacji?></span>
+                <span class="reacji-count"><?php echo count($rdata)?></span>
+        </span>
+        <?php } ?>
+
+        <div style="clear:both"></div>
+        </span>
+    <?php } ?>
+
+
     <?php if($post['comment_count'] > 0) { ?>
     <span class="comments-link"><a href="<?php echo $post['permalink']?>#comments" title="Comments for <?php echo $post['title']?>"><i class="fa fa-comment-o"></i> <?php echo $post['comment_count'] ?></a></span>
     <span class="sep"> | </span>

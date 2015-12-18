@@ -6,8 +6,8 @@
 </h1>
 <?php } ?>
 <div class="entry-content e-content">
-    <audio controls class="u-audio">
-        <source src="<?php echo $post['audio_file']?>" type="audio/mp4">
+    <audio controls>
+        <source class="u-audio" src="<?php echo $post['audio_file']?>" type="audio/mp4">
         <a href="<?php echo $post['audio_file']?>" >Link</a>
     <audio>
     <?php echo $post['body_html'];?>

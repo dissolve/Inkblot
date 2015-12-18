@@ -270,6 +270,9 @@ class ModelBlogPost extends Model {
                 " WHERE post_id = " . (int)$post_id
             );
             $post = $query->row;
+            if(empty($post)){
+                return null;
+            }
             $syndications = $this->getSyndications($post['post_id']);
             $shortlink = $this->short_url->link(
                 'common/shortener',
@@ -290,9 +293,23 @@ class ModelBlogPost extends Model {
                     ($post['slug'] ? '&' . 'slug=' . $post['slug'] : ''),
                     ''
                 ),
+                'public' => true,
                 'shortlink' => $shortlink//,
                 //'permashortcitation' => $citation
             ));
+
+            $query = $this->db->query(
+                "SELECT * " .
+                " FROM " . DATABASE . ".post_access " .
+                " WHERE post_id = " . (int)$post_id
+            );
+            $acls = $query->rows;
+
+            if(!empty($acls)){
+                $post['public'] = false;
+                $post['access'] = $acls;
+            }
+
             $post['name'] = $post['title'];
 
             if ($post['post_type'] == 'article' && preg_match('/<hr \/>/', $post['body'])) {
@@ -308,6 +325,29 @@ class ModelBlogPost extends Model {
                 $post['like-of'] = $post['bookmark_like_url'];
             }
             $this->cache->set('post.' . $post_id, $post);
+        }
+        if ($this->session->data['is_owner']) {
+            return $post;
+
+        } elseif(!$post['public']){
+            if(!isset($this->session->data['person_id'])){
+                return null;
+            }
+            $logged_in_person_id = $this->session->data['person_id'];
+
+            $allow_view = false;
+            $this->log->write('debug 1 ' .  print_r($post['access'], true));
+            $this->log->write($logged_in_person_id);
+            foreach($post['access'] as $access_entry){
+                $this->log->write( $access_entry['person_id'] . '??'. $logged_in_person_id);
+                if($access_entry['person_id'] == $logged_in_person_id){
+                    $this->log->write('good');
+                    $allow_view = true;
+                }
+            }
+            if(!$allow_view){
+                return null;
+            }
         }
         return $post;
     }
@@ -358,7 +398,10 @@ class ModelBlogPost extends Model {
 
             $data_array = array();
         foreach ($post_id_array as $post) {
-                $data_array[] = $this->getPost($post['post_id']);
+                $found_post = $this->getPost($post['post_id']);
+                if($found_post){
+                    $data_array[] = $found_post;
+                }
         }
 
         return $data_array;
@@ -382,7 +425,10 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $data_array[] = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['post_id']);
+            if($found_post){
+                $data_array[] = $found_post;
+            }
         }
 
         return $data_array;
@@ -423,7 +469,10 @@ class ModelBlogPost extends Model {
         }
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $data_array[] = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['post_id']);
+            if($found_post){
+                $data_array[] = $found_post;
+            }
         }
 
         return $data_array;
@@ -469,7 +518,10 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $data_array[] = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['post_id']);
+            if($found_post){
+                $data_array[] = $found_post;
+            }
         }
 
         return $data_array;
@@ -494,7 +546,10 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $data_array[] = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['post_id']);
+            if($found_post){
+                $data_array[] = $found_post;
+            }
         }
 
         return $data_array;
@@ -529,7 +584,10 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $data_array[] = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['post_id']);
+            if($found_post){
+                $data_array[] = $found_post;
+            }
         }
 
         return $data_array;
@@ -538,8 +596,8 @@ class ModelBlogPost extends Model {
 
     public function getPostsByArchive($type, $year, $month, $limit = 20, $skip = 0)
     {
-        $data = $this->cache->get($type . '.date.' . $year . '.' . $month . '.' . $skip . '.' . $limit);
-        if (!$data) {
+        $post_id_array = $this->cache->get($type . '.date.' . $year . '.' . $month . '.' . $skip . '.' . $limit);
+        if (!$post_id_array) {
             $query = $this->db->query(
                 "SELECT post_id " .
                 " FROM " . DATABASE . ".posts " .
@@ -551,14 +609,17 @@ class ModelBlogPost extends Model {
                 " ORDER BY timestamp DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
-            $data = $query->rows;
-            $data_array = array();
-            foreach ($data as $post) {
-                $data_array[] = $this->getPost($post['post_id']);
+            $post_id_array = $query->rows;
+            $this->cache->set($type . '.date.' . $year . '.' . $month . '.' . $skip . '.' . $limit, $post_id_array);
+
+        }
+        
+        $data_array = array();
+        foreach ($post_id_array as $post) {
+            $found_post = $this->getPost($post['post_id']);
+            if($found_post){
+                $data_array[] = $found_post;
             }
-            $this->cache->set($type . '.date.' . $year . '.' . $month . '.' . $skip . '.' . $limit, $data_array);
-        } else {
-            $data_array = $data;
         }
 
         return $data_array;
@@ -586,7 +647,10 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $data_array[] = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['post_id']);
+            if($found_post){
+                $data_array[] = $found_post;
+            }
         }
         return $data_array;
     }

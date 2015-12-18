@@ -79,3 +79,5 @@ define('DIR_APPLICATION', DIR_BASE . '/');
 define('DIR_TEMPLATE', DIR_BASE . '/view/theme/');
 
 define('AUTH_ENDPOINT', 'https://indieauth.com/auth');
+
+define('STREAM_SERVICE_URL', 'http://stream.thatmustbe.us/?url=');

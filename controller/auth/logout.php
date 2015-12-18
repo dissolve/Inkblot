@@ -11,6 +11,7 @@ class ControllerAuthLogout extends Controller {
         unset($this->session->data['scope']);
         unset($this->session->data['is_owner']);
         unset($this->session->data['mp-config']);
+        unset($this->session->data['person_id']);
         $this->session->data['success'] = "Logged out";
         $this->response->redirect($this->url->link(''));
     }

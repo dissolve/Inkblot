@@ -1,4 +1,5 @@
 <?php
+require_once DIR_BASE . 'libraries/single-emoji-recognizer/src/emoji.php';
 class ModelBlogInteraction extends Model {
 
     public function addWebmention($data, $webmention_id, $comment_data, $post_id = null)
@@ -50,11 +51,18 @@ class ModelBlogInteraction extends Model {
             $interaction_type = 'mention';
 
             switch ($comment_data['type']) {
+                case 'reply':
+                    $body_text = trim($comment_data['text']);
+                    $interaction_type = 'reply';
+                    if(EmojiRecognizer::isSingleEmoji($body_text)) {
+                        $interaction_type = 'reacji';
+                        $comment_data['text'] = $body_text;
+                    }
+                break;
                 case 'like':
                     $interaction_type = 'like';
-                break;
-                case 'reply':
-                    $interaction_type = 'reply';
+                    $interaction_type = 'reacji';
+                    $comment_data['text'] = html_entity_decode('&#10084;'); //a heart emoji
                 break;
                 case 'repost':
                     $interaction_type = 'repost';

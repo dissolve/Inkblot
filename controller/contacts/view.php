@@ -20,6 +20,11 @@ class ControllerContactsView extends Controller {
             $this->document->setTitle(AUTHOR_FIRST_NAME . ' ' . AUTHOR_LAST_NAME);
             $data['contact'] = array();
 
+            $data['author'] = array(
+                'first_name' => AUTHOR_FIRST_NAME,
+                'last_name' => AUTHOR_LAST_NAME,
+                'url'    => $this->url->link('')
+            );
             foreach ($this->model_blog_mycard->getDataAll($this->session->data['user_site'], 'contact') as $result) {
                     $data['contact'][] = array(
                         'first_name' => AUTHOR_FIRST_NAME,

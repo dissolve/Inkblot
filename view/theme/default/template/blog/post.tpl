@@ -69,6 +69,21 @@
       <?php } ?>
     </div>
 
+    <?php if(!empty($post['reacjis']) ) { ?>
+    <span id="general-reacjis">
+        <?php foreach($post['reacjis'] as $reacji => $rdata){ ?>
+        <span class="reacji-container">
+                <span class="reacji"><?php echo $reacji?></span>
+                <span class="reacji-count"><?php echo count($rdata)?></span>
+        </span>
+        <?php } ?>
+
+    <div style="clear:both"></div>
+        </span>
+    <?php } ?>
+
+
+
   <?php if($post['categories']){ ?>
       <?php foreach($post['categories'] as $category) { ?>
           <?php if(isset($category['person_name'])){ ?>
@@ -87,7 +102,7 @@
         <?php foreach($post['likes'] as $like){?>
                 <span class="likewrapper h-cite p-like">
                 <a class="u-url" href="<?php echo $like['source_url']?>" rel="nofollow">
-                    <img class='like_author' src="<?php echo (isset($like['author_image']) ? $like['author_image']: '/image/person.jpg') ?>"
+                    <img class='like_author' src="<?php echo (isset($like['author_image']) ? $like['author_image']: '/image/person.png') ?>"
                         title="<?php echo (isset($like['author_name']) ? $like['author_name']: 'Author Image') ?>" /></a>
                 </span>
         <?php } ?>
@@ -101,7 +116,7 @@
         <?php foreach($post['reposts'] as $repost){?>
                 <span class="repostwrapper h-cite p-repost">
                 <a class="u-url" href="<?php echo $repost['source_url']?>" rel="nofollow">
-                    <img class='repost_author' src="<?php echo (isset($repost['author_image']) ? $repost['author_image']: '/image/person.jpg') ?>"
+                    <img class='repost_author' src="<?php echo (isset($repost['author_image']) ? $repost['author_image']: '/image/person.png') ?>"
                         title="<?php echo (isset($repost['author_name']) ? $repost['author_name']: 'Author Image') ?>" /></a>
                 </span>
         <?php } ?>
@@ -125,7 +140,7 @@
             <div class="comment u-comment h-cite">
                 <div class='comment_header'>
                     <span class="minicard h-card u-author">
-                        <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.jpg') ?>" />
+                        <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.png') ?>" />
                         <a class="p-name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" ><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?></a>
                     </span>
 
@@ -149,7 +164,7 @@
                     
                         <div class='comment_header'>
                             <span class="minicard h-card u-author">
-                                <img class='comment_author' src="<?php echo (isset($subcomment['author_image']) ? $subcomment['author_image']: '/image/person.jpg') ?>" />
+                                <img class='comment_author' src="<?php echo (isset($subcomment['author_image']) ? $subcomment['author_image']: '/image/person.png') ?>" />
                                 <a class="p-name u-url" href="<?php echo (isset($subcomment['author_url']) ? $subcomment['author_url']: $subcomment['source_url'])?>" rel="nofollow" title="<?php echo (isset($subcomment['author_name']) ? $subcomment['author_name']: 'View Author') ?>" ><?php echo (isset($subcomment['author_name']) ? $subcomment['author_name']: 'A Reader') ?></a>
                             </span>
 

@@ -1362,9 +1362,11 @@ data.p-rsvp[value="yes"] {color:green}
 }
 .person.selectedperson{
     background: lightyellow;
+    border: 3px solid darkgray;
 }
 .person.primaryperson{
-    background: lightgreen;
+    background: lightyellow;
+    border: 3px solid sienna;
 }
 
 .person img {
@@ -1374,6 +1376,17 @@ data.p-rsvp[value="yes"] {color:green}
     margin-right:10px;
     border-radius: 4px;
 }
+
+#content { position:relative;}
+#peoplecontrols {
+    position:absolute;
+    top:0;
+    right:0;
+}
+#peoplecontrols button{
+    width:75px;
+}
+
 
 
 /* Tablet Portrait size to standard 960 (devices and browsers) */
