@@ -148,6 +148,11 @@ class ControllerBlogPost extends Controller {
             }
 
             $data['post'] = array_merge($post, array(
+                'body_html' => preg_replace(
+                    '/\@([a-zA-Z0-9_]{1,15})/',
+                    '<a href="https://twitter.com/$1">@$1</a>',
+                    html_entity_decode($post['body'])
+                ),
                 'author' => $author,
                 'author_image' => '/image/static/icon_128.jpg',
                 'categories' => $categories,
@@ -221,14 +226,23 @@ class ControllerBlogPost extends Controller {
             $this->document->setDescription($description);
 
             $this->document->addMeta('twitter:card', 'summary');
-            $this->document->addMeta('twitter:title', $short_title);
-            $this->document->addMeta('twitter:description', $description);
-            $this->document->addMeta('twitter:image', '/image/static/icon_200.jpg');
-
             $this->document->addMeta('og:type', 'article');
+
+            $this->document->addMeta('twitter:title', $short_title);
             $this->document->addMeta('og:title', $short_title);
+
+            $this->document->addMeta('twitter:description', $description);
             $this->document->addMeta('og:description', $description);
-            $this->document->addMeta('og:image', '/image/static/icon_200.jpg');
+
+            $this->document->addMeta('og:url', $data['post']['permalink'] );
+            $this->document->addMeta('twitter:url', $data['post']['permalink'] );
+
+            if(isset($data['post']['image_file']) && !empty($data['post']['image_file'])){
+                $this->document->addMeta('twitter:image', HTTPS_SERVER . $data['post']['image_file']);
+                $this->document->addMeta('twitter:card', 'summary_large_image');
+                $this->document->addMeta('og:image', HTTPS_SERVER . $data['post']['image_file'] );
+            }
+
 
             $data['header'] = $this->load->controller('common/header');
             $data['footer'] = $this->load->controller('common/footer');

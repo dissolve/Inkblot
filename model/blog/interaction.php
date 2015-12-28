@@ -53,6 +53,13 @@ class ModelBlogInteraction extends Model {
             switch ($comment_data['type']) {
                 case 'reply':
                     $body_text = trim($comment_data['text']);
+
+                    if(defined('TWITTER_HANDLE')){
+                        //backfed twitter reacji include the twitter handle, so lets try stripping that out
+                        $body_text = str_replace(TWITTER_HANDLE, '', $body_text);
+                        $body_text = trim($body_text);
+                    }
+
                     $interaction_type = 'reply';
                     if(EmojiRecognizer::isSingleEmoji($body_text)) {
                         $interaction_type = 'reacji';

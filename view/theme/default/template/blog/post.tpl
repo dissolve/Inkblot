@@ -75,6 +75,26 @@
         <span class="reacji-container">
                 <span class="reacji"><?php echo $reacji?></span>
                 <span class="reacji-count"><?php echo count($rdata)?></span>
+                <span class="reacji-sources">
+    
+                <?php foreach($rdata as $comment){ ?>
+                    <div class="h-cite u-comment">
+                        <span class="h-card u-author">
+                            <span class="p-name" style="display:none"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'view author') ?></span>
+
+                            <a class="u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'view author') ?>">
+                                <img class='comment_author u-photo' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.png') ?>" />
+                            </a>
+                        </span>
+
+                        <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['timestamp']?>"><?php echo date("Y-m-d", strtotime($comment['timestamp']))?></time></a>
+                        <div class='p-content p-name' style="display:none">
+                            <?php echo $comment['body']?>
+                        </div>
+                    </div>
+                <?php  } ?>
+
+                </span>
         </span>
         <?php } ?>
 
@@ -140,7 +160,7 @@
             <div class="comment u-comment h-cite">
                 <div class='comment_header'>
                     <span class="minicard h-card u-author">
-                        <img class='comment_author' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.png') ?>" />
+                        <img class='comment_author u-photo' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.png') ?>" />
                         <a class="p-name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" ><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?></a>
                     </span>
 

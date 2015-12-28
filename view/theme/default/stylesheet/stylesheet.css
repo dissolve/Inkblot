@@ -1387,6 +1387,33 @@ data.p-rsvp[value="yes"] {color:green}
     width:75px;
 }
 
+.reacji-container {
+    position:relative;
+}
+.reacji-sources {
+    display:none ;
+    background-color: #34627d;
+    border-radius: 10px;
+    display: none;
+    padding: 10px;
+    position: absolute;
+    top:0;
+    left:0;
+    min-width:110px;
+    z-index:100;
+    margin-top:20px;
+}
+.reacji-sources a {
+    color:black
+}
+.reacji-sources img {
+    height:20px;
+    width:20px;
+}
+
+.reacji-container:hover > .reacji-sources {
+    display:block ;
+}
 
 
 /* Tablet Portrait size to standard 960 (devices and browsers) */
