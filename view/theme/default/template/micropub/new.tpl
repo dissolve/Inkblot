@@ -30,16 +30,19 @@ window.addEventListener('load', function() {
     window.addEventListener('online',  updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
-    $('#saveOffline').click(function () {
-        $formdata = $('#form-post').serialize() + '&published=' + get_formatted_date();
+    $('#saveOffline').click(function (event) {
+	event.preventDefault();
+        var formdata = $('#form-post').serialize() + '&published=' + get_formatted_date();
         var posts = JSON.parse(localStorage.posts);
         posts.push(formdata);
         localStorage.posts = JSON.stringify(posts);
 
         $('#form-post input[type=text], #form-post textarea').val("");
+	alert('stored for later');
     });
 
-    $('#submitOfflined').click(function () {
+    $('#submitOfflined').click(function (event ) {
+	event.preventDefault();
         sendSaved();
     });
 
@@ -98,7 +101,7 @@ window.addEventListener('load', function() {
         for (var v = 0; v < formdata_array.length; v++){ 
             input_array = formdata_array[v].split('=');
             if(input_array[1]){
-                formstring += '<input type="text" name="'+input_array[0]+'" value="' + input_array[1] + '" />' ;
+                formstring += '<input type="text" name="'+input_array[0]+'" value="' + input_array[1].replace(/\+/g,' ') + '" />' ;
             }
             
         }
