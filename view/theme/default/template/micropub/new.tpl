@@ -41,7 +41,7 @@ window.addEventListener('load', function() {
 
     $('#submitOfflined').click(function () {
         sendSaved();
-    }
+    });
 
     function get_formatted_date(){
         var now = new Date();
@@ -98,7 +98,7 @@ window.addEventListener('load', function() {
         for (var v = 0; v < formdata_array.length; v++){ 
             input_array = formdata_array[v].split('=');
             if(input_array[1]){
-                formstring += '<input type="text" name="'+input_array[0]+'" value="' + input_array[1] + '" />' +
+                formstring += '<input type="text" name="'+input_array[0]+'" value="' + input_array[1] + '" />' ;
             }
             
         }
