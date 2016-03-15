@@ -272,7 +272,7 @@ class ControllerMicropubReceive extends Controller {
                                         $this->createPost('article', $auth_info['client_id']);
                                     } elseif (isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'checkin') {
                                         $this->createPost('checkin', $auth_info['client_id']);
-                                    } elseif ((isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'rsvp') || (isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp']))) {
+                                    } elseif ((isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'rsvp') || (!isset($this->request->post['mp-type']) && isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp']))) {
                                         $this->createPost('rsvp', $auth_info['client_id']);
                                     } elseif (isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'tag') {
                                         $this->createPost('tag', $auth_info['client_id']);
