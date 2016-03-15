@@ -1,12 +1,130 @@
 <?php echo $header; ?>
  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
  <script src="/libraries/cassis/cassis.js"></script>
+<script type="text/javascript">
+window.addEventListener('load', function() {
+
+    if (!localStorage.posts) {
+        localStorage.posts = JSON.stringify([]);
+    }
+
+    function updateOnlineStatus(event) {
+        var condition = navigator.onLine ? "online" : "offline";
+        if(navigator.onLine){
+            $('body').addClass("online").removeClass("offline");
+        } else {
+            $('body').addClass("offline").removeClass("online");
+        }
+    }
+
+    if(navigator.onLine){
+        $('body').addClass("online").removeClass("offline");
+        var posts = JSON.parse(localStorage.posts);
+        if(posts.length > 0){
+            $('#submitOfflined').show();
+        }
+    } else {
+        $('body').addClass("offline").removeClass("online");
+    }
+
+    window.addEventListener('online',  updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+    $('#saveOffline').click(function () {
+        $formdata = $('#form-post').serialize() + '&published=' + get_formatted_date();
+        var posts = JSON.parse(localStorage.posts);
+        posts.push(formdata);
+        localStorage.posts = JSON.stringify(posts);
+
+        $('#form-post input[type=text], #form-post textarea').val("");
+    });
+
+    $('#submitOfflined').click(function () {
+        sendSaved();
+    }
+
+    function get_formatted_date(){
+        var now = new Date();
+
+        var formatted_out = now.getFullYear() + "-";
+
+        // ugh zero indexed months
+        if(now.getMonth() < 9){ formatted_out += "0"; }
+        
+        formatted_out += (now.getMonth()+1) + "-";
+
+        if(now.getDate() < 10){ formatted_out += "0"; }
+        formatted_out += now.getDate() + "T";
+
+        if(now.getHours() < 10){ formatted_out += "0"; }
+        formatted_out += now.getHours() + ":";
+ 
+        if(now.getMinutes() < 10){ formatted_out += "0"; }
+        formatted_out += now.getMinutes() + ":";
+ 
+        if(now.getSeconds() < 10){ formatted_out += "0"; }
+        formatted_out += now.getSeconds();
+
+        tz_offset = now.getTimezoneOffset();
+
+        if(tz_offset > 0){
+            formatted_out += "-";
+        } else {
+            formatted_out += "+";
+        }
+        
+        offset_hours = Math.abs(tz_offset) / 60;
+        offset_mins = Math.abs(tz_offset) % 60;
+
+        if(offset_hours < 10){ formatted_out += "0"; }
+        formatted_out += offset_hours + ":";
+
+        if(offset_mins < 10){ formatted_out += "0"; }
+        formatted_out += offset_mins ;
+ 
+        return formatted_out
+    }
+
+    function sendSaved(){
+
+        var posts = JSON.parse(localStorage.posts);
+        var formdata = posts.shift();
+        localStorage.posts = JSON.stringify(posts);
+
+        var url = '<?php echo ($token?$action:''); ?>';
+
+        var formstring = '<form action="' + url + '" method="post">' ;
+        formdata_array = formdata.split('&');
+        for (var v = 0; v < formdata_array.length; v++){ 
+            input_array = formdata_array[v].split('=');
+            if(input_array[1]){
+                formstring += '<input type="text" name="'+input_array[0]+'" value="' + input_array[1] + '" />' +
+            }
+            
+        }
+        formstring += '</form>';
+
+        var form = $(formstring);
+        $('body').append(form);
+        form.submit();
+    }
+
+    var posts = JSON.parse(localStorage.posts);
+    if(posts.length > 0){
+        $('#submitOfflined').show();
+    }
+    
+});
+</script>
 
           <article id="" class="article">
 
       <div class="entry-content e-content">
       <?php if(isset($user_name)) { ?><br>
       Logged in as <?php echo $user_name?><br>
+        <div class="onlineOnly">
+            <button style="display:none" id="submitOfflined">Submit Stored Post</button>
+        </div>
           <?php if(isset($micropubEndpoint)) { ?>
               Found Micropub Endpoint at <?php echo $micropubEndpoint?><br>
                 
@@ -288,9 +406,12 @@
                 <?php if(isset($micropubEndpoint) && $token) { ?>
                 <div class="form-group group-note group-article group-rsvp group-checkin group-like group-bookmark">
                   <div class="col-sm-12">
-                    <input type="submit" value="Submit" class="form-control"/>
+                    <input type="submit" value="Submit" class="onlineOnly form-control"/>
+                    <button id="saveOffline" class="offlineOnly form-control">Save</button>
                   </div>
                 </div>
+
+                    
 
                 <?php } ?>
             </div>

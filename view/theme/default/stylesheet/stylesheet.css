@@ -6,6 +6,11 @@ body {
   word-wrap: break-word;
 }
 
+.online .offlineOnly,
+.offline .onlineOnly {
+    display:none !important;
+}
+
 
   /* CSS Pride rainbow bg by Tantek Çelik. CC0: share freely. */
 /*body {
