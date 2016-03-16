@@ -497,10 +497,10 @@ class ControllerMicropubReceive extends Controller {
             $data['draft'] = $this->request->post['draft'];
         }
         if (isset($this->request->post['like-of'])) {
-            $data['like-of'] = $this->request->post['like-of'];
+            $data['bookmark_like_url'] = $this->request->post['like-of'];
         }
         if (isset($this->request->post['bookmark'])) {
-            $data['bookmark'] = $this->request->post['bookmark'];
+            $data['bookmark_like_url'] = $this->request->post['bookmark'];
         }
         if (isset($this->request->post['in-reply-to'])) {
             $data['replyto'] = $this->request->post['in-reply-to'];

@@ -34,10 +34,6 @@
             <i class="fa fa-bookmark-o"></i> 
             <a class="u-bookmark-of" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
         <?php } ?>
-        <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
-            <i class="fa fa-heart-o"></i> <br>
-            I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
-        <?php } ?>
         <?php if(isset($post['following']) && !empty($post['following'])) { ?>
             <?php echo $post['author']['display_name'] . 
              ($post['post_type'] == 'follow' ? ' followed ' : ' unfollowed ' ) .
