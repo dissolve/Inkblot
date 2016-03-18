@@ -191,7 +191,7 @@
                             <a href="<?php echo $subcomment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $subcomment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($subcomment['timestamp']))?></time></a>
                         </div>
                         <div class='comment_body p-content p-name'>
-                            <?php echo $comment['body']?>
+                            <?php echo $subcomment['body']?>
                         </div>
                     </div>
 
