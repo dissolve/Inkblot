@@ -35,7 +35,7 @@
 
         <span class='in_reply_url'>
         <?php if(!empty($post['replyto'])){ ?>
-       In Reply To <a class="u-in-reply-to u-url" rel="in-reply-to" href="<?php echo $post['replyto']?>"><?php echo $post['replyto']?></a>
+       In Reply To <a class="u-in-reply-to" rel="in-reply-to" href="<?php echo $post['replyto']?>"><?php echo $post['replyto']?></a>
        <?php } ?>
        </span>
         </div><!-- .entry-meta -->
