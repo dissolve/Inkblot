@@ -1,7 +1,7 @@
 <?php echo $header; ?>
 <?php date_default_timezone_set(LOCALTIMEZONE); ?> 
 <div class="h-feed" id="posts-stream">
-    <a style="display:none;" class="u-url p-name" href="<?php echo $feed_url?>" >Main Feed</div>
+    <a style="display:none;" class="u-url p-name" href="<?php echo $feed_url?>" >Main Feed</a>
 <?php foreach($posts as $post) { ?>
 <article id="post-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?> h-entry <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" >
   <header class="entry-header">
