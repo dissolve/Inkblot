@@ -81,11 +81,12 @@
                     <div class="h-cite u-comment">
                         <time class="date dt-published" style="display:none" datetime="<?php echo $comment['timestamp']?>"><?php echo date("Y-m-d", strtotime($comment['timestamp']))?></time></a>
                         <span class="h-card u-author">
-                            <a class="u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo date("Y-m-d", strtotime($comment['timestamp']))?>">
+                            <a class="u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="View Profile">
                                 <img class='comment_author u-photo' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.png') ?>" />
-                                <span class="p-name"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'someone') ?></span>
+                                <span class="p-name" style="display:none"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'someone') ?></span>
                             </a>
                         </span>
+                        <a href="<?php echo $comment['source_url']?>" class="u-url permalink" title="<?php echo date("Y-m-d", strtotime($comment['timestamp']))?>"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'someone') ?></a>
 
                         <div class='p-content p-name' style="display:none">
                             <?php echo $comment['body']?>

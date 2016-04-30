@@ -1402,9 +1402,10 @@ data.p-rsvp[value="yes"] {color:green}
     display: none;
     padding: 10px;
     position: absolute;
-    top:0;
+    top:-5px;
     left:0;
-    min-width:110px;
+    white-space: nowrap;
+    min-width:100px;
     z-index:100;
     margin-top:20px;
 }
