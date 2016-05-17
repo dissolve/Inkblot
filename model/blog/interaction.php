@@ -282,6 +282,7 @@ class ModelBlogInteraction extends Model {
 
     public function getInteractionsForPost($type, $post_id, $limit = 100, $skip = 0)
     {
+        date_default_timezone_set(LOCALTIMEZONE);
         //correct my vocabulary
         if ( $type == 'comment' ) {
             $type = 'reply';
@@ -309,6 +310,8 @@ class ModelBlogInteraction extends Model {
                 $row['author_url']   = (!empty($person) ? $person['url'] : '');
                 $row['author_image'] = (!empty($person) ? $person['image'] : '');
 
+                $row['timestamp'] = date("c", strtotime($row['timestamp']));
+
                 $second_level_query = $this->db->query(
                     "SELECT sli.*, " .
                     " p.name as author_name, " .
@@ -322,6 +325,10 @@ class ModelBlogInteraction extends Model {
                 );
 
                 $row['comments'] = $second_level_query->rows;
+                
+                foreach($row['comments'] as &$secondlev){
+                    $secondlev['timestamp'] = date("c", strtotime($secondlev['timestamp']));
+                }
 
                 $data[] = $row;
             }
@@ -398,6 +405,17 @@ class ModelBlogInteraction extends Model {
     {
         $this->load->model('blog/person');
         $person_id = $this->model_blog_person->storePerson($data['author']);
+
+        if ( isset($data['published']) && !empty($data['published']) ) {
+            // do our best to conver to local time
+            date_default_timezone_set(LOCALTIMEZONE);
+            $date = new DateTime($data['published']);
+            $now = new DateTime;
+            $tz = $now->getTimezone();
+            $date->setTimezone($tz);
+            $data['published'] = $date->format('Y-m-d H:i:s') . "\n";
+        }
+
         $this->db->query(
             "INSERT INTO " . DATABASE . ".second_level_interactions " .
             " SET source_url = '" . $this->db->escape($data['url']) . "', " .

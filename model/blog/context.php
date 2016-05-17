@@ -62,6 +62,11 @@ class ModelBlogContext extends Model {
                 " ORDER BY `timestamp` ASC");
             $data = $query->rows;
 
+            date_default_timezone_set(LOCALTIMEZONE);
+            foreach($data as &$row){
+                $row['timestamp'] = date("c", strtotime($row['timestamp']));
+            }
+
             $this->cache->set('context.all.post.' . $post_id, $data);
         }
         return $data;
