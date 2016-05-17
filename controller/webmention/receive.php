@@ -319,7 +319,7 @@ class ControllerWebmentionReceive extends Controller {
             } else {
                 $mf2_parsed = Mf2\parse($page_content, $real_source_url);
                 foreach ($mf2_parsed['items'] as $item) {
-                    $comment_data = IndieWeb\comments\parse($item, $target_url);
+                    $comment_data = IndieWeb\comments\parse($item, $target_url, 300);
                     if (!empty($comment_data['url'])) { //break out of loop if we found one
                         break;
                     }

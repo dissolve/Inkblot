@@ -86,10 +86,10 @@ class ModelBlogContext extends Model {
 
         if ($page_content !== false) {
             $mf2_parsed = Mf2\parse($page_content, $real_source_url);
-            $source_data = IndieWeb\comments\parse($mf2_parsed['items'][0]);
+            $source_data = IndieWeb\comments\parse($mf2_parsed['items'][0], false, 300);
             if (empty($source_data['url'])) {
                 $mf2_parsed = Mf2\Shim\parseTwitter($page_content, $real_source_url);
-                $source_data = IndieWeb\comments\parse($mf2_parsed['items'][0]);
+                $source_data = IndieWeb\comments\parse($mf2_parsed['items'][0], false, 300);
             }
             //if(empty($source_data['url'])){
                 //$mf2_parsed = Mf2\Shim\parseFacebook($page_content, $real_source_url);
