@@ -26,19 +26,24 @@ class ControllerMicropubReceive extends Controller {
             "mp-syndicate-to[]=https://www.brid.gy/publish/facebook"
         );
 
+
+        $supported_syndication_array_for_json = array(
+            "syndicate-to" => array(
+                array('name' => 'Brid.gy Twitter',
+                    'uid' => 'https://www.brid.gy/publish/twitter'),
+                array('name' => 'Brid.gy FaceBook',
+                    'uid' => 'https://www.brid.gy/publish/facebook')
+            )
+        );
+
         $this->load->model('auth/mpsyndicate');
         $mp_syndication_targets = $this->model_auth_mpsyndicate->getSiteList();
         foreach ($mp_syndication_targets as $target) {
-            $supported_syndication_array[] = 'syndicate-to[]=' . $target;
-            $supported_syndication_array[] = 'mp-syndicate-to[]=' . $target;
+            $supported_syndication_array[] = 'syndicate-to[]=' . $target['url'];
+            $supported_syndication_array[] = 'mp-syndicate-to[]=' . $target['url'];
+            $supported_syndication_array_for_json['syndicate-to'][] = array('name' => $target['name'], 'uid' => $target['url']);
 
         }
-
-        $supported_syndication_array_for_json = array(
-            "syndicate-to" => array_merge($mp_syndication_targets, array("https://www.brid.gy/publish/twitter",
-                                      "https://www.brid.gy/publish/facebook")),
-            "mp-syndicate-to" => array_merge($mp_syndication_targets, array("https://www.brid.gy/publish/twitter",
-                                      "https://www.brid.gy/publish/facebook")));
 
         if (isset($this->request->get['q']) && $this->request->get['q'] == 'actions') {
             if ($this->request->server['HTTP_ACCEPT'] == 'application/json') {

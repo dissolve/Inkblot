@@ -18,16 +18,12 @@ class ModelAuthMpsyndicate extends Model {
         $data = $this->cache->get('mpsyndicate.all');
         if (!$data) {
             $query = $this->db->query(
-                "SELECT COALESCE( label, site_url) as name
+                "SELECT COALESCE( label, site_url) as name,
+                site_url as url
                 FROM " . DATABASE . ".mp_syndicate"
             );
 
-            $tmp_data = $query->rows;
-            $data = array();
-            foreach ($tmp_data as $site) {
-                $data[] = $site['name'];
-            }
-
+            $data = $query->rows;
             $this->cache->set('mpsyndicate.all', $data);
         }
 
