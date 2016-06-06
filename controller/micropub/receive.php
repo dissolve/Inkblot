@@ -22,6 +22,8 @@ class ControllerMicropubReceive extends Controller {
         $supported_syndication_array = array(
             "syndicate-to[]=https://www.brid.gy/publish/twitter",
             "syndicate-to[]=https://www.brid.gy/publish/facebook",
+            "syndicate-to[]=http://news.indiewebcamp.com/en",
+            "mp-syndicate-to[]=http://news.indiewebcamp.com/en",
             "mp-syndicate-to[]=https://www.brid.gy/publish/twitter",
             "mp-syndicate-to[]=https://www.brid.gy/publish/facebook"
         );
@@ -32,7 +34,9 @@ class ControllerMicropubReceive extends Controller {
                 array('name' => 'Brid.gy Twitter',
                     'uid' => 'https://www.brid.gy/publish/twitter'),
                 array('name' => 'Brid.gy FaceBook',
-                    'uid' => 'https://www.brid.gy/publish/facebook')
+                    'uid' => 'https://www.brid.gy/publish/facebook'),
+                array('name' => 'IndieNews',
+                    'uid' => 'http://news.indiewebcamp.com/en'),
             )
         );
 
@@ -542,12 +546,12 @@ class ControllerMicropubReceive extends Controller {
         if (isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])) {
             $data['syndication_extra'] = '';
             foreach ($this->request->post['syndicate-to'] as $synto) {
-                $data['syndication_extra'] .= '<a href="' . $synto . '"></a>';
+                $data['syndication_extra'] .= '<a href="' . $synto . '" class="u-category"></a>';
             }
         } elseif (isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])) {
             $data['syndication_extra'] = '';
             foreach ($this->request->post['mp-syndicate-to'] as $synto) {
-                $data['syndication_extra'] .= '<a href="' . $synto . '"></a>';
+                $data['syndication_extra'] .= '<a href="' . $synto . '" class="u-category"></a>';
             }
         }
 
