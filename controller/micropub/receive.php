@@ -375,6 +375,7 @@ class ControllerMicropubReceive extends Controller {
         //$this->log->write('called editPost()');
         $post = $this->getPostByURL($this->request->post['url']);
         if ($post) {
+            $old_body = $post['body'];
             //$this->log->write('post set');
             //$this->log->write(print_r($post,true));
             $this->load->model('blog/post');
@@ -417,6 +418,13 @@ class ControllerMicropubReceive extends Controller {
 
             //$this->log->write(print_r($post,true));
             $this->model_blog_post->editPost($post);
+
+            $this->load->model('webmention/send_queue');
+            if (defined('QUEUED_SEND')) {
+                $this->model_webmention_send_queue->addEntry($post['post_id']);
+            } else {
+                $this->load->controller('webmention/queue/sendWebmention', $post['post_id'], $old_body);
+            }
 
             $this->response->addHeader('HTTP/1.1 200 OK');
             //$this->response->addHeader('Location: '. $post['permalink']);

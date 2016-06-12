@@ -56,7 +56,7 @@ class ControllerWebmentionQueue extends Controller {
     }
 
 
-    public function sendWebmention($post_id)
+    public function sendWebmention($post_id, $old_text = '')
     {
 
         $this->load->model('blog/post');
@@ -77,7 +77,7 @@ class ControllerWebmentionQueue extends Controller {
             }
         }
 
-        $webmention_text .= html_entity_decode($post['body'] . $post['syndication_extra']);
+        $webmention_text .= html_entity_decode($old_text .' ' .$post['body'] . $post['syndication_extra']);
         // send webmention
         $client = new IndieWeb\MentionClient($post['permalink'], $webmention_text, false, $post['shortlink']);
 
