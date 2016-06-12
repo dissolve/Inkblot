@@ -10,3 +10,4 @@ parsed.sql
 static/
 *.swp
 upload/*
+vendor/
