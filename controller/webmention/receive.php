@@ -200,6 +200,7 @@ class ControllerWebmentionReceive extends Controller {
                 curl_setopt($c, CURLOPT_URL, $vouch_url);
                 curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
                 curl_setopt($c, CURLOPT_MAXREDIRS, 20);
+                curl_setopt($c, CURLOPT_TIMEOUT, 600);
                 $vouch_content = curl_exec($c);
                 curl_close($c);
                 unset($c);
@@ -262,6 +263,7 @@ class ControllerWebmentionReceive extends Controller {
             curl_setopt($c, CURLOPT_URL, $target_url);
             curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
             curl_setopt($c, CURLOPT_MAXREDIRS, 20);
+            curl_setopt($c, CURLOPT_TIMEOUT, 600);
             $real_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
             curl_close($c);
             unset($c);
@@ -272,6 +274,7 @@ class ControllerWebmentionReceive extends Controller {
             curl_setopt($c, CURLOPT_URL, $source_url);
             curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
             curl_setopt($c, CURLOPT_MAXREDIRS, 20);
+            curl_setopt($c, CURLOPT_TIMEOUT, 600);
             //curl_setopt($c, CURLOPT_HEADER, true); //including header causes php-mf2 parsing to fail
             $real_source_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
             $page_content = curl_exec($c);
@@ -340,6 +343,7 @@ class ControllerWebmentionReceive extends Controller {
                     //curl_setopt($c, CURLOPT_URL, $src);
                     //curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
                     //curl_setopt($c, CURLOPT_MAXREDIRS, 20);
+                    //curl_setopt($c, CURLOPT_TIMEOUT, 600);
                     //$real_source_url = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
                     //$comment_data['url'] = $real_source_url;
                 //}
