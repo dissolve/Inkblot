@@ -95,8 +95,8 @@ class ControllerCommonHeader extends Controller {
         $this->response->addHeader('Link: <' . $token_endpoint . '>; rel="token_endpoint"', false);
         $this->response->addHeader('Link: <' . $micropub_endpoint . '>; rel="micropub"', false);
         if(defined('STREAM_SERVICE_URL')){
-            $this->response->addHeader('Link: <' . STREAM_SERVICE_URL . $server . $_SERVER[REQUEST_URI] . '>; rel="alternate"; type="application/json"', false);
-            $data['json_alternate'] = STREAM_SERVICE_URL . $server . $_SERVER[REQUEST_URI];
+            $this->response->addHeader('Link: <' . STREAM_SERVICE_URL . urlencode( $server . $_SERVER[REQUEST_URI]) . '>; rel="alternate"; type="application/activity+json"', false);
+            $data['json_alternate'] = STREAM_SERVICE_URL . urlencode($server . $_SERVER[REQUEST_URI]);
         }
 
         $data['webmention_handler'] = $webmention_handler;

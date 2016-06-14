@@ -33,7 +33,7 @@
         <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
         <?php } ?>
         <?php if ($json_alternate) { ?>
-        <link href="<?php echo $json_alternate; ?>" rel="alternate" type="application/json" />
+        <link href="<?php echo $json_alternate; ?>" rel="alternate" type="application/activity+json" />
         <?php } ?>
         <?php if ($icon) { ?>
         <link href="<?php echo $icon; ?>" rel="icon" />
