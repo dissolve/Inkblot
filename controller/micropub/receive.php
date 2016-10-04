@@ -576,10 +576,16 @@ class ControllerMicropubReceive extends Controller {
         $post_id = $this->model_blog_post->newPost($type, $data);
 
         if (isset($this->request->post['category']) && !empty($this->request->post['category'])) {
-            $categories = explode(',', urldecode($this->request->post['category']));
-            $this->log->write(print_r($categories));
-            foreach ($categories as $category) {
-                $this->model_blog_post->addToCategory($post_id, $category);
+            if(is_array($this->request->post['category'])){
+                foreach ($this->request->post['category'] as $category) {
+                    $this->model_blog_post->addToCategory($post_id, $category);
+                }
+            } else {
+                $categories = explode(',', urldecode($this->request->post['category']));
+                //$this->log->write(print_r($categories));
+                foreach ($categories as $category) {
+                    $this->model_blog_post->addToCategory($post_id, $category);
+                }
             }
         }
         $this->cache->delete('posts');
