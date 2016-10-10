@@ -103,6 +103,7 @@ class ControllerCommonHeader extends Controller {
         $data['authorization_endpoint'] = $auth_endpoint;
         $data['token_endpoint'] = $token_endpoint;
         $data['micropub_endpoint'] = $micropub_endpoint;
+        $data['public_whitelist'] = $public_whitelist;
 
         if (isset($this->session->data['success'])) {
             $data['success'] = $this->session->data['success'];
@@ -127,7 +128,7 @@ class ControllerCommonHeader extends Controller {
 
         $data['pro_nominative'] = PRONOUN_NOMINATIVE;
         $data['pro_oblique'] = PRONOUN_OBLIQUE;
-        $data['pro_posessive'] = PRONOUN_POSESSIVE;
+        $data['pro_possessive'] = PRONOUN_POSSESSIVE;
 
 
         $data['icon'] = $this->document->getIcon();

@@ -111,7 +111,7 @@ var loadIndieConfig = function () {
         <?php } ?>
         <span class="p-x-pronoun-nominative" style="display:none"><?php echo $pro_nominative?></span>
         <span class="p-x-pronoun-oblique" style="display:none"><?php echo $pro_oblique ?></span>
-        <span class="p-x-pronoun-posessive" style="display:none"><?php echo $pro_posessive ?></span>
+        <span class="p-x-pronoun-possessive" style="display:none"><?php echo $pro_possessive ?></span>
 
   </header>
 

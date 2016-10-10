@@ -27,7 +27,7 @@ define('GCM_API_KEY', 'XXXXXXXXXXXXX');
 //prouns, because why not
 define('PRONOUN_NOMINATIVE', 'e');
 define('PRONOUN_OBLIQUE', 'em');
-define('PRONOUN_POSESSIVE', 'eirs');
+define('PRONOUN_POSSESSIVE', 'eirs');
 //http://en.wikipedia.org/wiki/Spivak_pronoun 
 
 define('TWITTER_HANDLE', '@yourtwitterhandle'); //this is only needed for reacji
