@@ -260,6 +260,35 @@ class ModelBlogPost extends Model {
         $this->cache->delete('posts');
     }
 
+    public function getPostAsMf2($post_id) {
+        $internal_post = $this->getPost($post_id);
+        $mf2_post = array(
+            'type' => array('h-entry'),
+            'properties' => array(
+                'url'=> $post['permalink'],
+                'content'=> $post['body']
+            )
+        );
+
+        $fields_supported = array('name', 'like-of', 'bookmark', 'category', 'description');
+
+
+        foreach($fields_supported as $field_name){
+
+            if(isset($post[$field_name])){
+                if(is_array($post[$field_name])){
+                    $mf2_post['properties'][$field_name] = $post[$field_name];
+                } else {
+                    $mf2_post['properties'][$field_name] = array($post[$field_name]);
+                }
+            }
+        }
+
+
+        return $mf2_post;
+
+    }
+
     public function getPost($post_id)
     {
         $post = $this->cache->get('post.' . $post_id);
