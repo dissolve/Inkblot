@@ -65,14 +65,33 @@ class ControllerMicropubReceivenew extends Controller {
                 } else {
 
                     $post_data = $this->request->post;
-                    if( $_SERVER["CONTENT_TYPE"] == 'application/json') { // todo: supposedly there is a documented bug of this coming in as HTTP_CONTENT_TYPE   need to look in to this more
+                    if( $_SERVER["CONTENT_TYPE"] == 'application/json') { 
+                        // todo: supposedly there is a documented bug of this coming in as HTTP_CONTENT_TYPE
+                        //   need to look in to this more
 
                         try {
-                            $post_data = json_decode(file_get_contents('php://input'), true);
+                            $data = json_decode(file_get_contents('php://input'), true);
+                            $post_data = array();
+                            if(isset($data['type'])){
+                                $post_data['h'] = $data['type'][0];
+                                unset($data['type']);
+                            }
+                            if(isset($data['properties'])){
+                                $post_data = array_merge($post_data, $data['properties']);
+                                unset($data['properties']);
+                            }
+                            $post_data = array_merge($post_data, $data);
+
+                            foreach($post_data as $key => &$value){
+                                if(is_array($value) && count($value) == 1){
+                                    $value = $value[0];
+                                }
+                            }
                         } catch (Exception $e){
                             $post_data = array();
                         }
                     }
+                    $this->log->write(print_r($post_data,true));
 
                     // ----------------------------------------
                     // Handle new micropub endpoint registration
@@ -137,27 +156,27 @@ class ControllerMicropubReceivenew extends Controller {
                                     //$this->getPost();
                                 //} else
                                 if (isset($post_data['mp-type']) && $post_data['mp-type'] == 'article') {
-                                    $this->createPost('article', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'article', $auth_info['client_id']);
                                 } elseif (isset($post_data['mp-type']) && $post_data['mp-type'] == 'checkin') {
-                                    $this->createPost('checkin', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'checkin', $auth_info['client_id']);
                                 } elseif ((isset($post_data['mp-type']) && $post_data['mp-type'] == 'rsvp') || (!isset($post_data['mp-type']) && isset($post_data['rsvp']) && !empty($post_data['rsvp']))) {
-                                    $this->createPost('rsvp', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'rsvp', $auth_info['client_id']);
                                 } elseif (isset($post_data['mp-type']) && $post_data['mp-type'] == 'tag') {
-                                    $this->createPost('tag', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'tag', $auth_info['client_id']);
                                 } elseif (isset($post_data['mp-type']) && $post_data['mp-type'] == 'snark') {
-                                    $this->createPost('snark', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'snark', $auth_info['client_id']);
                                 } elseif (isset($post_data['bookmark']) && !empty($post_data['bookmark'])) {
-                                    $this->createPost('bookmark', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'bookmark', $auth_info['client_id']);
                                 } elseif (isset($post_data['like-of']) && !empty($post_data['like-of'])) {
-                                    $this->createPost('like', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'like', $auth_info['client_id']);
                                 } elseif (isset($_FILES['video']) && !empty($_FILES['video'])) {
-                                    $this->createPost('video', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'video', $auth_info['client_id']);
                                 } elseif (isset($_FILES['audio']) && !empty($_FILES['audio'])) {
-                                    $this->createPost('audio', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'audio', $auth_info['client_id']);
                                 } elseif (isset($_FILES['photo']) && !empty($_FILES['photo'])) {
-                                    $this->createPost('photo', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'photo', $auth_info['client_id']);
                                 } else {
-                                    $this->createPost('note', $auth_info['client_id']);
+                                    $this->createPost($post_data, 'note', $auth_info['client_id']);
                                 }
                             } else {
                         //$this->log->write('err10');
@@ -300,7 +319,7 @@ class ControllerMicropubReceivenew extends Controller {
     }
 
 
-    private function createPost($type, $client_id = null)
+    private function createPost($post_data, $type, $client_id = null)
     {
 
         $this->load->model('blog/post');
@@ -364,53 +383,53 @@ class ControllerMicropubReceivenew extends Controller {
         //TODO
         // $this->request->post['h'];
 
-        if (isset($this->request->post['content'])) {
-            $data['body'] = $this->request->post['content'];
+        if (isset($post_data['content'])) {
+            $data['body'] = $post_data['content'];
         } else {
             $data['body'] = '';
         }
-        if (isset($this->request->post['published'])) {
-            $data['published'] = $this->request->post['published'];
+        if (isset($post_data['published'])) {
+            $data['published'] = $post_data['published'];
         }
-        if (isset($this->request->post['slug'])) {
-            $data['slug'] = $this->request->post['slug'];
+        if (isset($post_data['slug'])) {
+            $data['slug'] = $post_data['slug'];
         } else {
             $data['slug'] = '';
         }
-        if (isset($this->request->post['draft'])) {
-            $data['draft'] = $this->request->post['draft'];
+        if (isset($post_data['draft'])) {
+            $data['draft'] = $post_data['draft'];
         }
-        if (isset($this->request->post['like-of'])) {
-            $data['bookmark_like_url'] = $this->request->post['like-of'];
+        if (isset($post_data['like-of'])) {
+            $data['bookmark_like_url'] = $post_data['like-of'];
         }
-        if (isset($this->request->post['bookmark'])) {
-            $data['bookmark_like_url'] = $this->request->post['bookmark'];
+        if (isset($post_data['bookmark'])) {
+            $data['bookmark_like_url'] = $post_data['bookmark'];
         }
-        if (isset($this->request->post['in-reply-to'])) {
-            $data['replyto'] = $this->request->post['in-reply-to'];
+        if (isset($post_data['in-reply-to'])) {
+            $data['replyto'] = $post_data['in-reply-to'];
             $this->load->model('webmention/vouch');
             $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
-        if (isset($this->request->post['tag-of'])) {
+        if (isset($post_data['tag-of'])) {
             //TODO: correct this once I have the DB updated
-            $data['replyto'] = $this->request->post['tag-of'];
+            $data['replyto'] = $post_data['tag-of'];
             $this->load->model('webmention/vouch');
             $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
         }
-        if (isset($this->request->post['name'])) {
-            $data['name'] = $this->request->post['name'];
+        if (isset($post_data['name'])) {
+            $data['name'] = $post_data['name'];
         }
-        if (isset($this->request->post['description'])) {
-            $data['description'] = $this->request->post['description'];
+        if (isset($post_data['description'])) {
+            $data['description'] = $post_data['description'];
         }
-        if (isset($this->request->post['location'])) {
-            $data['location'] = $this->request->post['location'];
+        if (isset($post_data['location'])) {
+            $data['location'] = $post_data['location'];
         }
-        if (isset($this->request->post['place_name'])) {
-            $data['place_name'] = $this->request->post['place_name'];
+        if (isset($post_data['place_name'])) {
+            $data['place_name'] = $post_data['place_name'];
         }
-        if ($type == 'rsvp' && isset($this->request->post['rsvp']) && !empty($this->request->post['rsvp'])) {
-            $inputval = strtolower($this->request->post['rsvp']);
+        if ($type == 'rsvp' && isset($post_data['rsvp']) && !empty($post_data['rsvp'])) {
+            $inputval = strtolower($post_data['rsvp']);
             if ($inputval == 'yes') {
                 $data['rsvp'] = 'yes';
             } else {
@@ -418,9 +437,9 @@ class ControllerMicropubReceivenew extends Controller {
             }
         }
 
-        if (isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])) {
+        if (isset($post_data['mp-syndicate-to']) && !empty($post_data['mp-syndicate-to'])) {
             $data['syndication_extra'] = '';
-            foreach ($this->request->post['mp-syndicate-to'] as $synto) {
+            foreach ($post_data['mp-syndicate-to'] as $synto) {
                 $data['syndication_extra'] .= '<a href="' . $synto . '" class="u-category"></a>';
             }
         }
@@ -431,13 +450,13 @@ class ControllerMicropubReceivenew extends Controller {
 
         $post_id = $this->model_blog_post->newPost($type, $data);
 
-        if (isset($this->request->post['category']) && !empty($this->request->post['category'])) {
-            if(is_array($this->request->post['category'])){
-                foreach ($this->request->post['category'] as $category) {
+        if (isset($post_data['category']) && !empty($post_data['category'])) {
+            if(is_array($post_data['category'])){
+                foreach ($post_data['category'] as $category) {
                     $this->model_blog_post->addToCategory($post_id, $category);
                 }
             } else {
-                $categories = explode(',', urldecode($this->request->post['category']));
+                $categories = explode(',', urldecode($post_data['category']));
                 //$this->log->write(print_r($categories));
                 foreach ($categories as $category) {
                     $this->model_blog_post->addToCategory($post_id, $category);
@@ -448,12 +467,12 @@ class ControllerMicropubReceivenew extends Controller {
 
         $post = $this->model_blog_post->getPost($post_id);
 
-        if ($post && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])) {
+        if ($post && isset($post_data['syndication']) && !empty($post_data['syndication'])) {
             $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
+            $this->model_blog_post->addSyndication($post['post_id'], $post_data['syndication']);
         }
 
-        $this->syndicateByMp($this->request->post, $post['shortlink'], $post_id);
+        $this->syndicateByMp($post_data, $post['shortlink'], $post_id);
 
         $this->load->model('webmention/send_queue');
         if (defined('QUEUED_SEND')) {
@@ -589,7 +608,7 @@ class ControllerMicropubReceivenew extends Controller {
 
     }
 
-    private function convert_post_to_mf2_json
+    //private function convert_post_to_mf2_json
 
     // assumes q=content has already verified to be set
     private function query_endpoint_content($getdata){
