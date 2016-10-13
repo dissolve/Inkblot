@@ -56,17 +56,17 @@ class ControllerCommonHome extends Controller {
 
             $reacji_array = array();
             foreach($reacjis as $r) {
-                if(!isset($reacji_array[$r['body']])){
-                    $reacji_array[$r['body']] = array();
+                if(!isset($reacji_array[$r['content']])){
+                    $reacji_array[$r['content']] = array();
                 }
-                $reacji_array[$r['body']][] = $r;
+                $reacji_array[$r['content']][] = $r;
             }
 
             $extra_data_array = array(
                 'body_html' => preg_replace(
                     '/\@([a-zA-Z0-9_]{1,15})/',
                     '<a href="https://twitter.com/$1">@$1</a>',
-                    html_entity_decode(isset($post['excerpt']) ? $post['excerpt'] : $post['body'])
+                    html_entity_decode(isset($post['summary']) && !empty($post['summary']) ? $post['summary'] : $post['content'])
                 ),
                 'author' => $author,
                 'author_image' => '/image/static/icon_200.jpg',
@@ -75,8 +75,8 @@ class ControllerCommonHome extends Controller {
                 'like_count' => $like_count,
                 'reacjis' => $reacji_array,
                 'actions' => array());
-                if (isset($post['excerpt'])) {
-                    $extra_data_array['excerpt_html'] = html_entity_decode($post['excerpt']);
+                if (isset($post['summary']) && !empty($post['summary'])) {
+                    $extra_data_array['summary_html'] = html_entity_decode($post['summary']);
                 }
                 if (isset($post['following_id']) && !empty($post['following_id'])) {
                     $this->load->model('contacts/following');

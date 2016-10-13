@@ -266,7 +266,7 @@ class ControllerBlogPost extends Controller {
 
 
             $extra_data_array = array(
-                'body_html' => html_entity_decode($post['body']),
+                'body_html' => html_entity_decode($post['content']),
                 'author' => $author,
                 'author_image' => '/image/static/icon_128.jpg',
                 'categories' => $categories,

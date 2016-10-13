@@ -616,9 +616,9 @@ class ControllerMicropubClient extends Controller {
 
             if (array_key_exists('content', $properties)) {
                 if ($as_html) {
-                    $post['body'] = $properties['content'][0]['html'];
+                    $post['content'] = $properties['content'][0]['html'];
                 } else {
-                    $post['body'] = strip_tags($properties['content'][0]['html']);
+                    $post['content'] = strip_tags($properties['content'][0]['html']);
                 }
             }
 
@@ -632,7 +632,7 @@ class ControllerMicropubClient extends Controller {
             $post['permalink'] = $real_source_url;
         }
 
-        //$post['body'] = print_r($mf2_parsed['items'][0],true);
+        //$post['content'] = print_r($mf2_parsed['items'][0],true);
         return $post;
     }
     private function mpDownloadPost()

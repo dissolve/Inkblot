@@ -25,7 +25,7 @@
         </div><!-- .entry-meta -->
       </header><!-- .entry-header -->
 
-     <?php if(isset($post['excerpt_html'])) { ?>
+     <?php if(isset($post['summary_html'])) { ?>
       <div class="p-summary">
      <?php } else { ?>
       <div class="entry-content e-content">
@@ -46,14 +46,14 @@
             <i class="fa fa-heart-o"></i> <br>
             I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
         <?php } ?>
-        <?php if($post['image_file']) { ?>
-            <img src="<?php echo $post['image_file']?>" class="u-photo photo-post" /><br>
+        <?php foreach($post['photo'] as $photo){ ?>
+            <img src="<?php echo $photo['path']?>" class="u-photo photo-post" <?php if(isset($photo['alt'])) { echo 'alt="'.$photo['alt'].'"'; } ?> /><br>
         <?php } ?>
-        <?php if($post['audio_file']) { ?>
-                <a href="<?php echo $post['audio_file']?>">Audio</a>
+        <?php foreach($post['audio'] as $audio){ ?>
+            <a href="<?php echo $audio['path']?>">Audio</a>
         <?php } ?>
-        <?php if($post['video_file']) { ?>
-                <a href="<?php echo $post['video_file']?>">Video</a>
+        <?php foreach($post['video'] as $video){ ?>
+            <a href="<?php echo $video['path']?>">Video</a>
         <?php } ?>
         <?php if($post['post_type'] == 'listen'){ ?>
             <?php echo 'I listend To <span class="song-title">'.$post['title'].'</span> by <span class="song-artist">'.$post['artist'].'</span>.'; ?>
@@ -69,8 +69,8 @@
             <?php echo (strtolower($post['rsvp']) == 'yes' ? 'Attending' : 'Not Attending' );?>
             </data><br>
         <?php } ?>
-             <?php if(isset($post['excerpt_html'])) {?>
-                <?php echo $post['excerpt_html']?>
+             <?php if(isset($post['summary_html']) && !empty($post['summary_html'])) {?>
+                <?php echo $post['summary_html']?>
              <?php } else { ?>
                 <?php echo $post['body_html']?>
              <?php } ?>
@@ -87,7 +87,7 @@
       </div><!-- .entry-content -->
   
   <footer class="entry-meta">
-             <?php if(isset($post['excerpt_html'])) {?>
+             <?php if(isset($post['summary_html'])) {?>
                 <a href="<?php echo $post['permalink']?>" class="u-url">More...</a>
              <?php } ?>
 

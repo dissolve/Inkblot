@@ -70,7 +70,7 @@ class ControllerCommonFooter extends Controller {
                         $result['title'] = 'Checkin';
                     }
                 } else {
-                    $result['title'] = substr(strip_tags(html_entity_decode($result['body'])), 0, 30) . '...';
+                    $result['title'] = substr(strip_tags(html_entity_decode($result['content'])), 0, 30) . '...';
                 }
             }
 

@@ -375,7 +375,7 @@ class ControllerMicropubReceive extends Controller {
         //$this->log->write('called editPost()');
         $post = $this->getPostByURL($this->request->post['url']);
         if ($post) {
-            $old_body = $post['body'];
+            $old_body = $post['content'];
             //$this->log->write('post set');
             //$this->log->write(print_r($post,true));
             $this->load->model('blog/post');
@@ -385,7 +385,7 @@ class ControllerMicropubReceive extends Controller {
 
             $simple_editable_fields = array(
                 'name' => 'name',
-                'content' => 'body',
+                'content' => 'content',
                 'location' => 'location',
                 'place_name' => 'place_name',
                 'like-of' => 'like-of',
@@ -455,7 +455,7 @@ class ControllerMicropubReceive extends Controller {
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/photo/' . urldecode($upload_shot["name"]));
 
-            $data['image_file'] = DIR_UPLOAD_REL . '/photo/' . $upload_shot["name"];
+            $data['photo'] = DIR_UPLOAD_REL . '/photo/' . $upload_shot["name"];
         }
         if (isset($_FILES['video'])) {
             $upload_shot = $_FILES['video'];
@@ -466,7 +466,7 @@ class ControllerMicropubReceive extends Controller {
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/video/' . urldecode($upload_shot["name"]));
 
-            $data['video_file'] = DIR_UPLOAD_REL . '/video/' . $upload_shot["name"];
+            $data['video'] = DIR_UPLOAD_REL . '/video/' . $upload_shot["name"];
         }
         if (isset($_FILES['audio'])) {
             $upload_shot = $_FILES['audio'];
@@ -477,23 +477,23 @@ class ControllerMicropubReceive extends Controller {
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/audio/' . urldecode($upload_shot["name"]));
 
-            $data['audio_file'] = DIR_UPLOAD_REL . '/audio/' . $upload_shot["name"];
+            $data['audio'] = DIR_UPLOAD_REL . '/audio/' . $upload_shot["name"];
         }
 
-        if ($type == 'photo' && !isset($data['image_file'])) {
+        if ($type == 'photo' && !isset($data['photo'])) {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
             exit();
         }
 
-        if ($type == 'video' && !isset($data['video_file'])) {
+        if ($type == 'video' && !isset($data['video'])) {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
             exit();
         }
-        if ($type == 'audio' && !isset($data['audio_file'])) {
+        if ($type == 'audio' && !isset($data['audio'])) {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
@@ -504,9 +504,9 @@ class ControllerMicropubReceive extends Controller {
         // $this->request->post['h'];
 
         if (isset($this->request->post['content'])) {
-            $data['body'] = $this->request->post['content'];
+            $data['content'] = $this->request->post['content'];
         } else {
-            $data['body'] = '';
+            $data['content'] = '';
         }
         if (isset($this->request->post['published'])) {
             $data['published'] = $this->request->post['published'];

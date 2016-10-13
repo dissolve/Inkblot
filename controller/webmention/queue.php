@@ -77,7 +77,7 @@ class ControllerWebmentionQueue extends Controller {
             }
         }
 
-        $webmention_text .= html_entity_decode($old_text .' ' .$post['body'] . $post['syndication_extra']);
+        $webmention_text .= html_entity_decode($old_text .' ' .$post['content'] . $post['syndication_extra']);
         // send webmention
         $client = new IndieWeb\MentionClient($post['permalink'], $webmention_text, false, $post['shortlink']);
 

@@ -141,17 +141,17 @@ class ControllerBlogPost extends Controller {
             $context = $this->model_blog_context->getAllContextForPost($post['post_id']);
             $reacji_array = array();
             foreach($reacjis as $r) {
-                if(!isset($reacji_array[$r['body']])){
-                    $reacji_array[$r['body']] = array();
+                if(!isset($reacji_array[$r['content']])){
+                    $reacji_array[$r['content']] = array();
                 }
-                $reacji_array[$r['body']][] = $r;
+                $reacji_array[$r['content']][] = $r;
             }
 
             $data['post'] = array_merge($post, array(
                 'body_html' => preg_replace(
                     '/\@([a-zA-Z0-9_]{1,15})/',
                     '<a href="https://twitter.com/$1">@$1</a>',
-                    html_entity_decode($post['body'])
+                    html_entity_decode($post['content'])
                 ),
                 'author' => $author,
                 'author_image' => '/image/static/icon_128.jpg',
@@ -237,10 +237,22 @@ class ControllerBlogPost extends Controller {
             $this->document->addMeta('og:url', $data['post']['permalink'] );
             $this->document->addMeta('twitter:url', $data['post']['permalink'] );
 
-            if(isset($data['post']['image_file']) && !empty($data['post']['image_file'])){
-                $this->document->addMeta('twitter:image', HTTPS_SERVER . $data['post']['image_file']);
+            if(isset($data['post']['photo']) && !empty($data['post']['photo'])){
+
+                $image_url = '';
+                if(is_array($data['post']['photo'])){
+                    $image_url = $data['post']['photo'][0]['url'];
+                } else {
+                    $image_url = $data['post']['photo']['url'];
+                }
+                
+                if(strpos($image_url, 'http') !== 0 && strpos($image_url, '//') !== 0){
+                    $image_url = HTTPS_SERVER . $image_url;
+                }
+
                 $this->document->addMeta('twitter:card', 'summary_large_image');
-                $this->document->addMeta('og:image', HTTPS_SERVER . $data['post']['image_file'] );
+                $this->document->addMeta('twitter:image', $image_url);
+                $this->document->addMeta('og:image', $image_url);
             }
 
 
@@ -302,7 +314,7 @@ class ControllerBlogPost extends Controller {
                 'body_html' => preg_replace(
                     '/\@([a-zA-Z0-9_]{1,15})/',
                     '<a href="https://twitter.com/$1">@$1</a>',
-                    html_entity_decode($post['body'])
+                    html_entity_decode($post['content'])
                 ),
                 'author' => $author,
                 'author_image' => '/image/static/icon_128.jpg',

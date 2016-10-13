@@ -52,18 +52,18 @@ class ModelBlogInteraction extends Model {
 
             switch ($comment_data['type']) {
                 case 'reply':
-                    $body_text = trim($comment_data['text']);
+                    $content_text = trim($comment_data['text']);
 
                     if(defined('TWITTER_HANDLE')){
                         //backfed twitter reacji include the twitter handle, so lets try stripping that out
-                        $body_text = str_replace(TWITTER_HANDLE, '', $body_text);
-                        $body_text = trim($body_text);
+                        $content_text = str_replace(TWITTER_HANDLE, '', $content_text);
+                        $content_text = trim($content_text);
                     }
 
                     $interaction_type = 'reply';
-                    if(EmojiRecognizer::isSingleEmoji($body_text)) {
+                    if(EmojiRecognizer::isSingleEmoji($content_text)) {
                         $interaction_type = 'reacji';
-                        $comment_data['text'] = $body_text;
+                        $comment_data['text'] = $content_text;
                     }
                 break;
                 case 'like':
@@ -121,7 +121,7 @@ class ModelBlogInteraction extends Model {
                     ? ", tag_of='" . $comment_data['tag-of'] . "'"
                     : "") .
                 ((isset($comment_data['text'])  && !empty($comment_data['text']))
-                    ? ", body='" . $this->db->escape($comment_data['text']) . "'"
+                    ? ", content='" . $this->db->escape($comment_data['text']) . "'"
                     : "") .
                 ((isset($comment_data['name'])  && !empty($comment_data['name']))
                     ? ", source_name='" . $this->db->escape($comment_data['name']) . "'"
@@ -423,7 +423,7 @@ class ModelBlogInteraction extends Model {
             " interaction_id=" . (int)$interaction_id . ", " .
             " author_person_id=" . (int)$person_id . ", " .
             ((isset($data['text']) && !empty($data['text']))
-                ? " body='" . $this->db->escape($data['text']) . "', "
+                ? " content='" . $this->db->escape($data['text']) . "', "
                 : "") .
             ((isset($data['name'])  && !empty($data['name']))
                 ? " source_name='" . $this->db->escape($data['name']) . "', "

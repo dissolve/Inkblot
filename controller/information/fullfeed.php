@@ -45,15 +45,15 @@ class ControllerCommonHome extends Controller {
             $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
 
             $extra_data_array = array(
-                'body_html' => html_entity_decode(isset($post['excerpt']) ? $post['excerpt'] : $post['body']),
+                'body_html' => html_entity_decode(isset($post['summary']) && !empty($post['summary']) ? $post['summary'] : $post['content']),
                 'author' => $author,
                 'author_image' => '/image/static/icon_200.jpg',
                 'categories' => $categories,
                 'comment_count' => $comment_count,
                 'like_count' => $like_count,
                 'actions' => array());
-            if (isset($post['excerpt'])) {
-                $extra_data_array['excerpt_html'] = html_entity_decode($post['excerpt']);
+            if (isset($post['summary']) && !empty($post['summary'])) {
+                $extra_data_array['summary_html'] = html_entity_decode($post['summary']);
             }
             if (isset($post['following_id']) && !empty($post['following_id'])) {
                 $this->load->model('contacts/following');

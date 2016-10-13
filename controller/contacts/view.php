@@ -60,7 +60,7 @@ class ControllerContactsView extends Controller {
                     if ($result['post_type'] == 'photo') {
                         $result['title'] = 'photo';
                     } else {
-                        $result['title'] = substr(strip_tags(html_entity_decode($result['body'])), 0, 30) . '...';
+                        $result['title'] = substr(strip_tags(html_entity_decode($result['content'])), 0, 30) . '...';
                     }
                 }
 

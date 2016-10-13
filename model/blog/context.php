@@ -112,7 +112,7 @@ class ModelBlogContext extends Model {
 
             } else {
                 $published = $source_data['published'];
-                $body = $source_data['text'];
+                $content = $source_data['text'];
                 $source_name = $source_data['name'];
 
                 $author_name = $source_data['author']['name'];
@@ -139,7 +139,7 @@ class ModelBlogContext extends Model {
                     author_image = '" . $this->db->escape($author_image) . "',
                     source_name = '" . $this->db->escape($source_name) . "',
                     source_url = '" . $this->db->escape($real_url) . "',
-                    body = '" . $this->db->escape($body) . "',
+                    content = '" . $this->db->escape($content) . "',
                     timestamp ='" . $published . "'");
 
                 $context_id = $this->db->getLastId();

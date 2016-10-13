@@ -48,7 +48,7 @@ class ControllerMicropubReceivenew extends Controller {
 
                 if (!empty($auth_info)  && isset($auth_info['scope']) && !empty($auth_info['scope'])) {
                     $has_post_access = in_array('post', $scopes);
-                    $has_edit_access = in_array('edit', $scopes);
+                    $has_edit_access = in_array('update', $scopes) || in_array('edit', $scopes);
                     $has_delete_access = in_array('delete', $scopes);
                     $has_follow_access = in_array('follow', $scopes);
                     $has_contacts_access = in_array('contacts', $scopes);
@@ -83,7 +83,7 @@ class ControllerMicropubReceivenew extends Controller {
                             $post_data = array_merge($post_data, $data);
 
                             foreach($post_data as $key => &$value){
-                                if(is_array($value) && count($value) == 1){
+                                if(is_array($value) && !$this->isHash($value) && count($value) == 1 && $key != 'photo' && $key != 'video' && $key != 'audio'){
                                     $value = $value[0];
                                 }
                             }
@@ -139,9 +139,20 @@ class ControllerMicropubReceivenew extends Controller {
                                 exit();
                             }
                             break;
+                            //Classic Edit functionality
                         case 'edit':
                             if ($has_edit_access) {
                                 $this->editPost($post_data);
+                            } else {
+                        //$this->log->write('err9');
+                                header('HTTP/1.1 401 Insufficient Scope');
+                                exit();
+                            }
+                            break;
+                            //new update function
+                        case 'update':
+                            if ($has_edit_access) {
+                                $this->updatePost($post_data);
                             } else {
                         //$this->log->write('err9');
                                 header('HTTP/1.1 401 Insufficient Scope');
@@ -250,12 +261,54 @@ class ControllerMicropubReceivenew extends Controller {
         }
     }
 
-    private function editPost($post_data)
+    private function updatePost($post_data)
     {
         //$this->log->write('called editPost()');
         $post = $this->getPostByURL($post_data['url']);
         if ($post) {
-            $old_body = $post['body'];
+            $old_body = $post['content'];
+            $post_id = $post['post_id'];
+            
+            if(isset($post_data['delete'])){
+                if($this->isHash($post_data['delete'])){
+                    foreach($post_data['delete'] as $field => $value){
+                        //TODO model->removeFromField($post_id, $field, $value);
+                    }
+                } else {
+                    foreach($post_data['delete'] as $field){
+                        //TODO model->emptyField($field);
+                    }
+                }
+
+            }
+            if(isset($post_data['replace'])){
+                foreach($post_data['replace'] as $field => $value){
+                    //TODO model->emptyField($field);
+
+                    if(is_array($value)){
+                        foreach($value as $val){
+                            //TODO model->addToField($post_id, $field, $val);
+                        }
+                    } else {
+                        //TODO model->addToField($post_id, $field, $value);
+                    }
+                }
+
+            }
+            if(isset($post_data['add'])){
+
+                foreach($post_data['add'] as $field => $value){
+                    if(is_array($value)){
+                        foreach($value as $val){
+                            //TODO model->addToField($post_id, $field, $val);
+                        }
+                    } else {
+                        //TODO model->addToField($post_id, $field, $value);
+                    }
+                }
+            }
+
+            $old_body = $post['content'];
             //$this->log->write('post set');
             //$this->log->write(print_r($post,true));
             $this->load->model('blog/post');
@@ -265,7 +318,76 @@ class ControllerMicropubReceivenew extends Controller {
 
             $simple_editable_fields = array(
                 'name' => 'name',
-                'content' => 'body',
+                'content' => 'content',
+                'location' => 'location',
+                'place_name' => 'place_name',
+                'like-of' => 'like-of',
+                'bookmark' => 'bookmark',
+                'slug' => 'slug');
+
+            if (isset($post_data['delete-fields']) && !empty($post_data['delete-fields'])) {
+                foreach ($simple_editable_fields as $field_name => $db_name) {
+                    if (in_array($field_name, $post_data['delete-fields'])) {
+                        $post[$db_name] = '';
+                    }
+                }
+                if (in_array('category', $post_data['delete-fields'])) {
+                    $this->model_blog_post->removeFromAllCategories($post['post_id']);
+                }
+            }
+
+            foreach ($simple_editable_fields as $field_name => $db_name) {
+                if (isset($post_data[$field_name]) && !empty($post_data[$field_name])) {
+                    $post[$db_name] = $post_data[$field_name];
+                }
+            }
+            if (isset($post_data['category']) && !empty($post_data['category'])) {
+                if(is_array($post_data['category'])){
+                    foreach ($post_data['category'] as $category) {
+                        $this->model_blog_post->addToCategory($post['post_id'], $category);
+                    }
+                } else {
+                    $categories = explode(',', urldecode($post_data['category']));
+                    $this->log->write(print_r($categories));
+                    foreach ($categories as $category) {
+                        $this->model_blog_post->addToCategory($post['post_id'], $category);
+                    }
+                }
+            }
+
+            //$this->log->write(print_r($post,true));
+            $this->model_blog_post->editPost($post);
+
+            $this->load->model('webmention/send_queue');
+            if (defined('QUEUED_SEND')) {
+                $this->model_webmention_send_queue->addEntry($post['post_id']);
+            } else {
+                $this->load->controller('webmention/queue/sendWebmention', $post['post_id'], $old_body);
+            }
+
+            $this->response->addHeader('HTTP/1.1 200 OK');
+            //$this->response->addHeader('Location: '. $post['permalink']);
+            $this->response->setOutput($post['permalink']);
+        }
+    }
+
+
+    private function editPost($post_data)
+    {
+        //$this->log->write('called editPost()');
+        $post = $this->getPostByURL($post_data['url']);
+        if ($post) {
+            $old_body = $post['content'];
+            //$this->log->write('post set');
+            //$this->log->write(print_r($post,true));
+            $this->load->model('blog/post');
+            if (isset($post_data['syndication'])) {
+                $this->model_blog_post->addSyndication($post['post_id'], $post_data['syndication']);
+            }
+
+            $simple_editable_fields = array(
+                'name' => 'name',
+                'content' => 'content',
                 'location' => 'location',
                 'place_name' => 'place_name',
                 'like-of' => 'like-of',
@@ -335,8 +457,12 @@ class ControllerMicropubReceivenew extends Controller {
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/photo/' . urldecode($upload_shot["name"]));
 
-            $data['image_file'] = DIR_UPLOAD_REL . '/photo/' . $upload_shot["name"];
+            $data['photo'] = DIR_UPLOAD_REL . '/photo/' . $upload_shot["name"];
+        } elseif (isset($post_data['photo'])){
+            $data['photo'] =  $post_data["photo"];
+
         }
+
         if (isset($_FILES['video'])) {
             $upload_shot = $_FILES['video'];
             if ( $upload_shot['error'] != 0) {
@@ -346,7 +472,9 @@ class ControllerMicropubReceivenew extends Controller {
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/video/' . urldecode($upload_shot["name"]));
 
-            $data['video_file'] = DIR_UPLOAD_REL . '/video/' . $upload_shot["name"];
+            $data['video'] = DIR_UPLOAD_REL . '/video/' . $upload_shot["name"];
+        } elseif (isset($post_data['video'])){
+            $data['video'] =  $post_data["video"];
         }
         if (isset($_FILES['audio'])) {
             $upload_shot = $_FILES['audio'];
@@ -357,23 +485,25 @@ class ControllerMicropubReceivenew extends Controller {
 
             move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/audio/' . urldecode($upload_shot["name"]));
 
-            $data['audio_file'] = DIR_UPLOAD_REL . '/audio/' . $upload_shot["name"];
+            $data['audio'] = DIR_UPLOAD_REL . '/audio/' . $upload_shot["name"];
+        } elseif (isset($post_data['audio'])){
+            $data['audio'] =  $post_data["audio"];
         }
 
-        if ($type == 'photo' && !isset($data['image_file'])) {
+        if ($type == 'photo' && !isset($data['photo'])) {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
             exit();
         }
 
-        if ($type == 'video' && !isset($data['video_file'])) {
+        if ($type == 'video' && !isset($data['video'])) {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
             exit();
         }
-        if ($type == 'audio' && !isset($data['audio_file'])) {
+        if ($type == 'audio' && !isset($data['audio'])) {
             $this->log->write('cannot find file in $_FILES');
             $this->log->write(print_r($_FILES, true));
             header('HTTP/1.1 449 Retry With file');
@@ -384,9 +514,17 @@ class ControllerMicropubReceivenew extends Controller {
         // $this->request->post['h'];
 
         if (isset($post_data['content'])) {
-            $data['body'] = $post_data['content'];
+            $content_data = $post_data['content'];
+            if(is_array($content_data) && !$this->isHash($content_data)){
+                $content_data = $content_data[0];
+            }
+            if($this->isHash($content_data) && isset($content_data['html'])){
+                $data['content'] = $content_data['html'];
+            } else {
+                $data['content'] = htmlentities($content_data);
+            }
         } else {
-            $data['body'] = '';
+            $data['content'] = '';
         }
         if (isset($post_data['published'])) {
             $data['published'] = $post_data['published'];
@@ -737,5 +875,10 @@ class ControllerMicropubReceivenew extends Controller {
 
         } // end indie-config block
     } // end function
+
+    private function isHash(array $in)
+    {
+        return is_array($in) && count(array_filter(array_keys($in), 'is_string')) > 0;
+    }
 
 }

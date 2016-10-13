@@ -69,10 +69,16 @@ class ModelBlogPost extends Model {
                 $set_data[] = "title =''";
             }
 
-            if (isset($data['body']) && !empty($data['body'])) {
-                $set_data[] = "body ='" . $this->db->escape($data['body']) . "'";
+            if (isset($data['summary']) && !empty($data['summary'])) {
+                $set_data[] = "summary ='" . $this->db->escape($data['summary']) . "'";
             } else {
-                $set_data[] = "body =''";
+                $set_data[] = "summary =''";
+            }
+
+            if (isset($data['content']) && !empty($data['content'])) {
+                $set_data[] = "content ='" . $this->db->escape($data['content']) . "'";
+            } else {
+                $set_data[] = "content =''";
             }
 
             if (isset($data['location']) && !empty($data['location'])) {
@@ -148,7 +154,8 @@ class ModelBlogPost extends Model {
             " `day` = " . (int)$day . ", " .
             " `draft` = " . (int)$draft . ", " .
             " `deleted` = 0, " .
-            " `body` = '" . (isset($data['body']) && !empty($data['body']) ? $this->db->escape($data['body']) : "") . "', " .
+            " `content` = '" . (isset($data['content']) && !empty($data['content']) ? $this->db->escape($data['content']) : "") . "', " .
+            " `summary` = '" . (isset($data['summary']) && !empty($data['summary']) ? $this->db->escape($data['summary']) : "") . "', " .
             " `slug` = '" . (isset($data['slug']) && !empty($data['slug']) ? $this->db->escape($data['slug']) : "") . "', " .
 
             " `syndication_extra` = '" . (
@@ -184,15 +191,6 @@ class ModelBlogPost extends Model {
             (isset($data['name']) && !empty($data['name'])
                 ? ", title='" . $this->db->escape($data['name']) . "'"
                 : "") .
-            (isset($data['audio_file']) && !empty($data['audio_file'])
-                ? ", audio_file='" . $this->db->escape($data['audio_file']) . "'"
-                : "") .
-            (isset($data['image_file']) && !empty($data['image_file'])
-                ? ", image_file='" . $this->db->escape($data['image_file']) . "'"
-                : "") .
-            (isset($data['video_file']) && !empty($data['video_file'])
-                ? ", video_file='" . $this->db->escape($data['video_file']) . "'"
-                : "") .
             (isset($data['rsvp']) && !empty($data['rsvp'])
                 ? ", rsvp='" . $this->db->escape($data['rsvp']) . "'"
                 : "") .
@@ -215,7 +213,7 @@ class ModelBlogPost extends Model {
         //$this->log->write($sql);
         $query = $this->db->query($sql);
 
-        $id = $this->db->getLastId();
+        $post_id = $this->db->getLastId();
 
         if (isset($data['category']) && !empty($data['category'])) {
             $categories = explode(',', $data['category']);
@@ -225,12 +223,56 @@ class ModelBlogPost extends Model {
                 $this->db->query(
                     "INSERT INTO " . DATABASE . ".categories_posts " .
                     " SET category_id=" . (int)$category['category_id'] . ", " .
-                    " post_id = " . (int)$id
+                    " post_id = " . (int)$post_id
                 );
             }
         }
 
-        return $id;
+        foreach(array('photo', 'audio', 'video') as $media_type){
+
+            if(isset($data[$media_type])){
+                if(is_array($data[$media_type]) && !$this->isHash($data[$media_type])){
+                    foreach($data[$media_type] as $media_obj){
+                        if(is_array($media_obj)){
+                            $this->db->query(
+                                "INSERT INTO " . DATABASE . ".media " .
+                                " SET path='" . $this->db->escape($media_obj['value']) . "'" .
+                                " , type='".$media_type."'" .
+                                (isset($media_obj['alt']) ? ', alt="'.$this->db->escape($media_obj['alt']).'"' : '')
+                            );
+                        } else {
+                            $this->db->query(
+                                "INSERT INTO " . DATABASE . ".media " .
+                                " SET path='" . $this->db->escape($media_obj) . "'" .
+                                " , type='".$media_type."'"
+                            );
+                        }
+
+                        $media_id = $this->db->getLastId();
+                        $this->db->query(
+                            "INSERT INTO " . DATABASE . ".media_posts " .
+                            " SET media_id =". (int)$media_id .
+                            " , post_id =". (int)$post_id 
+                        );
+                    } //end foreach
+                } else {
+
+                    $this->db->query(
+                        "INSERT INTO " . DATABASE . ".media " .
+                        " SET path='" . $this->db->escape($media_obj) . "'" .
+                        " , post_id =". (int)$post_id 
+                    );
+                    $media_id = $this->db->getLastId();
+                    $this->db->query(
+                        "INSERT INTO " . DATABASE . ".media_posts " .
+                        " SET media_id =". (int)$media_id .
+                        " , post_id =". (int)$post_id 
+                    );
+                }
+            }
+        } //end foreach media_type
+
+        return $post_id;
     }
 
     public function setSyndicationExtra($post_id, $syn_extra_val)
@@ -266,7 +308,7 @@ class ModelBlogPost extends Model {
             'type' => array('h-entry'),
             'properties' => array(
                 'url'=> $post['permalink'],
-                'content'=> $post['body']
+                'content'=> $post['content']
             )
         );
 
@@ -308,6 +350,22 @@ class ModelBlogPost extends Model {
                 'eid=' . $this->numToSxg($post['post_id']),
                 ''
             );
+            unset($post['photo']);
+            unset($post['audio']);
+            unset($post['video']);
+            $photo = $this->getMediaForPost($post_id, 'photo');
+            if(!empty($photo)){
+                $post['photo'] = $photo;
+            }
+            $video = $this->getMediaForPost($post_id, 'video');
+            if(!empty($video)){
+                $post['video'] = $video;
+            }
+            $audio = $this->getMediaForPost($post_id, 'audio');
+            if(!empty($audio)){
+                $post['audio'] = $audio;
+            }
+
             //$citation = '(' . trim(str_replace(array('http://','https://'),array('',''), HTTP_SHORT), '/').
             //' '. trim(str_replace(array(HTTP_SHORT,HTTPS_SHORT),array('',''), $shortlink),'/')  .')';
             $post = array_merge($post, array(
@@ -341,15 +399,15 @@ class ModelBlogPost extends Model {
 
             $post['name'] = $post['title'];
 
-            if ($post['post_type'] == 'article' && preg_match('/<hr \/>/', $post['body'])) {
-                $post['excerpt'] = preg_replace('/<hr \/>.*/s', '', $post['body']);
-                $post['body'] = preg_replace('/<hr \/>/', '', $post['body']);
-            }
+            //if ($post['post_type'] == 'article' && preg_match('/<hr \/>/', $post['content'])) {
+                //$post['summary'] = preg_replace('/<hr \/>.*/s', '', $post['content']);
+                //$post['content'] = preg_replace('/<hr \/>/', '', $post['content']);
+            //}
             date_default_timezone_set(LOCALTIMEZONE);
             $post['timestamp'] = date("c", strtotime($post['timestamp']));
             if ($post['post_type'] == 'bookmark') {
                 $post['bookmark'] = $post['bookmark_like_url'];
-                $post['description'] = $post['body'];
+                $post['description'] = $post['content'];
             } elseif ($post['post_type'] == 'like') {
                 $post['like-of'] = $post['bookmark_like_url'];
             }
@@ -731,6 +789,18 @@ class ModelBlogPost extends Model {
 
             $this->cache->delete('post.' . $post_id);
         }
+    }
+
+    public function getMediaForPost($post_id, $media_type){
+            $query = $this->db->query(
+                "SELECT * " .
+                "FROM " . DATABASE . ".media " .
+                " JOIN " . DATABASE . ".media_posts USING(media_id) " .
+                " WHERE post_id = " . (int)$post_id .
+                " and type = '" . $this->db->escape($media_type) . "'" 
+            );
+            return $query->rows;
+
     }
 
 

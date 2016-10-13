@@ -6,7 +6,7 @@ class ControllerCommonPostbody extends Controller {
 
         $post = $this->model_blog_post->getPost($post_id);
 
-        $post['body_html'] = html_entity_decode($post['body']);
+        $post['body_html'] = html_entity_decode($post['content']);
 
 
         $data['post'] = $post;
