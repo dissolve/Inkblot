@@ -65,7 +65,7 @@ class ControllerWebmentionQueue extends Controller {
         $this->load->model('blog/category');
         $categories = $this->model_blog_category->getCategoriesForPost($post_id);
 
-        $webmention_text = '<a href="' . $post['replyto'] . '">ReplyTo</a>';
+        $webmention_text = '<a href="' . $post['in-reply-to'] . '">ReplyTo</a>';
 
         if ($post['bookmark_like_url']) {
             $webmetnion_text = '<a href="' . $post['bookmark_like_url'] . '"></a>';
@@ -98,14 +98,14 @@ class ControllerWebmentionQueue extends Controller {
 
     public function processcontexts()
     {
-        $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE NOT replyto is NULL AND context_parsed=0 LIMIT 1");
+        $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE NOT in-reply-to is NULL AND context_parsed=0 LIMIT 1");
         $post = $result->row;
 
         while (!empty($post)) {
             //immediately update this to say that it is parsed.. this way we don't end up trying to run it multiple times on the same post
             $this->db->query("UPDATE " . DATABASE . ".posts SET context_parsed = 1 WHERE post_id = " . (int)$post_id);
 
-            $source_url = trim($post['replyto']); //todo want to support multiples
+            $source_url = trim($post['in-reply-to']); //todo want to support multiples
 
             $post_id = $post['post_id'];
             $context_id = $this->getContextId($source_url);
@@ -117,7 +117,7 @@ class ControllerWebmentionQueue extends Controller {
             }
 
 
-            $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE NOT replyto is NULL AND context_parsed=0 LIMIT 1");
+            $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE NOT in-reply-to is NULL AND context_parsed=0 LIMIT 1");
             $post = $result->row;
 
         } //end while($post) loop

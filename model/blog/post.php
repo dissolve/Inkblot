@@ -64,9 +64,9 @@ class ModelBlogPost extends Model {
             $set_data = array();
 
             if (isset($data['name']) && !empty($data['name'])) {
-                $set_data[] = "title ='" . $this->db->escape($data['name']) . "'";
+                $set_data[] = "name ='" . $this->db->escape($data['name']) . "'";
             } else {
-                $set_data[] = "title =''";
+                $set_data[] = "name =''";
             }
 
             if (isset($data['summary']) && !empty($data['summary'])) {
@@ -189,7 +189,7 @@ class ModelBlogPost extends Model {
                 : "") .
 
             (isset($data['name']) && !empty($data['name'])
-                ? ", title='" . $this->db->escape($data['name']) . "'"
+                ? ", name='" . $this->db->escape($data['name']) . "'"
                 : "") .
             (isset($data['rsvp']) && !empty($data['rsvp'])
                 ? ", rsvp='" . $this->db->escape($data['rsvp']) . "'"
@@ -200,8 +200,8 @@ class ModelBlogPost extends Model {
             (isset($data['place_name']) && !empty($data['place_name'])
                 ? ", place_name='" . $this->db->escape($data['place_name']) . "'"
                 : "") .
-            (isset($data['replyto']) && !empty($data['replyto'])
-                ? ", replyto='" . $this->db->escape($data['replyto']) . "'"
+            (isset($data['in-reply-to']) && !empty($data['in-reply-to'])
+                ? ", in-reply-to='" . $this->db->escape($data['in-reply-to']) . "'"
                 : "") .
             (isset($data['created_by']) && !empty($data['created_by'])
                 ? ", created_by='" . $this->db->escape($data['created_by']) . "'"
@@ -344,7 +344,7 @@ class ModelBlogPost extends Model {
                 'rsvp='
                 'location='
                 'place_name='
-                'replyto='
+                'in-reply-to='
                 'created_by='
                 'following_id='
                          */
@@ -447,7 +447,7 @@ class ModelBlogPost extends Model {
                 $post['access'] = $acls;
             }
 
-            $post['name'] = $post['title'];
+            //$post['name'] = $post['title'];
 
             //if ($post['post_type'] == 'article' && preg_match('/<hr \/>/', $post['content'])) {
                 //$post['summary'] = preg_replace('/<hr \/>.*/s', '', $post['content']);

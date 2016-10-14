@@ -10,10 +10,10 @@
     </header>
   <div class='articlebody'>
 
-    <?php if(!empty($note['title'])){ ?>
-    <h1 class="entry-title p-name"><a href="<?php echo $note['permalink']?>" class="u-url url" title="Permalink to <?php echo $note['title']?>" rel="bookmark" ><?php echo $note['title']?></a></h1>
+    <?php if(!empty($note['name'])){ ?>
+    <h1 class="entry-title p-name"><a href="<?php echo $note['permalink']?>" class="u-url url" title="Permalink to <?php echo $note['name']?>" rel="bookmark" ><?php echo $note['name']?></a></h1>
     <?php } ?>
-      <div class="entry-content e-content p-note <?php echo (empty($note['title']) ? 'p-name' : '')?>">
+      <div class="entry-content e-content p-note <?php echo (empty($note['name']) ? 'p-name' : '')?>">
        Sorry. This entry has been deleted.
       
       </div><!-- .entry-content -->

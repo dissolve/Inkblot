@@ -178,7 +178,7 @@ class ModelBlogContext extends Model {
     {
         $result = $this->db->query("SELECT * " .
             " FROM " . DATABASE . ".posts " .
-            " WHERE NOT replyto is NULL AND context_parsed=0 " .
+            " WHERE NOT in-reply-to is NULL AND context_parsed=0 " .
             " LIMIT 1");
         $post = $result->row;
 
@@ -189,7 +189,7 @@ class ModelBlogContext extends Model {
                 " WHERE post_id = " . (int)$post_id
             );
 
-            $source_url = trim($post['replyto']); //todo want to support multiples
+            $source_url = trim($post['in-reply-to']); //todo want to support multiples
 
             $post_id = $post['post_id'];
             $context_id = $this->getContextId($source_url);
@@ -205,7 +205,7 @@ class ModelBlogContext extends Model {
 
             $result = $this->db->query("SELECT * " .
                 " FROM " . DATABASE . ".posts " .
-                " WHERE NOT replyto is NULL AND context_parsed=0 " .
+                " WHERE NOT in-reply-to is NULL AND context_parsed=0 " .
                 " LIMIT 1");
             $post = $result->row;
 

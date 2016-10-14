@@ -34,8 +34,8 @@
         <a href="<?php echo $post['shortlink']?>" title="Shortlink" rel="shortlink" class="shortlink u-shortlink u-url">Shortlink</a>
 
         <span class='in_reply_url'>
-        <?php if(!empty($post['replyto'])){ ?>
-       In Reply To <a class="u-in-reply-to" rel="in-reply-to" href="<?php echo $post['replyto']?>"><?php echo $post['replyto']?></a>
+        <?php if(!empty($post['in-reply-to'])){ ?>
+       In Reply To <a class="u-in-reply-to" rel="in-reply-to" href="<?php echo $post['in-reply-to']?>"><?php echo $post['in-reply-to']?></a>
        <?php } ?>
        </span>
         </div><!-- .entry-meta -->

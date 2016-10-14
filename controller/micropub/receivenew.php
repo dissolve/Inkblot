@@ -540,15 +540,15 @@ class ControllerMicropubReceivenew extends Controller {
             $data['bookmark_like_url'] = $post_data['bookmark'];
         }
         if (isset($post_data['in-reply-to'])) {
-            $data['replyto'] = $post_data['in-reply-to'];
+            $data['in-reply-to'] = $post_data['in-reply-to'];
             $this->load->model('webmention/vouch');
-            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
+            $this->model_webmention_vouch->addWhitelistEntry($data['in-reply-to']);
         }
         if (isset($post_data['tag-of'])) {
             //TODO: correct this once I have the DB updated
-            $data['replyto'] = $post_data['tag-of'];
+            $data['in-reply-to'] = $post_data['tag-of'];
             $this->load->model('webmention/vouch');
-            $this->model_webmention_vouch->addWhitelistEntry($data['replyto']);
+            $this->model_webmention_vouch->addWhitelistEntry($data['in-reply-to']);
         }
         if (isset($post_data['name'])) {
             $data['name'] = $post_data['name'];
@@ -822,7 +822,7 @@ class ControllerMicropubReceivenew extends Controller {
             'actions' => array(
                 "edit" => "https://ben.thatmustbe.me/edit?url={url}",
                 "new" => "https://ben.thatmustbe.me/new",
-                "reply" => "https://ben.thatmustbe.me/new?reply_to={url}",
+                "reply" => "https://ben.thatmustbe.me/new?in-reply-to={url}",
                 "repost" => "https://ben.thatmustbe.me/new?url={url}",
                 "bookmark" => "https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}",
                 "favorite" => "https://ben.thatmustbe.me/new?type=like&like-of={url}",

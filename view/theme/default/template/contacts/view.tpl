@@ -43,7 +43,7 @@
 <ul>
 <?php foreach($recent_posts as $post){ ?>
     <li>
-        <a href="<?php echo $post['permalink']?>"><?php echo $post['title']?></a>
+        <a href="<?php echo $post['permalink']?>"><?php echo $post['name']?></a>
     </li>
 <?php } // end foreach recent_post ?>
 </ul>

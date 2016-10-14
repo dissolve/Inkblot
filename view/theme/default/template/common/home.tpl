@@ -6,7 +6,7 @@
 <article id="post-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?> h-entry <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" >
   <header class="entry-header">
     <?php if($post['post_type'] != 'listen'){ ?>
-    <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['title']?>" ><?php echo $post['title']?></a></h1>
+    <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['name']?>" ><?php echo $post['name']?></a></h1>
     <?php } ?>
 
 <?php if($post['post_type'] == 'snark'){ ?>
@@ -17,11 +17,11 @@
       <span class="sep">Posted on </span>
         <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" class="u-url"> <time class="dt-published" datetime="<?php echo date("c", strtotime($post['timestamp']))?>" ><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
         <address class="byline"> <span class="sep"> by </span> <span class="p-author h-card"><img alt='' src='<?php echo $author_image?>' class='u-photo avatar photo' height='40' width='40' /> <a class="u-url p-name" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>"><?php echo $post['author']['display_name']?></a></span></address>
-        <?php if($post['replyto']) { ?>
+        <?php if($post['in-reply-to']) { ?>
             <div class="repyto">
-               In Reply To <a class="u-in-reply-to"  href="<?php echo $post['replyto']?>">This</a>
+               In Reply To <a class="u-in-reply-to"  href="<?php echo $post['in-reply-to']?>">This</a>
             </div>
-        <?php }  // end if replyto?>
+        <?php }  // end if in-reply-to?>
         </div><!-- .entry-meta -->
       </header><!-- .entry-header -->
 
@@ -56,12 +56,12 @@
             <a href="<?php echo $video['path']?>">Video</a>
         <?php } ?>
         <?php if($post['post_type'] == 'listen'){ ?>
-            <?php echo 'I listend To <span class="song-title">'.$post['title'].'</span> by <span class="song-artist">'.$post['artist'].'</span>.'; ?>
+            <?php echo 'I listend To <span class="song-title">'.$post['name'].'</span> by <span class="song-artist">'.$post['artist'].'</span>.'; ?>
       
         <?php  } ?>
         <?php if(isset($post['rsvp']) && !empty($post['rsvp'])) { ?>
             <i class="fa fa-calendar"></i>
-               <a class="eventlink" href="<?php echo $post['replyto']?>">Event</a>
+               <a class="eventlink" href="<?php echo $post['in-reply-to']?>">Event</a>
 
 <br>
             <i class="fa fa-envelope-o"></i>
@@ -107,17 +107,17 @@
 
 
     <?php if($post['comment_count'] > 0) { ?>
-    <span class="comments-link"><a href="<?php echo $post['permalink']?>#comments" title="Comments for <?php echo $post['title']?>"><i class="fa fa-comment-o"></i> <?php echo $post['comment_count'] ?></a></span>
+    <span class="comments-link"><a href="<?php echo $post['permalink']?>#comments" title="Comments for <?php echo $post['name']?>"><i class="fa fa-comment-o"></i> <?php echo $post['comment_count'] ?></a></span>
     <span class="sep"> | </span>
     <?php } ?>
 
     <?php if($post['like_count'] > 0) { ?>
-    <span class="likes-link"><a href="<?php echo $post['permalink']?>#likes" title="Likes of <?php echo $post['title']?>"><i class="fa fa-heart-o"></i> <?php echo $post['like_count']?></a></span>
+    <span class="likes-link"><a href="<?php echo $post['permalink']?>#likes" title="Likes of <?php echo $post['name']?>"><i class="fa fa-heart-o"></i> <?php echo $post['like_count']?></a></span>
     <span class="sep"> | </span>
     <?php } ?>
   
     <?php if($post['repost_count'] > 0) { ?>
-    <span class="reposts-link"><a href="<?php echo $post['permalink']?>#reposts" title="reposts of <?php echo $post['title']?>"><i class="fa fa-retweet"></i> <?php echo $post['repost_count']?></a></span>
+    <span class="reposts-link"><a href="<?php echo $post['permalink']?>#reposts" title="reposts of <?php echo $post['name']?>"><i class="fa fa-retweet"></i> <?php echo $post['repost_count']?></a></span>
     <span class="sep"> | </span>
     <?php } ?>
   

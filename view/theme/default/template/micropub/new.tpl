@@ -168,7 +168,7 @@ window.addEventListener('load', function() {
                     $('.required').removeClass('required');
                     $('.group-note').show();
                     $('.form-group.content').addClass('required');
-                    $('.control-label[for="input-replyto"]').html('Reply To');
+                    $('.control-label[for="input-in-reply-to"]').html('Reply To');
                     if(ed){
                         ed.destroy('input-body');
                     }
@@ -178,7 +178,7 @@ window.addEventListener('load', function() {
                     $('.required').removeClass('required');
                     $('.group-note').show();
                     $('.form-group.content').addClass('required');
-                    $('.control-label[for="input-replyto"]').html('Reply To');
+                    $('.control-label[for="input-in-reply-to"]').html('Reply To');
                     if(ed){
                         ed.destroy('input-body');
                     }
@@ -189,14 +189,14 @@ window.addEventListener('load', function() {
                     $('.group-article').show();
                     $('.form-group.content').addClass('required');
                     $('.form-group.title').addClass('required');
-                    $('.control-label[for="input-replyto"]').html('Reply To');
+                    $('.control-label[for="input-in-reply-to"]').html('Reply To');
                     ed = CKEDITOR.replace('input-body');
                 }
                 function showRsvp(){
                     $('.form-group').hide();
                     $('.required').removeClass('required');
                     $('.group-rsvp').show();
-                    $('.control-label[for="input-replyto"]').html('Event URL');
+                    $('.control-label[for="input-in-reply-to"]').html('Event URL');
                     $('.form-group.rsvp').addClass('required');
                     $('.form-group.reply').addClass('required');
                     if(ed){
@@ -327,9 +327,9 @@ window.addEventListener('load', function() {
                 </div>
 
                 <div class="form-group group-note group-article group-rsvp reply">
-                  <label class="col-sm-2 control-label" for="input-replyto">Reply To</label>
+                  <label class="col-sm-2 control-label" for="input-in-reply-to">Reply To</label>
                   <div class="col-sm-10">
-                    <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
+                    <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['in-reply-to'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-in-reply-to" class="form-control" />
                   </div>
                 </div>
 
@@ -337,14 +337,14 @@ window.addEventListener('load', function() {
                 <div class="form-group group-like like">
                   <label class="col-sm-2 control-label" for="input-like">Like Of</label>
                   <div class="col-sm-10">
-                    <input type="text" name="like-of" value="<?php echo isset($post) ? $post['like-of'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
+                    <input type="text" name="like-of" value="<?php echo isset($post) ? $post['like-of'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-in-reply-to" class="form-control" />
                   </div>
                 </div>
 
                 <div class="form-group group-bookmark bookmark ">
                   <label class="col-sm-2 control-label" for="input-bookmark">Bookmark URL</label>
                   <div class="col-sm-10">
-                    <input type="text" name="bookmark" value="<?php echo isset($post) ? $post['bookmark'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
+                    <input type="text" name="bookmark" value="<?php echo isset($post) ? $post['bookmark'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-in-reply-to" class="form-control" />
                   </div>
                 </div>
 

@@ -1,5 +1,5 @@
-    <?php if(!empty($post['title'])){ ?>
-    <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['title']?>" rel="bookmark" ><?php echo $post['title']?></a></h1>
+    <?php if(!empty($post['name'])){ ?>
+    <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url url" title="Permalink to <?php echo $post['name']?>" rel="bookmark" ><?php echo $post['name']?></a></h1>
     <?php } ?>
       <div class="entry-content e-content">
         <?php foreach($post['video'] as $video){ ?>

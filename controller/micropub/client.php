@@ -48,8 +48,8 @@ class ControllerMicropubClient extends Controller {
         if (isset($this->request->get['type'])) {
             $data['type'] = strtolower($this->request->get['type']);
         }
-        if (isset($this->request->get['reply_to'])) {
-            $data['post'] = array('replyto' => $this->request->get['reply_to']);
+        if (isset($this->request->get['in-replty-to'])) {
+            $data['post'] = array('in-replty-to' => $this->request->get['in-replty-to']);
         }
         if (isset($this->request->get['bookmark'])) {
             $data['post'] = array('bookmark' => $this->request->get['bookmark']);
@@ -627,7 +627,7 @@ class ControllerMicropubClient extends Controller {
             }
 
             if (array_key_exists('in-reply-to', $properties)) {
-                $post['replyto'] = $properties['in-reply-to'][0]['value'];
+                $post['in-reply-to'] = $properties['in-reply-to'][0]['value'];
             }
             $post['permalink'] = $real_source_url;
         }

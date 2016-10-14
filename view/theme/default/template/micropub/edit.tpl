@@ -46,7 +46,7 @@
                     $('.required').removeClass('required');
                     $('.group-note').show();
                     $('.form-group.content').addClass('required');
-                    $('.control-label[for="input-replyto"]').html('Reply To');
+                    $('.control-label[for="input-in-reply-to"]').html('Reply To');
                     ed.destroy('input-body');
                 }
                 function showArticle(){
@@ -61,7 +61,7 @@
                     $('.form-group').hide();
                     $('.required').removeClass('required');
                     $('.group-rsvp').show();
-                    $('.control-label[for="input-replyto"]').html('Event URL');
+                    $('.control-label[for="input-in-reply-to"]').html('Event URL');
                     $('.form-group.rsvp').addClass('required');
                     $('.form-group.reply').addClass('required');
                 }
@@ -157,23 +157,23 @@
                 </div>
 
                 <div class="form-group group-note group-rsvp reply">
-                  <label class="col-sm-2 control-label" for="input-replyto">Reply To</label>
+                  <label class="col-sm-2 control-label" for="input-in-reply-to">Reply To</label>
                   <div class="col-sm-10">
-                    <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['replyto'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
+                    <input type="text" name="in-reply-to" value="<?php echo isset($post) ? $post['in-reply-to'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-in-reply-to" class="form-control" />
                   </div>
                 </div>
 
                 <div class="form-group group-like like">
                   <label class="col-sm-2 control-label" for="input-like">Like Of</label>
                   <div class="col-sm-10">
-                    <input type="text" name="like" value="<?php echo isset($post) ? $post['like'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
+                    <input type="text" name="like" value="<?php echo isset($post) ? $post['like'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-in-reply-to" class="form-control" />
                   </div>
                 </div>
 
                 <div class="form-group group-bookmark bookmark ">
                   <label class="col-sm-2 control-label" for="input-bookmark">Bookmark URL</label>
                   <div class="col-sm-10">
-                    <input type="text" name="bookmark" value="<?php echo isset($post) ? $post['bookmark'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-replyto" class="form-control" />
+                    <input type="text" name="bookmark" value="<?php echo isset($post) ? $post['bookmark'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-in-reply-to" class="form-control" />
                   </div>
                 </div>
 
