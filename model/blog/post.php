@@ -116,7 +116,7 @@ class ModelBlogPost extends Model {
     }
     public function newPost($type, $data)
     {
-        //$this->log->write(print_r($data, true));
+        $this->log->write(print_r($data, true));
 
         if (isset($data['published']) && !empty($data['published'])) {
             $year = date('Y', strtotime($data['published']));
@@ -230,49 +230,52 @@ class ModelBlogPost extends Model {
 
         foreach(array('photo', 'audio', 'video') as $media_type){
 
-            if(isset($data[$media_type])){
-                if(is_array($data[$media_type]) && !$this->isHash($data[$media_type])){
-                    foreach($data[$media_type] as $media_obj){
-                        if(is_array($media_obj)){
-                            $this->db->query(
-                                "INSERT INTO " . DATABASE . ".media " .
-                                " SET path='" . $this->db->escape($media_obj['value']) . "'" .
-                                " , type='".$media_type."'" .
-                                (isset($media_obj['alt']) ? ', alt="'.$this->db->escape($media_obj['alt']).'"' : '')
-                            );
-                        } else {
-                            $this->db->query(
-                                "INSERT INTO " . DATABASE . ".media " .
-                                " SET path='" . $this->db->escape($media_obj) . "'" .
-                                " , type='".$media_type."'"
-                            );
-                        }
-
-                        $media_id = $this->db->getLastId();
-                        $this->db->query(
-                            "INSERT INTO " . DATABASE . ".media_posts " .
-                            " SET media_id =". (int)$media_id .
-                            " , post_id =". (int)$post_id 
-                        );
-                    } //end foreach
-                } else {
-
-                    $this->db->query(
-                        "INSERT INTO " . DATABASE . ".media " .
-                        " SET path='" . $this->db->escape($media_obj) . "'" .
-                        " , post_id =". (int)$post_id 
-                    );
-                    $media_id = $this->db->getLastId();
-                    $this->db->query(
-                        "INSERT INTO " . DATABASE . ".media_posts " .
-                        " SET media_id =". (int)$media_id .
-                        " , post_id =". (int)$post_id 
-                    );
-                }
+            if(isset($data[$media_type]) && !empty($data[$media_type])){
+                $this->addMediaToPost($post_id, $media_type, $data[$media_type]);
             }
         } //end foreach media_type
 
         return $post_id;
+    }
+
+    public function addMediaToPost($post_id, $media_type, $media_data){
+        if(empty($media_data)){
+            return;
+        }
+        if($this->isHash($media_data)){
+            $this->log->write('debug1');
+            $this->db->query(
+                "INSERT INTO " . DATABASE . ".media " .
+                " SET path='" . $this->db->escape($media_data['value']) . "'" .
+                " , type='".$media_type."'" .
+                (isset($media_data['alt']) ? ', alt="'.$this->db->escape($media_data['alt']).'"' : '')
+            );
+            $media_id = $this->db->getLastId();
+            $this->db->query(
+                "INSERT INTO " . DATABASE . ".media_posts " .
+                " SET media_id =". (int)$media_id .
+                " , post_id =". (int)$post_id 
+            );
+        } elseif(is_array($media_data)){
+            $this->log->write('debug2');
+            foreach($media_data as $media_obj){
+                $this->addMediaToPost($post_id, $media_type, $media_obj);
+            } 
+        } else {
+
+            $this->log->write('debug3');
+            $this->db->query(
+                "INSERT INTO " . DATABASE . ".media " .
+                " SET path='" . $this->db->escape($media_data) . "'" .
+                " , type='".$media_type."'" 
+            );
+            $media_id = $this->db->getLastId();
+            $this->db->query(
+                "INSERT INTO " . DATABASE . ".media_posts " .
+                " SET media_id =". (int)$media_id .
+                " , post_id =". (int)$post_id 
+            );
+        }
     }
 
     public function setSyndicationExtra($post_id, $syn_extra_val)
@@ -800,7 +803,54 @@ class ModelBlogPost extends Model {
                 " and type = '" . $this->db->escape($media_type) . "'" 
             );
             return $query->rows;
+    }
 
+    public function setPropertyForPost($post_id, $field_name, $value = null){
+        switch ($field_name) {
+            case 'category':
+                break;
+            case 'photo':
+            case 'video':
+            case 'audio':
+                $query = $this->db->query(
+                    "SELECT * " .
+                    "FROM " . DATABASE . ".media " .
+                    " JOIN " . DATABASE . ".media_posts USING(media_id) " .
+                    " WHERE post_id = " . (int)$post_id .
+                    " and type = '" . $this->db->escape($field_name) . "'" 
+                );
+
+                $old_media_ids = array();
+                foreach($query->rows as $row){
+                    $old_media_ids[] = (int)$row['media_id'];
+                }
+                if(!empty($old_media_ids)){
+                    $ids_joined = implode(',', $old_media_ids);
+                    $this->db->query(
+                        "DELETE " .
+                        "FROM " . DATABASE . ".media_posts " .
+                        " WHERE media_id IN (" . $ids_joined . ")"
+                    );
+                    $this->db->query(
+                        "DELETE " .
+                        "FROM " . DATABASE . ".media " .
+                        " WHERE media_id IN (" . $ids_joined . ")"
+                    );
+                }
+
+                if(!empty($value)){
+                    $this->addMediaToPost($post_id, $field_name, $value);
+                }
+
+                break;
+
+            default:
+        }
+    }
+
+    private function isHash(array $in)
+    {
+        return is_array($in) && count(array_filter(array_keys($in), 'is_string')) > 0;
     }
 
 

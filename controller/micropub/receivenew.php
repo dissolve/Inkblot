@@ -6,11 +6,14 @@ require_once DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php
 class ControllerMicropubReceivenew extends Controller {
     public function index()
     {
+        $this->log->write(print_r($this->request->post, true));
+
         if( isset($this->request->get['q']) && !empty($this->request->get['q'])){
 
-            if ($this->request->get['q'] == 'content'){
-                $this->query_endpoint_content($this->request->get);
+            if ($this->request->get['q'] == 'source'){
+                $this->query_endpoint_source($this->request->get);
             } else {
+                $this->log->write(print_r($this->request->get, true));
                 $this->query_endpoint_config($this->request->get['q']);
             }
 
@@ -264,6 +267,7 @@ class ControllerMicropubReceivenew extends Controller {
     private function updatePost($post_data)
     {
         //$this->log->write('called editPost()');
+        $this->load->model('blog/post');
         $post = $this->getPostByURL($post_data['url']);
         if ($post) {
             $old_body = $post['content'];
@@ -273,25 +277,18 @@ class ControllerMicropubReceivenew extends Controller {
                 if($this->isHash($post_data['delete'])){
                     foreach($post_data['delete'] as $field => $value){
                         //TODO model->removeFromField($post_id, $field, $value);
+                        //$this->
                     }
                 } else {
                     foreach($post_data['delete'] as $field){
-                        //TODO model->emptyField($field);
+                        $this->model_blog_post->SetPropertyForPost($post['post_id'], $field, null);
                     }
                 }
 
             }
             if(isset($post_data['replace'])){
                 foreach($post_data['replace'] as $field => $value){
-                    //TODO model->emptyField($field);
-
-                    if(is_array($value)){
-                        foreach($value as $val){
-                            //TODO model->addToField($post_id, $field, $val);
-                        }
-                    } else {
-                        //TODO model->addToField($post_id, $field, $value);
-                    }
+                    $this->model_blog_post->SetPropertyForPost($post['post_id'], $field, $value);
                 }
 
             }
@@ -749,16 +746,38 @@ class ControllerMicropubReceivenew extends Controller {
     //private function convert_post_to_mf2_json
 
     // assumes q=content has already verified to be set
-    private function query_endpoint_content($getdata){
+    private function query_endpoint_source($getdata){
+        //$this->log->write(print_r($getdata,true));
 
-        header( 'Content-Type: application/json');
+        $this->response->addHeader( 'Content-Type: application/json');
+
+        $this->load->model('blog/category');
 
         $result = array();
 
         if(isset($getdata['url'])){
             $post = $this->getPostByURL($getdata['url']);
             if ($post) {
-                $result = $post;
+                $result['properties'] = array();
+                
+                foreach($post as $key => $value){
+                    if(!empty($value)){
+                        if(is_array($value)){
+                            $result['properties'][$key] = $value;
+                        } else {
+                            $result['properties'][$key] = array($value);
+                        }
+                    }
+                }
+
+                $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
+                if(!empty($categories)){
+                    $result['properties']['category'] = array();
+                    foreach($categories as $category){
+                        $result['properties']['category'][]= $category['name'];
+                    }
+                }
+
             }
 
         }
@@ -846,10 +865,12 @@ class ControllerMicropubReceivenew extends Controller {
         }
     
         if($query == 'config'){
+            $this->response->addHeader( 'Content-Type: application/json');
             $this->response->setOutput(json_encode($config));
 
         //queries for specific fields
         } elseif(isset($config[$query])){
+            $this->response->addHeader( 'Content-Type: application/json');
             $json = array( $query => $config[$query]);
             $this->response->setOutput(json_encode($json));
 

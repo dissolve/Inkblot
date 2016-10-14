@@ -34,9 +34,12 @@ class ControllerMicropubMediaendpoint extends Controller {
             }
 
 
+            $this->load->model('auth/token');
+            $auth_info = $this->model_auth_token->getAuthFromToken(urldecode($token));
 
             $token_user = str_replace(array('http://', 'https://'), array('',''), $auth_info['user']);
             $myself = str_replace(array('http://', 'https://'), array('',''), HTTP_SERVER);
+
 
             if ($token_user != $myself && $token_user . '/' != $myself && $token_user != $myself . '/' ) {
                 //$this->log->write('err1');
@@ -52,10 +55,13 @@ class ControllerMicropubMediaendpoint extends Controller {
                     
                 } else {
 
+                    $this->log->write('debug');
                     $file_url = $this->uploadFile($auth_info['client_id']);
-                    $this->response->addHeader('HTTP/1.1 201 Created');
-                    $this->response->addHeader('Location: ' . $file_url);
-                    $this->response->setOutput('');
+                    $this->log->write($file_url);
+                    header('HTTP/1.1 201 Created');
+                    header('Location: ' . $file_url);
+                    exit();
+                    //$this->response->setOutput('');
                 }
 
 
@@ -78,9 +84,17 @@ class ControllerMicropubMediaendpoint extends Controller {
             }
         }
 
-        move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/files/' . urldecode($upload_shot["name"]));
+        $file_count = (int)file_get_contents(DIR_UPLOAD . "/file_count.txt", "r");
 
-        $file_rel_url = DIR_UPLOAD_REL . '/files/' . $upload_shot["name"];
+        $new_count = $file_count +1;
+
+
+        //TODO: check that the file doesn't exist first
+        move_uploaded_file($upload_shot["tmp_name"], DIR_UPLOAD . '/files/' . $new_count . '_' . urldecode($upload_shot["name"]));
+
+        file_put_contents(DIR_UPLOAD . "/file_count.txt", $new_count);
+
+        $file_rel_url = DIR_UPLOAD_REL . '/files/' .$new_count . '_' . $upload_shot["name"];
 
         return HTTPS_SERVER . $file_rel_url;
 
