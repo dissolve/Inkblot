@@ -276,19 +276,18 @@ class ControllerMicropubReceivenew extends Controller {
             if(isset($post_data['delete'])){
                 if($this->isHash($post_data['delete'])){
                     foreach($post_data['delete'] as $field => $value){
-                        //TODO model->removeFromField($post_id, $field, $value);
-                        //$this->
+                        $this->model_blog_post->removePropertyValue($post['post_id'], $field, $value);
                     }
                 } else {
                     foreach($post_data['delete'] as $field){
-                        $this->model_blog_post->SetPropertyForPost($post['post_id'], $field, null);
+                        $this->model_blog_post->deleteProperty($post['post_id'], $field);
                     }
                 }
 
             }
             if(isset($post_data['replace'])){
                 foreach($post_data['replace'] as $field => $value){
-                    $this->model_blog_post->SetPropertyForPost($post['post_id'], $field, $value);
+                    $this->model_blog_post->setProperty($post['post_id'], $field, $value);
                 }
 
             }
@@ -297,10 +296,10 @@ class ControllerMicropubReceivenew extends Controller {
                 foreach($post_data['add'] as $field => $value){
                     if(is_array($value)){
                         foreach($value as $val){
-                            //TODO model->addToField($post_id, $field, $val);
+                            $this->model_blog_post->addProperty($post['post_id'], $field, $val);
                         }
                     } else {
-                        //TODO model->addToField($post_id, $field, $value);
+                        $this->model_blog_post->addProperty($post['post_id'], $field, $value);
                     }
                 }
             }
@@ -755,12 +754,22 @@ class ControllerMicropubReceivenew extends Controller {
 
         $result = array();
 
+        if(isset($getdata['properties']) && !is_array($getdata['properties'])){
+            $getdata['properties'] = array($getdata['properties']);
+        }
+
+
         if(isset($getdata['url'])){
             $post = $this->getPostByURL($getdata['url']);
             if ($post) {
                 $result['properties'] = array();
                 
                 foreach($post as $key => $value){
+                    if(!empty($getdata['properties'])){
+                        if(!in_array($key, $getdata['properties'])){
+                            $value = null;// shortcut to not add this to the properties array;
+                        }
+                    }
                     if(!empty($value)){
                         if(is_array($value)){
                             $result['properties'][$key] = $value;

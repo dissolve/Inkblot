@@ -309,11 +309,58 @@ class ModelBlogPost extends Model {
         $internal_post = $this->getPost($post_id);
         $mf2_post = array(
             'type' => array('h-entry'),
-            'properties' => array(
-                'url'=> $post['permalink'],
-                'content'=> $post['content']
-            )
+            'properties' => array()
         );
+        foreach($internal_post as $key => $value){
+            if(!empty($value)){
+                switch($key){
+                    case 'bookmark_like_url';
+                        $mf2_post['properties']['like-of'] = $value;
+                        break;
+                    case 'permalink';
+                        $mf2_post['properties']['url'] = $value;
+                        break;
+                    case 'timestamp';
+                        $mf2_post['properties']['created'] = $value;
+                        break;
+
+                    case 'slug':
+                    case 'summary':
+                    case 'content':
+                    case 'name':
+                        break;
+
+                    case 'draft':
+                    case 'artist':
+                    case 'deleted':
+
+
+                        /*
+                'tag_category='
+                'tag_person='
+                'tag_url='
+                'tag_shape='
+                'tag_coords='
+                'rsvp='
+                'location='
+                'place_name='
+                'replyto='
+                'created_by='
+                'following_id='
+                         */
+                        break;
+                    default:
+                        break;
+
+                }
+                if(is_array($value)){
+                    $mf2_post['properties'][$key] = $value;
+                } else {
+                    $mf2_post['properties'][$key] = array($value);
+                }
+            }
+
+        }
 
         $fields_supported = array('name', 'like-of', 'bookmark', 'category', 'description');
 
@@ -805,9 +852,10 @@ class ModelBlogPost extends Model {
             return $query->rows;
     }
 
-    public function setPropertyForPost($post_id, $field_name, $value = null){
+    public function deleteProperty($post_id, $field_name){
         switch ($field_name) {
             case 'category':
+                //TODO
                 break;
             case 'photo':
             case 'video':
@@ -837,7 +885,57 @@ class ModelBlogPost extends Model {
                         " WHERE media_id IN (" . $ids_joined . ")"
                     );
                 }
+                break;
 
+            default:
+                //TODO
+        }
+    }
+
+    public function removePropertyValue($post_id, $field_name, $value){
+        switch ($field_name) {
+            case 'category':
+                //TODO
+                break;
+            case 'photo':
+            case 'video':
+            case 'audio':
+                $query = $this->db->query(
+                    "SELECT * " .
+                    "FROM " . DATABASE . ".media " .
+                    " JOIN " . DATABASE . ".media_posts USING(media_id) " .
+                    " WHERE post_id = " . (int)$post_id .
+                    " and type = '" . $this->db->escape($field_name) . "'" 
+                );
+
+                foreach($query->rows as $row){
+                    if($row['path'] == $value){
+                        $this->db->query(
+                            "DELETE " .
+                            "FROM " . DATABASE . ".media_posts " .
+                            " WHERE media_id = " . (int)$row['media_id']
+                        );
+                        $this->db->query(
+                            "DELETE " .
+                            "FROM " . DATABASE . ".media " .
+                            " WHERE media_id = " . (int)$row['media_id']
+                        );
+                    }
+                }
+                break;
+            default:
+                $this->deleteProperty($post_id, $field_name);
+        }
+    }
+
+    public function addProperty($post_id, $field_name, $value){
+        switch ($field_name) {
+            case 'category':
+                //TODO
+                break;
+            case 'photo':
+            case 'video':
+            case 'audio':
                 if(!empty($value)){
                     $this->addMediaToPost($post_id, $field_name, $value);
                 }
@@ -845,7 +943,13 @@ class ModelBlogPost extends Model {
                 break;
 
             default:
+                //TODO
         }
+    }
+    public function setProperty($post_id, $field_name, $value){
+
+        $this->deleteProperty($post_id, $field_name);
+        $this->addProperty($post_id, $field_name, $value);
     }
 
     private function isHash(array $in)
