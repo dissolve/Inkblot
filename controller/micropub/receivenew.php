@@ -80,16 +80,16 @@ class ControllerMicropubReceivenew extends Controller {
                                 unset($data['type']);
                             }
                             if(isset($data['properties'])){
+                                foreach($data['properties'] as $key => &$value){
+                                    if(is_array($value) && !$this->isHash($value) && count($value) == 1 && $key != 'photo' && $key != 'video' && $key != 'audio'){
+                                        $value = $value[0];
+                                    }
+                                }
                                 $post_data = array_merge($post_data, $data['properties']);
                                 unset($data['properties']);
                             }
                             $post_data = array_merge($post_data, $data);
 
-                            foreach($post_data as $key => &$value){
-                                if(is_array($value) && !$this->isHash($value) && count($value) == 1 && $key != 'photo' && $key != 'video' && $key != 'audio'){
-                                    $value = $value[0];
-                                }
-                            }
                         } catch (Exception $e){
                             $post_data = array();
                         }
@@ -179,7 +179,7 @@ class ControllerMicropubReceivenew extends Controller {
                                     $this->createPost($post_data, 'tag', $auth_info['client_id']);
                                 } elseif (isset($post_data['mp-type']) && $post_data['mp-type'] == 'snark') {
                                     $this->createPost($post_data, 'snark', $auth_info['client_id']);
-                                } elseif (isset($post_data['bookmark']) && !empty($post_data['bookmark'])) {
+                                } elseif (isset($post_data['bookmark-of']) && !empty($post_data['bookmark-of'])) {
                                     $this->createPost($post_data, 'bookmark', $auth_info['client_id']);
                                 } elseif (isset($post_data['like-of']) && !empty($post_data['like-of'])) {
                                     $this->createPost($post_data, 'like', $auth_info['client_id']);
@@ -266,7 +266,7 @@ class ControllerMicropubReceivenew extends Controller {
 
     private function updatePost($post_data)
     {
-        //$this->log->write('called editPost()');
+        $this->log->write('called updatePost() with ' . print_r($post_data, true));
         $this->load->model('blog/post');
         $post = $this->getPostByURL($post_data['url']);
         if ($post) {
@@ -274,9 +274,17 @@ class ControllerMicropubReceivenew extends Controller {
             $post_id = $post['post_id'];
             
             if(isset($post_data['delete'])){
+                if(!is_array($post_data['delete'])){
+                    header('HTTP/1.1 400 Invalid Request');
+                    exit();
+                }
                 if($this->isHash($post_data['delete'])){
                     foreach($post_data['delete'] as $field => $value){
-                        $this->model_blog_post->removePropertyValue($post['post_id'], $field, $value);
+                        if(!is_array($value)){
+                            //this submission was not according to spec!, tsk tsk tsk
+                            $value = array($value);
+                        }
+                        $this->model_blog_post->removePropertyValues($post['post_id'], $field, $value);
                     }
                 } else {
                     foreach($post_data['delete'] as $field){
@@ -286,6 +294,10 @@ class ControllerMicropubReceivenew extends Controller {
 
             }
             if(isset($post_data['replace'])){
+                if(!is_array($post_data['replace'])){
+                    header('HTTP/1.1 400 Invalid Request');
+                    exit();
+                }
                 foreach($post_data['replace'] as $field => $value){
                     $this->model_blog_post->setProperty($post['post_id'], $field, $value);
                 }
@@ -293,6 +305,10 @@ class ControllerMicropubReceivenew extends Controller {
             }
             if(isset($post_data['add'])){
 
+                if(!is_array($post_data['add'])){
+                    header('HTTP/1.1 400 Invalid Request');
+                    exit();
+                }
                 foreach($post_data['add'] as $field => $value){
                     if(is_array($value)){
                         foreach($value as $val){
@@ -304,55 +320,12 @@ class ControllerMicropubReceivenew extends Controller {
                 }
             }
 
-            $old_body = $post['content'];
-            //$this->log->write('post set');
-            //$this->log->write(print_r($post,true));
             $this->load->model('blog/post');
             if (isset($post_data['syndication'])) {
                 $this->model_blog_post->addSyndication($post['post_id'], $post_data['syndication']);
             }
 
-            $simple_editable_fields = array(
-                'name' => 'name',
-                'content' => 'content',
-                'location' => 'location',
-                'place_name' => 'place_name',
-                'like-of' => 'like-of',
-                'bookmark' => 'bookmark',
-                'slug' => 'slug');
 
-            if (isset($post_data['delete-fields']) && !empty($post_data['delete-fields'])) {
-                foreach ($simple_editable_fields as $field_name => $db_name) {
-                    if (in_array($field_name, $post_data['delete-fields'])) {
-                        $post[$db_name] = '';
-                    }
-                }
-                if (in_array('category', $post_data['delete-fields'])) {
-                    $this->model_blog_post->removeFromAllCategories($post['post_id']);
-                }
-            }
-
-            foreach ($simple_editable_fields as $field_name => $db_name) {
-                if (isset($post_data[$field_name]) && !empty($post_data[$field_name])) {
-                    $post[$db_name] = $post_data[$field_name];
-                }
-            }
-            if (isset($post_data['category']) && !empty($post_data['category'])) {
-                if(is_array($post_data['category'])){
-                    foreach ($post_data['category'] as $category) {
-                        $this->model_blog_post->addToCategory($post['post_id'], $category);
-                    }
-                } else {
-                    $categories = explode(',', urldecode($post_data['category']));
-                    $this->log->write(print_r($categories));
-                    foreach ($categories as $category) {
-                        $this->model_blog_post->addToCategory($post['post_id'], $category);
-                    }
-                }
-            }
-
-            //$this->log->write(print_r($post,true));
-            $this->model_blog_post->editPost($post);
 
             $this->load->model('webmention/send_queue');
             if (defined('QUEUED_SEND')) {
@@ -387,7 +360,7 @@ class ControllerMicropubReceivenew extends Controller {
                 'location' => 'location',
                 'place_name' => 'place_name',
                 'like-of' => 'like-of',
-                'bookmark' => 'bookmark',
+                'bookmark' => 'bookmark-of',
                 'slug' => 'slug');
 
             if (isset($post_data['delete-fields']) && !empty($post_data['delete-fields'])) {
@@ -534,10 +507,10 @@ class ControllerMicropubReceivenew extends Controller {
             $data['draft'] = $post_data['draft'];
         }
         if (isset($post_data['like-of'])) {
-            $data['bookmark_like_url'] = $post_data['like-of'];
+            $data['like-of'] = $post_data['like-of'];
         }
-        if (isset($post_data['bookmark'])) {
-            $data['bookmark_like_url'] = $post_data['bookmark'];
+        if (isset($post_data['bookmark-of'])) {
+            $data['bookmark-of'] = $post_data['bookmark-of'];
         }
         if (isset($post_data['in-reply-to'])) {
             $data['in-reply-to'] = $post_data['in-reply-to'];
@@ -824,7 +797,7 @@ class ControllerMicropubReceivenew extends Controller {
                 "new" => "https://ben.thatmustbe.me/new",
                 "reply" => "https://ben.thatmustbe.me/new?in-reply-to={url}",
                 "repost" => "https://ben.thatmustbe.me/new?url={url}",
-                "bookmark" => "https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}",
+                "bookmark" => "https://ben.thatmustbe.me/new?type=bookmark&bookmark-of={url}",
                 "favorite" => "https://ben.thatmustbe.me/new?type=like&like-of={url}",
                 "like" => "https://ben.thatmustbe.me/new?type=like&like={url}",
                 "delete" => "https://ben.thatmustbe.me/delete?url={url}",

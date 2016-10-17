@@ -127,8 +127,8 @@ class ModelBlogInteraction extends Model {
                     ? ", source_name='" . $this->db->escape($comment_data['name']) . "'"
                     : "") .
                 ((isset($comment_data['published'])  && !empty($comment_data['published']))
-                    ? ", `timestamp`='" . $this->db->escape($comment_data['published']) . "'"
-                    : ", `timestamp`=NOW()") .
+                    ? ", `published`='" . $this->db->escape($comment_data['published']) . "'"
+                    : ", `published`=NOW()") .
                 ", webmention_id='" . $webmention_id . "'" .
                 ", interaction_type='" . $interaction_type . "'" .
                 ", post_id = " . (int)$post['post_id'] .
@@ -254,7 +254,7 @@ class ModelBlogInteraction extends Model {
                 " WHERE interaction_type='" . $type . "' " .
                 " AND post_id IS NULL " .
                 " AND deleted=0 " .
-                " ORDER BY timestamp ASC " .
+                " ORDER BY published ASC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $data = $query->rows;
@@ -299,7 +299,7 @@ class ModelBlogInteraction extends Model {
                 " WHERE interaction_type='" . $type . "' " .
                 " AND post_id = " . (int)$post_id . " " .
                 " AND deleted=0 " .
-                " ORDER BY timestamp ASC " .
+                " ORDER BY published ASC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $data = array();
@@ -310,7 +310,7 @@ class ModelBlogInteraction extends Model {
                 $row['author_url']   = (!empty($person) ? $person['url'] : '');
                 $row['author_image'] = (!empty($person) ? $person['image'] : '');
 
-                $row['timestamp'] = date("c", strtotime($row['timestamp']));
+                $row['published'] = date("c", strtotime($row['published']));
 
                 $second_level_query = $this->db->query(
                     "SELECT sli.*, " .
@@ -321,13 +321,13 @@ class ModelBlogInteraction extends Model {
                     " LEFT JOIN " . DATABASE . ".people p " .
                     " ON sli.author_person_id  = p.person_id " .
                     " WHERE interaction_id='" . $row['interaction_id'] . "' " .
-                    " ORDER BY timestamp ASC "
+                    " ORDER BY published ASC "
                 );
 
                 $row['comments'] = $second_level_query->rows;
                 
                 foreach($row['comments'] as &$secondlev){
-                    $secondlev['timestamp'] = date("c", strtotime($secondlev['timestamp']));
+                    $secondlev['published'] = date("c", strtotime($secondlev['published']));
                 }
 
                 $data[] = $row;
@@ -387,7 +387,7 @@ class ModelBlogInteraction extends Model {
                 " JOIN " . DATABASE . ".webmentions " .
                 " USING(webmention_id) " .
                 " WHERE deleted=0 " .
-                " ORDER BY timestamp DESC " .
+                " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $data = array();
@@ -429,8 +429,8 @@ class ModelBlogInteraction extends Model {
                 ? " source_name='" . $this->db->escape($data['name']) . "', "
                 : "") .
             ((isset($data['published'])  && !empty($data['published']))
-                ? " `timestamp`='" . $this->db->escape($data['published']) . "',"
-                : " `timestamp`=NOW(),") .
+                ? " `published`='" . $this->db->escape($data['published']) . "',"
+                : " `published`=NOW(),") .
             " parse_timestamp = NOW()"
         );
 

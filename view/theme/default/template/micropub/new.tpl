@@ -344,7 +344,7 @@ window.addEventListener('load', function() {
                 <div class="form-group group-bookmark bookmark ">
                   <label class="col-sm-2 control-label" for="input-bookmark">Bookmark URL</label>
                   <div class="col-sm-10">
-                    <input type="text" name="bookmark" value="<?php echo isset($post) ? $post['bookmark'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-in-reply-to" class="form-control" />
+                    <input type="text" name="bookmark-of" value="<?php echo isset($post) ? $post['bookmark-of'] : ''; ?>" placeholder="http://somesite.com/posts/123" id="input-in-reply-to" class="form-control" />
                   </div>
                 </div>
 

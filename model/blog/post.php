@@ -94,15 +94,15 @@ class ModelBlogPost extends Model {
             }
 
             if (isset($data['like-of']) && !empty($data['like-of'])) {
-                $set_data[] = "bookmark_like_url ='" . $this->db->escape($data['like-of']) . "'";
+                $set_data[] = "`like-of` ='" . $this->db->escape($data['like-of']) . "'";
             } else {
-                $set_data[] = "bookmark_like_url =''";
+                $set_data[] = "`like-of` =''";
             }
 
-            if (isset($data['bookmark']) && !empty($data['bookmark'])) {
-                $set_data[] = "bookmark_like_url ='" . $this->db->escape($data['bookmark']) . "'";
+            if (isset($data['bookmark-of']) && !empty($data['bookmark-of'])) {
+                $set_data[] = "`bookmark-of` ='" . $this->db->escape($data['bookmark-of']) . "'";
             } else {
-                $set_data[] = "bookmark_like_url =''";
+                $set_data[] = "`bookmark-of` =''";
             }
 
             //$this->log->write(print_r($set_data,true));
@@ -122,12 +122,12 @@ class ModelBlogPost extends Model {
             $year = date('Y', strtotime($data['published']));
             $month = date('n', strtotime($data['published']));
             $day = date('j', strtotime($data['published']));
-            $timestamp = "'" . $this->db->escape($data['published']) . "'";
+            $published = "'" . $this->db->escape($data['published']) . "'";
         } else {
             $year = date('Y');
             $month = date('n');
             $day = date('j');
-            $timestamp = "NOW()";
+            $published = "NOW()";
         }
 
         $draft = 0;
@@ -148,7 +148,7 @@ class ModelBlogPost extends Model {
 
         $sql = "INSERT INTO " . DATABASE . ".posts " .
             " SET `post_type`='" . $this->db->escape($type) . "', " .
-            " `timestamp` = " . $timestamp . ", " .
+            " `published` = " . $published . ", " .
             " `year` = " . (int)$year . ", " .
             " `month` = " . (int)$month . ", " .
             " `day` = " . (int)$day . ", " .
@@ -169,8 +169,11 @@ class ModelBlogPost extends Model {
             (isset($data['artist']) && !empty($data['artist'])
                 ? ", artist='" . $this->db->escape($data['artist']) . "'"
                 : "") . //for "listens"
-            (isset($data['bookmark_like_url']) && !empty($data['bookmark_like_url'])
-            ? ", bookmark_like_url='" . $this->db->escape($data['bookmark_like_url']) . "'"
+            (isset($data['like-of']) && !empty($data['like-of'])
+            ? ", `like-of`='" . $this->db->escape($data['like-of']) . "'"
+                : "") .
+            (isset($data['bookmark-of']) && !empty($data['bookmark-of'])
+            ? ", `bookmark-of`='" . $this->db->escape($data['bookmark-of']) . "'"
                 : "") .
             (isset($data['tag_category']) && !empty($data['tag_category'])
                 ? ", tag_category='" . $this->db->escape($data['tag_category']) . "'"
@@ -201,7 +204,7 @@ class ModelBlogPost extends Model {
                 ? ", place_name='" . $this->db->escape($data['place_name']) . "'"
                 : "") .
             (isset($data['in-reply-to']) && !empty($data['in-reply-to'])
-                ? ", in-reply-to='" . $this->db->escape($data['in-reply-to']) . "'"
+                ? ", `in-reply-to`='" . $this->db->escape($data['in-reply-to']) . "'"
                 : "") .
             (isset($data['created_by']) && !empty($data['created_by'])
                 ? ", created_by='" . $this->db->escape($data['created_by']) . "'"
@@ -226,6 +229,7 @@ class ModelBlogPost extends Model {
                     " post_id = " . (int)$post_id
                 );
             }
+            $this->cache->delete('categories.post.' . $post_id);
         }
 
         foreach(array('photo', 'audio', 'video') as $media_type){
@@ -314,13 +318,12 @@ class ModelBlogPost extends Model {
         foreach($internal_post as $key => $value){
             if(!empty($value)){
                 switch($key){
-                    case 'bookmark_like_url';
-                        $mf2_post['properties']['like-of'] = $value;
-                        break;
                     case 'permalink';
                         $mf2_post['properties']['url'] = $value;
                         break;
-                    case 'timestamp';
+                    case 'created';
+                    case 'published';
+                    case 'updated';
                         $mf2_post['properties']['created'] = $value;
                         break;
 
@@ -328,6 +331,9 @@ class ModelBlogPost extends Model {
                     case 'summary':
                     case 'content':
                     case 'name':
+                    case 'in-reply-to':
+                    case 'like-of':
+                    case 'bookmark-of':
                         break;
 
                     case 'draft':
@@ -336,17 +342,16 @@ class ModelBlogPost extends Model {
 
 
                         /*
-                'tag_category='
-                'tag_person='
-                'tag_url='
-                'tag_shape='
-                'tag_coords='
-                'rsvp='
-                'location='
-                'place_name='
-                'in-reply-to='
-                'created_by='
-                'following_id='
+                'tag_category'
+                'tag_person'
+                'tag_url'
+                'tag_shape'
+                'tag_coords'
+                'rsvp'
+                'location'
+                'place_name'
+                'created_by'
+                'following_id'
                          */
                         break;
                     default:
@@ -362,7 +367,7 @@ class ModelBlogPost extends Model {
 
         }
 
-        $fields_supported = array('name', 'like-of', 'bookmark', 'category', 'description');
+        $fields_supported = array('name', 'like-of', 'bookmark-of', 'category', 'description');
 
 
         foreach($fields_supported as $field_name){
@@ -454,12 +459,9 @@ class ModelBlogPost extends Model {
                 //$post['content'] = preg_replace('/<hr \/>/', '', $post['content']);
             //}
             date_default_timezone_set(LOCALTIMEZONE);
-            $post['timestamp'] = date("c", strtotime($post['timestamp']));
+            $post['published'] = date("c", strtotime($post['published']));
             if ($post['post_type'] == 'bookmark') {
-                $post['bookmark'] = $post['bookmark_like_url'];
                 $post['description'] = $post['content'];
-            } elseif ($post['post_type'] == 'like') {
-                $post['like-of'] = $post['bookmark_like_url'];
             }
             $this->cache->set('post.' . $post_id, $post);
         }
@@ -526,7 +528,7 @@ class ModelBlogPost extends Model {
                 " FROM " . DATABASE . ".posts " .
                 " WHERE deleted=0 " .
                 " AND draft=0 " .
-                " ORDER BY timestamp DESC " .
+                " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $post_id_array = $query->rows;
@@ -553,7 +555,7 @@ class ModelBlogPost extends Model {
                 " FROM " . DATABASE . ".posts " .
                 " WHERE deleted=0 " .
                 " AND draft=1 " .
-                " ORDER BY timestamp DESC " .
+                " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $post_id_array = $query->rows;
@@ -581,7 +583,7 @@ class ModelBlogPost extends Model {
                     "SELECT post_id FROM " . DATABASE . ".posts " .
                     " WHERE post_type IN ('" . implode("','", $type_list) . "') " .
                     " AND draft=0 " .
-                    " ORDER BY timestamp DESC " .
+                    " ORDER BY published DESC " .
                     " LIMIT " . (int)$skip . ", " . (int)$limit
                 );
                 $post_id_array = $query->rows;
@@ -596,7 +598,7 @@ class ModelBlogPost extends Model {
                     " WHERE post_type IN ('" . implode("','", $type_list) . "') " .
                     " AND deleted=0 " .
                     " AND draft=0 " .
-                    " ORDER BY timestamp DESC " .
+                    " ORDER BY published DESC " .
                     " LIMIT " . (int)$skip . ", " . (int)$limit
                 );
                 $post_id_array = $query->rows;
@@ -624,6 +626,7 @@ class ModelBlogPost extends Model {
             " SET category_id=" . (int)$category['category_id'] . ", " .
             " post_id = " . (int)$post_id
         );
+        $this->cache->delete('categories.post.' . $post_id);
     }
 
 
@@ -633,6 +636,7 @@ class ModelBlogPost extends Model {
             "DELETE FROM " . DATABASE . ".categories_posts " .
             " WHERE post_id = " . (int)$post_id
         );
+        $this->cache->delete('categories.post.' . $post_id);
         //todo find and remove empty categories
     }
 
@@ -646,7 +650,7 @@ class ModelBlogPost extends Model {
                 " WHERE category_id = '" . (int)$category_id . "' " .
                 " AND deleted=0 " .
                 " AND draft=0 " .
-                " ORDER BY timestamp DESC " .
+                " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $post_id_array = $query->rows;
@@ -674,7 +678,7 @@ class ModelBlogPost extends Model {
                 " WHERE post_type = '" . $this->db->escape($type) . "' " .
                 " AND deleted=0 " .
                 " AND draft=0 " .
-                " ORDER BY timestamp DESC " .
+                " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $post_id_array = $query->rows;
@@ -702,7 +706,7 @@ class ModelBlogPost extends Model {
                 " WHERE category_id = '" . (int)$category_id . "' " .
                 " AND deleted=0 " .
                 " AND draft=0 " .
-                " ORDER BY timestamp DESC " .
+                " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $query = $this->db->query(
@@ -713,7 +717,7 @@ class ModelBlogPost extends Model {
                 " AND `day` = " . (int)$day . " " .
                 " AND deleted=0 " .
                 " AND draft=0 " .
-                " ORDER BY timestamp DESC"
+                " ORDER BY published DESC"
             );
             $post_id_array = $query->rows;
             $this->cache->set('posts.day.' . $year . '.' . $month . '.' . $day, $post_id_array);
@@ -743,7 +747,7 @@ class ModelBlogPost extends Model {
                 " AND `month` = '" . (int)$month . "' " .
                 " AND deleted=0 " .
                 " AND draft=0 " .
-                " ORDER BY timestamp DESC " .
+                " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $post_id_array = $query->rows;
@@ -772,7 +776,7 @@ class ModelBlogPost extends Model {
                 " AND `month` = '" . (int)$month . "' " .
                 " AND deleted=0 " .
                 " AND draft=0 " .
-                " ORDER BY timestamp DESC " .
+                " ORDER BY published DESC " .
                 ($limit ? " LIMIT " . (int)$skip . ", " . (int)$limit : '')
             );
             $post_id_array = $query->rows;
@@ -853,9 +857,14 @@ class ModelBlogPost extends Model {
     }
 
     public function deleteProperty($post_id, $field_name){
+        $this->log->write('called deleteProperty with ' . $post_id . ' ' . $field_name );
         switch ($field_name) {
             case 'category':
-                //TODO
+                $this->db->query(
+                    "DELETE FROM " . DATABASE . ".categories_posts " .
+                    " WHERE post_id = " . (int)$post_id
+                );
+                $this->cache->delete('categories.post.' . $post_id);
                 break;
             case 'photo':
             case 'video':
@@ -886,16 +895,67 @@ class ModelBlogPost extends Model {
                     );
                 }
                 break;
+            case 'like-of':
+            case 'bookmark-of':
+            case 'created':
+            case 'published':
+            case 'updated':
+            case 'slug':
+            case 'summary':
+            case 'content':
+            case 'name':
+            case 'in-reply-to':
+            case 'draft':
+            case 'artist':
+            case 'deleted':
+            case 'tag_category':
+            case 'tag_person':
+            case 'tag_url':
+            case 'tag_shape':
+            case 'tag_coords':
+            case 'rsvp':
+            case 'location':
+            case 'place_name':
+            case 'created_by':
+            case 'following_id':
+
+                if(is_array($value)){
+                    $value = $value[0];
+                }
+                $this->log->write(
+                    "UPDATE " . DATABASE . ".posts " .
+                    " SET `".$field_name."`= '' " .
+                    " WHERE post_id = " . (int)$post_id
+                );
+                $this->db->query(
+                    "UPDATE " . DATABASE . ".posts " .
+                    " SET `".$field_name."`= '' " .
+                    " WHERE post_id = " . (int)$post_id
+                );
+                break;
 
             default:
-                //TODO
+                // do nothing i guess as we don't support that field
         }
+        $this->cache->delete('post.' . $data['post_id']);
     }
 
-    public function removePropertyValue($post_id, $field_name, $value){
+    //This assumes that value is an array (as it should be per the micropub spec)
+    public function removePropertyValues($post_id, $field_name, $value){
+        $this->log->write('called removePropertyValues with ' . $post_id . ' ' . $field_name . ' ' . $value[0]);
         switch ($field_name) {
             case 'category':
-                //TODO
+                foreach($value as $cat){
+                    $this->load->model('blog/category');
+                    $category = $this->model_blog_category->getCategoryByName($cat, true);
+                    $this->db->query(
+                        "DELETE FROM " . DATABASE . ".categories_posts " .
+                        " WHERE category_id=" . (int)$category['category_id'] . " " .
+                        " AND post_id = " . (int)$post_id
+                    );
+                }
+                $this->cache->delete('categories.post.' . $post_id);
+
                 break;
             case 'photo':
             case 'video':
@@ -909,7 +969,7 @@ class ModelBlogPost extends Model {
                 );
 
                 foreach($query->rows as $row){
-                    if($row['path'] == $value){
+                    if(in_array($row['path'], $value)){
                         $this->db->query(
                             "DELETE " .
                             "FROM " . DATABASE . ".media_posts " .
@@ -926,12 +986,33 @@ class ModelBlogPost extends Model {
             default:
                 $this->deleteProperty($post_id, $field_name);
         }
+        $this->cache->delete('post.' . $data['post_id']);
     }
 
     public function addProperty($post_id, $field_name, $value){
+        $this->log->write('called addProperty with ' . $post_id . ' ' . $field_name . ' ' . $value[0]);
         switch ($field_name) {
             case 'category':
-                //TODO
+                $this->load->model('blog/category');
+                if(is_array($value)){
+                    foreach ($value as $cat) {
+                        $category = $this->model_blog_category->getCategoryByName($cat, true);
+                        $this->db->query(
+                            "INSERT INTO " . DATABASE . ".categories_posts " .
+                            " SET category_id=" . (int)$category['category_id'] . ", " .
+                            " post_id = " . (int)$post_id
+                        );
+                    }
+                } else {
+                    $category = $this->model_blog_category->getCategoryByName($value, true);
+                    $this->db->query(
+                        "INSERT INTO " . DATABASE . ".categories_posts " .
+                        " SET category_id=" . (int)$category['category_id'] . ", " .
+                        " post_id = " . (int)$post_id
+                    );
+
+                }
+                $this->cache->delete('categories.post.' . $post_id);
                 break;
             case 'photo':
             case 'video':
@@ -942,12 +1023,53 @@ class ModelBlogPost extends Model {
 
                 break;
 
+            case 'like-of':
+            case 'bookmark-of':
+            case 'created':
+            case 'published':
+            case 'updated':
+            case 'slug':
+            case 'summary':
+            case 'content':
+            case 'name':
+            case 'in-reply-to':
+            case 'draft':
+            case 'artist':
+            case 'deleted':
+            case 'tag_category':
+            case 'tag_person':
+            case 'tag_url':
+            case 'tag_shape':
+            case 'tag_coords':
+            case 'rsvp':
+            case 'location':
+            case 'place_name':
+            case 'created_by':
+            case 'following_id':
+
+                if(is_array($value)){
+                    $value = $value[0];
+                }
+                $this->log->write(
+                    "UPDATE " . DATABASE . ".posts " .
+                    " SET `".$field_name."`='" . $this->db->escape($value) . "' " .
+                    " WHERE post_id = " . (int)$post_id
+                );
+                $this->db->query(
+                    "UPDATE " . DATABASE . ".posts " .
+                    " SET `".$field_name."`='" . $this->db->escape($value) . "' " .
+                    " WHERE post_id = " . (int)$post_id
+                );
+                break;
+
             default:
-                //TODO
+                // do nothing as we don't have that field i guess
         }
+        $this->cache->delete('post.' . $data['post_id']);
     }
     public function setProperty($post_id, $field_name, $value){
 
+        $this->log->write('called setProperty with ' . $post_id . ' ' . $field_name . ' ' . $value[0]);
         $this->deleteProperty($post_id, $field_name);
         $this->addProperty($post_id, $field_name, $value);
     }

@@ -13,7 +13,7 @@ class ControllerMicropubReceive extends Controller {
                 "new" => "https://ben.thatmustbe.me/new",
                 "reply" => "https://ben.thatmustbe.me/new?in-reply-to={url}",
                 "repost" => "https://ben.thatmustbe.me/new?url={url}",
-                "bookmark" => "https://ben.thatmustbe.me/new?type=bookmark&bookmark={url}",
+                "bookmark" => "https://ben.thatmustbe.me/new?type=bookmark&bookmark-of={url}",
                 "favorite" => "https://ben.thatmustbe.me/new?type=like&like-of={url}",
                 "like" => "https://ben.thatmustbe.me/new?type=like&like={url}",
                 "delete" => "https://ben.thatmustbe.me/delete?url={url}",
@@ -287,7 +287,7 @@ class ControllerMicropubReceive extends Controller {
                                         $this->createPost('tag', $auth_info['client_id']);
                                     } elseif (isset($this->request->post['mp-type']) && $this->request->post['mp-type'] == 'snark') {
                                         $this->createPost('snark', $auth_info['client_id']);
-                                    } elseif (isset($this->request->post['bookmark']) && !empty($this->request->post['bookmark'])) {
+                                    } elseif (isset($this->request->post['bookmark-of']) && !empty($this->request->post['bookmark-of'])) {
                                         $this->createPost('bookmark', $auth_info['client_id']);
                                     } elseif (isset($this->request->post['like-of']) && !empty($this->request->post['like-of'])) {
                                         $this->createPost('like', $auth_info['client_id']);
@@ -389,7 +389,7 @@ class ControllerMicropubReceive extends Controller {
                 'location' => 'location',
                 'place_name' => 'place_name',
                 'like-of' => 'like-of',
-                'bookmark' => 'bookmark',
+                'bookmark-of' => 'bookmark-of',
                 'slug' => 'slug');
 
             if (isset($this->request->post['delete-fields']) && !empty($this->request->post['delete-fields'])) {
@@ -520,10 +520,10 @@ class ControllerMicropubReceive extends Controller {
             $data['draft'] = $this->request->post['draft'];
         }
         if (isset($this->request->post['like-of'])) {
-            $data['bookmark_like_url'] = $this->request->post['like-of'];
+            $data['like-of'] = $this->request->post['like-of'];
         }
-        if (isset($this->request->post['bookmark'])) {
-            $data['bookmark_like_url'] = $this->request->post['bookmark'];
+        if (isset($this->request->post['bookmark-of'])) {
+            $data['bookmark-of'] = $this->request->post['bookmark-of'];
         }
         if (isset($this->request->post['in-reply-to'])) {
             $data['in-reply-to'] = $this->request->post['in-reply-to'];

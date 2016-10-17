@@ -59,12 +59,12 @@ class ModelBlogContext extends Model {
             $query = $this->db->query("SELECT * " .
                 " FROM " . DATABASE . ".context " .
                 " WHERE context_id in (" . implode(',', $ids) . ") " .
-                " ORDER BY `timestamp` ASC");
+                " ORDER BY `published` ASC");
             $data = $query->rows;
 
             date_default_timezone_set(LOCALTIMEZONE);
             foreach($data as &$row){
-                $row['timestamp'] = date("c", strtotime($row['timestamp']));
+                $row['published'] = date("c", strtotime($row['published']));
             }
 
             $this->cache->set('context.all.post.' . $post_id, $data);
@@ -140,7 +140,7 @@ class ModelBlogContext extends Model {
                     source_name = '" . $this->db->escape($source_name) . "',
                     source_url = '" . $this->db->escape($real_url) . "',
                     content = '" . $this->db->escape($content) . "',
-                    timestamp ='" . $published . "'");
+                    published ='" . $published . "'");
 
                 $context_id = $this->db->getLastId();
 

@@ -25,7 +25,7 @@
 
         <div class="entry-meta">      
       <span class="sep">Posted on </span>
-        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>"  class="u-url"> <time class="dt-published" datetime="<?php echo $post['timestamp']?>"><?php echo date("F j, Y", strtotime($post['timestamp']))?></time> </a>
+        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['published']))?>"  class="u-url"> <time class="dt-published" datetime="<?php echo $post['published']?>"><?php echo date("F j, Y", strtotime($post['published']))?></time> </a>
         <address class="byline"> <span class="sep"> by </span> <span class="p-author h-card"><img alt='' src='<?php echo $post['author_image']?>' class='u-photo avatar photo' height='40' width='40' /> <a class="u-url p-name" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" ><?php echo $post['author']['display_name']?></a></span></address>
         <?php if($post['in-reply-to']) { ?>
             <div class="repyto">
@@ -40,9 +40,9 @@
      <?php } else { ?>
       <div class="entry-content e-content">
      <?php } ?>
-        <?php if(isset($post['bookmark']) && !empty($post['bookmark'])) { ?>
+        <?php if(isset($post['bookmark-of']) && !empty($post['bookmark-of'])) { ?>
             <i class="fa fa-bookmark-o"></i> 
-            <a class="u-bookmark-of" href="<?php echo $post['bookmark']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark'])?></a> <br>
+            <a class="u-bookmark-of" href="<?php echo $post['bookmark-of']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark-of'])?></a> <br>
         <?php } ?>
         <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
             <i class="fa fa-heart-o"></i> <br>

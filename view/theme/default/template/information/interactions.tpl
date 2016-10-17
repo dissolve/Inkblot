@@ -9,7 +9,7 @@
 
         <?php foreach($recent_interactions as $interaction){ ?>
         <div class="h-entry" id="i<?php echo $interaction['interaction_id']?>">
-            <time class="date dt-published" datetime="<?php echo $interaction['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($interaction['timestamp']))?></time>
+            <time class="date dt-published" datetime="<?php echo $interaction['published']?>"><?php echo date("F j, Y g:i A", strtotime($interaction['published']))?></time>
             <span class="h-card p-author">
             <a class="u-url p-name" href="<?php echo $interaction['author_url']?>">
                 <?php if($interaction['author_image']){ ?>

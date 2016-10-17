@@ -9,7 +9,7 @@
                     <img class="comment_author logo u-photo" src="<?php echo $ctx['author_image']?>" alt="<?php echo $ctx['author_name']?>" width="48" />
                     <a class="p-name u-url" href="<?php echo $ctx['author_url']?>"><?php echo $ctx['author_name']?></a>
                 </span>
-                <a href="<?php echo $ctx['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $ctx['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($ctx['timestamp']))?></time></a>
+                <a href="<?php echo $ctx['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $ctx['published']?>"><?php echo date("F j, Y g:i A", strtotime($ctx['published']))?></time></a>
             </div>
                                                            
             <div class="h-cite entry-meta comment_body">
@@ -29,7 +29,7 @@
                 <?php echo $post['author']['display_name']?>
             </a></span>
         </span>
-        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['timestamp']))?>" rel="bookmark" class="permalink u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo $post['timestamp']?>" ><?php echo date("F j, Y g:i A", strtotime($post['timestamp']))?></time></a>
+        <a href="<?php echo $post['permalink']?>" title="<?php echo date("g:i A", strtotime($post['published']))?>" rel="bookmark" class="permalink u-url"> <time class="entry-date updated published dt-updated dt-published" datetime="<?php echo $post['published']?>" ><?php echo date("F j, Y g:i A", strtotime($post['published']))?></time></a>
 
         <a href="<?php echo $post['shortlink']?>" title="Shortlink" rel="shortlink" class="shortlink u-shortlink u-url">Shortlink</a>
 
@@ -79,14 +79,14 @@
     
                 <?php foreach($rdata as $comment){ ?>
                     <div class="h-cite u-comment">
-                        <time class="date dt-published" style="display:none" datetime="<?php echo $comment['timestamp']?>"><?php echo date("Y-m-d", strtotime($comment['timestamp']))?></time></a>
+                        <time class="date dt-published" style="display:none" datetime="<?php echo $comment['published']?>"><?php echo date("Y-m-d", strtotime($comment['published']))?></time></a>
                         <span class="h-card u-author">
                             <a class="u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="View Profile">
                                 <img class='comment_author u-photo' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.png') ?>" />
                                 <span class="p-name" style="display:none"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'someone') ?></span>
                             </a>
                         </span>
-                        <a href="<?php echo $comment['source_url']?>" class="u-url permalink" title="<?php echo date("Y-m-d", strtotime($comment['timestamp']))?>"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'someone') ?></a>
+                        <a href="<?php echo $comment['source_url']?>" class="u-url permalink" title="<?php echo date("Y-m-d", strtotime($comment['published']))?>"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'someone') ?></a>
 
                         <div class='p-content p-name' style="display:none">
                             <?php echo $comment['body']?>
@@ -164,7 +164,7 @@
                         <a class="p-name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" ><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?></a>
                     </span>
 
-                    <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($comment['timestamp']))?></time></a>
+                    <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['published']?>"><?php echo date("F j, Y g:i A", strtotime($comment['published']))?></time></a>
                     <?php if($comment['vouch_url']) { ?>
                         <a href="<?php echo $comment['vouch_url']?>" class="vouch">Vouched</a>
                     <?php } ?>
@@ -188,7 +188,7 @@
                                 <a class="p-name u-url" href="<?php echo (isset($subcomment['author_url']) ? $subcomment['author_url']: $subcomment['source_url'])?>" rel="nofollow" title="<?php echo (isset($subcomment['author_name']) ? $subcomment['author_name']: 'View Author') ?>" ><?php echo (isset($subcomment['author_name']) ? $subcomment['author_name']: 'A Reader') ?></a>
                             </span>
 
-                            <a href="<?php echo $subcomment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $subcomment['timestamp']?>"><?php echo date("F j, Y g:i A", strtotime($subcomment['timestamp']))?></time></a>
+                            <a href="<?php echo $subcomment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $subcomment['published']?>"><?php echo date("F j, Y g:i A", strtotime($subcomment['published']))?></time></a>
                         </div>
                         <div class='comment_body p-content p-name'>
                             <?php echo $subcomment['body']?>

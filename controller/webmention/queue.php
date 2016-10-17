@@ -67,8 +67,11 @@ class ControllerWebmentionQueue extends Controller {
 
         $webmention_text = '<a href="' . $post['in-reply-to'] . '">ReplyTo</a>';
 
-        if ($post['bookmark_like_url']) {
-            $webmetnion_text = '<a href="' . $post['bookmark_like_url'] . '"></a>';
+        if ($post['like-of']) {
+            $webmetnion_text = '<a href="' . $post['like-of'] . '"></a>';
+        }
+        if ($post['bookmark-of']) {
+            $webmetnion_text = '<a href="' . $post['bookmark-of'] . '"></a>';
         }
 
         foreach ($categories as $category) {
