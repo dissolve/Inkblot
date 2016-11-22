@@ -44,10 +44,6 @@
             <i class="fa fa-bookmark-o"></i> 
             <a class="u-bookmark-of" href="<?php echo $post['bookmark-of']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark-of'])?></a> <br>
         <?php } ?>
-        <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
-            <i class="fa fa-heart-o"></i> <br>
-            I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
-        <?php } ?>
         <?php if(isset($post['following']) && !empty($post['following'])) { ?>
             <?php echo $post['author']['display_name'] . 
              ($post['post_type'] == 'follow' ? ' followed ' : ' unfollowed ' ) .
@@ -57,8 +53,7 @@
             '</a>'; ?>
         <?php } ?>
         <?php if(isset($post['like-of']) && !empty($post['like-of'])) { ?>
-            <i class="fa fa-heart-o"></i> <br>
-            I liked <a class="u-like-of" href="<?php echo $post['like-of']?>">This</a> page.
+            <i class="fa fa-heart-o"></i> <a class="u-like-of" href="<?php echo $post['like-of']?>"><?php echo htmlentities($post['like-of']);?></a><br>
         <?php } ?>
         <?php foreach($post['photo'] as $photo){ ?>
             <img src="<?php echo $photo['path']?>" class="u-photo photo-post" <?php if(isset($photo['alt'])) { echo 'alt="'.$photo['alt'].'"'; } ?> /><br>
