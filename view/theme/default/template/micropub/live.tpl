@@ -48,7 +48,7 @@
 
 		    <input type="hidden" name="mp-action" value="create" />
             <input type="hidden" name="mp-type" class="type-select" value="note" />
-            <input type="hidden" name="postly-live" value="live" />
+            <input type="hidden" name="inkblot-live" value="live" />
             <div class="content">
 
                 <div class="form-group required group-note group-checkin group-article group-bookmark group-rsvp content">
