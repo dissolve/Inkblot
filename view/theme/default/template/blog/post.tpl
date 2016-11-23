@@ -13,7 +13,7 @@
             </div>
                                                            
             <div class="h-cite entry-meta comment_body">
-                <div class="quote-text"><div class="e-content p-name"><?php echo $ctx['body']?></div></div>
+                <div class="quote-text"><div class="e-content p-name"><?php echo $ctx['content']?></div></div>
             </div>
         </div>
     <?php } ?>
@@ -89,7 +89,7 @@
                         <a href="<?php echo $comment['source_url']?>" class="u-url permalink" title="<?php echo date("Y-m-d", strtotime($comment['published']))?>"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'someone') ?></a>
 
                         <div class='p-content p-name' style="display:none">
-                            <?php echo $comment['body']?>
+                            <?php echo $comment['content']?>
                         </div>
                     </div>
                 <?php  } ?>
@@ -177,7 +177,7 @@
                   </span>
                 </div>
                 <div class='comment_body p-content p-name'>
-                    <?php echo $comment['body']?>
+                    <?php echo $comment['content']?>
                 </div>
                 <?php foreach($comment['comments'] as $subcomment) { ?>
                     <div class="subcomment u-comment h-cite">
@@ -191,7 +191,7 @@
                             <a href="<?php echo $subcomment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $subcomment['published']?>"><?php echo date("F j, Y g:i A", strtotime($subcomment['published']))?></time></a>
                         </div>
                         <div class='comment_body p-content p-name'>
-                            <?php echo $subcomment['body']?>
+                            <?php echo $subcomment['content']?>
                         </div>
                     </div>
 

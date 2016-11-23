@@ -52,6 +52,7 @@ class ControllerBlogFeed extends Controller {
 
 
         $data['feed_url'] = $this->url->link('blog/feed');
+        $this->document->setSelfLink($data['feed_url']);
 
         //foreach ($this->model_blog_post->getPostsByTypes(['article'], 20, $skip) as $post) {
         foreach ($this->model_blog_post->getRecentPosts(FEED_LIMIT, $skip) as $post) {

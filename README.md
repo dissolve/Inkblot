@@ -1,8 +1,8 @@
-# Postly
+# InkBlot
 
 ## Overview
 
-Postly (formerly OpenBlog) is free open source platform for bloggers formerly.  Postly is intended to be highly hackable for easy creation of new features.
+InkBlot (formerly Postly) is free open source platform for bloggers.  InkBlot is intended to be highly hackable for easy creation of new features.
 
 This is a derived work based on opencart. https://github.com/opencart/opencart.git
 

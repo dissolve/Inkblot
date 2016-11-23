@@ -81,4 +81,6 @@ define('DIR_TEMPLATE', DIR_BASE . '/view/theme/');
 
 define('AUTH_ENDPOINT', 'https://indieauth.com/auth');
 
+define('PUBSUB_HUB', 'https://inklings.io/inkwell/');
+
 define('STREAM_SERVICE_URL', 'http://stream.thatmustbe.us/?url=');

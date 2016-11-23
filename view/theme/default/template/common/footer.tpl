@@ -121,7 +121,7 @@
 </section>
         <?php if(isset($webaction)){ ?>
         <section id='webaction' class="widget">
-            <button onclick=" window.navigator.registerProtocolHandler('web+action', '<?php echo $webaction;?>' , 'Postly');" value="" >Register Your Handler</button>
+            <button onclick=" window.navigator.registerProtocolHandler('web+action', '<?php echo $webaction;?>' , 'InkBlot');" value="" >Register Your Handler</button>
         </section>
         <?php } ?>
 
@@ -142,7 +142,8 @@
 
 <footer id="colophon" role="contentinfo">
   <div id="site-generator">
-    This site is powered by <a href="https://github.com/dissolve/postly">Postly</a>
+    This site is powered by <a href="https://github.com/dissolve/inkblot"><img style="width:20px;" src="/image/inkblot.svg"/>InkBlot</a> an 
+      <a href="https://inklings.io/"><img style="width:20px;" src="/image/inkling.svg"/>Inkling Project</a>
   </div>
 </footer><!-- #colophon -->
 

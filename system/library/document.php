@@ -2,6 +2,7 @@
 class Document {
     private $title;
     private $bodyclass;
+    private $selflink;
     private $description;
     private $keywords;
     private $icon;
@@ -28,6 +29,16 @@ class Document {
     public function getBodyClass()
     {
         return $this->bodyclass;
+    }
+
+    public function setSelfLink($self_link)
+    {
+        $this->selflink = $self_link;
+    }
+
+    public function getSelfLink()
+    {
+        return $this->selflink;
     }
 
     public function setDescription($description)

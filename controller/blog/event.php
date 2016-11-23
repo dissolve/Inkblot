@@ -26,6 +26,8 @@ class ControllerBlogPost extends Controller {
             $this->response->redirect($post['permalink']);
         }
 
+        $this->document->setSelfLink($post['permalink']);
+
         $this->load->model('blog/category');
         $this->load->model('blog/post');
         $this->load->model('blog/interaction');

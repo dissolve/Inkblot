@@ -94,6 +94,7 @@ class ControllerCommonHeader extends Controller {
         $this->response->addHeader('Link: <' . $auth_endpoint . '>; rel="authorization_endpoint"', false);
         $this->response->addHeader('Link: <' . $token_endpoint . '>; rel="token_endpoint"', false);
         $this->response->addHeader('Link: <' . $micropub_endpoint . '>; rel="micropub"', false);
+
         if(defined('STREAM_SERVICE_URL')){
             $this->response->addHeader('Link: <' . STREAM_SERVICE_URL . urlencode( $server . $_SERVER[REQUEST_URI]) . '>; rel="alternate"; type="application/activity+json"', false);
             $data['json_alternate'] = STREAM_SERVICE_URL . urlencode($server . $_SERVER[REQUEST_URI]);
@@ -104,6 +105,19 @@ class ControllerCommonHeader extends Controller {
         $data['token_endpoint'] = $token_endpoint;
         $data['micropub_endpoint'] = $micropub_endpoint;
         $data['public_whitelist'] = $public_whitelist;
+
+        if(defined('PUBSUB_HUB')){
+            $pubsub_endpoint = PUBSUB_HUB;
+            $this->response->addHeader('Link: <' . $pubsub_endpoint . '>; rel="hub"', false);
+            $data['pubsub_endpoint'] = $pubsub_endpoint;
+        }
+
+        
+        $self_link = $this->document->getSelfLink();
+        if($self_link){
+            $this->response->addHeader('Link: <' . $self_link . '>; rel="self"', false);
+            $data['self_link'] = $self_link;
+        }
 
         if (isset($this->session->data['success'])) {
             $data['success'] = $this->session->data['success'];

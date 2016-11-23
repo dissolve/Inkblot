@@ -17,6 +17,12 @@
         <link rel="authorization_endpoint" href="<?php echo $authorization_endpoint ?>">
         <link rel="token_endpoint" href="<?php echo $token_endpoint ?>">
         <link rel="micropub" href="<?php echo $micropub_endpoint ?>">
+        <?php if(isset($pubsub_endpoint)){ ?>
+            <link rel="hub" href="<?php echo $pubsub_endpoint ?>">
+        <?php } ?>
+        <?php if(isset($self_link)){ ?>
+            <link rel="self" href="<?php echo $self_link ?>">
+        <?php } ?>
         <link rel="profile" href="http://microformats.org/profile/specs" />
         <link rel="profile" href="http://microformats.org/profile/hatom" />
 
