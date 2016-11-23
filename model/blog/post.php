@@ -247,7 +247,6 @@ class ModelBlogPost extends Model {
             return;
         }
         if($this->isHash($media_data)){
-            $this->log->write('debug1');
             $this->db->query(
                 "INSERT INTO " . DATABASE . ".media " .
                 " SET path='" . $this->db->escape($media_data['value']) . "'" .
@@ -261,13 +260,11 @@ class ModelBlogPost extends Model {
                 " , post_id =". (int)$post_id 
             );
         } elseif(is_array($media_data)){
-            $this->log->write('debug2');
             foreach($media_data as $media_obj){
                 $this->addMediaToPost($post_id, $media_type, $media_obj);
             } 
         } else {
 
-            $this->log->write('debug3');
             $this->db->query(
                 "INSERT INTO " . DATABASE . ".media " .
                 " SET path='" . $this->db->escape($media_data) . "'" .
@@ -475,7 +472,7 @@ class ModelBlogPost extends Model {
             $logged_in_person_id = $this->session->data['person_id'];
 
             $allow_view = false;
-            $this->log->write('debug 1 ' .  print_r($post['access'], true));
+            //$this->log->write('debug 1 ' .  print_r($post['access'], true));
             $this->log->write($logged_in_person_id);
             foreach($post['access'] as $access_entry){
                 $this->log->write( $access_entry['person_id'] . '??'. $logged_in_person_id);
