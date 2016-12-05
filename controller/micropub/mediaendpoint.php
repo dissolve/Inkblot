@@ -55,9 +55,9 @@ class ControllerMicropubMediaendpoint extends Controller {
                     
                 } else {
 
-                    $this->log->write('debug');
+                    //$this->log->write('debug');
                     $file_url = $this->uploadFile($auth_info['client_id']);
-                    $this->log->write($file_url);
+                    //$this->log->write($file_url);
                     header('HTTP/1.1 201 Created');
                     header('Location: ' . $file_url);
                     exit();

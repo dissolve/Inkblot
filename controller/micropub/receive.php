@@ -7,7 +7,7 @@ require_once DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php
 class ControllerMicropubReceive extends Controller {
     public function index()
     {
-        //$this->log->write(print_r($this->request->post, true));
+        $this->log->write(print_r($this->request->post, true));
 
         if( isset($this->request->get['q']) && !empty($this->request->get['q'])){
 
@@ -119,8 +119,8 @@ class ControllerMicropubReceive extends Controller {
                     // ----------------------------------------
 
                     $mp_action = '';
-                    if (isset($post_data['action']) && !empty($post_data['action'])) {
-                        $mp_action = strtolower($post_data['action']);
+                    if (isset($post_data['mp-action']) && !empty($post_data['mp-action'])) {
+                        $mp_action = strtolower($post_data['mp-action']);
                     }
 
                     switch ($mp_action) {
