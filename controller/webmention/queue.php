@@ -101,7 +101,7 @@ class ControllerWebmentionQueue extends Controller {
 
     public function processcontexts()
     {
-        $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE NOT in-reply-to is NULL AND context_parsed=0 LIMIT 1");
+        $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE NOT `in-reply-to` is NULL AND context_parsed=0 LIMIT 1");
         $post = $result->row;
 
         while (!empty($post)) {
@@ -120,7 +120,7 @@ class ControllerWebmentionQueue extends Controller {
             }
 
 
-            $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE NOT in-reply-to is NULL AND context_parsed=0 LIMIT 1");
+            $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE NOT `in-reply-to` is NULL AND context_parsed=0 LIMIT 1");
             $post = $result->row;
 
         } //end while($post) loop
