@@ -170,7 +170,7 @@ class ControllerWebmentionQueue extends Controller {
         //try to find the correct item
         foreach ($mf2_parsed['items'] as $item) {
             $source_data = IndieWeb\comments\parse($item);
-            if (!empty($source_data['url'])) {
+            if (!empty($source_data['url']) && $source_data['url'] == $real_source_url) {
                 break;
             }
         }
@@ -225,8 +225,8 @@ class ControllerWebmentionQueue extends Controller {
             author_image = '" . $this->db->escape($author_image) . "',
             source_name = '" . $this->db->escape($source_name) . "',
             source_url = '" . $this->db->escape($real_url) . "',
-            body = '" . $this->db->escape($body) . "',
-            timestamp ='" . $published . "'");
+            content = '" . $this->db->escape($body) . "',
+            published ='" . $published . "'");
 
         $context_id = $this->db->getLastId();
 
