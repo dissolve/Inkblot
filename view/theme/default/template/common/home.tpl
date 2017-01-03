@@ -30,6 +30,11 @@
      <?php } else { ?>
       <div class="entry-content e-content">
      <?php } ?>
+        <?php if(isset($post['weight_value']) && !empty($post['weight_value'])) { ?>
+         <h2 class="h-measure p-weight">
+             Weight: <data class="p-num" value="<?php echo $post['weight_value']?>"><?php echo $post['weight_value']?></data><data class="p-unit" value="<?php echo $post['weight_unit']?>"><?php echo $post['weight_unit']?></data>
+         </h2>
+        <?php } ?>
         <?php if(isset($post['bookmark-of']) && !empty($post['bookmark-of'])) { ?>
             <i class="fa fa-bookmark-o"></i> 
             <a class="u-bookmark-of" href="<?php echo $post['bookmark-of']?>"><?php echo (isset($post['name']) && !empty($post['name'])?$post['name']:$post['bookmark-of'])?></a> <br>
