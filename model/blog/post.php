@@ -206,6 +206,12 @@ class ModelBlogPost extends Model {
             (isset($data['in-reply-to']) && !empty($data['in-reply-to'])
                 ? ", `in-reply-to`='" . $this->db->escape($data['in-reply-to']) . "'"
                 : "") .
+            (isset($data['weight_value']) && !empty($data['weight_value'])
+                ? ", weight_value='" . $this->db->escape($data['weight_value']) . "'"
+                : "") .
+            (isset($data['weight_unit']) && !empty($data['weight_unit'])
+                ? ", weight_unit='" . $this->db->escape($data['weight_unit']) . "'"
+                : "") .
             (isset($data['created_by']) && !empty($data['created_by'])
                 ? ", created_by='" . $this->db->escape($data['created_by']) . "'"
                 : "") .

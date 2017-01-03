@@ -180,6 +180,8 @@ class ControllerMicropubReceive extends Controller {
                                     $this->createPost($post_data, 'tag', $auth_info['client_id']);
                                 } elseif (isset($post_data['mp-type']) && $post_data['mp-type'] == 'snark') {
                                     $this->createPost($post_data, 'snark', $auth_info['client_id']);
+                                } elseif (isset($post_data['weight']) && !empty($post_data['weight'])) {
+                                    $this->createPost($post_data, 'weight', $auth_info['client_id']);
                                 } elseif (isset($post_data['bookmark-of']) && !empty($post_data['bookmark-of'])) {
                                     $this->createPost($post_data, 'bookmark', $auth_info['client_id']);
                                 } elseif (isset($post_data['like-of']) && !empty($post_data['like-of'])) {
@@ -530,8 +532,22 @@ class ControllerMicropubReceive extends Controller {
         if (isset($post_data['description'])) {
             $data['description'] = $post_data['description'];
         }
+        if (isset($post_data['weight'])) {
+            $data['weight'] = $post_data['weight'];
+        }
         if (isset($post_data['location'])) {
             $data['location'] = $post_data['location'];
+        }
+        if (isset($post_data['weight'])) {
+
+            $data['weight_value'] = $post_data['weight']['value'];
+            $data['weight_unit'] = $post_data['weight']['unit'];
+        }
+        if (isset($post_data['weight_value'])) {
+            $data['weight_value'] = $post_data['weight_value'];
+        }
+        if (isset($post_data['weight_unit'])) {
+            $data['weight_unit'] = $post_data['weight_unit'];
         }
         if (isset($post_data['place_name'])) {
             $data['place_name'] = $post_data['place_name'];
