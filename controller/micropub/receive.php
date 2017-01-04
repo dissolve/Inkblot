@@ -180,6 +180,8 @@ class ControllerMicropubReceive extends Controller {
                                     $this->createPost($post_data, 'tag', $auth_info['client_id']);
                                 } elseif (isset($post_data['mp-type']) && $post_data['mp-type'] == 'snark') {
                                     $this->createPost($post_data, 'snark', $auth_info['client_id']);
+                                } elseif (isset($post_data['weight_value']) && !empty($post_data['weight_value'])) {
+                                    $this->createPost($post_data, 'weight', $auth_info['client_id']);
                                 } elseif (isset($post_data['weight']) && !empty($post_data['weight'])) {
                                     $this->createPost($post_data, 'weight', $auth_info['client_id']);
                                 } elseif (isset($post_data['bookmark-of']) && !empty($post_data['bookmark-of'])) {
