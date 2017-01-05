@@ -374,7 +374,9 @@ class ControllerBlogPost extends Controller {
                 $data['posts'][] = array_merge($post, $extra_data_array);
         }
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/post_list.tpl')) {
+        if(file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/post_list_'.$post_type.'.tpl')) {
+            $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/post_list_'.$post_type.'.tpl', $data));
+        } elseif (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/post_list.tpl')) {
             $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/blog/post_list.tpl', $data));
         } else {
             $this->response->setOutput($this->load->view('default/template/blog/post_list.tpl', $data));

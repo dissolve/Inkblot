@@ -11,6 +11,7 @@
           <?php 
               echo $post['body_html'];
               echo $post['syndication_extra'];
-          ?>
+          ?><br>
+              View my progress at <a href="https://ben.thatmustbe.me/weight/">https://ben.thatmustbe.me/weight/</a>
       
       </div><!-- .entry-content -->
