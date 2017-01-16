@@ -17,7 +17,7 @@ class ModelBlogContext extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".context " .
-                " JOIN " . DATABASE . ".post_context USING(context_id) " .
+                " JOIN " . DATABASE . ".context_post USING(context_id) " .
                 " WHERE post_id = " . (int)$post_id
             );
             $data = $query->rows;
@@ -33,7 +33,7 @@ class ModelBlogContext extends Model {
         if (!$data) {
             $ids = array();
             $query = $this->db->query("SELECT context_id " .
-                " FROM " . DATABASE . ".post_context " .
+                " FROM " . DATABASE . ".context_post " .
                 " WHERE post_id = " . (int)$post_id);
 
             foreach ($query->rows as $toAdd) {
@@ -46,9 +46,9 @@ class ModelBlogContext extends Model {
             while (count($ids) > $prev) {
                 $prev = count($ids);
 
-                $query = $this->db->query("SELECT parent_context_id AS context_id " .
-                    " FROM " . DATABASE . ".context_to_context " .
-                    " WHERE context_id in (" . implode(',', $ids) . ")");
+                $query = $this->db->query("SELECT parent_id AS context_id " .
+                    " FROM " . DATABASE . ".context_context " .
+                    " WHERE child_id in (" . implode(',', $ids) . ")");
                 foreach ($query->rows as $toAdd) {
                     if (!in_array((int)$toAdd['context_id'], $ids)) {
                         $ids[] = (int)$toAdd['context_id'];
@@ -149,9 +149,9 @@ class ModelBlogContext extends Model {
                         foreach ($citation['properties']['url'] as $reply_to_url) {
                             $ctx_id = $this->getContextId($reply_to_url);
                             if ($ctx_id) {
-                                $this->db->query("INSERT INTO " . DATABASE . ".context_to_context SET 
-                                context_id = " . (int)$context_id . ",
-                                parent_context_id = " . (int)$ctx_id);
+                                $this->db->query("INSERT INTO " . DATABASE . ".context_context SET 
+                                child_id = " . (int)$context_id . ",
+                                parent_id = " . (int)$ctx_id);
                             }
 
                         }
@@ -160,9 +160,9 @@ class ModelBlogContext extends Model {
 
                         $ctx_id = $this->getContextId($reply_to_url);
                         if ($ctx_id) {
-                            $this->db->query("INSERT INTO " . DATABASE . ".context_to_context SET 
-                            context_id = " . (int)$context_id . ",
-                            parent_context_id = " . (int)$ctx_id);
+                            $this->db->query("INSERT INTO " . DATABASE . ".context_context SET 
+                            child_id = " . (int)$context_id . ",
+                            parent_id = " . (int)$ctx_id);
                         }
                     }
 
@@ -196,7 +196,7 @@ class ModelBlogContext extends Model {
 
             if ($context_id) {
                 $this->db->query(
-                    "INSERT INTO " . DATABASE . ".post_context " .
+                    "INSERT INTO " . DATABASE . ".context_post " .
                     " SET post_id = " . (int)$post_id . ", " .
                     " context_id = " . (int)$context_id
                 );
@@ -220,7 +220,7 @@ class ModelBlogContext extends Model {
     private function getAllContextForContext($context_id) {
         $query = $this->db->query("SELECT c.* " .
             " FROM " . DATABASE . ".context c " .
-            " JOIN ".DATABASE.".context_to_context ctc ON c.context_id = ctc.parent_context_id " .
+            " JOIN ".DATABASE.".context_context ctc ON c.context_id = ctc.parent_id " .
             " WHERE ctc.context_id = ".(int)$context_id
         );
         $data = array();

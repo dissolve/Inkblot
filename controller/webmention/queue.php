@@ -114,7 +114,7 @@ class ControllerWebmentionQueue extends Controller {
             $context_id = $this->getContextId($source_url);
 
             if ($context_id) {
-                $this->db->query("INSERT INTO " . DATABASE . ".post_context SET 
+                $this->db->query("INSERT INTO " . DATABASE . ".context_post SET 
                     post_id = " . (int)$post_id . ",
                     context_id = " . (int)$context_id);
             }
@@ -266,9 +266,9 @@ class ControllerWebmentionQueue extends Controller {
                         " LIMIT 1"
                     );
                     $this->db->query(
-                        "UPDATE " . DATABASE . ".context_to_context " .
-                        " SET context_parent_id = " . (int)$context_id . " " .
-                        " WHERE context_parent_id=" . (int)$query->row['context_id']
+                        "UPDATE " . DATABASE . ".context_context " .
+                        " SET parent_id = " . (int)$context_id . " " .
+                        " WHERE parent_id=" . (int)$query->row['context_id']
                     );
                 }
             }
@@ -281,9 +281,9 @@ class ControllerWebmentionQueue extends Controller {
                         foreach ($citation['properties']['url'] as $reply_to_url) {
                             $ctx_id = $this->getContextId($reply_to_url);
                             if ($ctx_id) {
-                                $this->db->query("INSERT INTO " . DATABASE . ".context_to_context SET 
-                                context_id = " . (int)$context_id . ",
-                                parent_context_id = " . (int)$ctx_id);
+                                $this->db->query("INSERT INTO " . DATABASE . ".context_context SET 
+                                child_id = " . (int)$context_id . ",
+                                parent_id = " . (int)$ctx_id);
                             }
 
                         }
@@ -292,9 +292,9 @@ class ControllerWebmentionQueue extends Controller {
 
                         $ctx_id = $this->getContextId($reply_to_url);
                         if ($ctx_id) {
-                            $this->db->query("INSERT INTO " . DATABASE . ".context_to_context SET 
-                            context_id = " . (int)$context_id . ",
-                            parent_context_id = " . (int)$ctx_id);
+                            $this->db->query("INSERT INTO " . DATABASE . ".context_context SET 
+                            child_id = " . (int)$context_id . ",
+                            parent_id = " . (int)$ctx_id);
                         }
                     }
                 }

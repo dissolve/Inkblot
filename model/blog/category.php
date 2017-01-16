@@ -14,7 +14,7 @@ class ModelBlogCategory extends Model {
             $query = $this->db->query(
                 "SELECT categories.* 
                 FROM " . DATABASE . ".categories 
-                JOIN " . DATABASE . ".categories_posts USING (category_id)
+                JOIN " . DATABASE . ".category_post USING (category_id)
                 GROUP BY category_id 
                 HAVING count(post_id) >= " . (int)$min . "
                 ORDER BY name;"
@@ -47,7 +47,7 @@ class ModelBlogCategory extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".categories " .
-                " JOIN " . DATABASE . ".categories_posts USING(category_id) " .
+                " JOIN " . DATABASE . ".category_post USING(category_id) " .
                 " WHERE post_id = '" . (int)$post_id . "' " .
                 " AND NOT category_id = 0 " .
                 " ORDER BY name ASC"
