@@ -14,8 +14,8 @@ class ModelBlogCategory extends Model {
             $query = $this->db->query(
                 "SELECT categories.* 
                 FROM " . DATABASE . ".categories 
-                JOIN " . DATABASE . ".categories_posts USING (category_id)
-                GROUP BY category_id 
+                JOIN " . DATABASE . ".category_post on id = category_id
+                GROUP BY id 
                 HAVING count(post_id) >= " . (int)$min . "
                 ORDER BY name;"
             );
@@ -47,9 +47,9 @@ class ModelBlogCategory extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".categories " .
-                " JOIN " . DATABASE . ".categories_posts USING(category_id) " .
+                " JOIN " . DATABASE . ".category_post on id = category_id " .
                 " WHERE post_id = '" . (int)$post_id . "' " .
-                " AND NOT category_id = 0 " .
+                " AND NOT id = 0 " .
                 " ORDER BY name ASC"
             );
             $data = $query->rows;
@@ -84,7 +84,7 @@ class ModelBlogCategory extends Model {
 
         $data = $this->cache->get('categories.id.' . $cid);
         if (!$data) {
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".categories WHERE category_id = '" . $this->db->escape($cid) . "'");
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".categories WHERE id = '" . $this->db->escape($cid) . "'");
             $data = $query->row;
             if ($data) {
                 $data['permalink'] = $this->url->link('information/category', 'name=' . $this->db->escape($data['name']), '');
@@ -103,13 +103,13 @@ class ModelBlogCategory extends Model {
         $find_cat = $this->cache->get('categories.name.' . $category_name);
         if (!$find_cat) {
         // this presumes that the DB will do an case insensative search
-            $query = $this->db->query("SELECT category_id FROM " . DATABASE . ".categories where name='" . $this->db->escape($category_name) . "'");
+            $query = $this->db->query("SELECT id FROM " . DATABASE . ".categories where name='" . $this->db->escape($category_name) . "'");
             $find_cat = $query->row;
             $this->cache->set('categories.name.' . $category_name, $find_cat);
         }
 
         if (!empty($find_cat)) {
-            return $find_cat['category_id'];
+            return $find_cat['id'];
         } else {
             return null;
         }

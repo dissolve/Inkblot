@@ -17,7 +17,7 @@ class ModelBlogContext extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".context " .
-                " JOIN " . DATABASE . ".post_context USING(context_id) " .
+                " JOIN " . DATABASE . ".context_post USING(context_id) " .
                 " WHERE post_id = " . (int)$post_id
             );
             $data = $query->rows;
@@ -33,7 +33,7 @@ class ModelBlogContext extends Model {
         if (!$data) {
             $ids = array();
             $query = $this->db->query("SELECT context_id " .
-                " FROM " . DATABASE . ".post_context " .
+                " FROM " . DATABASE . ".context_post " .
                 " WHERE post_id = " . (int)$post_id);
 
             foreach ($query->rows as $toAdd) {
@@ -196,7 +196,7 @@ class ModelBlogContext extends Model {
 
             if ($context_id) {
                 $this->db->query(
-                    "INSERT INTO " . DATABASE . ".post_context " .
+                    "INSERT INTO " . DATABASE . ".context_post " .
                     " SET post_id = " . (int)$post_id . ", " .
                     " context_id = " . (int)$context_id
                 );

@@ -114,7 +114,7 @@ class ControllerWebmentionQueue extends Controller {
             $context_id = $this->getContextId($source_url);
 
             if ($context_id) {
-                $this->db->query("INSERT INTO " . DATABASE . ".post_context SET 
+                $this->db->query("INSERT INTO " . DATABASE . ".context_post SET 
                     post_id = " . (int)$post_id . ",
                     context_id = " . (int)$context_id);
             }

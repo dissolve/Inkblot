@@ -8,7 +8,7 @@ class ControllerInformationCategory extends Controller {
         }
         $this->load->model('blog/category');
         $category = $this->model_blog_category->getCategoryByName($this->request->get['name']);
-        $category_id = $category['category_id'];
+        $category_id = $category['id'];
 
         $this->document->setTitle('Posts Filed Under ' . $category['name']);
         $data['title'] = 'Posts Filed Under ' . $category['name'];

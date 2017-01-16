@@ -230,8 +230,8 @@ class ModelBlogPost extends Model {
                 $this->load->model('blog/category');
                 $category = $this->model_blog_category->getCategoryByName($cat, true);
                 $this->db->query(
-                    "INSERT INTO " . DATABASE . ".categories_posts " .
-                    " SET category_id=" . (int)$category['category_id'] . ", " .
+                    "INSERT INTO " . DATABASE . ".category_post " .
+                    " SET category_id=" . (int)$category['id'] . ", " .
                     " post_id = " . (int)$post_id
                 );
             }
@@ -625,8 +625,8 @@ class ModelBlogPost extends Model {
         $this->load->model('blog/category');
         $category = $this->model_blog_category->getCategoryByName($category_name, true);
         $this->db->query(
-            "INSERT INTO " . DATABASE . ".categories_posts " .
-            " SET category_id=" . (int)$category['category_id'] . ", " .
+            "INSERT INTO " . DATABASE . ".category_post " .
+            " SET category_id=" . (int)$category['id'] . ", " .
             " post_id = " . (int)$post_id
         );
         $this->cache->delete('categories.post.' . $post_id);
@@ -636,7 +636,7 @@ class ModelBlogPost extends Model {
     public function removeFromAllCategories($post_id)
     {
         $this->db->query(
-            "DELETE FROM " . DATABASE . ".categories_posts " .
+            "DELETE FROM " . DATABASE . ".category_post " .
             " WHERE post_id = " . (int)$post_id
         );
         $this->cache->delete('categories.post.' . $post_id);
@@ -649,7 +649,7 @@ class ModelBlogPost extends Model {
         if (!$post_id_array) {
             $query = $this->db->query(
                 "SELECT post_id FROM " . DATABASE . ".posts " .
-                " JOIN " . DATABASE . ".categories_posts USING(post_id) " .
+                " JOIN " . DATABASE . ".category_post USING(post_id) " .
                 " WHERE category_id = '" . (int)$category_id . "' " .
                 " AND deleted=0 " .
                 " AND draft=0 " .
@@ -703,15 +703,6 @@ class ModelBlogPost extends Model {
     {
         $post_id_array = $this->cache->get('posts.day.' . $year . '.' . $month . '.' . $day);
         if (!$post_id_array) {
-            $query = $this->db->query(
-                "SELECT post_id " .
-                " FROM " . DATABASE . ".posts " .
-                " WHERE category_id = '" . (int)$category_id . "' " .
-                " AND deleted=0 " .
-                " AND draft=0 " .
-                " ORDER BY published DESC " .
-                " LIMIT " . (int)$skip . ", " . (int)$limit
-            );
             $query = $this->db->query(
                 "SELECT post_id " .
                 " FROM " . DATABASE . ".posts " .
@@ -864,7 +855,7 @@ class ModelBlogPost extends Model {
         switch ($field_name) {
             case 'category':
                 $this->db->query(
-                    "DELETE FROM " . DATABASE . ".categories_posts " .
+                    "DELETE FROM " . DATABASE . ".category_post " .
                     " WHERE post_id = " . (int)$post_id
                 );
                 $this->cache->delete('categories.post.' . $post_id);
@@ -952,8 +943,8 @@ class ModelBlogPost extends Model {
                     $this->load->model('blog/category');
                     $category = $this->model_blog_category->getCategoryByName($cat, true);
                     $this->db->query(
-                        "DELETE FROM " . DATABASE . ".categories_posts " .
-                        " WHERE category_id=" . (int)$category['category_id'] . " " .
+                        "DELETE FROM " . DATABASE . ".category_post " .
+                        " WHERE category_id=" . (int)$category['id'] . " " .
                         " AND post_id = " . (int)$post_id
                     );
                 }
@@ -1001,16 +992,16 @@ class ModelBlogPost extends Model {
                     foreach ($value as $cat) {
                         $category = $this->model_blog_category->getCategoryByName($cat, true);
                         $this->db->query(
-                            "INSERT INTO " . DATABASE . ".categories_posts " .
-                            " SET category_id=" . (int)$category['category_id'] . ", " .
+                            "INSERT INTO " . DATABASE . ".category_post " .
+                            " SET category_id=" . (int)$category['id'] . ", " .
                             " post_id = " . (int)$post_id
                         );
                     }
                 } else {
                     $category = $this->model_blog_category->getCategoryByName($value, true);
                     $this->db->query(
-                        "INSERT INTO " . DATABASE . ".categories_posts " .
-                        " SET category_id=" . (int)$category['category_id'] . ", " .
+                        "INSERT INTO " . DATABASE . ".category_post " .
+                        " SET category_id=" . (int)$category['id'] . ", " .
                         " post_id = " . (int)$post_id
                     );
 
