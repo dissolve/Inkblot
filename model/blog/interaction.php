@@ -107,15 +107,6 @@ class ModelBlogInteraction extends Model {
             $this->db->query(
                 "INSERT INTO " . DATABASE . ".interactions " .
                 " SET source_url = '" . $comment_data['url'] . "'" .
-                ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))
-                    ? ", author_name='" . $comment_data['author']['name'] . "'"
-                    : "") .
-                ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))
-                    ? ", author_url='" . $comment_data['author']['url'] . "'"
-                    : "") .
-                ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))
-                    ? ", author_image='" . $comment_data['author']['photo'] . "'"
-                    : "") .
                 ", author_person_id ='" . $person_id . "'" .
                 ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of']))
                     ? ", tag_of='" . $comment_data['tag-of'] . "'"
@@ -306,20 +297,13 @@ class ModelBlogInteraction extends Model {
             $this->load->model('blog/person');
             foreach ($query->rows as $row) {
                 $person = $this->model_blog_person->getPerson($row['author_person_id']);
-                $row['author_name']  = (!empty($person) ? $person['name'] : '');
-                $row['author_url']   = (!empty($person) ? $person['url'] : '');
-                $row['author_image'] = (!empty($person) ? $person['image'] : '');
+                $row['author'] = $person;
 
                 $row['published'] = date("c", strtotime($row['published']));
 
                 $second_level_query = $this->db->query(
                     "SELECT sli.*, " .
-                    " p.name as author_name, " .
-                    " p.url as author_url, " .
-                    " p.image as author_image " .
                     " FROM " . DATABASE . ".second_level_interactions sli " .
-                    " LEFT JOIN " . DATABASE . ".people p " .
-                    " ON sli.author_person_id  = p.person_id " .
                     " WHERE interaction_id='" . $row['interaction_id'] . "' " .
                     " ORDER BY published ASC "
                 );
@@ -327,6 +311,7 @@ class ModelBlogInteraction extends Model {
                 $row['comments'] = $second_level_query->rows;
                 
                 foreach($row['comments'] as &$secondlev){
+                    $row['author'] = $this->model_blog_person->getPerson($row['author_person_id']);
                     $secondlev['published'] = date("c", strtotime($secondlev['published']));
                 }
 

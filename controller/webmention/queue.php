@@ -182,10 +182,10 @@ class ControllerWebmentionQueue extends Controller {
 
         $real_url = $source_data['url'];
 
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".context WHERE source_url='" . $this->db->escape($real_url) . "' LIMIT 1");
+        $query = $this->db->query("SELECT * FROM " . DATABASE . ".contexts WHERE source_url='" . $this->db->escape($real_url) . "' LIMIT 1");
 
         if (!empty($query->row)) {
-            return $query->row['context_id'];
+            return $query->row['id'];
 
         }
 
@@ -206,10 +206,6 @@ class ControllerWebmentionQueue extends Controller {
         $body = $source_data['text'];
         $source_name = $source_data['name'];
 
-        $author_name = $source_data['author']['name'];
-        $author_url = $source_data['author']['url'];
-        $author_image = $source_data['author']['photo'];
-
 
         // do our best to conver to local time
         date_default_timezone_set(LOCALTIMEZONE);
@@ -219,10 +215,11 @@ class ControllerWebmentionQueue extends Controller {
         $date->setTimezone($tz);
         $published = $date->format('Y-m-d H:i:s') . "\n";
 
-        $this->db->query("INSERT INTO " . DATABASE . ".context SET 
-            author_name = '" . $this->db->escape($author_name) . "',
-            author_url = '" . $this->db->escape($author_url) . "',
-            author_image = '" . $this->db->escape($author_image) . "',
+        $this->load->model('blog/person');
+        $person_id = $this->model_blog_person->storePerson($source_data['author']);
+
+        $this->db->query("INSERT INTO " . DATABASE . ".contexts SET 
+            person_id = ".(int)$person_id . "
             source_name = '" . $this->db->escape($source_name) . "',
             source_url = '" . $this->db->escape($real_url) . "',
             content = '" . $this->db->escape($body) . "',
@@ -255,13 +252,13 @@ class ControllerWebmentionQueue extends Controller {
                 //remove any syndicated copies we have already parsed
                 $query = $this->db->query(
                     "SELECT * " .
-                    " FROM " . DATABASE . ".context " .
+                    " FROM " . DATABASE . ".contexts " .
                     " WHERE source_url='" . $this->db->escape($syndication_url) . "' " .
                     " LIMIT 1"
                 );
                 if (!empty($query->row)) {
                     $this->db->query(
-                        "DELETE FROM " . DATABASE . ".context " .
+                        "DELETE FROM " . DATABASE . ".contexts " .
                         " WHERE source_url='" . $this->db->escape($syndication_url) . "' " .
                         " LIMIT 1"
                     );

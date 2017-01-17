@@ -6,8 +6,8 @@
         <div class="comment h-cite entry-meta" >
             <div class="comment_header">    
                 <span class="minicard h-card p-author">
-                    <img class="comment_author logo u-photo" src="<?php echo $ctx['author_image']?>" alt="<?php echo $ctx['author_name']?>" width="48" />
-                    <a class="p-name u-url" href="<?php echo $ctx['author_url']?>"><?php echo $ctx['author_name']?></a>
+                    <img class="comment_author logo u-photo" src="<?php echo $ctx['author']['image']?>" alt="<?php echo $ctx['author']['name']?>" width="48" />
+                    <a class="p-name u-url" href="<?php echo $ctx['author']['url']?>"><?php echo $ctx['author']['name']?></a>
                 </span>
                 <a href="<?php echo $ctx['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $ctx['published']?>"><?php echo date("F j, Y g:i A", strtotime($ctx['published']))?></time></a>
             </div>
@@ -24,7 +24,7 @@
     <header class="entry-meta comment_header">
         <div class="entry-meta">      
         <span class="author p-author  hcard h-card">
-            <img alt='' src='<?php echo $post['author_image']?>' class='u-photo ' height='40' width='40' /> 
+            <img alt='' src='<?php echo $post['author']['image']?>' class='u-photo ' height='40' width='40' /> 
             <span class="p-name"><a class="url u-url" href="<?php echo $post['author']['link']?>" title="<?php echo $post['author']['display_name']?>" rel="author">
                 <?php echo $post['author']['display_name']?>
             </a></span>
@@ -81,12 +81,12 @@
                     <div class="h-cite u-comment">
                         <time class="date dt-published" style="display:none" datetime="<?php echo $comment['published']?>"><?php echo date("Y-m-d", strtotime($comment['published']))?></time></a>
                         <span class="h-card u-author">
-                            <a class="u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="View Profile">
-                                <img class='comment_author u-photo' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.png') ?>" />
-                                <span class="p-name" style="display:none"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'someone') ?></span>
+                            <a class="u-url" href="<?php echo (isset($comment['author']['url']) ? $comment['author']['url']: $comment['source_url'])?>" rel="nofollow" title="View Profile">
+                                <img class='comment_author u-photo' src="<?php echo (isset($comment['author']['image']) ? $comment['author']['image']: '/image/person.png') ?>" />
+                                <span class="p-name" style="display:none"><?php echo (isset($comment['author']['name']) ? $comment['author']['name']: 'someone') ?></span>
                             </a>
                         </span>
-                        <a href="<?php echo $comment['source_url']?>" class="u-url permalink" title="<?php echo date("Y-m-d", strtotime($comment['published']))?>"><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'someone') ?></a>
+                        <a href="<?php echo $comment['source_url']?>" class="u-url permalink" title="<?php echo date("Y-m-d", strtotime($comment['published']))?>"><?php echo (isset($comment['author']['name']) ? $comment['author']['name']: 'someone') ?></a>
 
                         <div class='p-content p-name' style="display:none">
                             <?php echo $comment['content']?>
@@ -122,8 +122,8 @@
         <?php foreach($post['likes'] as $like){?>
                 <span class="likewrapper h-cite p-like">
                 <a class="u-url" href="<?php echo $like['source_url']?>" rel="nofollow">
-                    <img class='like_author' src="<?php echo (isset($like['author_image']) ? $like['author_image']: '/image/person.png') ?>"
-                        title="<?php echo (isset($like['author_name']) ? $like['author_name']: 'Author Image') ?>" /></a>
+                    <img class='like_author' src="<?php echo (isset($like['author']['image']) ? $like['author']['image']: '/image/person.png') ?>"
+                        title="<?php echo (isset($like['author']['name']) ? $like['author']['name']: 'Author Image') ?>" /></a>
                 </span>
         <?php } ?>
     <div style="clear:both"></div>
@@ -136,8 +136,8 @@
         <?php foreach($post['reposts'] as $repost){?>
                 <span class="repostwrapper h-cite p-repost">
                 <a class="u-url" href="<?php echo $repost['source_url']?>" rel="nofollow">
-                    <img class='repost_author' src="<?php echo (isset($repost['author_image']) ? $repost['author_image']: '/image/person.png') ?>"
-                        title="<?php echo (isset($repost['author_name']) ? $repost['author_name']: 'Author Image') ?>" /></a>
+                    <img class='repost_author' src="<?php echo (isset($repost['author']['image']) ? $repost['author']['image']: '/image/person.png') ?>"
+                        title="<?php echo (isset($repost['author']['name']) ? $repost['author']['name']: 'Author Image') ?>" /></a>
                 </span>
         <?php } ?>
     <div style="clear:both"></div>
@@ -160,8 +160,8 @@
             <div class="comment u-comment h-cite">
                 <div class='comment_header'>
                     <span class="minicard h-card u-author">
-                        <img class='comment_author u-photo' src="<?php echo (isset($comment['author_image']) ? $comment['author_image']: '/image/person.png') ?>" />
-                        <a class="p-name u-url" href="<?php echo (isset($comment['author_url']) ? $comment['author_url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author_name']) ? $comment['author_name']: 'View Author') ?>" ><?php echo (isset($comment['author_name']) ? $comment['author_name']: 'A Reader') ?></a>
+                        <img class='comment_author u-photo' src="<?php echo (isset($comment['author']['image']) ? $comment['author']['image']: '/image/person.png') ?>" />
+                        <a class="p-name u-url" href="<?php echo (isset($comment['author']['url']) ? $comment['author']['url']: $comment['source_url'])?>" rel="nofollow" title="<?php echo (isset($comment['author']['name']) ? $comment['author']['name']: 'View Author') ?>" ><?php echo (isset($comment['author']['name']) ? $comment['author']['name']: 'A Reader') ?></a>
                     </span>
 
                     <a href="<?php echo $comment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $comment['published']?>"><?php echo date("F j, Y g:i A", strtotime($comment['published']))?></time></a>
@@ -184,8 +184,8 @@
                     
                         <div class='comment_header'>
                             <span class="minicard h-card u-author">
-                                <img class='comment_author' src="<?php echo (isset($subcomment['author_image']) ? $subcomment['author_image']: '/image/person.png') ?>" />
-                                <a class="p-name u-url" href="<?php echo (isset($subcomment['author_url']) ? $subcomment['author_url']: $subcomment['source_url'])?>" rel="nofollow" title="<?php echo (isset($subcomment['author_name']) ? $subcomment['author_name']: 'View Author') ?>" ><?php echo (isset($subcomment['author_name']) ? $subcomment['author_name']: 'A Reader') ?></a>
+                                <img class='comment_author' src="<?php echo (isset($subcomment['author']['image']) ? $subcomment['author']['image']: '/image/person.png') ?>" />
+                                <a class="p-name u-url" href="<?php echo (isset($subcomment['author']['url']) ? $subcomment['author']['url']: $subcomment['source_url'])?>" rel="nofollow" title="<?php echo (isset($subcomment['author']['name']) ? $subcomment['author']['name']: 'View Author') ?>" ><?php echo (isset($subcomment['author']['name']) ? $subcomment['author']['name']: 'A Reader') ?></a>
                             </span>
 
                             <a href="<?php echo $subcomment['source_url']?>" class="u-url permalink"><time class="date dt-published" datetime="<?php echo $subcomment['published']?>"><?php echo date("F j, Y g:i A", strtotime($subcomment['published']))?></time></a>

@@ -11,11 +11,11 @@
         <div class="h-entry" id="i<?php echo $interaction['interaction_id']?>">
             <time class="date dt-published" datetime="<?php echo $interaction['published']?>"><?php echo date("F j, Y g:i A", strtotime($interaction['published']))?></time>
             <span class="h-card p-author">
-            <a class="u-url p-name" href="<?php echo $interaction['author_url']?>">
-                <?php if($interaction['author_image']){ ?>
-                    <img class="logo u-photo" src="<?php echo $interaction['author_image']?>" alt="<?php echo $interaction['author_name']?>" width="48" />
+            <a class="u-url p-name" href="<?php echo $interaction['author']['url']?>">
+                <?php if($interaction['author']['image']){ ?>
+                    <img class="logo u-photo" src="<?php echo $interaction['author']['image']?>" alt="<?php echo $interaction['author']['name']?>" width="48" />
                 <?php } ?>
-                <?php echo $interaction['author_name']?>
+                <?php echo $interaction['author']['name']?>
             </a> 
             </span>
 

@@ -16,11 +16,19 @@ class ModelBlogContext extends Model {
         if (!$data) {
             $query = $this->db->query(
                 "SELECT * " .
-                " FROM " . DATABASE . ".context " .
-                " JOIN " . DATABASE . ".context_post USING(context_id) " .
+                " FROM " . DATABASE . ".contexts " .
+                " JOIN " . DATABASE . ".context_post on id = context_id " .
                 " WHERE post_id = " . (int)$post_id
             );
             $data = $query->rows;
+
+            $this->load->model('blog/person');
+
+            foreach($data as &$row){
+                $row['author'] = $this->model_blog_person->getPerson($row['person_id']);
+                $row['published'] = date("c", strtotime($row['published']));
+            }
+
             $this->cache->set('context.immediate.post.' . $post_id, $data);
         }
 
@@ -46,24 +54,27 @@ class ModelBlogContext extends Model {
             while (count($ids) > $prev) {
                 $prev = count($ids);
 
-                $query = $this->db->query("SELECT parent_id AS context_id " .
+                $query = $this->db->query("SELECT parent_id " .
                     " FROM " . DATABASE . ".context_context " .
                     " WHERE child_id in (" . implode(',', $ids) . ")");
                 foreach ($query->rows as $toAdd) {
-                    if (!in_array((int)$toAdd['context_id'], $ids)) {
-                        $ids[] = (int)$toAdd['context_id'];
+                    if (!in_array((int)$toAdd['parent_id'], $ids)) {
+                        $ids[] = (int)$toAdd['parent_id'];
                     }
                 }
             }
 
             $query = $this->db->query("SELECT * " .
-                " FROM " . DATABASE . ".context " .
-                " WHERE context_id in (" . implode(',', $ids) . ") " .
+                " FROM " . DATABASE . ".contexts " .
+                " WHERE id in (" . implode(',', $ids) . ") " .
                 " ORDER BY `published` ASC");
             $data = $query->rows;
 
             date_default_timezone_set(LOCALTIMEZONE);
+            $this->load->model('blog/person');
+
             foreach($data as &$row){
+                $row['author'] = $this->model_blog_person->getPerson($row['person_id']);
                 $row['published'] = date("c", strtotime($row['published']));
             }
 
@@ -103,22 +114,17 @@ class ModelBlogContext extends Model {
             $real_url = $source_data['url'];
 
             $query = $this->db->query("SELECT * " .
-                " FROM " . DATABASE . ".context " .
+                " FROM " . DATABASE . ".contexts " .
                 " WHERE source_url='" . $this->db->escape($real_url) . "' " .
                 " LIMIT 1");
 
             if (!empty($query->row)) {
-                return $query->row['context_id'];
+                return $query->row['id'];
 
             } else {
                 $published = $source_data['published'];
                 $content = $source_data['text'];
                 $source_name = $source_data['name'];
-
-                $author_name = $source_data['author']['name'];
-                $author_url = $source_data['author']['url'];
-                $author_image = $source_data['author']['photo'];
-
 
                 // do our best to conver to local time
                 date_default_timezone_set(LOCALTIMEZONE);
@@ -133,10 +139,12 @@ class ModelBlogContext extends Model {
                     return null;
                 }
 
-                $this->db->query("INSERT INTO " . DATABASE . ".context SET 
-                    author_name = '" . $this->db->escape($author_name) . "',
-                    author_url = '" . $this->db->escape($author_url) . "',
-                    author_image = '" . $this->db->escape($author_image) . "',
+                $this->load->model('blog/person');
+                $person_id = $this->model_blog_person->storePerson($source_data['author']);
+
+
+                $this->db->query("INSERT INTO " . DATABASE . ".contexts SET 
+                    person_id = ".(int)$person_id . "
                     source_name = '" . $this->db->escape($source_name) . "',
                     source_url = '" . $this->db->escape($real_url) . "',
                     content = '" . $this->db->escape($content) . "',

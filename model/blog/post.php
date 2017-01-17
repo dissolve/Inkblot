@@ -216,11 +216,7 @@ class ModelBlogPost extends Model {
                 $category = $this->model_blog_category->getCategoryByName($cat, true);
                 $this->db->query(
                     "INSERT INTO " . DATABASE . ".category_post " .
-<<<<<<< HEAD
-                    " SET category_id=" . (int)$category['category_id'] . ", " .
-=======
                     " SET category_id=" . (int)$category['id'] . ", " .
->>>>>>> cadf8e17d375b70920b1e167343615e26c026b0d
                     " post_id = " . (int)$post_id
                 );
             }
@@ -610,11 +606,7 @@ class ModelBlogPost extends Model {
         $category = $this->model_blog_category->getCategoryByName($category_name, true);
         $this->db->query(
             "INSERT INTO " . DATABASE . ".category_post " .
-<<<<<<< HEAD
-            " SET category_id=" . (int)$category['category_id'] . ", " .
-=======
             " SET category_id=" . (int)$category['id'] . ", " .
->>>>>>> cadf8e17d375b70920b1e167343615e26c026b0d
             " post_id = " . (int)$post_id
         );
         $this->cache->delete('categories.post.' . $post_id);

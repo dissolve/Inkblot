@@ -409,15 +409,6 @@ class ControllerWebmentionReceive extends Controller {
                     $this->db->query(
                         "INSERT INTO " . DATABASE . ".interactions " .
                         " SET source_url = '" . $comment_data['url'] . "'" .
-                        ((isset($comment_data['author']) && isset($comment_data['author']['name']) && !empty($comment_data['author']['name']))
-                        ? ", author_name='" . $comment_data['author']['name'] . "'"
-                        : "") .
-                        ((isset($comment_data['author']) && isset($comment_data['author']['url']) && !empty($comment_data['author']['url']))
-                        ? ", author_url='" . $comment_data['author']['url'] . "'"
-                        : "") .
-                        ((isset($comment_data['author']) && isset($comment_data['author']['photo']) && !empty($comment_data['author']['photo']))
-                        ? ", author_image='" . $comment_data['author']['photo'] . "'"
-                        : "") .
                         ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of']))
                         ? ", tag_of='" . $comment_data['tag-of'] . "'"
                         : "") .

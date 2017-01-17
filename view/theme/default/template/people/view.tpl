@@ -111,8 +111,8 @@ function doMerge()
 <div id="people">
   <?php foreach($people as $person){?>
   <div class="h-card person"
-        id="person-<?php echo $person['person_id']?>" 
-        data-id="<?php echo $person['person_id']?>" 
+        id="person-<?php echo $person['id']?>" 
+        data-id="<?php echo $person['id']?>" 
         onclick="togglePerson(this)">
 
       <img class="u-img" src="<?php echo $person['image']?>" />

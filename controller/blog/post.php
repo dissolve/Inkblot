@@ -69,7 +69,7 @@ class ControllerBlogPost extends Controller {
             if (intval($post['deleted']) == 1) {
                 $data['deleted'] = true;
             }
-            $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
+            $author = array('url' => $this->url->link('') , 'name' => AUTHOR_NAME, 'image' => '/image/static/icon_128.jpg');
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
             $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
             $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
@@ -156,7 +156,6 @@ class ControllerBlogPost extends Controller {
                     html_entity_decode($post['content'])
                 ),
                 'author' => $author,
-                'author_image' => '/image/static/icon_128.jpg',
                 'categories' => $categories,
                 'comment_count' => $comment_count,
                 'comments' => $comments,
@@ -294,8 +293,8 @@ class ControllerBlogPost extends Controller {
         $this->load->model('blog/category');
 
         $data['author'] = array(
-            'link' => $this->url->link(''),
-            'display_name' => AUTHOR_NAME,
+            'url' => $this->url->link(''),
+            'name' => AUTHOR_NAME,
             'image' => '/image/static/icon_128.jpg'
         );
         $data['posts'] = array();
@@ -303,8 +302,8 @@ class ControllerBlogPost extends Controller {
         foreach ($this->model_blog_post->getRecentPostsByType($post_type) as $post) {
             $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
             $author = array(
-                'link' => $this->url->link(''),
-                'display_name' => AUTHOR_NAME,
+                'url' => $this->url->link(''),
+                'name' => AUTHOR_NAME,
                 'image' => '/image/static/icon_128.jpg'
             );
             $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
@@ -319,7 +318,6 @@ class ControllerBlogPost extends Controller {
                     html_entity_decode($post['content'])
                 ),
                 'author' => $author,
-                'author_image' => '/image/static/icon_128.jpg',
                 'categories' => $categories,
                 'comment_count' => $comment_count,
                 'like_count' => $like_count,
