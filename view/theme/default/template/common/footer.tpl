@@ -34,7 +34,7 @@
     <ul>
     <?php foreach($recent_interactions as $interaction){ ?>
         <li>
-            <a href="<?php echo $interaction['post']['permalink']?>"><?php echo $interaction['interaction_type'] . ' by ' . $interaction['author']['name']?></a>
+            <a href="<?php echo $interaction['post']['permalink']?>"><?php echo $interaction['type'] . ' by ' . $interaction['author']['name']?></a>
         </li>
     <?php } // end foreach recent_drafts?>
     </ul>

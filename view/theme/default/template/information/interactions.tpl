@@ -8,7 +8,7 @@
 <article>
 
         <?php foreach($recent_interactions as $interaction){ ?>
-        <div class="h-entry" id="i<?php echo $interaction['interaction_id']?>">
+        <div class="h-entry" id="i<?php echo $interaction['id']?>">
             <time class="date dt-published" datetime="<?php echo $interaction['published']?>"><?php echo date("F j, Y g:i A", strtotime($interaction['published']))?></time>
             <span class="h-card p-author">
             <a class="u-url p-name" href="<?php echo $interaction['author']['url']?>">
@@ -21,7 +21,7 @@
 
 
             <?php 
-                switch($interaction['interaction_type']){
+                switch($interaction['type']){
                 case 'like':
                     echo 'liked a';
                     $linkclasses = 'u-like-of';
@@ -53,7 +53,7 @@
                 <a class="<?php echo $linkclasses?>" href="<?php echo $interaction['post']['permalink']?>">
                     <?php echo $interaction['post']['post_type']?>
                 </a>
-            <?php } elseif($interaction['interaction_type'] == 'person-mention') { ?>
+            <?php } elseif($interaction['type'] == 'person-mention') { ?>
                 <a class="<?php echo $linkclasses?>" href="<?php echo $interaction['target_url']?>">
                     Me
                 </a>

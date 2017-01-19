@@ -11,7 +11,7 @@ class ControllerCommonShortener extends Controller {
 
         $post = $this->model_blog_post->getPost($id);
 
-        if ($post['post_id']) {
+        if ($post['id']) {
             $this->response->redirect($post['permalink']);
         } else {
             $this->response->redirect($this->url->link(''));

@@ -70,11 +70,11 @@ class ModelWebmentionVouch extends Model {
     // this will loop through all entries in the queue and validate that they have valid links back to my site
     public function processReferers()
     {
-        $query = $this->db->query("SELECT queue_id " .
+        $query = $this->db->query("SELECT id " .
             " FROM " . DATABASE . ".referer_receive_queue rrq JOIN " . DATABASE . ".referrer_ignore ri on rrq.url LIKE ri.url_match ;");
 
         foreach ($query->rows as $queue_entry) {
-            $this->db->query("DELETE FROM " . DATABASE . ".referer_receive_queue where queue_id = " . (int)$queue_entry['queue_id']);
+            $this->db->query("DELETE FROM " . DATABASE . ".referer_receive_queue where id = " . (int)$queue_entry['id']);
         }
 
         $query = $this->db->query("SELECT * " .
@@ -173,7 +173,7 @@ class ModelWebmentionVouch extends Model {
 
             }
             //remove old entry from queue
-            $this->db->query("DELETE FROM " . DATABASE . ".referer_receive_queue where queue_id = " . (int)$entry['queue_id']);
+            $this->db->query("DELETE FROM " . DATABASE . ".referer_receive_queue where id = " . (int)$entry['id']);
 
             //get the next queued item
             $query = $this->db->query("SELECT * FROM " . DATABASE . ".referer_receive_queue " .
@@ -339,7 +339,7 @@ class ModelWebmentionVouch extends Model {
         } else {
             $url_domain = parse_url('http://' . $url, PHP_URL_HOST);
         }
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".vouch_whitelist WHERE domain = '" . $this->db->escape($url_domain) . "'");
+        $query = $this->db->query("SELECT * FROM " . DATABASE . ".whitelist WHERE domain = '" . $this->db->escape($url_domain) . "'");
         return (!empty($query->row));
     }
 
@@ -347,7 +347,7 @@ class ModelWebmentionVouch extends Model {
     {
         $data = $this->cache->get('whitelist.' . ($getAll ? '1' : '0'));
         if (!$data) {
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".vouch_whitelist " . ($getAll ? "" : "WHERE public=1"));
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".whitelist " . ($getAll ? "" : "WHERE public=1"));
             $data = $query->rows;
             $this->cache->set('whitelist.' . ($getAll ? '1' : '0'), $data);
         }
@@ -369,27 +369,27 @@ class ModelWebmentionVouch extends Model {
             $domain = parse_url('http://' . $url, PHP_URL_HOST);
         }
         if ($domain && !empty($domain)) {
-            $query = $this->db->query("SELECT * FROM " . DATABASE . ".vouch_whitelist WHERE domain='" . $this->db->escape($domain) . "'");
+            $query = $this->db->query("SELECT * FROM " . DATABASE . ".whitelist WHERE domain='" . $this->db->escape($domain) . "'");
             $found = $query->row;
             if (!$found || empty($found)) {
-                $this->db->query("INSERT INTO " . DATABASE . ".vouch_whitelist(domain, public) VALUES ('" . $this->db->escape($domain) . "', 0)");
+                $this->db->query("INSERT INTO " . DATABASE . ".whitelist(domain, public) VALUES ('" . $this->db->escape($domain) . "', 0)");
             }
         }
     }
 
-    public function setWhitelistEntryPublic($whitelist_id)
+    public function setWhitelistEntryPublic($id)
     {
-        $this->db->query("UPDATE " . DATABASE . ".vouch_whitelist SET public = 1 WHERE whitelist_id = " . (int)$whitelist_id . " LIMIT 1");
+        $this->db->query("UPDATE " . DATABASE . ".whitelist SET public = 1 WHERE id = " . (int)$id . " LIMIT 1");
         $this->cache->delete('whitelist');
     }
-    public function setWhitelistEntryPrivate($whitelist_id)
+    public function setWhitelistEntryPrivate($id)
     {
-        $this->db->query("UPDATE " . DATABASE . ".vouch_whitelist SET public = 0 WHERE whitelist_id = " . (int)$whitelist_id . " LIMIT 1");
+        $this->db->query("UPDATE " . DATABASE . ".whitelist SET public = 0 WHERE id = " . (int)$id . " LIMIT 1");
         $this->cache->delete('whitelist');
     }
-    public function removeWhitelistEntry($whitelist_id)
+    public function removeWhitelistEntry($id)
     {
-        $this->db->query("DELETE FROM " . DATABASE . ".vouch_whitelist WHERE whitelist_id = " . (int)$whitelist_id . " LIMIT 1");
+        $this->db->query("DELETE FROM " . DATABASE . ".whitelist WHERE id = " . (int)$id . " LIMIT 1");
         $this->cache->delete('whitelist');
     }
 

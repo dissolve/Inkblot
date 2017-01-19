@@ -7,7 +7,7 @@ class ModelAuthToken extends Model {
             "INSERT INTO " . DATABASE . ".tokens " .
             " SET user='" . $this->db->escape($user) . "', " .
             " scope='" . $this->db->escape($scope) . "', " .
-            " client_id='" . $this->db->escape($client_id) . "', " .
+            " client='" . $this->db->escape($client_id) . "', " .
             " last_used=NOW(), " .
             " checksum='" . $this->db->escape($checksum) . "'"
         );
@@ -25,7 +25,7 @@ class ModelAuthToken extends Model {
         $results = $this->db->query(
             "SELECT * " .
             " FROM " . DATABASE . ".tokens " .
-            " WHERE token_id=" . (int)$token_id . " " .
+            " WHERE id=" . (int)$token_id . " " .
             " AND checksum = '" . $this->db->escape($checksum) . "' " .
             " LIMIT 1"
         );
@@ -35,7 +35,7 @@ class ModelAuthToken extends Model {
             $this->db->query(
                 "UPDATE " . DATABASE . ".tokens " .
                 " SET last_used=NOW() " .
-                " WHERE token_id=" . (int)$token_id
+                " WHERE id=" . (int)$token_id
             );
         }
 

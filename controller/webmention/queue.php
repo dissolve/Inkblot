@@ -101,7 +101,11 @@ class ControllerWebmentionQueue extends Controller {
 
     public function processcontexts()
     {
-        $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts WHERE NOT `in-reply-to` is NULL AND context_parsed=0 LIMIT 1");
+        $result = $this->db->query("SELECT * FROM " . DATABASE . ".posts 
+             JOIN " . DATABASe . ".post_reply_to ON posts.id = post_reply_to.post_id
+             WHERE context_parsed=0 
+             LIMIT 1" );
+
         $post = $result->row;
 
         while (!empty($post)) {
@@ -110,7 +114,7 @@ class ControllerWebmentionQueue extends Controller {
 
             $source_url = trim($post['in-reply-to']); //todo want to support multiples
 
-            $post_id = $post['post_id'];
+            $post_id = $post['id'];
             $context_id = $this->getContextId($source_url);
 
             if ($context_id) {
@@ -131,7 +135,7 @@ class ControllerWebmentionQueue extends Controller {
     {
 
         //todo check if $source_url is a syndicated copy of my own posts
-        $result = $this->db->query("SELECT post_id FROM " . DATABASE . ".post_syndication WHERE syndication_url = '" . $source_url . "' LIMIT 1");
+        $result = $this->db->query("SELECT post_id FROM " . DATABASE . ".post_syndication WHERE url = '" . $source_url . "' LIMIT 1");
         if ($result->row) {
             $this->load->model('blog/post');
             $post = $this->model_blog_post->getPost($result->row['post_id']);
@@ -194,7 +198,7 @@ class ControllerWebmentionQueue extends Controller {
         $query = $this->db->query(
             "SELECT * " .
             " FROM " . DATABASE . ".context_syndication " .
-            " WHERE syndication_url='" . $this->db->escape($real_url) . "' " .
+            " WHERE url='" . $this->db->escape($real_url) . "' " .
             " LIMIT 1"
         );
 
@@ -235,17 +239,17 @@ class ControllerWebmentionQueue extends Controller {
         }
 
         if (isset($sourch_data['syndications'])) {
-            foreach ($sourch_data['syndications'] as $syndication_url) {
+            foreach ($sourch_data['syndications'] as $url) {
                 // figure out what syndicaiton_site_id to use
                 foreach ($syndication_sites as $possible_site) {
-                    if (strpos($syndication_url, $possible_site['site_url_match']) === 0) {
+                    if (strpos($url, $possible_site['site_url_match']) === 0) {
                         $syn_site_id = $possible_site['syndication_site_id'];
                     }
                 }
 
 
                 $this->db->query("INSERT INTO " . DATABASE . ".context_syndication 
-                    SET syndication_url = '" . $this->db->escape($syndication_url) . "',
+                    SET url = '" . $this->db->escape($url) . "',
                         " . (isset($syn_site_id) ? "syndication_site_id = " . (int)$syn_site_id . ", " : "" ) . "
                         context_id = " . (int)$context_id);
 
@@ -253,13 +257,13 @@ class ControllerWebmentionQueue extends Controller {
                 $query = $this->db->query(
                     "SELECT * " .
                     " FROM " . DATABASE . ".contexts " .
-                    " WHERE source_url='" . $this->db->escape($syndication_url) . "' " .
+                    " WHERE source_url='" . $this->db->escape($url) . "' " .
                     " LIMIT 1"
                 );
                 if (!empty($query->row)) {
                     $this->db->query(
                         "DELETE FROM " . DATABASE . ".contexts " .
-                        " WHERE source_url='" . $this->db->escape($syndication_url) . "' " .
+                        " WHERE source_url='" . $this->db->escape($url) . "' " .
                         " LIMIT 1"
                     );
                     $this->db->query(

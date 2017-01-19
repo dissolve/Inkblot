@@ -47,9 +47,9 @@ class ModelBlogCategory extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".categories " .
-                " JOIN " . DATABASE . ".category_post on id = category_id " .
+                " JOIN " . DATABASE . ".category_post on categories.id = category_id " .
                 " WHERE post_id = '" . (int)$post_id . "' " .
-                " AND NOT id = 0 " .
+                " AND NOT categories.id = 0 " .
                 " ORDER BY name ASC"
             );
             $data = $query->rows;

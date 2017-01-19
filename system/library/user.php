@@ -46,7 +46,7 @@ class User {
         // make sure they actually submitted something
         if (!empty($me)) {
             $me = $this->normalizeUrl($me);
-            a
+            
             //look up user's auth provider
             $auth_endpoint = IndieAuth\Client::discoverAuthorizationEndpoint($me);
 
@@ -195,7 +195,7 @@ class User {
             $this->log->write($this->request->get['me'] . ' has logged in.');
 
             //TODO token stuff
-            $token_results = $this->getToken($me, $code, $redir_url, $state);
+            $token_results = $this->getToken_priv($me, $code, $redir_url, $state);
 
             $this->session->data['token'] = $token_results['access_token'];
 
@@ -269,7 +269,7 @@ class User {
         }
 
     }
-    private function getToken($me, $code, $redir, $state = null)
+    private function getToken_priv($me, $code, $redir, $state = null)
     {
 
         $client_id = $this->url->link('');

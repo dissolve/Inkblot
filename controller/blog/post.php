@@ -43,7 +43,7 @@ class ControllerBlogPost extends Controller {
         $this->load->model('blog/context');
 
 
-        if (intval($post['deleted']) == 1 && !$this->session->data['is_owner']) {
+        if (!empty($post['deleted_at']) && !$this->session->data['is_owner']) {
             $data['deleted'] = true;
 
             $this->document->setTitle('Deleted');
@@ -55,7 +55,7 @@ class ControllerBlogPost extends Controller {
             $data['postbody'] = preg_replace(
                 '/\@([a-zA-Z0-9_]{1,15})/',
                 '<a href="https://twitter.com/$1">@$1</a>',
-                $this->load->controller('common/postbody', $post['post_id'])
+                $this->load->controller('common/postbody', $post['id'])
             );
 
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/deleted.tpl')) {
@@ -66,19 +66,19 @@ class ControllerBlogPost extends Controller {
 
 
         } else {
-            if (intval($post['deleted']) == 1) {
+            if (!empty($post['deleted_at'])) {
                 $data['deleted'] = true;
             }
             $author = array('url' => $this->url->link('') , 'name' => AUTHOR_NAME, 'image' => '/image/static/icon_128.jpg');
-            $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
-            $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
-            $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
-            $repost_count = $this->model_blog_interaction->getInteractionCountForPost('repost', $post['post_id']);
-            $fetch_comments = $this->model_blog_interaction->getInteractionsForPost('reply', $post['post_id']);
-            $likes = $this->model_blog_interaction->getInteractionsForPost('like', $post['post_id']);
-            $reposts = $this->model_blog_interaction->getInteractionsForPost('repost', $post['post_id']);
-            $mentions = $this->model_blog_interaction->getInteractionsForPost('mention', $post['post_id']);
-            $reacjis = $this->model_blog_interaction->getInteractionsForPost('reacji', $post['post_id']);
+            $categories = $this->model_blog_category->getCategoriesForPost($post['id']);
+            $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['id']);
+            $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['id']);
+            $repost_count = $this->model_blog_interaction->getInteractionCountForPost('repost', $post['id']);
+            $fetch_comments = $this->model_blog_interaction->getInteractionsForPost('reply', $post['id']);
+            $likes = $this->model_blog_interaction->getInteractionsForPost('like', $post['id']);
+            $reposts = $this->model_blog_interaction->getInteractionsForPost('repost', $post['id']);
+            $mentions = $this->model_blog_interaction->getInteractionsForPost('mention', $post['id']);
+            $reacjis = $this->model_blog_interaction->getInteractionsForPost('reacji', $post['id']);
 
             $comments = array();
             if (!isset($this->session->data['user_site'])) {
@@ -140,7 +140,7 @@ class ControllerBlogPost extends Controller {
                 }
             }
 
-            $context = $this->model_blog_context->getAllContextForPost($post['post_id']);
+            $context = $this->model_blog_context->getAllContextForPost($post['id']);
             $reacji_array = array();
             foreach($reacjis as $r) {
                 if(!isset($reacji_array[$r['content']])){
@@ -172,20 +172,20 @@ class ControllerBlogPost extends Controller {
 
 
             if ($this->session->data['is_owner']) {
-                if ($data['deleted']) {
+                if (!empty($data['deleted_at'])) {
                     $data['post']['actions']['undelete'] = array(
                         'title' => 'Undelete',
                         'icon' => "<i class='fa fa-undo'></i>",
-                        'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['post_id'], ''));
+                        'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['id'], ''));
                 } else {
                     $data['post']['actions']['edit'] = array(
                         'title' => 'Edit',
                         'icon' => "<i class='fa fa-edit'></i>",
-                        'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['post_id'], ''));
+                        'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['id'], ''));
                     $data['post']['actions']['delete'] = array(
                         'title' => 'Delete',
                         'icon' => "<i class='fa fa-trash'></i>",
-                        'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['post_id'], ''));
+                        'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['id'], ''));
                 }
             }
 
@@ -259,11 +259,11 @@ class ControllerBlogPost extends Controller {
 
             $data['header'] = $this->load->controller('common/header');
             $data['footer'] = $this->load->controller('common/footer');
-            //$data['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
+            //$data['postbody'] = $this->load->controller('common/postbody', $post['id']);
             $data['postbody'] = preg_replace(
                 '/\@([a-zA-Z0-9_]{1,15})/',
                 '<a href="https://twitter.com/$1">@$1</a>',
-                $this->load->controller('common/postbody', $post['post_id'])
+                $this->load->controller('common/postbody', $post['id'])
             );
 
             if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/blog/post.tpl')) {
@@ -300,15 +300,15 @@ class ControllerBlogPost extends Controller {
         $data['posts'] = array();
 
         foreach ($this->model_blog_post->getRecentPostsByType($post_type) as $post) {
-            $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
+            $categories = $this->model_blog_category->getCategoriesForPost($post['id']);
             $author = array(
                 'url' => $this->url->link(''),
                 'name' => AUTHOR_NAME,
                 'image' => '/image/static/icon_128.jpg'
             );
-            $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
-            $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
-            $repost_count = $this->model_blog_interaction->getInteractionCountForPost('repost', $post['post_id']);
+            $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['id']);
+            $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['id']);
+            $repost_count = $this->model_blog_interaction->getInteractionCountForPost('repost', $post['id']);
 
 
             $extra_data_array = array(
@@ -324,24 +324,24 @@ class ControllerBlogPost extends Controller {
                 'repost_count' => $repost_count,
                 'actions' => array());
 
-            //$extra_data_array['postbody'] = $this->load->controller('common/postbody', $post['post_id']);
+            //$extra_data_array['postbody'] = $this->load->controller('common/postbody', $post['id']);
 
 
-                if ($this->session->data['is_owner']) {
-                    if ($post['deleted'] == 1) {
-                        $extra_data_array['actions']['undelete'] = array(
+            if ($this->session->data['is_owner']) {
+                if (!empty($post['deleted_at'])) {
+                    $extra_data_array['actions']['undelete'] = array(
                         'title' => 'Undelete',
                         'icon' => "<i class='fa fa-undo'></i>",
-                        'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['post_id'], ''));
+                        'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['id'], ''));
                     } else {
                         $extra_data_array['actions']['edit'] = array(
                         'title' => 'Edit',
                         'icon' => "<i class='fa fa-edit'></i>",
-                        'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['post_id'], ''));
+                        'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['id'], ''));
                         $extra_data_array['actions']['delete'] = array(
                         'title' => 'Delete',
                         'icon' => "<i class='fa fa-trash'></i>",
-                        'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['post_id'], ''));
+                        'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['id'], ''));
                     }
                 }
                 if ($mpconfig['repost']) {

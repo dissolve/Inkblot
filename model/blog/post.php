@@ -60,7 +60,7 @@ class ModelBlogPost extends Model {
     {
         //$this->log->write('called editPost');
         //$this->log->write(print_r($data,true));
-        if (isset($data['post_id'])) {
+        if (isset($data['id'])) {
             $set_data = array();
 
             if (isset($data['name']) && !empty($data['name'])) {
@@ -109,9 +109,9 @@ class ModelBlogPost extends Model {
             //todo category
             //todo syndicate-to
 
-            $sql = "UPDATE " . DATABASE . ".posts SET " . implode(' , ', $set_data) . " WHERE post_id=" . (int)$data['post_id'];
+            $sql = "UPDATE " . DATABASE . ".posts SET " . implode(' , ', $set_data) . " WHERE id=" . (int)$data['id'];
             $this->db->query($sql);
-            $this->cache->delete('post.' . $data['post_id']);
+            $this->cache->delete('post.' . $data['id']);
         }
     }
     public function newPost($type, $data)
@@ -153,7 +153,6 @@ class ModelBlogPost extends Model {
             " `month` = " . (int)$month . ", " .
             " `day` = " . (int)$day . ", " .
             " `draft` = " . (int)$draft . ", " .
-            " `deleted` = 0, " .
             " `content` = '" . (isset($data['content']) && !empty($data['content']) ? $this->db->escape($data['content']) : "") . "', " .
             " `summary` = '" . (isset($data['summary']) && !empty($data['summary']) ? $this->db->escape($data['summary']) : "") . "', " .
             " `slug` = '" . (isset($data['slug']) && !empty($data['slug']) ? $this->db->escape($data['slug']) : "") . "', " .
@@ -188,9 +187,6 @@ class ModelBlogPost extends Model {
             (isset($data['place_name']) && !empty($data['place_name'])
                 ? ", place_name='" . $this->db->escape($data['place_name']) . "'"
                 : "") .
-            (isset($data['in-reply-to']) && !empty($data['in-reply-to'])
-                ? ", `in-reply-to`='" . $this->db->escape($data['in-reply-to']) . "'"
-                : "") .
             (isset($data['weight_value']) && !empty($data['weight_value'])
                 ? ", weight_value='" . $this->db->escape($data['weight_value']) . "'"
                 : "") .
@@ -208,6 +204,18 @@ class ModelBlogPost extends Model {
         $query = $this->db->query($sql);
 
         $post_id = $this->db->getLastId();
+
+        if (isset($data['in-reply-to']) && !empty($data['in-reply-to']))  {
+            $replys = explode(',', $data['in-reply-to']);
+            foreach($replys as $replyto){
+                $this->db->query(
+                    "INSERT INTO " . DATABASE . ".post_reply_to " .
+                    " SET url='" . $this->db->escape($replyto) . "' " .
+                    " post_id = " . (int)$post_id
+                );
+            }
+
+        }
 
         if (isset($data['category']) && !empty($data['category'])) {
             $categories = explode(',', $data['category']);
@@ -280,8 +288,8 @@ class ModelBlogPost extends Model {
     public function deletePost($post_id)
     {
         $sql = "UPDATE " . DATABASE . ".posts " .
-            " SET `deleted`=1 " .
-            " WHERE post_id = " . (int)$post_id;
+            " SET `deleted_at`= NOW() " .
+            " WHERE id = " . (int)$post_id;
         $this->db->query($sql);
         $this->cache->delete('post.' . $post_id);
         $this->cache->delete('posts');
@@ -290,8 +298,8 @@ class ModelBlogPost extends Model {
     public function undeletePost($post_id)
     {
         $sql = "UPDATE " . DATABASE . ".posts " .
-            " SET `deleted`=0 " .
-            " WHERE post_id = " . (int)$post_id;
+            " SET `deleted_at` = NULL " .
+            " WHERE id = " . (int)$post_id;
         $this->db->query($sql);
         $this->cache->delete('post.' . $post_id);
         $this->cache->delete('posts');
@@ -315,18 +323,20 @@ class ModelBlogPost extends Model {
                         $mf2_post['properties']['created'] = $value;
                         break;
 
+                    case 'in-reply-to':
+                        $mf2_post['properties']['in-reply-to'] = explode(',', $value);
+                        break;
                     case 'slug':
                     case 'summary':
                     case 'content':
                     case 'name':
-                    case 'in-reply-to':
                     case 'like-of':
                     case 'bookmark-of':
                         break;
 
                     case 'draft':
                     case 'artist':
-                    case 'deleted':
+                    case 'deleted_at':
 
 
                         /*
@@ -371,21 +381,22 @@ class ModelBlogPost extends Model {
 
     public function getPost($post_id)
     {
+        //TODO: in-reply-to spoof
         $post = $this->cache->get('post.' . $post_id);
         if (!$post) {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".posts " .
-                " WHERE post_id = " . (int)$post_id
+                " WHERE id = " . (int)$post_id
             );
             $post = $query->row;
             if(empty($post)){
                 return null;
             }
-            $syndications = $this->getSyndications($post['post_id']);
+            $syndications = $this->getSyndications($post_id);
             $shortlink = $this->short_url->link(
                 'common/shortener',
-                'eid=' . $this->numToSxg($post['post_id']),
+                'eid=' . $this->numToSxg($post_id),
                 ''
             );
             unset($post['photo']);
@@ -422,6 +433,17 @@ class ModelBlogPost extends Model {
                 'shortlink' => $shortlink//,
                 //'permashortcitation' => $citation
             ));
+
+            $query = $this->db->query(
+                "SELECT * " .
+                " FROM " . DATABASE . ".post_reply_to " .
+                " WHERE post_id = " . (int)$post_id
+            );
+            $reply_tos = array();
+            foreach($query->rows as $row){
+                $reply_tos[] = $row['url'];
+            }
+            $post['in-reply-to'] = implode(', ', $reply_tos);
 
             $query = $this->db->query(
                 "SELECT * " .
@@ -488,14 +510,14 @@ class ModelBlogPost extends Model {
         $post_id = $this->cache->get('post_id.' . $year . '.' . $month . '.' . $day . '.' . $daycount);
         if (!$post_id) {
             $query = $this->db->query(
-                "SELECT post_id " .
+                "SELECT id " .
                 " FROM " . DATABASE . ".posts " .
                 " WHERE year = '" . (int)$year . "' " .
                 " AND month = '" . (int)$month . "' " .
                 " AND day = '" . (int)$day . "' " .
                 " AND daycount = '" . (int)$daycount . "'"
             );
-            $post_id = $query->row['post_id'];
+            $post_id = $query->row['id'];
             $this->cache->set('post_id.' . $year . '.' . $month . '.' . $day . '.' . $daycount, $post_id);
         }
 
@@ -507,9 +529,9 @@ class ModelBlogPost extends Model {
         $post_id_array = $this->cache->get('posts.recent.' . $skip . '.' . $limit);
         if (!$post_id_array) {
             $query = $this->db->query(
-                "SELECT post_id " .
+                "SELECT id " .
                 " FROM " . DATABASE . ".posts " .
-                " WHERE deleted=0 " .
+                " WHERE deleted_at is null " .
                 " AND draft=0 " .
                 " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
@@ -520,7 +542,7 @@ class ModelBlogPost extends Model {
 
             $data_array = array();
         foreach ($post_id_array as $post) {
-                $found_post = $this->getPost($post['post_id']);
+                $found_post = $this->getPost($post['id']);
                 if($found_post){
                     $data_array[] = $found_post;
                 }
@@ -534,9 +556,9 @@ class ModelBlogPost extends Model {
         $post_id_array = $this->cache->get('posts.drafts.' . $skip . '.' . $limit);
         if (!$post_id_array) {
             $query = $this->db->query(
-                "SELECT post_id " .
+                "SELECT id " .
                 " FROM " . DATABASE . ".posts " .
-                " WHERE deleted=0 " .
+                " WHERE deleted_at is null " .
                 " AND draft=1 " .
                 " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
@@ -547,7 +569,7 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $found_post = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['id']);
             if($found_post){
                 $data_array[] = $found_post;
             }
@@ -563,7 +585,7 @@ class ModelBlogPost extends Model {
             if (!$post_id_array) {
                 // todo need to map this->db->escape
                 $query = $this->db->query(
-                    "SELECT post_id FROM " . DATABASE . ".posts " .
+                    "SELECT id FROM " . DATABASE . ".posts " .
                     " WHERE post_type IN ('" . implode("','", $type_list) . "') " .
                     " AND draft=0 " .
                     " ORDER BY published DESC " .
@@ -577,9 +599,9 @@ class ModelBlogPost extends Model {
             if (!$post_id_array) {
                 // todo need to map this->db->escape
                 $query = $this->db->query(
-                    "SELECT post_id FROM " . DATABASE . ".posts " .
+                    "SELECT id FROM " . DATABASE . ".posts " .
                     " WHERE post_type IN ('" . implode("','", $type_list) . "') " .
-                    " AND deleted=0 " .
+                    " AND deleted_at is null " .
                     " AND draft=0 " .
                     " ORDER BY published DESC " .
                     " LIMIT " . (int)$skip . ", " . (int)$limit
@@ -591,7 +613,7 @@ class ModelBlogPost extends Model {
         }
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $found_post = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['id']);
             if($found_post){
                 $data_array[] = $found_post;
             }
@@ -628,10 +650,10 @@ class ModelBlogPost extends Model {
         $post_id_array = $this->cache->get('posts.category.' . $category_id . '.' . $skip . '.' . $limit);
         if (!$post_id_array) {
             $query = $this->db->query(
-                "SELECT post_id FROM " . DATABASE . ".posts " .
-                " JOIN " . DATABASE . ".category_post USING(post_id) " .
+                "SELECT id FROM " . DATABASE . ".posts " .
+                " JOIN " . DATABASE . ".category_post on category_post.post_id = posts.id " .
                 " WHERE category_id = '" . (int)$category_id . "' " .
-                " AND deleted=0 " .
+                " AND deleted_at is null " .
                 " AND draft=0 " .
                 " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
@@ -642,7 +664,7 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $found_post = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['id']);
             if($found_post){
                 $data_array[] = $found_post;
             }
@@ -656,10 +678,10 @@ class ModelBlogPost extends Model {
         $post_id_array = $this->cache->get('posts.' . $type . '.' . $skip . '.' . $limit);
         if (!$post_id_array) {
             $query = $this->db->query(
-                "SELECT post_id " .
+                "SELECT id " .
                 " FROM " . DATABASE . ".posts " .
                 " WHERE post_type = '" . $this->db->escape($type) . "' " .
-                " AND deleted=0 " .
+                " AND deleted_at is null " .
                 " AND draft=0 " .
                 " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
@@ -670,7 +692,7 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $found_post = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['id']);
             if($found_post){
                 $data_array[] = $found_post;
             }
@@ -684,12 +706,12 @@ class ModelBlogPost extends Model {
         $post_id_array = $this->cache->get('posts.day.' . $year . '.' . $month . '.' . $day);
         if (!$post_id_array) {
             $query = $this->db->query(
-                "SELECT post_id " .
+                "SELECT id " .
                 " FROM " . DATABASE . ".posts " .
                 " WHERE `year` = '" . (int)$year . "' " .
                 " AND `month` = '" . (int)$month . "' " .
                 " AND `day` = " . (int)$day . " " .
-                " AND deleted=0 " .
+                " AND deleted_at is null " .
                 " AND draft=0 " .
                 " ORDER BY published DESC"
             );
@@ -699,7 +721,7 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $found_post = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['id']);
             if($found_post){
                 $data_array[] = $found_post;
             }
@@ -714,12 +736,12 @@ class ModelBlogPost extends Model {
         $post_id_array = $this->cache->get($type . '.date.' . $year . '.' . $month . '.' . $skip . '.' . $limit);
         if (!$post_id_array) {
             $query = $this->db->query(
-                "SELECT post_id " .
+                "SELECT id " .
                 " FROM " . DATABASE . ".posts " .
                 " WHERE post_type='" . $this->db->escape($type) . "' " .
                 " AND `year` = '" . (int)$year . "' " .
                 " AND `month` = '" . (int)$month . "' " .
-                " AND deleted=0 " .
+                " AND deleted_at is null " .
                 " AND draft=0 " .
                 " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
@@ -731,7 +753,7 @@ class ModelBlogPost extends Model {
         
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $found_post = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['id']);
             if($found_post){
                 $data_array[] = $found_post;
             }
@@ -744,11 +766,11 @@ class ModelBlogPost extends Model {
         $post_id_array = $this->cache->get('posts.date.' . $year . '.' . $month . '.' . $skip . '.' . $limit);
         if (!$post_id_array) {
             $query = $this->db->query(
-                "SELECT post_id " .
+                "SELECT id " .
                 " FROM " . DATABASE . ".posts " .
                 " WHERE `year` = '" . (int)$year . "' " .
                 " AND `month` = '" . (int)$month . "' " .
-                " AND deleted=0 " .
+                " AND deleted_at is null " .
                 " AND draft=0 " .
                 " ORDER BY published DESC " .
                 ($limit ? " LIMIT " . (int)$skip . ", " . (int)$limit : '')
@@ -762,7 +784,7 @@ class ModelBlogPost extends Model {
 
         $data_array = array();
         foreach ($post_id_array as $post) {
-            $found_post = $this->getPost($post['post_id']);
+            $found_post = $this->getPost($post['id']);
             if($found_post){
                 $data_array[] = $found_post;
             }
@@ -788,10 +810,10 @@ class ModelBlogPost extends Model {
         return $data;
     }
 
-    public function addSyndication($post_id, $syndication_url)
+    public function addSyndication($post_id, $url)
     {
-        if (!empty($syndication_url)) {
-            $syndication_url = trim($syndication_url);
+        if (!empty($url)) {
+            $url = trim($url);
             //figure out what site this is.
             $sites_query = $this->db->query(
                 "SELECT * " .
@@ -801,7 +823,7 @@ class ModelBlogPost extends Model {
 
             $syn_site_id = 0;
             foreach ($sites as $site) {
-                if (strpos($syndication_url, $site['site_url_match']) === 0) {
+                if (strpos($url, $site['site_url_match']) === 0) {
                     $syn_site_id = $site['syndication_site_id'];
                     break;
                 }
@@ -812,7 +834,7 @@ class ModelBlogPost extends Model {
                 "INSERT INTO " . DATABASE . ".post_syndication " .
                 " SET post_id = " . (int)$post_id . ", " .
                 " syndication_site_id=" . (int)$syn_site_id . ", " .
-                " syndication_url = '" . $this->db->escape($syndication_url) . "'"
+                " url = '" . $this->db->escape($url) . "'"
             );
 
             $this->cache->delete('post.' . $post_id);
@@ -823,7 +845,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 "FROM " . DATABASE . ".media " .
-                " JOIN " . DATABASE . ".media_post USING(media_id) " .
+                " JOIN " . DATABASE . ".media_post on media.id = media_post.media_id " .
                 " WHERE post_id = " . (int)$post_id .
                 " and type = '" . $this->db->escape($media_type) . "'" 
             );
@@ -846,14 +868,14 @@ class ModelBlogPost extends Model {
                 $query = $this->db->query(
                     "SELECT * " .
                     "FROM " . DATABASE . ".media " .
-                    " JOIN " . DATABASE . ".media_post USING(media_id) " .
+                    " JOIN " . DATABASE . ".media_post on media.id = media_post.media_id " .
                     " WHERE post_id = " . (int)$post_id .
                     " and type = '" . $this->db->escape($field_name) . "'" 
                 );
 
                 $old_media_ids = array();
                 foreach($query->rows as $row){
-                    $old_media_ids[] = (int)$row['media_id'];
+                    $old_media_ids[] = (int)$row['id'];
                 }
                 if(!empty($old_media_ids)){
                     $ids_joined = implode(',', $old_media_ids);
@@ -869,6 +891,14 @@ class ModelBlogPost extends Model {
                     );
                 }
                 break;
+            case 'in-reply-to':
+                $this->db->query(
+                    "DELETE " .
+                    "FROM " . DATABASE . ".post_reply_to " .
+                    " WHERE post_id = " . (int)$post_id 
+                );
+
+                break;
             case 'like-of':
             case 'bookmark-of':
             case 'created':
@@ -878,10 +908,9 @@ class ModelBlogPost extends Model {
             case 'summary':
             case 'content':
             case 'name':
-            case 'in-reply-to':
             case 'draft':
             case 'artist':
-            case 'deleted':
+            case 'deleted_at':
             case 'rsvp':
             case 'location':
             case 'place_name':
@@ -893,20 +922,20 @@ class ModelBlogPost extends Model {
                 }
                 $this->log->write(
                     "UPDATE " . DATABASE . ".posts " .
-                    " SET `".$field_name."`= '' " .
-                    " WHERE post_id = " . (int)$post_id
+                    " SET `".$field_name."` = NULL " . //can i do this generally?
+                    " WHERE id = " . (int)$post_id
                 );
                 $this->db->query(
                     "UPDATE " . DATABASE . ".posts " .
-                    " SET `".$field_name."`= '' " .
-                    " WHERE post_id = " . (int)$post_id
+                    " SET `".$field_name."`= NULL " .//can i do this generally?
+                    " WHERE id = " . (int)$post_id
                 );
                 break;
 
             default:
                 // do nothing i guess as we don't support that field
         }
-        $this->cache->delete('post.' . $data['post_id']);
+        $this->cache->delete('post.' . $post_id);
     }
 
     //This assumes that value is an array (as it should be per the micropub spec)
@@ -932,7 +961,7 @@ class ModelBlogPost extends Model {
                 $query = $this->db->query(
                     "SELECT * " .
                     "FROM " . DATABASE . ".media " .
-                    " JOIN " . DATABASE . ".media_post USING(media_id) " .
+                    " JOIN " . DATABASE . ".media_post on media_post.media_id = media.id " .
                     " WHERE post_id = " . (int)$post_id .
                     " and type = '" . $this->db->escape($field_name) . "'" 
                 );
@@ -942,12 +971,12 @@ class ModelBlogPost extends Model {
                         $this->db->query(
                             "DELETE " .
                             "FROM " . DATABASE . ".media_post " .
-                            " WHERE media_id = " . (int)$row['media_id']
+                            " WHERE media_id = " . (int)$row['id']
                         );
                         $this->db->query(
                             "DELETE " .
                             "FROM " . DATABASE . ".media " .
-                            " WHERE media_id = " . (int)$row['media_id']
+                            " WHERE id = " . (int)$row['id']
                         );
                     }
                 }
@@ -955,7 +984,7 @@ class ModelBlogPost extends Model {
             default:
                 $this->deleteProperty($post_id, $field_name);
         }
-        $this->cache->delete('post.' . $data['post_id']);
+        $this->cache->delete('post.' . $post_id);
     }
 
     public function addProperty($post_id, $field_name, $value){
@@ -991,6 +1020,22 @@ class ModelBlogPost extends Model {
                 }
 
                 break;
+            case 'in-reply-to':
+
+                if(!empty($value)){
+
+                    $reply_tos = explode(',', $value);
+
+                    foreach($reply_tos as $repl){
+                        $query = $this->db->query(
+                            "INSERT INTO  " . DATABASE . ".post_reply_to " .
+                            " SET post_id = " . (int)$post_id  . " " .
+                            " , url = '" . $this->db->escape($repl) . "' " 
+                        );
+                    }
+
+                }
+                break;
 
             case 'like-of':
             case 'bookmark-of':
@@ -1001,10 +1046,9 @@ class ModelBlogPost extends Model {
             case 'summary':
             case 'content':
             case 'name':
-            case 'in-reply-to':
             case 'draft':
             case 'artist':
-            case 'deleted':
+            case 'deleted_at':
             case 'rsvp':
             case 'location':
             case 'place_name':
@@ -1017,19 +1061,19 @@ class ModelBlogPost extends Model {
                 $this->log->write(
                     "UPDATE " . DATABASE . ".posts " .
                     " SET `".$field_name."`='" . $this->db->escape($value) . "' " .
-                    " WHERE post_id = " . (int)$post_id
+                    " WHERE id = " . (int)$post_id
                 );
                 $this->db->query(
                     "UPDATE " . DATABASE . ".posts " .
                     " SET `".$field_name."`='" . $this->db->escape($value) . "' " .
-                    " WHERE post_id = " . (int)$post_id
+                    " WHERE id = " . (int)$post_id
                 );
                 break;
 
             default:
                 // do nothing as we don't have that field i guess
         }
-        $this->cache->delete('post.' . $data['post_id']);
+        $this->cache->delete('post.' . $post_id);
     }
     public function setProperty($post_id, $field_name, $value){
 

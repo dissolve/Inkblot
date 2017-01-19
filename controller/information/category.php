@@ -25,10 +25,10 @@ class ControllerInformationCategory extends Controller {
         $data['posts'] = array();
 
         foreach ($this->model_blog_post->getPostsByCategory($category_id) as $post) {
-            $categories = $this->model_blog_category->getCategoriesForPost($post['post_id']);
+            $categories = $this->model_blog_category->getCategoriesForPost($post['id']);
             $author = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
-            $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['post_id']);
-            $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['post_id']);
+            $comment_count = $this->model_blog_interaction->getInteractionCountForPost('reply', $post['id']);
+            $like_count = $this->model_blog_interaction->getInteractionCountForPost('like', $post['id']);
 
             $extra_data_array = array(
                 'body_html' => html_entity_decode($post['content']),
@@ -40,20 +40,20 @@ class ControllerInformationCategory extends Controller {
                 'actions' => array());
 
             if ($this->session->data['is_owner']) {
-                if ($post['deleted'] == 1) {
+                if (!empty($post['deleted_at'])) {
                     $extra_data_array['actions']['undelete'] = array(
                         'title' => 'Undelete',
                         'icon' => "<i class='fa fa-undo'></i>",
-                        'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['post_id'], ''));
+                        'link' => $this->url->link('micropub/client/undeletePost', 'id=' . $post['id'], ''));
                 } else {
                     $extra_data_array['actions']['edit'] = array(
                         'title' => 'Edit',
                         'icon' => "<i class='fa fa-edit'></i>",
-                        'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['post_id'], ''));
+                        'link' => $this->url->link('micropub/client/editPost', 'id=' . $post['id'], ''));
                     $extra_data_array['actions']['delete'] = array(
                         'title' => 'Delete',
                         'icon' => "<i class='fa fa-trash'></i>",
-                        'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['post_id'], ''));
+                        'link' => $this->url->link('micropub/client/deletePost', 'id=' . $post['id'], ''));
                 }
             }
             if ($mpconfig['repost']) {

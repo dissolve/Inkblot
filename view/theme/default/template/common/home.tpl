@@ -3,7 +3,7 @@
 <div class="h-feed" id="posts-stream">
     <a style="display:none;" class="u-url p-name" href="<?php echo $feed_url?>" >Main Feed</a>
 <?php foreach($posts as $post) { ?>
-<article id="post-<?php echo $post['post_id']?>" class="<?php echo $post['post_type']?> h-entry <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" >
+<article id="post-<?php echo $post['id']?>" class="<?php echo $post['post_type']?> h-entry <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>" >
   <header class="entry-header">
     <?php if($post['post_type'] != 'listen'){ ?>
     <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['name']?>" ><?php echo $post['name']?></a></h1>
@@ -140,9 +140,9 @@
     <?php foreach($post['syndications'] as $elsewhere){ ?>
 
       <?php if(isset($elsewhere['image'])){ ?>
-      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><img src="<?php echo $elsewhere['image']?>" title="<?php echo $elsewhere['site_name']?>" /></a>
+      <a class="u-syndication" href="<?php echo $elsewhere['url']?>" ><img src="<?php echo $elsewhere['image']?>" title="<?php echo $elsewhere['site_name']?>" /></a>
       <?php } else { ?>
-      <a class="u-syndication" href="<?php echo $elsewhere['syndication_url']?>" ><i class="fa fa-link"></i></a>
+      <a class="u-syndication" href="<?php echo $elsewhere['url']?>" ><i class="fa fa-link"></i></a>
       <?php } ?>
       
     <?php } //end foreach ?>
@@ -155,7 +155,7 @@
       </indie-action>
       <?php } ?>
     </div>
-  </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['post_id']?> -->
+  </footer><!-- #entry-meta --></article><!-- #post-<?php echo $post['id']?> -->
 
 <?php } //end foreach posts ?>
 </div>

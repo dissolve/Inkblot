@@ -334,9 +334,9 @@ class ControllerMicropubReceive extends Controller {
         $post = $this->getPostByURL($this->request->post['url']);
         if ($post) {
             $this->load->model('blog/post');
-            $this->model_blog_post->undeletePost($post['post_id']);
-            $this->cache->delete('post.' . $post['post_id']);
-            $this->cache->delete('posts.' . $post['post_id']);
+            $this->model_blog_post->undeletePost($post['id']);
+            $this->cache->delete('post.' . $post['id']);
+            $this->cache->delete('posts.' . $post['id']);
 
             $this->response->addHeader('HTTP/1.1 200 OK');
             //$this->response->addHeader('Location: '. $post['permalink']);
@@ -351,15 +351,15 @@ class ControllerMicropubReceive extends Controller {
         if ($post) {
             $this->log->write('found post');
             $this->load->model('blog/post');
-            $this->model_blog_post->deletePost($post['post_id']);
+            $this->model_blog_post->deletePost($post['id']);
 
-            $this->cache->delete('post.' . $post['post_id']);
+            $this->cache->delete('post.' . $post['id']);
 
             $this->load->model('webmention/send_queue');
             if (defined('QUEUED_SEND')) {
-                $this->model_webmention_send_queue->addEntry($post['post_id']);
+                $this->model_webmention_send_queue->addEntry($post['id']);
             } else {
-                $this->load->controller('webmention/queue/sendWebmention', $post['post_id']);
+                $this->load->controller('webmention/queue/sendWebmention', $post['id']);
             }
 
             $this->response->addHeader('HTTP/1.1 200 OK');
@@ -380,7 +380,7 @@ class ControllerMicropubReceive extends Controller {
             //$this->log->write(print_r($post,true));
             $this->load->model('blog/post');
             if (isset($this->request->post['syndication'])) {
-                $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
+                $this->model_blog_post->addSyndication($post['id'], $this->request->post['syndication']);
             }
 
             $simple_editable_fields = array(
@@ -399,7 +399,7 @@ class ControllerMicropubReceive extends Controller {
                     }
                 }
                 if (in_array('category', $this->request->post['delete-fields'])) {
-                    $this->model_blog_post->removeFromAllCategories($post['post_id']);
+                    $this->model_blog_post->removeFromAllCategories($post['id']);
                 }
             }
 
@@ -411,13 +411,13 @@ class ControllerMicropubReceive extends Controller {
             if (isset($this->request->post['category']) && !empty($this->request->post['category'])) {
                 if(is_array($this->request->post['category'])){
                     foreach ($this->request->post['category'] as $category) {
-                        $this->model_blog_post->addToCategory($post['post_id'], $category);
+                        $this->model_blog_post->addToCategory($post['id'], $category);
                     }
                 } else {
                     $categories = explode(',', urldecode($this->request->post['category']));
                     $this->log->write(print_r($categories));
                     foreach ($categories as $category) {
-                        $this->model_blog_post->addToCategory($post['post_id'], $category);
+                        $this->model_blog_post->addToCategory($post['id'], $category);
                     }
                 }
             }
@@ -427,9 +427,9 @@ class ControllerMicropubReceive extends Controller {
 
             $this->load->model('webmention/send_queue');
             if (defined('QUEUED_SEND')) {
-                $this->model_webmention_send_queue->addEntry($post['post_id']);
+                $this->model_webmention_send_queue->addEntry($post['id']);
             } else {
-                $this->load->controller('webmention/queue/sendWebmention', $post['post_id'], $old_body);
+                $this->load->controller('webmention/queue/sendWebmention', $post['id'], $old_body);
             }
 
             $this->response->addHeader('HTTP/1.1 200 OK');
@@ -594,7 +594,7 @@ class ControllerMicropubReceive extends Controller {
 
         if ($post && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])) {
             $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
+            $this->model_blog_post->addSyndication($post['id'], $this->request->post['syndication']);
         }
 
         $this->syndicateByMp($this->request->post, $post['shortlink'], $post_id);
@@ -606,7 +606,7 @@ class ControllerMicropubReceive extends Controller {
             $this->load->controller('webmention/queue/sendWebmention', $post_id);
         }
 
-        $this->cache->delete('post.' . $post['post_id']);
+        $this->cache->delete('post.' . $post['id']);
 
 
         $this->response->addHeader('HTTP/1.1 201 Created');
@@ -718,7 +718,7 @@ class ControllerMicropubReceive extends Controller {
 
         if ($post && isset($this->request->post['syndication']) && !empty($this->request->post['syndication'])) {
             $this->load->model('blog/post');
-            $this->model_blog_post->addSyndication($post['post_id'], $this->request->post['syndication']);
+            $this->model_blog_post->addSyndication($post['id'], $this->request->post['syndication']);
         }
 
         $this->load->model('webmention/send_queue');
@@ -728,7 +728,7 @@ class ControllerMicropubReceive extends Controller {
             $this->load->controller('webmention/queue/sendWebmention', $post_id);
         }
 
-        $this->cache->delete('post.' . $post['post_id']);
+        $this->cache->delete('post.' . $post['id']);
 
         $this->response->addHeader('HTTP/1.1 201 Created');
         $this->response->addHeader('Location: ' . $post['permalink']);

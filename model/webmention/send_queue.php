@@ -15,15 +15,15 @@ class ModelWebmentionSendQueue extends Model {
         $query = $this->db->query(
             "SELECT * " .
             " FROM " . DATABASE . ".mention_send_queue " .
-            " ORDER BY queue_id DESC " .
+            " ORDER BY id DESC " .
             " LIMIT 1"
         );
         $data = $query->row;
-        if ($data['queue_id']) {
+        if ($data['id']) {
         //$this->log->write('got '.print_r($data,true) . ' from queue');
             $this->db->query(
                 "DELETE FROM " . DATABASE . ".mention_send_queue " .
-                " WHERE queue_id = " . (int)$data['queue_id']
+                " WHERE id = " . (int)$data['id']
             );
 
             return $data['post_id'];

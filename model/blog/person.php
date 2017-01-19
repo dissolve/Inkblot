@@ -135,6 +135,8 @@ class ModelBlogPerson extends Model {
 
     public function joinPeople($main_person_id, $alternate_person_id)
     {
+        //TODO: make this only change the person_id on all URLs 
+
         $alt_person = $this->getPerson($alternate_person_id);
         $this->addAlternateUrl($main_person_id, $alt_person['url']);
 
@@ -142,17 +144,18 @@ class ModelBlogPerson extends Model {
             $this->addAlternateUrl($main_person_id, $alt['url']);
         }
 
-        //TODO update people in interactions, and interactions_second_level
+        // update people in interactions and contexts
 
         $this->db->query(
             "UPDATE " . DATABASE . ".interactions " .
-            " SET author_person_id = '" . (int)$main_person_id . "' " .
-            " WHERE author_person_id = " . (int)$alternate_person_id
+            " SET person_id = '" . (int)$main_person_id . "' " .
+            " WHERE person_id = " . (int)$alternate_person_id
         );
+
         $this->db->query(
-            "UPDATE " . DATABASE . ".second_level_interactions " .
-            " SET author_person_id = '" . (int)$main_person_id . "' " .
-            " WHERE author_person_id = " . (int)$alternate_person_id
+            "UPDATE " . DATABASE . ".contexts " .
+            " SET person_id = '" . (int)$main_person_id . "' " .
+            " WHERE person_id = " . (int)$alternate_person_id
         );
 
 

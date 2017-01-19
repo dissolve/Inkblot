@@ -1,6 +1,7 @@
 <?php
 class ControllerPeopleView extends Controller {
     public function index()
+    {
     
         $data['auth_page'] = $this->url->link('auth/login');
         $data['auth_endpoint'] = AUTH_ENDPOINT;

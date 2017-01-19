@@ -79,9 +79,6 @@ class ModelContactsContact extends Model {
 
     public function getContacts($limit = 20, $skip = 0)
     {
-        //if ($sort == 'note_id'){
-            //$sort = 'post_id';
-        //}
 
         $query = $this->db->query(
             "SELECT contact_id " .

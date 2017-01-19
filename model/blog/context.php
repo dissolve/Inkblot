@@ -186,7 +186,8 @@ class ModelBlogContext extends Model {
     {
         $result = $this->db->query("SELECT * " .
             " FROM " . DATABASE . ".posts " .
-            " WHERE NOT in-reply-to is NULL AND context_parsed=0 " .
+            " JOIN " . DATABASe . ".post_reply_to ON posts.id = post_reply_to.post_id " .
+            " WHERE context_parsed=0 " .
             " LIMIT 1");
         $post = $result->row;
 
@@ -213,7 +214,8 @@ class ModelBlogContext extends Model {
 
             $result = $this->db->query("SELECT * " .
                 " FROM " . DATABASE . ".posts " .
-                " WHERE NOT in-reply-to is NULL AND context_parsed=0 " .
+                " JOIN " . DATABASe . ".post_reply_to ON posts.id = post_reply_to.post_id " .
+                " WHERE context_parsed=0 " .
                 " LIMIT 1");
             $post = $result->row;
 

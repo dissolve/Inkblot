@@ -26,9 +26,9 @@ class ControllerInformationWhitelist extends Controller {
             $data['whitelist'][]  = array(
                 'domain' => $entry['domain'],
                 'public' => $entry['public'] == 1,
-                'delete' => $this->url->link('information/whitelist/remove', 'wid=' . $entry['whitelist_id'], ''),
-                'make_public' => $this->url->link('information/whitelist/makepublic', 'wid=' . $entry['whitelist_id'], ''),
-                'make_private' => $this->url->link('information/whitelist/makeprivate', 'wid=' . $entry['whitelist_id'], '')
+                'delete' => $this->url->link('information/whitelist/remove', 'wid=' . $entry['id'], ''),
+                'make_public' => $this->url->link('information/whitelist/makepublic', 'wid=' . $entry['id'], ''),
+                'make_private' => $this->url->link('information/whitelist/makeprivate', 'wid=' . $entry['id'], '')
             );
         }
 

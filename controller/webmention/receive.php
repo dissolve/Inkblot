@@ -188,7 +188,7 @@ class ControllerWebmentionReceive extends Controller {
                 " WHERE webmention_id=" . (int)$webmention_id . " " .
                 " LIMIT 1");
             if (!empty($edit_q->row)) {
-                $interaction_id = $edit_q->row['interaction_id'];
+                $interaction_id = $edit_q->row['id'];
                 $editing = true;
             }
 
@@ -291,8 +291,8 @@ class ControllerWebmentionReceive extends Controller {
             if ($editing && $return_code == 410) {
                 if (isset($interaction_id)) {
                     $this->db->query("UPDATE " . DATABASE . ".interactions " .
-                        " SET deleted=1 " .
-                        " WHERE interaction_id = " . (int)$interaction_id);
+                        " SET deleted_at = NOW() " .
+                        " WHERE id = " . (int)$interaction_id);
                 }
 
                 //our curl command failed to fetch the source site
@@ -315,8 +315,8 @@ class ControllerWebmentionReceive extends Controller {
 
                 if ($editing && isset($interaction_id)) {
                     $this->db->query("UPDATE " . DATABASE . ".interactions " .
-                        " SET deleted=1 " .
-                        " WHERE interaction_id = " . (int)$interaction_id);
+                        " SET deleted_at = NOW() " .
+                        " WHERE id = " . (int)$interaction_id);
                 }
 
             } else {
@@ -378,7 +378,7 @@ class ControllerWebmentionReceive extends Controller {
 
                         //salmention
                         $res = $this->db->query("SELECT post_id " .
-                            " FROM " . DATABASE . ".interactions " .
+                            " FROM " . DATABASE . ".interaction_post " .
                             " WHERE interaction_id = '" . (int)$interaction_id . "' LIMIT 1");
                         if ($res->row) {
                             $post_id = $res->row['post_id'];
@@ -412,8 +412,9 @@ class ControllerWebmentionReceive extends Controller {
                         ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of']))
                         ? ", tag_of='" . $comment_data['tag-of'] . "'"
                         : "") .
-                        ", author_person_id ='" . $person_id . "'" .
-                        ", interaction_type='" . $interaction_type . "'" .
+                        ", person_id ='" . $person_id . "'" .
+                        ", type='" . $interaction_type . "'" .
+                        ", `person-mention` = 1 " . // TODO: does this make sense?
                         ", webmention_id='" . $webmention_id . "'" .
                         ""
                     );

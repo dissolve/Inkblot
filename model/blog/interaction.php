@@ -8,7 +8,7 @@ class ModelBlogInteraction extends Model {
         $query = $this->db->query(
             "SELECT * " .
             " FROM " . DATABASE . ".interaction_syndication " .
-            " WHERE syndication_url='" . $comment_data['url'] . "' " .
+            " WHERE url='" . $comment_data['url'] . "' " .
             " LIMIT 1"
         );
         if ( !empty($query->row) ) {
@@ -107,7 +107,7 @@ class ModelBlogInteraction extends Model {
             $this->db->query(
                 "INSERT INTO " . DATABASE . ".interactions " .
                 " SET source_url = '" . $comment_data['url'] . "'" .
-                ", author_person_id ='" . $person_id . "'" .
+                ", person_id ='" . $person_id . "'" .
                 ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of']))
                     ? ", tag_of='" . $comment_data['tag-of'] . "'"
                     : "") .
@@ -121,14 +121,21 @@ class ModelBlogInteraction extends Model {
                     ? ", `published`='" . $this->db->escape($comment_data['published']) . "'"
                     : ", `published`=NOW()") .
                 ", webmention_id='" . $webmention_id . "'" .
-                ", interaction_type='" . $interaction_type . "'" .
-                ", post_id = " . (int)$post['post_id'] .
+                ", type='" . $interaction_type . "'" .
                 ", parse_timestamp = NOW()" .
                 ($autoapprove ? ", approved=1" : '' ) .
                 ""
             );
 
+
             $interaction_id = $this->db->getLastId();
+
+            $this->db->query(
+                "INSERT INTO " . DATABASE . ".interaction_post " .
+                " SET interaction_id = '" . (int)$interaction_id . "'" .
+                " , post_id = " . (int)$post['id'] .
+                ""
+            );
 
             $syndication_sites = $this->cache->get('syndication.sites');
             if ( !$syndication_sites ) {
@@ -137,16 +144,16 @@ class ModelBlogInteraction extends Model {
                 $this->cache->set('syndication.sites', $syndication_sites);
             }
             if ( isset($comment_data['syndications']) ) {
-                foreach ($comment_data['syndications'] as $syndication_url) {
+                foreach ($comment_data['syndications'] as $url) {
                     // figure out what syndicaiton_site_id to use
                     foreach ($syndication_sites as $possible_site) {
-                        if ( strpos($syndication_url, $possible_site['site_url_match']) === 0 ) {
+                        if ( strpos($url, $possible_site['site_url_match']) === 0 ) {
                             $syn_site_id = $possible_site['syndication_site_id'];
                         }
                     }
 
                     $this->db->query("INSERT INTO " . DATABASE . ".interaction_syndication 
-                        SET syndication_url = '" . $this->db->escape($syndication_url) . "',
+                        SET url = '" . $this->db->escape($url) . "',
                         " . (isset($syn_site_id) ? "syndication_site_id = " . (int)$syn_site_id . ", " : "" ) . "
                             interaction_id = " . (int)$interaction_id);
 
@@ -154,13 +161,13 @@ class ModelBlogInteraction extends Model {
                     $query = $this->db->query(
                         "SELECT * " .
                         " FROM " . DATABASE . ".interaction " .
-                        " WHERE source_url='" . $this->db->escape($syndication_url) . "' " .
+                        " WHERE source_url='" . $this->db->escape($url) . "' " .
                         " LIMIT 1"
                     );
                     if ( !empty($query->row) ) {
                         $this->db->query(
                             "DELETE FROM " . DATABASE . ".interaction " .
-                            " WHERE source_url='" . $this->db->escape($syndication_url) . "' " .
+                            " WHERE source_url='" . $this->db->escape($url) . "' " .
                             " LIMIT 1"
                         );
                     }
@@ -170,9 +177,9 @@ class ModelBlogInteraction extends Model {
             if ( $autoapprove && $type == 'tag' ) {
                 foreach ($comment_data['tags'] as $tag) {
                     if ( isset($tag['category']) ) {
-                        $this->model_blog_post->addToCategory($post['post_id'], $tag['category']);
+                        $this->model_blog_post->addToCategory($post['id'], $tag['category']);
                     } elseif ( isset($tag['url']) ) {
-                        $this->model_blog_post->addToCategory($post['post_id'], $tag['url']);
+                        $this->model_blog_post->addToCategory($post['id'], $tag['url']);
                     }
                 }
 
@@ -217,7 +224,7 @@ class ModelBlogInteraction extends Model {
         if ( $webmention_id ) {
             $this->db->query(
                 "UPDATE " . DATABASE . ".interactions " .
-                " SET deleted=1 " .
+                " SET deleted_at = NOW() " .
                 " WHERE webmention_id = " . (int)$webmention_id
             );
             $new_interaction_id = $this->addWebmention($data, $webmention_id, $comment_data, $post_id);
@@ -242,9 +249,9 @@ class ModelBlogInteraction extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".interactions " .
-                " WHERE interaction_type='" . $type . "' " .
-                " AND post_id IS NULL " .
-                " AND deleted=0 " .
+                " WHERE type='" . $type . "' " .
+                " AND `person-mention` = 0 " .
+                " AND deleted_at IS NULL " .
                 " ORDER BY published ASC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
@@ -261,9 +268,9 @@ class ModelBlogInteraction extends Model {
             $query = $this->db->query(
                 "SELECT COUNT(*) AS total " .
                 " FROM " . DATABASE . ".interactions " .
-                " WHERE interaction_type='" . $type . "' " .
-                " AND post_id IS NULL " .
-                " AND deleted=0"
+                " WHERE type='" . $type . "' " .
+                " AND `person-mention` = 0 " .
+                " AND deleted_at IS NULL"
             );
             $data = $query->row['total'];
             $this->cache->set('interactions.' . $type . '.generic.count', $data);
@@ -285,33 +292,36 @@ class ModelBlogInteraction extends Model {
                 "SELECT interactions.*, " .
                 " webmentions.vouch_url " .
                 " FROM " . DATABASE . ".interactions " .
+                " JOIN " . DATABASE . ".interaction_post " .
+                " ON interactions.id = interaction_post.interaction_id " .
                 " JOIN " . DATABASE . ".webmentions " .
                 " USING(webmention_id) " .
-                " WHERE interaction_type='" . $type . "' " .
-                " AND post_id = " . (int)$post_id . " " .
-                " AND deleted=0 " .
+                " WHERE type='" . $type . "' " .
+                " AND interaction_post.post_id = " . (int)$post_id . " " .
+                " AND deleted_at IS NULL " .
                 " ORDER BY published ASC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $data = array();
             $this->load->model('blog/person');
             foreach ($query->rows as $row) {
-                $person = $this->model_blog_person->getPerson($row['author_person_id']);
+                $person = $this->model_blog_person->getPerson($row['person_id']);
                 $row['author'] = $person;
 
                 $row['published'] = date("c", strtotime($row['published']));
 
                 $second_level_query = $this->db->query(
-                    "SELECT sli.*, " .
-                    " FROM " . DATABASE . ".second_level_interactions sli " .
-                    " WHERE interaction_id='" . $row['interaction_id'] . "' " .
+                    "SELECT i.*, " .
+                    " FROM " . DATABASE . ".interactions i " .
+                    " JOIN " . DATABASE . ".interaction_interaction ii ON ii.child_id = i.interaction_id " .
+                    " WHERE parent_id='" . $row['interaction_id'] . "' " .
                     " ORDER BY published ASC "
                 );
 
                 $row['comments'] = $second_level_query->rows;
                 
                 foreach($row['comments'] as &$secondlev){
-                    $row['author'] = $this->model_blog_person->getPerson($row['author_person_id']);
+                    $row['author'] = $this->model_blog_person->getPerson($row['person_id']);
                     $secondlev['published'] = date("c", strtotime($secondlev['published']));
                 }
 
@@ -330,9 +340,11 @@ class ModelBlogInteraction extends Model {
             $query = $this->db->query(
                 "SELECT COUNT(*) AS total " .
                 " FROM " . DATABASE . ".interactions " .
-                " WHERE interaction_type='" . $type . "' " .
-                " AND post_id = " . (int)$post_id . " " .
-                " AND deleted=0"
+                " JOIN " . DATABASE . ".interaction_post " .
+                " ON interactions.id = interaction_post.interaction_id " .
+                " WHERE type='" . $type . "' " .
+                " AND interaction_post.post_id = " . (int)$post_id . " " .
+                " AND deleted_at IS NULL"
             );
             $data = $query->row['total'];
             $this->cache->set('interactions.' . $type . '.post.count.' . $post_id, $data);
@@ -371,14 +383,20 @@ class ModelBlogInteraction extends Model {
                 " FROM " . DATABASE . ".interactions " .
                 " JOIN " . DATABASE . ".webmentions " .
                 " USING(webmention_id) " .
-                " WHERE deleted=0 " .
+                " WHERE deleted_at IS NULL " .
                 " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
             );
             $data = array();
+        $this->load->model('blog/person');
             foreach ($query->rows as $row) {
+
+                $person = $this->model_blog_person->getPerson($row['person_id']);
+
                 $data[] = array_merge($row, array(
-                    'post' => $this->model_blog_post->getPost($row['post_id'])
+                    'post' => $this->model_blog_post->getPost($row['post_id']),
+                    'author' => $person
+
                 ));
             }
             $this->cache->set('interactions.recent.' . $skip . '.' . $limit, $data);
@@ -402,11 +420,10 @@ class ModelBlogInteraction extends Model {
         }
 
         $this->db->query(
-            "INSERT INTO " . DATABASE . ".second_level_interactions " .
+            "INSERT INTO " . DATABASE . ".interactions " .
             " SET source_url = '" . $this->db->escape($data['url']) . "', " .
-            " interaction_type='reply'," .
-            " interaction_id=" . (int)$interaction_id . ", " .
-            " author_person_id=" . (int)$person_id . ", " .
+            " type='reply'," .
+            " person_id=" . (int)$person_id . ", " .
             ((isset($data['text']) && !empty($data['text']))
                 ? " content='" . $this->db->escape($data['text']) . "', "
                 : "") .
@@ -418,6 +435,16 @@ class ModelBlogInteraction extends Model {
                 : " `published`=NOW(),") .
             " parse_timestamp = NOW()"
         );
+
+
+        $second_level_interaction_id = $this->db->getLastId();
+
+        $this->db->query(
+            "INSERT INTO " . DATABASE . ".interaction_interaction " .
+            " SET child_id=" . (int)$second_level_interaction_id . ", " .
+            " parent_id=" . (int)$interaction_id 
+        );
+
 
     }
 
