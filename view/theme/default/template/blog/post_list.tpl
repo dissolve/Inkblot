@@ -13,13 +13,13 @@
 
 
 <?php foreach($posts as $post) { ?>
-<article id="<?php echo $post['post_type']?>-<?php echo $post['id']?>" class="<?php echo $post['post_type']?> type-<?php echo $post['post_type']?> h-entry <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
+<article id="<?php echo $post['type']?>-<?php echo $post['id']?>" class="<?php echo $post['type']?> type-<?php echo $post['type']?> h-entry <?php echo ($post['draft'] == 1 ? 'draft':'') ?> <?php echo ($post['deleted'] == 1 ? 'deleted':'') ?>">
   <header class="entry-header">
-    <?php if($post['post_type'] != 'listen'){ ?>
+    <?php if($post['type'] != 'listen'){ ?>
     <h1 class="entry-title p-name"><a href="<?php echo $post['permalink']?>" class="u-url" title="Permalink to <?php echo $post['name']?>" ><?php echo $post['name']?></a></h1>
     <?php } ?>
 
-<?php if($post['post_type'] == 'snark'){ ?>
+<?php if($post['type'] == 'snark'){ ?>
     <h3 class="snark_alert">Sarcasm Alert</h3>
 <?php } ?>
 
@@ -40,9 +40,9 @@
      <?php } else { ?>
       <div class="entry-content e-content">
      <?php } ?>
-        <?php if(isset($post['weight_value']) && !empty($post['weight_value'])) { ?>
+        <?php if(isset($post['weight']) && !empty($post['weight'])) { ?>
          <h2 class="h-measure p-weight">
-             Weight: <data class="p-num" value="<?php echo $post['weight_value']?>"><?php echo $post['weight_value']?></data><data class="p-unit" value="<?php echo $post['weight_unit']?>"><?php echo $post['weight_unit']?></data>
+             Weight: <data class="p-num" value="<?php echo $post['weight']['num']?>"><?php echo $post['weight']['num']?></data><data class="p-unit" value="<?php echo $post['weight']['unit']?>"><?php echo $post['weight']['unit']?></data>
          </h2>
         <?php } ?>
         <?php if(isset($post['bookmark-of']) && !empty($post['bookmark-of'])) { ?>
@@ -51,7 +51,7 @@
         <?php } ?>
         <?php if(isset($post['following']) && !empty($post['following'])) { ?>
             <?php echo $post['author']['display_name'] . 
-             ($post['post_type'] == 'follow' ? ' followed ' : ' unfollowed ' ) .
+             ($post['type'] == 'follow' ? ' followed ' : ' unfollowed ' ) .
             '<a class="u-follow-of h-card" href="'.$post['following']['url'].'" >'.
             (isset($post['following']['photo']) && !empty($post['following']['photo']) ? '<img class="u-photo" style="width:40px;" src="'.$post['following']['photo'].'" />' : '' ).
             $post['following']['name'].
@@ -69,7 +69,7 @@
         <?php foreach($post['video'] as $video){ ?>
             <a href="<?php echo $video['path']?>">Video</a>
         <?php } ?>
-        <?php if($post['post_type'] == 'listen'){ ?>
+        <?php if($post['type'] == 'listen'){ ?>
             <?php echo 'I listend To <span class="song-title">'.$post['name'].'</span> by <span class="song-artist">'.$post['artist'].'</span>.'; ?>
       
         <?php  } ?>
@@ -88,14 +88,12 @@
              <?php } else { ?>
                 <?php echo $post['body_html']?>
              <?php } ?>
-            <?php if(isset($post['place_name']) && !empty($post['place_name'])){ 
-            echo "<br>Checked In At ".$post['place_name'];
+            <?php if(isset($post['location']) && isset($post['location']['name'])){ 
+            echo "<br>Checked In At ".$post['location']['name'];
             } ?>
-            <?php if(isset($post['location']) && !empty($post['location'])){
-              $joined_loc = str_replace('geo:', '', $post['location']);
-              $latlng = explode($joined_loc, ',');
+            <?php if(isset($post['location']) && isset($post['location']['latitude']) && isset($post['location']['longitude']) ){
               echo '<br>';
-              echo '<img id="map" style="width: 400px; height: 300px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=400x300&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'. $joined_loc.'"/>';
+              echo '<img id="map" style="width: 400px; height: 300px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=400x300&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'. $post['location']['latitude'] .',' . $post['location']['longitude'].'"/>';
             } ?>
       
       </div><!-- .entry-content -->
@@ -150,7 +148,7 @@
     <?php foreach($post['syndications'] as $elsewhere){ ?>
 
       <?php if(isset($elsewhere['image'])){ ?>
-      <a class="u-syndication" href="<?php echo $elsewhere['url']?>" ><img src="<?php echo $elsewhere['image']?>" title="<?php echo $elsewhere['site_name']?>" /></a>
+      <a class="u-syndication" href="<?php echo $elsewhere['url']?>" ><img src="<?php echo $elsewhere['image']?>" title="<?php echo $elsewhere['name']?>" /></a>
       <?php } else { ?>
       <a class="u-syndication" href="<?php echo $elsewhere['url']?>" ><i class="fa fa-link"></i></a>
       <?php } ?>

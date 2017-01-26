@@ -55,10 +55,6 @@ class ControllerCommonHome extends Controller {
             if (isset($post['summary']) && !empty($post['summary'])) {
                 $extra_data_array['summary_html'] = html_entity_decode($post['summary']);
             }
-            if (isset($post['following_id']) && !empty($post['following_id'])) {
-                $this->load->model('contacts/following');
-                $extra_data_array['follow'] = $this->model_contacts_following->getFollowing($post['following_id']);
-            }
 
             $this->data['is_owner'] = $this->session->data['is_owner'];
             if ($this->session->data['is_owner']) {

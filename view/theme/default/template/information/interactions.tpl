@@ -49,11 +49,11 @@
                 }
             ?>
 
-            <?php if($interaction['post']['post_type']) {?>
+            <?php if($interaction['post']['type']) {?>
                 <a class="<?php echo $linkclasses?>" href="<?php echo $interaction['post']['permalink']?>">
-                    <?php echo $interaction['post']['post_type']?>
+                    <?php echo $interaction['post']['type']?>
                 </a>
-            <?php } elseif($interaction['type'] == 'person-mention') { ?>
+            <?php } elseif($interaction['person-mention']) { ?>
                 <a class="<?php echo $linkclasses?>" href="<?php echo $interaction['target_url']?>">
                     Me
                 </a>

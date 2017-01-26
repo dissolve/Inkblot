@@ -11,8 +11,8 @@ class ControllerCommonPostbody extends Controller {
 
         $data['post'] = $post;
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/posttypes/' . $post['post_type'] . '.tpl')) {
-            return $this->load->view($this->config->get('config_template') . '/template/posttypes/' . $post['post_type'] . '.tpl', $data);
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/posttypes/' . $post['type'] . '.tpl')) {
+            return $this->load->view($this->config->get('config_template') . '/template/posttypes/' . $post['type'] . '.tpl', $data);
         } else {
             return $this->load->view('default/template/posttypes/note.tpl', $data);
         }

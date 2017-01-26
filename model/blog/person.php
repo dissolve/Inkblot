@@ -20,25 +20,32 @@ class ModelBlogPerson extends Model {
             return $person_id;
         }
 
+        if (empty($data['image']) && !empty($data['photo'])) {
+            $data['image'] = $data['photo'];
+        }
+
         if ( !isset($data['url']) && !isset($data['name']) && !isset($data['image']) ) {
             return null;
         }
 
         $data['url'] = $this->standardizeUrl($data['url']);
 
-        if (empty($data['image']) && !empty($data['photo'])) {
-            $data['image'] = $data['photo'];
-        }
-
-
         $this->db->query(
             "INSERT INTO " . DATABASE . ".people " .
-            " SET `url`='" . $this->db->escape($data['url']) . "', " .
+            " SET " .
             " `name`='" . $this->db->escape($data['name']) . "', " .
             " `image`='" . $this->db->escape($data['image']) . "' "
         );
 
         $id = $this->db->getLastId();
+
+        $this->db->query(
+            "INSERT INTO " . DATABASE . ".person_url " .
+            " SET " .
+            " `url`='" . $this->db->escape($data['url']) . "', " .
+            " `person_id`=" . (int)$id
+        );
+
         $this->cache->delete('people');
 
         return $id;

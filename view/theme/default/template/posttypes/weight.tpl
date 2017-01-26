@@ -6,7 +6,7 @@
         <img src="<?php echo $photo['path']?>" class="u-photo photo-post" <?php if(isset($photo['alt'])) { echo 'alt="'.$photo['alt'].'"'; } ?> /><br>
         <?php } ?>
          <h2 class="h-measure p-weight">
-             Weight: <data class="p-num" value="<?php echo $post['weight_value']?>"><?php echo $post['weight_value']?></data><data class="p-unit" value="<?php echo $post['weight_unit']?>"><?php echo $post['weight_unit']?></data>
+             Weight: <data class="p-num" value="<?php echo $post['weight']['num']?>"><?php echo $post['weight']['num']?></data><data class="p-unit" value="<?php echo $post['weight']['unit']?>"><?php echo $post['weight']['unit']?></data>
          </h2>
           <?php 
               echo $post['body_html'];

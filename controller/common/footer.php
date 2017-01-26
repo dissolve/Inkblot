@@ -61,11 +61,11 @@ class ControllerCommonFooter extends Controller {
         $data['recent_posts'] = array();
         foreach ($this->model_blog_post->getRecentPosts(10) as $result) {
             if (empty($result['title'])) {
-                if ($result['post_type'] == 'photo') {
+                if ($result['type'] == 'photo') {
                     $result['title'] = 'Photo';
-                } elseif ($result['post_type'] == 'checkin') {
-                    if (isset($result['place_name'])) {
-                        $result['title'] = substr('Checkin At ' . $result['place_name'], 0, 30) . '...';
+                } elseif ($result['type'] == 'checkin') {
+                    if (isset($result['location']) &&  isset($result['location']['name'])) {
+                        $result['title'] = substr('Checkin At ' . $result['location']['name'], 0, 30) . '...';
                     } else {
                         $result['title'] = 'Checkin';
                     }

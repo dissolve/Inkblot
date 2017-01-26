@@ -13,9 +13,9 @@ class ModelWebmentionQueue extends Model {
                 "INSERT INTO " . DATABASE . ".webmentions " .
                 " SET source_url='" . $this->db->escape($source) . "', " .
                 " target_url='" . $this->db->escape($target) . "', " .
-                " `timestamp` = NOW(), " .
-                " webmention_status_code='" . $status_code . "', " .
-                " webmention_status='queued'" . ($vouch ? ", " .
+                " `created_at` = NOW(), " .
+                " status_code='" . $status_code . "', " .
+                " status='queued'" . ($vouch ? ", " .
                 " vouch_url='" . $this->db->escape($vouch) . "'" : "")
             );
             $id = $this->db->getLastId();
@@ -24,12 +24,12 @@ class ModelWebmentionQueue extends Model {
             //this is an update or delete
             $this->db->query(
                 "UPDATE " . DATABASE . ".webmentions " .
-                " SET webmention_status_code='" . $status_code . "', " .
-                " webmention_status = 'queued'" . ($vouch ? ", " .
+                " SET status_code='" . $status_code . "', " .
+                " status = 'queued'" . ($vouch ? ", " .
                 " vouch_url='" . $this->db->escape($vouch) . "'" : "") . " " .
-                " WHERE webmention_id = '" . (int)$results['webmention_id'] . "'"
+                " WHERE id = '" . (int)$results['id'] . "'"
             );
-            return $results['webmention_id'];
+            return $results['id'];
 
         }
     }
@@ -38,7 +38,7 @@ class ModelWebmentionQueue extends Model {
     {
         $res = $this->db->query(
             "SELECT * FROM " . DATABASE . ".webmentions " .
-            " WHERE webmention_id = '" . (int)$id . "'"
+            " WHERE id = '" . (int)$id . "'"
         );
         return $res->row;
     }
@@ -48,7 +48,7 @@ class ModelWebmentionQueue extends Model {
         $res = $this->db->query(
             "UPDATE " . DATABASE . ".webmentions " .
             " set callback_url='" . $this->db->escape($callback_url) . "' " .
-            " WHERE webmention_id = '" . (int)$id . "'"
+            " WHERE id = '" . (int)$id . "'"
         );
         return $res->row;
     }
@@ -57,9 +57,9 @@ class ModelWebmentionQueue extends Model {
     {
         $res = $this->db->query(
             "SELECT * FROM " . DATABASE . ".webmentions " .
-            " WHERE webmention_status_code != 200 " .
-            " AND webmention_status_code != 410 " .
-            " AND (admin_status != 'dismiss' OR admin_status is NULL)"
+            " WHERE status_code != 200 " .
+            " AND status_code != 410 " .
+            " AND (admin_op != 'dismiss' OR admin_op is NULL)"
         );
         return $res->rows;
     }
@@ -67,9 +67,9 @@ class ModelWebmentionQueue extends Model {
     {
         $res = $this->db->query(
             "SELECT count(*) as count FROM " . DATABASE . ".webmentions " .
-            " WHERE webmention_status_code != 200 " .
-            " AND webmention_status_code != 410 " .
-            " AND (admin_status != 'dismiss' OR admin_status is NULL)"
+            " WHERE status_code != 200 " .
+            " AND status_code != 410 " .
+            " AND (admin_op != 'dismiss' OR admin_op is NULL)"
         );
         return $res->row['count'];
     }
@@ -78,13 +78,13 @@ class ModelWebmentionQueue extends Model {
     {
         $res = $this->db->query(
             "SELECT * FROM " . DATABASE . ".webmentions " .
-            " WHERE webmention_id = '" . (int)$id . "'"
+            " WHERE id = '" . (int)$id . "'"
         );
-        if ($res->row['webmention_status_code'] != 200) {
+        if ($res->row['status_code'] != 200) {
             $this->db->query(
                 "UPDATE " . DATABASE . ".webmentions " .
-                " SET admin_status = 'dismiss' " .
-                " WHERE webmention_id = " . (int)$id
+                " SET admin_op = 'dismiss' " .
+                " WHERE id = " . (int)$id
             );
         }
     }
@@ -92,14 +92,14 @@ class ModelWebmentionQueue extends Model {
     {
         $res = $this->db->query(
             "SELECT * FROM " . DATABASE . ".webmentions " .
-            " WHERE webmention_id = '" . (int)$id . "'"
+            " WHERE id = '" . (int)$id . "'"
         );
-        if ($res->row['webmention_status_code'] != 200) {
+        if ($res->row['status_code'] != 200) {
             $this->db->query(
                 "UPDATE " . DATABASE . ".webmentions " .
-                " SET webmention_status_code = 202, " .
-                " webmention_status='retry' " .
-                " WHERE webmention_id = " . (int)$id
+                " SET status_code = 202, " .
+                " status='retry' " .
+                " WHERE id = " . (int)$id
             );
         }
     }
@@ -107,12 +107,12 @@ class ModelWebmentionQueue extends Model {
     {
         $res = $this->db->query(
             "SELECT * FROM " . DATABASE . ".webmentions " .
-            " WHERE webmention_id = '" . (int)$id . "'"
+            " WHERE id = '" . (int)$id . "'"
         );
-        if ($res->row['webmention_status_code'] != 200) {
+        if ($res->row['status_code'] != 200) {
             $res = $this->db->query(
                 "SELECT * FROM " . DATABASE . ".webmentions " .
-                " WHERE webmention_id = '" . (int)$id . "'"
+                " WHERE id = '" . (int)$id . "'"
             );
 
             $this->load->model('webmention/vouch');
@@ -120,9 +120,9 @@ class ModelWebmentionQueue extends Model {
 
             $this->db->query(
                 "UPDATE " . DATABASE . ".webmentions " .
-                " SET webmention_status_code = 202, " .
-                " webmention_status='retry' " .
-                " WHERE webmention_id = " . (int)$id
+                " SET status_code = 202, " .
+                " status='retry' " .
+                " WHERE id = " . (int)$id
             );
         }
     }

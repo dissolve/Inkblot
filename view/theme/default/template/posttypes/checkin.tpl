@@ -6,19 +6,16 @@
       <?php 
           echo $post['body_html'];
           echo '<span class="p-geo">';
-          if(isset($post['place_name']) && !empty($post['place_name'])){
+          if(isset($post['location']) && isset($post['location']['name'])){ 
               echo "<br>";
-              echo '<span class="p-name">Checked In At '.$post['place_name']. '</span>';
+              echo '<span class="p-name">Checked In At '.$post['location']['name']. '</span>';
           }
-          if(isset($post['location']) && !empty($post['location'])){
-              // echo "<br>".$post['location'];
-              $joined_loc = str_replace('geo:', '', $post['location']);
-              $latlng = explode($joined_loc, ',');
+          if(isset($post['location']) && isset($post['location']['latitude']) && isset($post['location']['longitude']) ){
               echo '<br>';
-              echo '<img class="p-map" id="map" style="width: 400px; height: 300px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=400x300&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'.$joined_loc.'"/>';
+              echo '<img id="map" style="width: 400px; height: 300px" src="//maps.googleapis.com/maps/api/staticmap?zoom=13&size=400x300&maptype=roadmap&markers=size:mid%7Ccolor:blue%7C'. $post['location']['latitude'] .',' . $post['location']['longitude'].'"/>';
               echo '<span class="h-geo">';
-              echo '<data class="p-latitude" value="'.$latlng[0].'"></data>';
-              echo '<data class="p-longitude" value="'.$latlng[1].'"></data>';
+              echo '<data class="p-latitude" value="'.$post['location']['latitude'].'"></data>';
+              echo '<data class="p-longitude" value="'.$post['location']['logitude'].'"></data>';
               echo '</span>'; //end h-geo
 
           }

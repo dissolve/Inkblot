@@ -57,7 +57,7 @@ class ControllerContactsView extends Controller {
 
             foreach ($this->model_blog_post->getRecentPosts(10) as $result) {
                 if (empty($result['title'])) {
-                    if ($result['post_type'] == 'photo') {
+                    if ($result['type'] == 'photo') {
                         $result['title'] = 'photo';
                     } else {
                         $result['title'] = substr(strip_tags(html_entity_decode($result['content'])), 0, 30) . '...';

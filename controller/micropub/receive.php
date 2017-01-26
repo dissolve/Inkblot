@@ -363,7 +363,6 @@ class ControllerMicropubReceive extends Controller {
                 'name' => 'name',
                 'content' => 'content',
                 'location' => 'location',
-                'place_name' => 'place_name',
                 'like-of' => 'like-of',
                 'bookmark' => 'bookmark-of',
                 'slug' => 'slug');
@@ -551,6 +550,7 @@ class ControllerMicropubReceive extends Controller {
         if (isset($post_data['weight_unit'])) {
             $data['weight_unit'] = $post_data['weight_unit'];
         }
+        //deprecated
         if (isset($post_data['place_name'])) {
             $data['place_name'] = $post_data['place_name'];
         }

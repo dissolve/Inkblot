@@ -45,10 +45,6 @@ class ControllerInformationArchive extends Controller {
                 'like_count' => $like_count,
                 'actions' => array());
 
-            if (isset($post['following_id']) && !empty($post['following_id'])) {
-                $this->load->model('contacts/following');
-                $extra_data_array['follow'] = $this->model_contacts_following->getFollowing($post['following_id']);
-            }
             if ($this->session->data['is_owner']) {
                 if (!empty($post['deleted_at'])) {
                     $extra_data_array['actions']['undelete'] = array(

@@ -17,8 +17,8 @@
 <td><a href="<?php echo $entry['action_retry']?>">Retry</a></td>
 <td><a href="<?php echo $entry['action_dismiss']?>">Dismiss</a></td>
 <td><a href="<?php echo $entry['action_approve']?>">Approve</a></td>
-<td><?php echo $entry['webmention_status_code']?></td>
-<td><?php echo $entry['webmention_status']?></td>
+<td><?php echo $entry['status_code']?></td>
+<td><?php echo $entry['status']?></td>
 <td><a href="<?php echo $entry['source_url']?>" target="_blank"><?php echo parse_url($entry['source_url'], PHP_URL_HOST)?></a></td>
 </tr>
 <?php } ?>

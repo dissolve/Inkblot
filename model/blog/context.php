@@ -115,7 +115,7 @@ class ModelBlogContext extends Model {
 
             $query = $this->db->query("SELECT * " .
                 " FROM " . DATABASE . ".contexts " .
-                " WHERE source_url='" . $this->db->escape($real_url) . "' " .
+                " WHERE url='" . $this->db->escape($real_url) . "' " .
                 " LIMIT 1");
 
             if (!empty($query->row)) {
@@ -124,7 +124,7 @@ class ModelBlogContext extends Model {
             } else {
                 $published = $source_data['published'];
                 $content = $source_data['text'];
-                $source_name = $source_data['name'];
+                $name = $source_data['name'];
 
                 // do our best to conver to local time
                 date_default_timezone_set(LOCALTIMEZONE);
@@ -145,8 +145,8 @@ class ModelBlogContext extends Model {
 
                 $this->db->query("INSERT INTO " . DATABASE . ".contexts SET 
                     person_id = ".(int)$person_id . "
-                    source_name = '" . $this->db->escape($source_name) . "',
-                    source_url = '" . $this->db->escape($real_url) . "',
+                    name = '" . $this->db->escape($name) . "',
+                    url = '" . $this->db->escape($real_url) . "',
                     content = '" . $this->db->escape($content) . "',
                     published ='" . $published . "'");
 
@@ -253,7 +253,7 @@ class ModelBlogContext extends Model {
         if (!$data) {
             $query = $this->db->query("SELECT * " .
                 " FROM " . DATABASE . ".context_syndication " .
-                " JOIN " . DATABASE . ".syndication_site USING(syndication_site_id) " .
+                " JOIN " . DATABASE . ".syndication_sites ON context_syndicaton.syndication_site_id = syndication_site.id" .
                 " WHERE context_id = " . (int)$context_id);
 
             $data = $query->rows;

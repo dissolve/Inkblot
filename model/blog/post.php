@@ -58,6 +58,7 @@ class ModelBlogPost extends Model {
 
     public function editPost($data)
     {
+        //TODO this entire function seems like a bad idea
         //$this->log->write('called editPost');
         //$this->log->write(print_r($data,true));
         if (isset($data['id'])) {
@@ -145,9 +146,51 @@ class ModelBlogPost extends Model {
         $newcount = $query->row['newval'];
 
 
+        $weight = null;
+
+        if(isset($data['weight_value']) && !empty($data['weight_value'])){
+            $weight_obj = array('num' => $data['weight_value']);
+            if(isset($data['weight_unit']) && !empty($data['weight_unit'])){
+                $weight_obj['unit'] = $data['weight_unit'];
+            } else {
+                $weight_obj['unit'] = 'lbs';
+            }
+            $weight = json_encode($weight_obj);
+        } elseif(isset($data['weight']) && !empty($data['weight'])){
+            $weight = $data['weight'];
+        }
+
+        $location = null;
+        if( (isset($data['location']) && !empty($data['location']))
+            || (isset($data['place_name']) && !empty($data['place_name']))) {
+
+            $location_card_obj = array();
+
+            if (isset($data['location']) && !empty($data['location']) ) {
+                if (preg_match('/^geo:/', trim($post['location']))) {
+                    $location_card_obj['adr'] = array('geo' => $data['location']);
+                    $joined_loc = str_replace('geo:', '', $post['location']);
+                    $latlng = explode($joined_loc, ',');
+
+                    $location_card_obj['latitude'] = $latlng[0];
+                    $location_card_obj['longitude'] = $latlng[1];
+
+                } else {
+                    //ideally import this if possible
+                    $location_card_obj['url'] = $data['location'];
+                }
+
+            }
+            if ( isset($data['place_name']) && !empty($data['place_name'])) {
+                $location_card_obj['name'] = $data['place_name'];
+            }
+
+        }
+
+
 
         $sql = "INSERT INTO " . DATABASE . ".posts " .
-            " SET `post_type`='" . $this->db->escape($type) . "', " .
+            " SET `type`='" . $this->db->escape($type) . "', " .
             " `published` = " . $published . ", " .
             " `year` = " . (int)$year . ", " .
             " `month` = " . (int)$month . ", " .
@@ -181,23 +224,12 @@ class ModelBlogPost extends Model {
             (isset($data['rsvp']) && !empty($data['rsvp'])
                 ? ", rsvp='" . $this->db->escape($data['rsvp']) . "'"
                 : "") .
-            (isset($data['location']) && !empty($data['location'])
-                ? ", location='" . $this->db->escape($data['location']) . "'"
-                : "") .
-            (isset($data['place_name']) && !empty($data['place_name'])
-                ? ", place_name='" . $this->db->escape($data['place_name']) . "'"
-                : "") .
-            (isset($data['weight_value']) && !empty($data['weight_value'])
-                ? ", weight_value='" . $this->db->escape($data['weight_value']) . "'"
-                : "") .
-            (isset($data['weight_unit']) && !empty($data['weight_unit'])
-                ? ", weight_unit='" . $this->db->escape($data['weight_unit']) . "'"
-                : "") .
+
+            ($location ? "location='" . $location  . "' " : "") .
+            ($weight ? "weight='" . $weight  . "' " : "") .
+
             (isset($data['created_by']) && !empty($data['created_by'])
                 ? ", created_by='" . $this->db->escape($data['created_by']) . "'"
-                : "") .
-            (isset($data['following_id']) && !empty($data['following_id'])
-                ? ", following_id='" . (int)$data['following_id'] . "'"
                 : "");
 
         //$this->log->write($sql);
@@ -324,8 +356,10 @@ class ModelBlogPost extends Model {
                         break;
 
                     case 'in-reply-to':
-                        $mf2_post['properties']['in-reply-to'] = explode(',', $value);
+                        $mf2_post['properties']['in-reply-to'] = explode(',', $value); //TODO this is not correct mf2 i don't think
                         break;
+                    case 'weight':
+                        $mf2_post['properties']['weight'] = json_encode($post['weight']); 
                     case 'slug':
                     case 'summary':
                     case 'content':
@@ -341,10 +375,7 @@ class ModelBlogPost extends Model {
 
                         /*
                 'rsvp'
-                'location'
-                'place_name'
                 'created_by'
-                'following_id'
                          */
                         break;
                     default:
@@ -381,7 +412,6 @@ class ModelBlogPost extends Model {
 
     public function getPost($post_id)
     {
-        //TODO: in-reply-to spoof
         $post = $this->cache->get('post.' . $post_id);
         if (!$post) {
             $query = $this->db->query(
@@ -421,7 +451,7 @@ class ModelBlogPost extends Model {
                 'syndications' => $syndications,
                 'permalink' => $this->url->link(
                     'blog/post',
-                    'post_type=' . $post['post_type'] . '&' .
+                    'type=' . $post['type'] . '&' .
                     'year=' . $post['year'] . '&' .
                     'month=' . $post['month'] . '&' .
                     'day=' . $post['day'] . '&' .
@@ -445,6 +475,9 @@ class ModelBlogPost extends Model {
             }
             $post['in-reply-to'] = implode(', ', $reply_tos);
 
+            $post['weight'] = json_decode($post['weight'], true);
+            $post['location'] = json_decode($post['location'], true);
+
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".post_access " .
@@ -459,13 +492,13 @@ class ModelBlogPost extends Model {
 
             //$post['name'] = $post['title'];
 
-            //if ($post['post_type'] == 'article' && preg_match('/<hr \/>/', $post['content'])) {
+            //if ($post['type'] == 'article' && preg_match('/<hr \/>/', $post['content'])) {
                 //$post['summary'] = preg_replace('/<hr \/>.*/s', '', $post['content']);
                 //$post['content'] = preg_replace('/<hr \/>/', '', $post['content']);
             //}
             date_default_timezone_set(LOCALTIMEZONE);
             $post['published'] = date("c", strtotime($post['published']));
-            if ($post['post_type'] == 'bookmark') {
+            if ($post['type'] == 'bookmark') {
                 $post['description'] = $post['content'];
             }
             $this->cache->set('post.' . $post_id, $post);
@@ -586,7 +619,7 @@ class ModelBlogPost extends Model {
                 // todo need to map this->db->escape
                 $query = $this->db->query(
                     "SELECT id FROM " . DATABASE . ".posts " .
-                    " WHERE post_type IN ('" . implode("','", $type_list) . "') " .
+                    " WHERE `type` IN ('" . implode("','", $type_list) . "') " .
                     " AND draft=0 " .
                     " ORDER BY published DESC " .
                     " LIMIT " . (int)$skip . ", " . (int)$limit
@@ -600,7 +633,7 @@ class ModelBlogPost extends Model {
                 // todo need to map this->db->escape
                 $query = $this->db->query(
                     "SELECT id FROM " . DATABASE . ".posts " .
-                    " WHERE post_type IN ('" . implode("','", $type_list) . "') " .
+                    " WHERE `type` IN ('" . implode("','", $type_list) . "') " .
                     " AND deleted_at is null " .
                     " AND draft=0 " .
                     " ORDER BY published DESC " .
@@ -680,7 +713,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query(
                 "SELECT id " .
                 " FROM " . DATABASE . ".posts " .
-                " WHERE post_type = '" . $this->db->escape($type) . "' " .
+                " WHERE `type` = '" . $this->db->escape($type) . "' " .
                 " AND deleted_at is null " .
                 " AND draft=0 " .
                 " ORDER BY published DESC " .
@@ -738,7 +771,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query(
                 "SELECT id " .
                 " FROM " . DATABASE . ".posts " .
-                " WHERE post_type='" . $this->db->escape($type) . "' " .
+                " WHERE `type`='" . $this->db->escape($type) . "' " .
                 " AND `year` = '" . (int)$year . "' " .
                 " AND `month` = '" . (int)$month . "' " .
                 " AND deleted_at is null " .
@@ -800,7 +833,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 "FROM " . DATABASE . ".post_syndication " .
-                " JOIN " . DATABASE . ".syndication_site USING(syndication_site_id) " .
+                " JOIN " . DATABASE . ".syndication_sites ON context_syndicaton.syndication_site_id = syndication_site.id" .
                 " WHERE post_id = " . (int)$post_id
             );
 
@@ -817,14 +850,14 @@ class ModelBlogPost extends Model {
             //figure out what site this is.
             $sites_query = $this->db->query(
                 "SELECT * " .
-                "FROM " . DATABASE . ".syndication_site "
+                "FROM " . DATABASE . ".syndication_sites "
             );
             $sites = $sites_query->rows;
 
             $syn_site_id = 0;
             foreach ($sites as $site) {
-                if (strpos($url, $site['site_url_match']) === 0) {
-                    $syn_site_id = $site['syndication_site_id'];
+                if (strpos($url, $site['url_match']) === 0) {
+                    $syn_site_id = $site['id'];
                     break;
                 }
             }
@@ -913,9 +946,8 @@ class ModelBlogPost extends Model {
             case 'deleted_at':
             case 'rsvp':
             case 'location':
-            case 'place_name':
             case 'created_by':
-            case 'following_id':
+            case 'weight':
 
                 if(is_array($value)){
                     $value = $value[0];
@@ -1051,9 +1083,8 @@ class ModelBlogPost extends Model {
             case 'deleted_at':
             case 'rsvp':
             case 'location':
-            case 'place_name':
             case 'created_by':
-            case 'following_id':
+            case 'weight':
 
                 if(is_array($value)){
                     $value = $value[0];

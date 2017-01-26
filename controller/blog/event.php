@@ -22,7 +22,7 @@ class ControllerBlogPost extends Controller {
         if ($this->request->get['slug'] != $post['slug'] ) {
             $this->response->redirect($post['permalink']);
         }
-        if ( explode('/', $this->request->server['REQUEST_URI'])[1] != $post['post_type'] ) {
+        if ( explode('/', $this->request->server['REQUEST_URI'])[1] != $post['type'] ) {
             $this->response->redirect($post['permalink']);
         }
 
@@ -31,7 +31,6 @@ class ControllerBlogPost extends Controller {
         $this->load->model('blog/category');
         $this->load->model('blog/post');
         $this->load->model('blog/interaction');
-        $this->load->model('blog/context');
 
         if ($this->session->data['is_owner']) {
             $data['is_owner'] = true;
@@ -133,10 +132,9 @@ class ControllerBlogPost extends Controller {
 
             //TODO
             $data['name'] = $post['title'];
-            $data['dt-start'] = $post['event_start_timestamp'];
-            $data['dt-end'] = $post['event_end_timestamp'];
+            $data['dt-start'] = $post['event_start'];
+            $data['dt-end'] = $post['event_end'];
             $data['location'] = $post['location'];
-            $data['place_name'] = $post['place_name'];
             $data['organizer'] = array('link' => $this->url->link('') , 'display_name' => AUTHOR_NAME);
             $data['description'] = $post['body_html'];
         //      p-attendee
@@ -151,8 +149,7 @@ class ControllerBlogPost extends Controller {
                 'comments' => $comments,
                 'mentions' => $mentions,
                 'like_count' => $like_count,
-                'likes' => $likes,
-                'context' => $context
+                'likes' => $likes
                 ));
 
             $data['post']['actions'] = array();
@@ -239,10 +236,10 @@ class ControllerBlogPost extends Controller {
     public function latest()
     {
 
-        $post_type = $this->request->get['post_type'];
+        $type = $this->request->get['type'];
 
-        $this->document->setTitle('Latest ' . ucfirst($post_type) . ' Stream');
-        $data['title'] = 'Latest ' . ucfirst($post_type) . ' Stream';
+        $this->document->setTitle('Latest ' . ucfirst($type) . ' Stream');
+        $data['title'] = 'Latest ' . ucfirst($type) . ' Stream';
 
         $this->document->setDescription($this->config->get('config_meta_description'));
         $this->document->setBodyClass('h-feed');
@@ -256,7 +253,7 @@ class ControllerBlogPost extends Controller {
 
         $data['posts'] = array();
 
-        foreach ($this->model_blog_post->getRecentPostsByType($post_type) as $post) {
+        foreach ($this->model_blog_post->getRecentPostsByType($type) as $post) {
             $categories = $this->model_blog_category->getCategoriesForPost($post['id']);
             $author = array(
                 'link' => $this->url->link(''),

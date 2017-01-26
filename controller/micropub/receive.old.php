@@ -192,24 +192,22 @@ class ControllerMicropubReceive extends Controller {
 
                     if (strcmp($h, 'card') == 0) {
                         switch ($mp_action) {
-                            case 'unfollow':
-                                if ($has_follow_access) {
-                                    $this->unfollowCard();
-                                } else {
-                            //$this->log->write('err2');
-                                    header('HTTP/1.1 401 Unauthorized');
-                                    exit();
-                                }
-                                break;
-                            case 'follow':
-                                if ($has_follow_access) {
-                                    $this->followCard();
-                                } else {
-                            //$this->log->write('err3');
-                                    header('HTTP/1.1 401 Unauthorized');
-                                    exit();
-                                }
-                                break;
+                            //case 'unfollow':
+                                //if ($has_follow_access) {
+                                    //$this->unfollowCard();
+                                //} else {
+                                    //header('HTTP/1.1 401 Unauthorized');
+                                    //exit();
+                                //}
+                                //break;
+                            //case 'follow':
+                                //if ($has_follow_access) {
+                                    //$this->followCard();
+                                //} else {
+                                    //header('HTTP/1.1 401 Unauthorized');
+                                    //exit();
+                                //}
+                                //break;
                             case 'edit':
                                 if ($has_contacts_access) {
                                     $this->editCard();
@@ -671,6 +669,7 @@ class ControllerMicropubReceive extends Controller {
         }
     }
 
+    /*
     private function followCard()
     {
 
@@ -695,19 +694,6 @@ class ControllerMicropubReceive extends Controller {
             $card_data['photo'] = '';
         }
 
-        /*
-        if(isset($this->request->post['syndicate-to']) && !empty($this->request->post['syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        } elseif(isset($this->request->post['mp-syndicate-to']) && !empty($this->request->post['mp-syndicate-to'])){
-            $data['syndication_extra'] = '';
-            foreach($this->request->post['mp-syndicate-to'] as $synto){
-                $data['syndication_extra'] .= '<a href="'.$synto.'"></a>';
-            }
-        }
-         */
 
         $following_id = $this->model_contacts_following->followCard($card_data);
         $post_id = $this->model_blog_post->newPost('follow', array('following_id' => $following_id));
@@ -734,6 +720,7 @@ class ControllerMicropubReceive extends Controller {
         $this->response->addHeader('Location: ' . $post['permalink']);
         $this->response->setOutput($post['permalink']);
     }
+     */
 
     private function syndicateByMp($data, $url, $post_id)
     {

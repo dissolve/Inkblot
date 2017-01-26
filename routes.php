@@ -73,12 +73,12 @@ $advanced_routes[] = array('controller' => 'common/fixroute',
 //The way this file is processed, the  later routes have precedence
 
 $advanced_routes[] = array('controller' => 'blog/post',
-    'expression' => '`^(?P<post_type>\w+)/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
-    'reverse' => '{post_type}/{year}/{month}/{day}/{daycount}/{slug}');
+    'expression' => '`^(?P<type>\w+)/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<daycount>\d+)/(?P<slug>.*)`',
+    'reverse' => '{type}/{year}/{month}/{day}/{daycount}/{slug}');
 
 $advanced_routes[] = array('controller' => 'blog/post/latest',
-    'expression' => '`^(?P<post_type>\w+)/?$`',
-    'reverse' => '{post_type}/');
+    'expression' => '`^(?P<type>\w+)/?$`',
+    'reverse' => '{type}/');
 
 
 

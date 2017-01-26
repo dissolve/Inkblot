@@ -14,9 +14,9 @@ class ModelBlogInteraction extends Model {
         if ( !empty($query->row) ) {
             $this->db->query(
                 "UPDATE " . DATABASE . ".webmentions " .
-                " SET webmention_status_code = '200', " .
-                " webmention_status = 'duplicate' " .
-                " WHERE webmention_id = " . (int)$webmention_id
+                " SET status_code = '200', " .
+                " status = 'duplicate' " .
+                " WHERE id = " . (int)$webmention_id
             );
             return null;
         }
@@ -82,20 +82,20 @@ class ModelBlogInteraction extends Model {
                 break;
                 case 'mention':
                 default:
-                    $query = $this->db->query(
-                        "SELECT * " .
-                        " FROM " . DATABASE . ".webmentions " .
-                        " WHERE webmention_id = " . (int)$webmention_id .
-                        " LIMIT 1"
-                    );
-                    $mention_record = $query->row;
-                    if ( $mention_record['target_url'] == HTTP_SERVER ||
-                        $mention_record['target_url'] == HTTPS_SERVER ||
-                        $mention_record['target_url'] == HTTP_SHORT ||
-                        $mention_record['target_url'] == HTTPS_SHORT  ) {
-                        $interaction_type = 'person-mention';
-                    }
+                    $interaction_type = 'mention';
                 break;
+            }
+            $query = $this->db->query(
+                "SELECT * " .
+                " FROM " . DATABASE . ".webmentions " .
+                " WHERE id = " . (int)$webmention_id .
+                " LIMIT 1"
+            );
+            $mention_record = $query->row;
+            $person_mention = false;
+            if ( $mention_record['target_url'] == HTTP_SERVER || $mention_record['target_url'] == HTTPS_SERVER
+                    || $mention_record['target_url'] == HTTP_SHORT || $mention_record['target_url'] == HTTPS_SHORT  ) {
+                $person_mention = true;
             }
 
             //TODO: move this to some config setting
@@ -106,7 +106,7 @@ class ModelBlogInteraction extends Model {
 
             $this->db->query(
                 "INSERT INTO " . DATABASE . ".interactions " .
-                " SET source_url = '" . $comment_data['url'] . "'" .
+                " SET url = '" . $comment_data['url'] . "'" .
                 ", person_id ='" . $person_id . "'" .
                 ((isset($comment_data['tag-of']) && !empty($comment_data['tag-of']))
                     ? ", tag_of='" . $comment_data['tag-of'] . "'"
@@ -115,14 +115,15 @@ class ModelBlogInteraction extends Model {
                     ? ", content='" . $this->db->escape($comment_data['text']) . "'"
                     : "") .
                 ((isset($comment_data['name'])  && !empty($comment_data['name']))
-                    ? ", source_name='" . $this->db->escape($comment_data['name']) . "'"
+                    ? ", name='" . $this->db->escape($comment_data['name']) . "'"
                     : "") .
                 ((isset($comment_data['published'])  && !empty($comment_data['published']))
                     ? ", `published`='" . $this->db->escape($comment_data['published']) . "'"
                     : ", `published`=NOW()") .
+                ($person_mention ? ", `person-mention` = 1 " :  ", `person-mention` = 0 " ) .
                 ", webmention_id='" . $webmention_id . "'" .
                 ", type='" . $interaction_type . "'" .
-                ", parse_timestamp = NOW()" .
+                ", created_at = NOW()" .
                 ($autoapprove ? ", approved=1" : '' ) .
                 ""
             );
@@ -139,7 +140,7 @@ class ModelBlogInteraction extends Model {
 
             $syndication_sites = $this->cache->get('syndication.sites');
             if ( !$syndication_sites ) {
-                $syn_site_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site");
+                $syn_site_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_sites");
                 $syndication_sites = $syn_site_query->rows;
                 $this->cache->set('syndication.sites', $syndication_sites);
             }
@@ -147,8 +148,8 @@ class ModelBlogInteraction extends Model {
                 foreach ($comment_data['syndications'] as $url) {
                     // figure out what syndicaiton_site_id to use
                     foreach ($syndication_sites as $possible_site) {
-                        if ( strpos($url, $possible_site['site_url_match']) === 0 ) {
-                            $syn_site_id = $possible_site['syndication_site_id'];
+                        if ( strpos($url, $possible_site['url_match']) === 0 ) {
+                            $syn_site_id = $possible_site['id'];
                         }
                     }
 
@@ -161,13 +162,13 @@ class ModelBlogInteraction extends Model {
                     $query = $this->db->query(
                         "SELECT * " .
                         " FROM " . DATABASE . ".interaction " .
-                        " WHERE source_url='" . $this->db->escape($url) . "' " .
+                        " WHERE url='" . $this->db->escape($url) . "' " .
                         " LIMIT 1"
                     );
                     if ( !empty($query->row) ) {
                         $this->db->query(
                             "DELETE FROM " . DATABASE . ".interaction " .
-                            " WHERE source_url='" . $this->db->escape($url) . "' " .
+                            " WHERE url='" . $this->db->escape($url) . "' " .
                             " LIMIT 1"
                         );
                     }
@@ -194,9 +195,9 @@ class ModelBlogInteraction extends Model {
 
             $this->db->query(
                 "UPDATE " . DATABASE . ".webmentions " .
-                " SET webmention_status_code = '200', " .
-                " webmention_status = 'OK' " .
-                " WHERE webmention_id = " . (int)$webmention_id
+                " SET status_code = '200', " .
+                " status = 'OK' " .
+                " WHERE id = " . (int)$webmention_id
             );
             $this->cache->delete('interactions');
 
@@ -212,26 +213,23 @@ class ModelBlogInteraction extends Model {
     {
 
         $query = $this->db->query(
-            "SELECT webmention_id, " .
-            " interactions.* " .
+            "SELECT * " .
             " FROM " . DATABASE . ".webmentions " .
-            " JOIN " . DATABASE . ".interactions " .
-            " USING(webmention_id) " .
-            " WHERE webmention_id = " . (int)$webmention_id . " " .
+            " WHERE id = " . (int)$webmention_id . " " .
             " LIMIT 1"
         );
-        $webmention = $query->row;
-        if ( $webmention_id ) {
+        if ( $query->num_rows ) {
             $this->db->query(
                 "UPDATE " . DATABASE . ".interactions " .
                 " SET deleted_at = NOW() " .
-                " WHERE webmention_id = " . (int)$webmention_id
+                " WHERE webmention_id = " . (int)$webmention_id .
+                " AND deleted_at IS NULL "
             );
             $new_interaction_id = $this->addWebmention($data, $webmention_id, $comment_data, $post_id);
             $this->db->query(
                 "UPDATE " . DATABASE . ".webmentions " .
-                " SET webmention_status='Updated' " .
-                " WHERE webmention_id = " . (int)$webmention_id
+                " SET status='Updated' " .
+                " WHERE id = " . (int)$webmention_id
             );
             return $new_interaction_id;
         }
@@ -295,7 +293,7 @@ class ModelBlogInteraction extends Model {
                 " JOIN " . DATABASE . ".interaction_post " .
                 " ON interactions.id = interaction_post.interaction_id " .
                 " JOIN " . DATABASE . ".webmentions " .
-                " USING(webmention_id) " .
+                " ON interactions.webmention_id = webmentions.id " .
                 " WHERE type='" . $type . "' " .
                 " AND interaction_post.post_id = " . (int)$post_id . " " .
                 " AND deleted_at IS NULL " .
@@ -313,8 +311,8 @@ class ModelBlogInteraction extends Model {
                 $second_level_query = $this->db->query(
                     "SELECT i.*, " .
                     " FROM " . DATABASE . ".interactions i " .
-                    " JOIN " . DATABASE . ".interaction_interaction ii ON ii.child_id = i.interaction_id " .
-                    " WHERE parent_id='" . $row['interaction_id'] . "' " .
+                    " JOIN " . DATABASE . ".interaction_interaction ii ON ii.child_id = i.id " .
+                    " WHERE ii.parent_id='" . $row['id'] . "' " .
                     " ORDER BY published ASC "
                 );
 
@@ -359,8 +357,8 @@ class ModelBlogInteraction extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 " FROM " . DATABASE . ".interaction_syndication " .
-                " JOIN " . DATABASE . ".syndication_site " .
-                " USING(syndication_site_id) " .
+                " JOIN " . DATABASE . ".syndication_sites " .
+                " ON interaction_syndication.syndication_site_id = syndication_site.id " .
                 " WHERE interaction_id = " . (int)$interaction_id
             );
 
@@ -382,7 +380,7 @@ class ModelBlogInteraction extends Model {
                 " webmentions.target_url " .
                 " FROM " . DATABASE . ".interactions " .
                 " JOIN " . DATABASE . ".webmentions " .
-                " USING(webmention_id) " .
+                " ON interactions.webmention_id = webmentions.id " .
                 " WHERE deleted_at IS NULL " .
                 " ORDER BY published DESC " .
                 " LIMIT " . (int)$skip . ", " . (int)$limit
@@ -421,19 +419,19 @@ class ModelBlogInteraction extends Model {
 
         $this->db->query(
             "INSERT INTO " . DATABASE . ".interactions " .
-            " SET source_url = '" . $this->db->escape($data['url']) . "', " .
+            " SET url = '" . $this->db->escape($data['url']) . "', " .
             " type='reply'," .
             " person_id=" . (int)$person_id . ", " .
             ((isset($data['text']) && !empty($data['text']))
                 ? " content='" . $this->db->escape($data['text']) . "', "
                 : "") .
             ((isset($data['name'])  && !empty($data['name']))
-                ? " source_name='" . $this->db->escape($data['name']) . "', "
+                ? " name='" . $this->db->escape($data['name']) . "', "
                 : "") .
             ((isset($data['published'])  && !empty($data['published']))
                 ? " `published`='" . $this->db->escape($data['published']) . "',"
                 : " `published`=NOW(),") .
-            " parse_timestamp = NOW()"
+            " created_at = NOW()"
         );
 
 

@@ -17,19 +17,19 @@ class ControllerWebmentionQueue extends Controller {
             $this->load->model('webmention/queue');
             $entry = $this->model_webmention_queue->getEntry($this->request->get['id']);
             if ($entry) {
-                header('Webmention-Status: ' . $entry['webmention_status_code']);
+                header('Webmention-Status: ' . $entry['status_code']);
 
-                if ($entry['webmention_status'] == 'accepted') {
+                if ($entry['status'] == 'accepted') {
                     $this->response->setOutput('This webmention has been accepted is awaiting moderator approval.');
 
-                } elseif ($entry['webmention_status'] == 'OK') {
+                } elseif ($entry['status'] == 'OK') {
                     $this->response->setOutput('This webmention has been accepted and approved.');
 
-                } elseif ($entry['webmention_status'] == 'queued') {
+                } elseif ($entry['status'] == 'queued') {
                     $this->response->setOutput('This webmention is in the process queue.');
 
                 } else {
-                    $this->response->setOutput('This webmention processing failed because: ' . $entry['webmention_status']);
+                    $this->response->setOutput('This webmention processing failed because: ' . $entry['status']);
 
                 }
 
@@ -110,7 +110,7 @@ class ControllerWebmentionQueue extends Controller {
 
         while (!empty($post)) {
             //immediately update this to say that it is parsed.. this way we don't end up trying to run it multiple times on the same post
-            $this->db->query("UPDATE " . DATABASE . ".posts SET context_parsed = 1 WHERE post_id = " . (int)$post_id);
+            $this->db->query("UPDATE " . DATABASE . ".posts SET context_parsed = 1 WHERE id = " . (int)$post_id);
 
             $source_url = trim($post['in-reply-to']); //todo want to support multiples
 
@@ -186,7 +186,7 @@ class ControllerWebmentionQueue extends Controller {
 
         $real_url = $source_data['url'];
 
-        $query = $this->db->query("SELECT * FROM " . DATABASE . ".contexts WHERE source_url='" . $this->db->escape($real_url) . "' LIMIT 1");
+        $query = $this->db->query("SELECT * FROM " . DATABASE . ".contexts WHERE url='" . $this->db->escape($real_url) . "' LIMIT 1");
 
         if (!empty($query->row)) {
             return $query->row['id'];
@@ -208,7 +208,7 @@ class ControllerWebmentionQueue extends Controller {
 
         $published = $source_data['published'];
         $body = $source_data['text'];
-        $source_name = $source_data['name'];
+        $name = $source_data['name'];
 
 
         // do our best to conver to local time
@@ -224,8 +224,8 @@ class ControllerWebmentionQueue extends Controller {
 
         $this->db->query("INSERT INTO " . DATABASE . ".contexts SET 
             person_id = ".(int)$person_id . "
-            source_name = '" . $this->db->escape($source_name) . "',
-            source_url = '" . $this->db->escape($real_url) . "',
+            name = '" . $this->db->escape($name) . "',
+            url = '" . $this->db->escape($real_url) . "',
             content = '" . $this->db->escape($body) . "',
             published ='" . $published . "'");
 
@@ -233,7 +233,7 @@ class ControllerWebmentionQueue extends Controller {
 
         $syndication_sites = $this->cache->get('syndication.sites');
         if (!$syndication_sites) {
-            $syn_site_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_site");
+            $syn_site_query = $this->db->query("SELECT * FROM " . DATABASE . ".syndication_sites");
             $syndication_sites = $syn_site_query->rows;
             $this->cache->set('syndication.sites', $syndication_sites);
         }
@@ -242,28 +242,28 @@ class ControllerWebmentionQueue extends Controller {
             foreach ($sourch_data['syndications'] as $url) {
                 // figure out what syndicaiton_site_id to use
                 foreach ($syndication_sites as $possible_site) {
-                    if (strpos($url, $possible_site['site_url_match']) === 0) {
-                        $syn_site_id = $possible_site['syndication_site_id'];
+                    if (strpos($url, $possible_site['url_match']) === 0) {
+                        $syn_site_id = $possible_site['id'];
                     }
                 }
 
 
                 $this->db->query("INSERT INTO " . DATABASE . ".context_syndication 
                     SET url = '" . $this->db->escape($url) . "',
-                        " . (isset($syn_site_id) ? "syndication_site_id = " . (int)$syn_site_id . ", " : "" ) . "
+                        " . (isset($syn_site_id) ? "id = " . (int)$syn_site_id . ", " : "" ) . "
                         context_id = " . (int)$context_id);
 
                 //remove any syndicated copies we have already parsed
                 $query = $this->db->query(
                     "SELECT * " .
                     " FROM " . DATABASE . ".contexts " .
-                    " WHERE source_url='" . $this->db->escape($url) . "' " .
+                    " WHERE url='" . $this->db->escape($url) . "' " .
                     " LIMIT 1"
                 );
                 if (!empty($query->row)) {
                     $this->db->query(
                         "DELETE FROM " . DATABASE . ".contexts " .
-                        " WHERE source_url='" . $this->db->escape($url) . "' " .
+                        " WHERE url='" . $this->db->escape($url) . "' " .
                         " LIMIT 1"
                     );
                     $this->db->query(

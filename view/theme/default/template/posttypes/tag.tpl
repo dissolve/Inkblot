@@ -4,7 +4,7 @@
       <div class="entry-content e-content tag <?php echo (empty($post['name']) ? 'p-name' : '')?>">
             <i class="fa fa-heart-o"></i><br>
       <?php 
-	if(isset($post['tag_person']) && !empty($post['tag_person']){
+	if(isset($post['tag_person']) && !empty($post['tag_person'])){
           echo $post['author']['display_name'] . 
 	    ' tagged <a class="u-category h-card" href="'.$post['tag_url'].'" '.
                 (isset($post['tag_shape']) && !empty($post['tag_shape']) ? 'shape="'.$post['tag_shape'].'" ': '').
