@@ -51,7 +51,7 @@ class ControllerMicropubReceive extends Controller {
                 $has_register_access = false;
 
                 if (!empty($auth_info)  && isset($auth_info['scope']) && !empty($auth_info['scope'])) {
-                    $has_post_access = in_array('post', $scopes);
+                    $has_post_access = in_array('post', $scopes) || in_array('create', $scopes);
                     $has_edit_access = in_array('update', $scopes) || in_array('edit', $scopes);
                     $has_delete_access = in_array('delete', $scopes);
                     $has_follow_access = in_array('follow', $scopes);

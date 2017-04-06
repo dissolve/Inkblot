@@ -19,7 +19,7 @@
                   <label for="indie_auth_url">Web Address:</label>
                   <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
                   <p><button type="submit">Log In</button></p>
-                  <input type="hidden" name="scope" value="post edit delete contacts follow" />
+                  <input type="hidden" name="scope" value="create edit delete contacts follow" />
                 </form>
               <?php } ?>
           <?php } else { ?>
@@ -32,7 +32,7 @@
           <label for="indie_auth_url">Web Address:</label>
           <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
           <p><button type="submit">Log In</button></p>
-          <input type="hidden" name="scope" value="post edit delete contacts follow" />
+          <input type="hidden" name="scope" value="create edit delete contacts follow" />
         </form>
       <?php } ?>
       <form action="<?php echo ($token?$action:''); ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">

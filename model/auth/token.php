@@ -7,7 +7,7 @@ class ModelAuthToken extends Model {
             "INSERT INTO " . DATABASE . ".tokens " .
             " SET user='" . $this->db->escape($user) . "', " .
             " scope='" . $this->db->escape($scope) . "', " .
-            " client='" . $this->db->escape($client_id) . "', " .
+            " client_id='" . $this->db->escape($client_id) . "', " .
             " last_used=NOW(), " .
             " checksum='" . $this->db->escape($checksum) . "'"
         );

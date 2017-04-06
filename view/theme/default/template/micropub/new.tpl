@@ -140,7 +140,7 @@ window.addEventListener('load', function() {
                   <label for="indie_auth_url">Web Address:</label>
                   <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
                   <p><button type="submit">Log In</button></p>
-                  <input type="hidden" name="scope" value="post edit delete" />
+                  <input type="hidden" name="scope" value="create edit delete" />
                 </form>
               <?php } ?>
           <?php } else { ?>
@@ -153,7 +153,7 @@ window.addEventListener('load', function() {
           <label for="indie_auth_url">Web Address:</label>
           <input id="indie_auth_url" type="text" name="me" placeholder="yourdomain.com" />
           <p><button type="submit">Log In</button></p>
-          <input type="hidden" name="scope" value="post edit delete" />
+          <input type="hidden" name="scope" value="create edit delete" />
         </form>
       <?php } ?>
       <form action="<?php echo ($token?$action:''); ?>" method="post" enctype="multipart/form-data" id="form-post" class="form-horizontal">
