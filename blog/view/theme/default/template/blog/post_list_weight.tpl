@@ -52,7 +52,7 @@ echo $datapoints;
 chart.render();
 }
 </script>
-<script type="text/javascript" src="/libraries/canvasjs/canvasjs.min.js"></script>
+<script type="text/javascript" src="/node_modules/canvasjs/dist/canvasjs.min.js"></script>
 
   <article id="chartContainer" style="height: 300px; width: 100%;">
   </article>

@@ -3,7 +3,9 @@ image/uploaded/
 image/static/
 static/
 *.swp
-vendor/
+
+/vendor/
+/node_modules
 
 # Config
 /config.php

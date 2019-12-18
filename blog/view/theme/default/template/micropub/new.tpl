@@ -1,6 +1,6 @@
 <?php echo $header; ?>
  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
- <script src="/libraries/cassis/cassis.js"></script>
+ <script src="/vendor/tantek/cassis/cassis.js"></script>
 <script type="text/javascript">
 window.addEventListener('load', function() {
 

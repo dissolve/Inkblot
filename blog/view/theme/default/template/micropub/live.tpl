@@ -1,7 +1,7 @@
 <?php echo $header; ?>
  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
  <script src="/view/javascript/jquery-2.1.1.min.js"></script>
- <script src="/libraries/cassis/cassis.js"></script>
+ <script src="/vendor/tantek/cassis/cassis.js"></script>
 <script>
     $(function(){ 
         $('#input-body').keyup(function(){
