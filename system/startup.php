@@ -67,8 +67,8 @@ function modification($filename) {
 }
 
 // Autoloader
-if (defined('DIR_STORAGE') && is_file(DIR_STORAGE . 'vendor/autoload.php')) {
-	require_once(DIR_STORAGE . 'vendor/autoload.php');
+if (defined('DIR_BASE') && is_file(DIR_BASE . 'vendor/autoload.php')) {
+	require_once(DIR_BASE . 'vendor/autoload.php');
 }
 
 function library($class) {

@@ -18,8 +18,9 @@ class ControllerCommonFooter extends Controller {
         $data['google_analytics_id'] = GOOGLE_ANALYTICS_ID;
         $data['sitesearch'] = trim(str_replace(array('http://','https://'), array('',''), HTTP_SERVER), '/');
 
+        $data['is_owner'] = false;
 
-        if ($this->session->data['is_owner']) {
+        if (isset($this->session->data['is_owner']) && $this->session->data['is_owner']) {
             $data['is_owner'] = true;
             $data['newlink'] = $this->url->link('micropub/client', '', '');
             $data['webaction'] = $this->url->link('micropub/receive', 'q=indie-config&handler=%s', '');
@@ -34,17 +35,19 @@ class ControllerCommonFooter extends Controller {
 
         $data['mylinks'] = array();
 
-        foreach ($this->model_blog_mycard->getData($this->session->data['user_site']) as $result) {
-                $data['mylinks'][] = array(
-                    'url'    => str_replace('{}', $result['value'], $result['link_format']),
-                    'image'  => $result['image'],
-                    'value'  => str_replace('{}', $result['value'], $result['field_label']),
-                    'title'  => str_replace('{}', $result['value'], $result['title']),
-                    'rel'    => $result['rel'],
-                    'target' => $result['target']);
+        if(isset($this->session->data['user_site'])){
+            foreach ($this->model_blog_mycard->getData($this->session->data['user_site']) as $result) {
+                    $data['mylinks'][] = array(
+                        'url'    => str_replace('{}', $result['value'], $result['link_format']),
+                        'image'  => $result['image'],
+                        'value'  => str_replace('{}', $result['value'], $result['field_label']),
+                        'title'  => str_replace('{}', $result['value'], $result['title']),
+                        'rel'    => $result['rel'],
+                        'target' => $result['target']);
+            }
         }
 
-        if ($this->session->data['is_owner']) {
+        if ($data['is_owner']) {
             $this->load->model('blog/post');
             $data['recent_drafts'] = $this->model_blog_post->getRecentDrafts(10);
             $this->load->model('blog/interaction');

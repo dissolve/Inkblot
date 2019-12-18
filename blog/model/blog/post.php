@@ -833,7 +833,7 @@ class ModelBlogPost extends Model {
             $query = $this->db->query(
                 "SELECT * " .
                 "FROM " . DB_DATABASE . ".post_syndication " .
-                " JOIN " . DB_DATABASE . ".syndication_sites ON context_syndicaton.syndication_site_id = syndication_site.id" .
+                " JOIN " . DB_DATABASE . ".syndication_sites ON post_syndication.syndication_site_id = syndication_sites.id" .
                 " WHERE post_id = " . (int)$post_id
             );
 
