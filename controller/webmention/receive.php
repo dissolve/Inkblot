@@ -1,7 +1,7 @@
 <?php
-require_once DIR_BASE . '/libraries/php-mf2/Mf2/Parser.php';
+require_once DIR_BASE . 'vendor/mf2/mf2/Mf2/Parser.php';
 require_once DIR_BASE . '/libraries/php-comments/src/indieweb/comments.php';
-require_once DIR_BASE . '/libraries/cassis/cassis-loader.php';
+require_once DIR_BASE . 'vendor/tantek/cassis/cassis.php';
 
 class ControllerWebmentionReceive extends Controller {
     public function index()

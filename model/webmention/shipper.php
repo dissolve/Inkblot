@@ -4,7 +4,7 @@ class ModelWebmentionShipper extends Model {
 
     private function getWebmentionURL($url)
     {
-        require_once(DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php');
+        require_once DIR_BASE . 'vendor/mf2/mf2/Mf2/Parser.php';
         $c = curl_init();
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_URL, $url);
@@ -29,7 +29,7 @@ class ModelWebmentionShipper extends Model {
 
     public function sendMention($my_permalink, $target_url)
     {
-        require_once(DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php');
+        require_once DIR_BASE . 'vendor/mf2/mf2/Mf2/Parser.php';
         $webmention_handler = $this->getWebmentionURL($target_url);
         if ($webmention_handler) {
             //set data

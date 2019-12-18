@@ -1,7 +1,7 @@
 <?php
-include DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
-include DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
-include DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
+require_once DIR_BASE . 'vendor/mf2/mf2/Mf2/Parser.php';
+require_once DIR_BASE . 'vendor/indieweb/link-rel-parser/src/IndieWeb/link_rel_parser.php';
+require_once DIR_BASE . 'vendor/indieauth/client/src/IndieAuth/Client.php';
 class User {
     private $user_site = null;
     private $contact_id = null;

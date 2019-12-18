@@ -1,8 +1,8 @@
 <?php
 //TODO do i need these anymore?  should probably be in the model instead
-require_once DIR_BASE . '/libraries/php-mf2/Mf2/Parser.php';
+require_once DIR_BASE . 'vendor/mf2/mf2/Mf2/Parser.php';
 require_once DIR_BASE . '/libraries/php-comments/src/indieweb/comments.php';
-require_once DIR_BASE . '/libraries/cassis/cassis-loader.php';
+require_once DIR_BASE . 'vendor/tantek/cassis/cassis.php';
 
 class ControllerWebmentionVouch extends Controller {
     public function get()

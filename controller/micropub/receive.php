@@ -1,8 +1,8 @@
 <?php
 //TODO:!!!! send out webmention for main feed to pubsub_hub if defined
-require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
-require_once DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
-require_once DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
+require_once DIR_BASE . 'vendor/mf2/mf2/Mf2/Parser.php';
+require_once DIR_BASE . 'vendor/indieweb/link-rel-parser/src/IndieWeb/link_rel_parser.php';
+require_once DIR_BASE . 'vendor/indieauth/client/src/IndieAuth/Client.php';
 
 class ControllerMicropubReceive extends Controller {
     public function index()

@@ -1,5 +1,5 @@
 <?php
-require_once DIR_BASE . 'libraries/single-emoji-recognizer/src/emoji.php';
+require_once DIR_BASE . '/vendor/dissolve/single-emoji-recognizer/src/emoji.php';
 class ModelBlogInteraction extends Model {
 
     public function addWebmention($data, $webmention_id, $comment_data, $post_id = null)

@@ -1,7 +1,4 @@
 <?php
-//require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
-//require_once DIR_BASE . 'libraries/link-rel-parser-php/src/IndieWeb/link_rel_parser.php';
-//require_once DIR_BASE . 'libraries/indieauth-client-php/src/IndieAuth/Client.php';
 
 class ControllerMicropubMediaendpoint extends Controller {
     public function index()

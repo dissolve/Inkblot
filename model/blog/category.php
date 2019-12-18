@@ -1,9 +1,6 @@
 <?php
 
-require_once DIR_BASE . 'libraries/php-mf2/Mf2/Parser.php';
-//require_once DIR_BASE.'libraries/cassis/cassis-loader.php';
-//require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/functions.php';
-//require_once DIR_BASE.'libraries/php-mf2-shim/Mf2/Shim/Twitter.php';
+require_once DIR_BASE . 'vendor/mf2/mf2/Mf2/Parser.php';
 
 class ModelBlogCategory extends Model {
 

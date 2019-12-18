@@ -1,0 +1,10 @@
+{
+    "require": {
+        "dissolve/single-emoji-recognizer": "^1.0",
+        "mf2/mf2": "^0.4.6",
+        "tantek/cassis": "^0.2.16895",
+        "indieweb/link-rel-parser": "^0.1.3",
+        "indieauth/client": "^0.5.2",
+        "indieweb/mention-client": "^1.2"
+    }
+}
