@@ -1,73 +1,84 @@
 <?php
-final class Action {
-    private $file;
-    private $class;
-    private $method;
-    private $args = array();
+/**
+ * @package        OpenCart
+ * @author        Daniel Kerr
+ * @copyright    Copyright (c) 2005 - 2017, OpenCart, Ltd. (https://www.opencart.com/)
+ * @license        https://opensource.org/licenses/GPL-3.0
+ * @link        https://www.opencart.com
+ */
 
-    public function __construct($route, $args = array())
-    {
-        $path = '';
+/**
+ * Action class
+ */
+class Action {
+	private $id;
+	private $route;
+	private $method = 'index';
 
-        // Break apart the route
-        $parts = explode('/', str_replace('../', '', (string)$route));
+	/**
+	 * Constructor
+	 *
+	 * @param    string $route
+	 */
+	public function __construct($route) {
+		$this->id = $route;
 
-        foreach ($parts as $part) {
-            $path .= $part;
+		$parts = explode('/', preg_replace('/[^a-zA-Z0-9_\/]/', '', (string)$route));
 
-            if (is_dir(DIR_APPLICATION . 'controller/' . $path)) {
-                $path .= '/';
+		// Break apart the route
+		while ($parts) {
+			$file = DIR_APPLICATION . 'controller/' . implode('/', $parts) . '.php';
 
-                array_shift($parts);
+			if (is_file($file)) {
+				$this->route = implode('/', $parts);
 
-                continue;
-            }
+				break;
+			} else {
+				$this->method = array_pop($parts);
+			}
+		}
+	}
 
-            if (is_file(DIR_APPLICATION . 'controller/' . str_replace(array('../', '..\\', '..'), '', $path) . '.php')) {
-                $this->file = DIR_APPLICATION . 'controller/' . str_replace(array('../', '..\\', '..'), '', $path) . '.php';
+	/**
+	 *
+	 *
+	 * @return    string
+	 *
+	 */
+	public function getId() {
+		return $this->id;
+	}
 
-                $this->class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
+	/**
+	 *
+	 *
+	 * @param    object $registry
+	 * @param    array $args
+	 */
+	public function execute($registry, array &$args = array()) {
+		// Stop any magical methods being called
+		if (substr($this->method, 0, 2) == '__') {
+			return new \Exception('Error: Calls to magic methods are not allowed!');
+		}
 
-                array_shift($parts);
+		$file = DIR_APPLICATION . 'controller/' . $this->route . '.php';
+		$class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $this->route);
 
-                break;
-            }
-        }
+		// Initialize the class
+		if (is_file($file)) {
+			include_once($file);
 
-        if ($args) {
-            $this->args = $args;
-        }
+			$controller = new $class($registry);
+		} else {
+			return new \Exception('Error: Could not call ' . $this->route . '/' . $this->method . '!');
+		}
 
-        $method = array_shift($parts);
+		$reflection = new ReflectionClass($class);
 
-        if ($method) {
-            $this->method = $method;
-        } else {
-            $this->method = 'index';
-        }
-    }
-
-    public function execute($registry)
-    {
-        // Stop any magical methods being called
-        if (substr($this->method, 0, 2) == '__') {
-            return false;
-        }
-
-        if (is_file($this->file)) {
-            include_once($this->file);
-
-            $class = $this->class;
-
-            $controller = new $class($registry);
-
-            if (is_callable(array($controller, $this->method))) {
-                return call_user_func_array(array($controller, $this->method), $this->args);
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
+		if ($reflection->hasMethod($this->method) && $reflection->getMethod($this->method)->getNumberOfRequiredParameters() <= count($args)) {
+			return call_user_func_array(array($controller, $this->method), $args);
+		} else {
+			return new \Exception('Error: Could not call ' . $this->route . '/' . $this->method . '!');
+		}
+	}
 }
