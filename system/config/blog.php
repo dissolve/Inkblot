@@ -1,6 +1,9 @@
 <?php
 // Site
-$_['site_url']           = HTTP_SERVER;
+$_['site_url']           = HTTPS_SERVER;
+if(defined('HTTPS_SHORT')){
+    $_['short_site_url']           = HTTPS_SHORT;
+}
 
 // Database
 $_['db_autostart']       = true;
@@ -17,13 +20,19 @@ $_['session_engine']     = 'db';
 $_['session_name']       = 'OCSESSID';
 
 // Template
-$_['template_engine']    = 'twig';
+//$_['template_engine']    = 'twig';
+$_['template_engine']    = 'template';
 $_['template_directory'] = '';
 
 // Autoload Libraries
 $_['library_autoload']   = array();
 
 // Actions
+$_['action_default']       = 'common/home';
+$_['action_router']        = 'startup/router';
+$_['action_error']         = 'error/not_found';
+
+$_['action_event']         = array();
 $_['action_pre_action']  = array(
 	'startup/startup',
 	'startup/marketing',

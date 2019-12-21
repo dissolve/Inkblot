@@ -182,7 +182,7 @@ class ControllerCommonHeader extends Controller {
 
         $data['categories'] = array();
 
-        $data['search'] = $this->load->controller('module/search');
+        //$data['search'] = $this->load->controller('module/search');
 
         // For page specific css
         if (isset($this->request->get['route'])) {

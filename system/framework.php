@@ -130,6 +130,11 @@ $registry->set('cache', new Cache($config->get('cache_engine'), $config->get('ca
 // Url
 $registry->set('url', new Url($config->get('site_url')));
 
+// Short Url
+if(!empty($config->get('short_site_url'))){
+    $registry->set('short_url', new Url($config->get('short_site_url')));
+}
+
 // Language
 $registry->set('language', new Language($config->get('language_directory')));
 

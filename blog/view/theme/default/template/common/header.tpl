@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html dir="{{ direction }}" lang="{{ lang }}">
+<html dir="<?php echo $direction?>" lang="<?php echo $lang?>">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{{ title }}</title>
+  <title><?php echo $title?></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <?php foreach ($metas as $meta) { ?>

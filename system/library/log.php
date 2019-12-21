@@ -22,9 +22,9 @@ class Log {
 		$file = DIR_LOGS . $filename;
 
 		if (!is_file($file)) {
-			$this->handle = fopen(DIR_LOGS . $filename, 'x');
+			$this->handle = fopen($file, 'x');
 		} else {
-			$this->handle = fopen(DIR_LOGS . $filename, 'a');
+			$this->handle = fopen($file, 'a');
 		}
 	}
 	

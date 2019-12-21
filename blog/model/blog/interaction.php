@@ -309,7 +309,7 @@ class ModelBlogInteraction extends Model {
                 $row['published'] = date("c", strtotime($row['published']));
 
                 $second_level_query = $this->db->query(
-                    "SELECT i.*, " .
+                    "SELECT i.* " .
                     " FROM " . DB_DATABASE . ".interactions i " .
                     " JOIN " . DB_DATABASE . ".interaction_interaction ii ON ii.child_id = i.id " .
                     " WHERE ii.parent_id='" . $row['id'] . "' " .

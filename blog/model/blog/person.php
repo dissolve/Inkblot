@@ -84,7 +84,7 @@ class ModelBlogPerson extends Model {
                 "SELECT * " .
                 " FROM " . DB_DATABASE . ".person_url " .
                 " WHERE person_id = " . (int)$person_id .
-                " AND primary = 1 "
+                " AND `primary` = 1 "
             );
             $person['url'] = $query->row['url'];
 
@@ -92,7 +92,7 @@ class ModelBlogPerson extends Model {
                 "SELECT * " .
                 " FROM " . DB_DATABASE . ".person_url " .
                 " WHERE person_id = " . (int)$person_id .
-                " AND primary = 0 " .
+                " AND `primary` = 0 " .
                 " ORDER BY url"
             );
             $person['alternates'] = $query->rows;
@@ -123,14 +123,14 @@ class ModelBlogPerson extends Model {
                     "SELECT * " .
                     " FROM " . DB_DATABASE . ".person_url " .
                     " WHERE person_id = " . (int)$person['id'] .
-                    " AND primary = 1 "
+                    " AND `primary` = 1 "
                 );
                 $person['url'] = $query->row['url'];
                 $query = $this->db->query(
                     "SELECT * " .
                     " FROM " . DB_DATABASE . ".person_url " .
                     " WHERE person_id = " . (int)$person['id'] .
-                    " AND primary = 0 " .
+                    " AND `primary` = 0 " .
                     " ORDER BY url"
                 );
                 $person['alternates'] = $query->rows;
@@ -188,7 +188,7 @@ class ModelBlogPerson extends Model {
             $this->db->query(
                 "INSERT INTO " . DB_DATABASE . ".person_url " .
                 " SET person_id = " . (int)$person_id . ", " .
-                " primary = 0, " .
+                " `primary` = 0, " .
                 " url = '" . $this->db->escape($alternate_url) . "' "
             );
         }
@@ -226,7 +226,7 @@ class ModelBlogPerson extends Model {
         $url = $this->standardizeUrl($url);
         $this->db->query(
             "UPDATE " . DB_DATABASE . ".person_url " .
-            " SET primary = 0 " . 
+            " SET `primary` = 0 " . 
             " WHERE person_id = " . (int)$person_id
         );
 
@@ -238,14 +238,14 @@ class ModelBlogPerson extends Model {
         if($query->num_rows > 0){
             $this->db->query(
                 "UPDATE " . DB_DATABASE . ".person_url " .
-                " SET primary = 1 " . 
+                " SET `primary` = 1 " . 
                 " WHERE id = " . (int)$query->row['id']
             );
         } else {
             $this->db->query(
                 "INSERT INTO " . DB_DATABASE . ".person_url " .
                 " SET person_id = " . (int)$person_id . ", " .
-                " primary = 1, " .
+                " `primary` = 1, " .
                 " url = '" . $this->db->escape($url) . "' "
             );
         }

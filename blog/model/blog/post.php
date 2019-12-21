@@ -503,7 +503,7 @@ class ModelBlogPost extends Model {
             }
             $this->cache->set('post.' . $post_id, $post);
         }
-        if ($this->session->data['is_owner']) {
+        if (isset($this->session->data['is_owner']) && $this->session->data['is_owner']) {
             return $post;
 
         } elseif(!$post['public']){
